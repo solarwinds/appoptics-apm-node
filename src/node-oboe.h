@@ -32,17 +32,17 @@
 
 #include "oboe.h"
 
-namespace appneta {
-  namespace oboe {
-    // class Metadata;
-    // class Context;
-    // class Event;
-    // class Config;
-    // class UdpReporter;
-    // class FileReporter;
-
-    namespace config { void Init(v8::Isolate*, v8::Local<v8::Object>); }
-  }  // namespace oboe
-}  // namespace appneta
+// namespace appneta {
+//   namespace oboe {
+//     // class Metadata;
+//     // class Context;
+//     // class Event;
+//     // class Config;
+//     // class UdpReporter;
+//     // class FileReporter;
+//
+//     namespace config { void Init(v8::Isolate*, v8::Local<v8::Object>); }
+//   }  // namespace oboe
+// }  // namespace appneta
 
 #endif  // NODE_OBOE_H_

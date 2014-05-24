@@ -1,13 +1,13 @@
 #include "node-oboe.h"
 
 // Components
-#include "config.h"
-#include "event.h"
-
 // #if NODE_VER == 10
-// # include "extras-v0-10.h"
+#include "config-v0-10.h"
+#include "context-v0-10.h"
+#include "event-v0-10.h"
 // #elif NODE_VER == 12
-// # include "extras-v0-12.h"
+// #include "config-v0-12.h"
+// #include "event-v0-12.h"
 // #endif
 
 namespace appneta {
