@@ -1,6 +1,7 @@
 #ifndef OBOE_EVENT_H
 #define OBOE_EVENT_H
 
+#include <cstring>
 #include <node.h>
 
 namespace appneta {
@@ -15,9 +16,9 @@ class Event : public node::ObjectWrap {
     oboe_event_t* event;
     static v8::Persistent<v8::Function> constructor;
     static v8::Handle<v8::Value> New(const v8::Arguments&);
-    v8::Handle<v8::Value> addInfo(const v8::Arguments&);
-    // v8::Handle<v8::Value> addEdge(const v8::Arguments&);
-    // v8::Handle<v8::Value> addEdgeStr(const v8::Arguments&);
+    static v8::Handle<v8::Value> addInfo(const v8::Arguments&);
+    static v8::Handle<v8::Value> addEdge(const v8::Arguments&);
+    static v8::Handle<v8::Value> addEdgeStr(const v8::Arguments&);
 
   public:
     static void Init(v8::Isolate*, v8::Handle<v8::Object>);
@@ -46,6 +47,7 @@ Event::~Event() {
   oboe_event_destroy(event);
 }
 
+
 Handle<Value> Event::addInfo(const Arguments& args) {
   HandleScope scope;
 
@@ -64,62 +66,70 @@ Handle<Value> Event::addInfo(const Arguments& args) {
     return scope.Close(Undefined());
   }
 
+  Event* inst = ObjectWrap::Unwrap<Event>(args.This());
+
   bool status;
 
   char* key = *String::AsciiValue(args[0]);
   if (args[1]->IsString()) {
     std::string val(*String::Utf8Value(args[1]));
     if (memchr(val.data(), '\0', val.size())) {
-      status = oboe_event_add_info_binary(event, key, val.data(), val.size()) == 0;
+      status = oboe_event_add_info_binary(inst->event, key, val.data(), val.size()) == 0;
     } else {
-      status = oboe_event_add_info(event, key, val.data()) == 0;
+      status = oboe_event_add_info(inst->event, key, val.data()) == 0;
     }
   } else {
     double val = args[1]->NumberValue();
-    status = oboe_event_add_info_double(event, key, val) == 0;
+    status = oboe_event_add_info_double(inst->event, key, val) == 0;
   }
 
   return scope.Close(Boolean::New(status));
 }
 
-// Handle<Value> Event::addEdge(const Arguments& args) {
-//   HandleScope scope;
-//
-//   if (args.Length() != 2) {
-//     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
-//     return scope.Close(Undefined());
-//   }
-//
-//   if (!args[0]->IsObject()) {
-//     ThrowException(Exception::TypeError(String::New("Must supply edge metadata")));
-//     return scope.Close(Undefined());
-//   }
-//
-//   Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
-//   bool status = oboe_event_add_edge(event, metadata->md) == 0;
-//
-//   return scope.Close(Boolean::New(status));
-// }
-//
-// Handle<Value> Event::addEdgeStr(const Arguments& args) {
-//   HandleScope scope;
-//
-//   if (args.Length() != 2) {
-//     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
-//     return scope.Close(Undefined());
-//   }
-//
-//   if (!args[0]->IsString()) {
-//     ThrowException(Exception::TypeError(String::New("Must supply an edge string")));
-//     return scope.Close(Undefined());
-//   }
-//
-//   std::string val(*String::Utf8Value(args[0]));
-//   bool status = oboe_event_add_edge_fromstr(event, val.c_str(), val.size()) == 0;
-//
-//   return scope.Close(Boolean::New(status));
-// }
-//
+
+Handle<Value> Event::addEdge(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 2) {
+    ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+    return scope.Close(Undefined());
+  }
+
+  if (!args[0]->IsObject()) {
+    ThrowException(Exception::TypeError(String::New("Must supply edge metadata")));
+    return scope.Close(Undefined());
+  }
+
+  Event* inst = ObjectWrap::Unwrap<Event>(args.This());
+  Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+  bool status = oboe_event_add_edge(inst->event, metadata->getMetadata()) == 0;
+
+  return scope.Close(Boolean::New(status));
+}
+
+
+Handle<Value> Event::addEdgeStr(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 2) {
+    ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+    return scope.Close(Undefined());
+  }
+
+  if (!args[0]->IsString()) {
+    ThrowException(Exception::TypeError(String::New("Must supply an edge string")));
+    return scope.Close(Undefined());
+  }
+
+  Event* inst = ObjectWrap::Unwrap<Event>(args.This());
+
+  std::string val(*String::Utf8Value(args[0]));
+  bool status = oboe_event_add_edge_fromstr(inst->event, val.c_str(), val.size()) == 0;
+
+  return scope.Close(Boolean::New(status));
+}
+
+
 // Handle<Value> Event::getMetadata(const Arguments& args) {
 //   HandleScope scope;
 //
@@ -127,6 +137,7 @@ Handle<Value> Event::addInfo(const Arguments& args) {
 //   Handle<Value> metadata = Metadata::constructor->NewInstance(1, argv);
 //   return scope.Close(metadata);
 // }
+
 
 // Creates a new Javascript instance
 Handle<Value> Event::New(const Arguments& args) {
@@ -153,18 +164,18 @@ void Event::Init(Isolate* isolate, Handle<Object> exports) {
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("addInfo"),
-  //   FunctionTemplate::New(addInfo)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("addEdge"),
-  //   FunctionTemplate::New(addEdge)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("addEdgeStr"),
-  //   FunctionTemplate::New(addEdgeStr)->GetFunction()
-  // );
+  tpl->PrototypeTemplate()->Set(
+    String::NewSymbol("addInfo"),
+    FunctionTemplate::New(addInfo)->GetFunction()
+  );
+  tpl->PrototypeTemplate()->Set(
+    String::NewSymbol("addEdge"),
+    FunctionTemplate::New(addEdge)->GetFunction()
+  );
+  tpl->PrototypeTemplate()->Set(
+    String::NewSymbol("addEdgeStr"),
+    FunctionTemplate::New(addEdgeStr)->GetFunction()
+  );
   // tpl->PrototypeTemplate()->Set(
   //   String::NewSymbol("getMetadata"),
   //   FunctionTemplate::New(getMetadata)->GetFunction()

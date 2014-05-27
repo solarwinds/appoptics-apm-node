@@ -27,6 +27,16 @@
         'src/node-oboe.h',
         'src/config.h',
         'src/event.h',
+      ],
+      'conditions': [
+        ['OS=="linux"', {
+          'libraries': [
+            '-loboe'
+          ],
+          'ldflags': [
+            '-Wl,-rpath /usr/local/lib'
+          ]
+        }]
       ]
     }
   ]

@@ -1,5 +1,5 @@
-#ifndef OBOE_EVENT_H
-#define OBOE_EVENT_H
+#ifndef OBOE_METADATA_H
+#define OBOE_METADATA_H
 
 #include <node.h>
 
@@ -7,6 +7,8 @@ namespace appneta {
 namespace oboe {
 
 class Metadata : public node::ObjectWrap {
+  friend class Event;
+
   private:
     explicit Metadata();
     explicit Metadata(oboe_metadata_t*);
@@ -16,10 +18,9 @@ class Metadata : public node::ObjectWrap {
     static v8::Persistent<v8::Function> constructor;
     static v8::Handle<v8::Value> New(const v8::Arguments&);
 
-    // v8::Handle<v8::Value> addInfo(const v8::Arguments&);
-
   public:
     static void Init(v8::Isolate*, v8::Handle<v8::Object>);
+    oboe_metadata_t* getMetadata();
 };
 
 using namespace v8;
@@ -32,6 +33,10 @@ Metadata::Metadata(oboe_metadata_t *md) {
 
 Metadata::~Metadata() {
   oboe_metadata_destroy(metadata);
+}
+
+oboe_metadata_t* Metadata::getMetadata() {
+  return metadata;
 }
 
 // Creates a new Javascript instance
@@ -55,7 +60,7 @@ Handle<Value> Metadata::New(const Arguments& args) {
 void Metadata::Init(Isolate* isolate, Handle<Object> exports) {
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("OboeEvent"));
+  tpl->SetClassName(String::NewSymbol("OboeMetadata"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
@@ -63,29 +68,9 @@ void Metadata::Init(Isolate* isolate, Handle<Object> exports) {
   //   String::NewSymbol("addInfo"),
   //   FunctionTemplate::New(addInfo)->GetFunction()
   // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("addEdge"),
-  //   FunctionTemplate::New(addEdge)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("addEdgeStr"),
-  //   FunctionTemplate::New(addEdgeStr)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("getMetadata"),
-  //   FunctionTemplate::New(getMetadata)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("metadataString"),
-  //   FunctionTemplate::New(metadataString)->GetFunction()
-  // );
-  // tpl->PrototypeTemplate()->Set(
-  //   String::NewSymbol("startTrace"),
-  //   FunctionTemplate::New(startTrace)->GetFunction()
-  // );
 
   constructor = Persistent<Function>::New(tpl->GetFunction());
-  exports->Set(String::NewSymbol("OboeEvent"), constructor);
+  exports->Set(String::NewSymbol("OboeMetadata"), constructor);
 }
 
 }  // namespace oboe

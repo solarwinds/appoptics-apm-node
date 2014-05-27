@@ -4,6 +4,7 @@
 // #if NODE_VER == 10
 #include "config-v0-10.h"
 #include "context-v0-10.h"
+#include "metadata-v0-10.h"
 #include "event-v0-10.h"
 // #elif NODE_VER == 12
 // #include "config-v0-12.h"
