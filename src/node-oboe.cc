@@ -1,39 +1,23 @@
 #include "node-oboe.h"
 
 // Components
-// #if NODE_VER == 10
-#include "config-v0-10.h"
-#include "context-v0-10.h"
-#include "metadata-v0-10.h"
-#include "event-v0-10.h"
-// #elif NODE_VER == 12
-// #include "config-v0-12.h"
-// #include "event-v0-12.h"
-// #endif
+#include "metadata.h"
+#include "context.h"
+#include "config.h"
+#include "event.h"
 
 namespace appneta {
-namespace oboe {
+namespace nodoboe {
 
-void Init(v8::Handle<v8::Object> exports) {
-#if NODE_VER == 10
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-#elif NODE_VER == 12
-  v8::Isolate* isolate = exports->CreationContext()->GetIsolate();
-#endif
+using v8::Handle;
+using v8::Object;
 
-  config::Init(isolate, exports);
-  Event::Init(isolate, exports);
+void Init(Handle<Object> exports) {
+  config::Init(exports);
+  Event::Init(exports);
 }
-
-// See https://github.com/joyent/node/pull/7240.  Need to make the module
-// definition externally visible when compiling with -fvisibility=hidden.
-// Doesn't apply to v0.11, it uses a constructor to register the module.
-#if defined(__GNUC__) && NODE_VER == 10
-extern "C" __attribute__((visibility("default")))
-node::node_module_struct node_oboe_module;
-#endif
 
 NODE_MODULE(node_oboe, Init)
 
-}  // namespace oboe
+}  // namespace nodoboe
 }  // namespace appneta

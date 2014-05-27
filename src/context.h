@@ -5,8 +5,9 @@
 #include <node.h>
 
 namespace appneta {
-namespace oboe {
+namespace nodoboe {
 
+class Metadata;
 class Event;
 namespace context {
 
@@ -18,9 +19,7 @@ namespace context {
  * - OBOE_TRACE_ALWAYS(1) to start a new trace if needed, or
  * - OBOE_TRACE_THROUGH(2) to only add to an existing trace.
  */
-void setTracingMode(int newMode) {
-  oboe_settings_cfg_tracing_mode_set(newMode);
-}
+void setTracingMode(int newMode);
 
 /**
  * Set the default sample rate.
@@ -32,9 +31,7 @@ void setTracingMode(int newMode) {
  *
  * @param newRate A number between 0 (none) and OBOE_SAMPLE_RESOLUTION (a million)
  */
-void setDefaultSampleRate(int newRate) {
-  oboe_settings_cfg_sample_rate_set(newRate);
-}
+void setDefaultSampleRate(int newRate);
 
 /**
  * Check if the current request should be traced based on the current settings.
@@ -57,68 +54,28 @@ int sampleRequest(
   std::string layer,
   std::string in_xtrace,
   std::string in_tv_meta
-) {
-  int sample_rate = 0;
-  int sample_source = 0;
-  int rc = oboe_sample_layer(
-    layer.c_str(),
-    in_xtrace.c_str(),
-    in_tv_meta.c_str(),
-    &sample_rate,
-    &sample_source
-  );
-
-  return (rc == 0 ? 0 : (((sample_source & 0xFF) << 24) | (sample_rate & 0xFFFFFF)));
-}
+);
 
 // returns pointer to current context (from thread-local storage)
-oboe_metadata_t *get() {
-  return oboe_context_get();
-}
+oboe_metadata_t *get();
 
-std::string toString() {
-  char buf[OBOE_MAX_METADATA_PACK_LEN];
-
-  oboe_metadata_t *md = context::get();
-  int rc = oboe_metadata_tostr(md, buf, sizeof(buf) - 1);
-  if (rc == 0) {
-    return std::string(buf);
-  } else {
-    return std::string(); // throw exception?
-  }
-}
-
-void set(oboe_metadata_t *md) {
-  oboe_context_set(md);
-}
-
-void fromString(std::string s) {
-  oboe_context_set_fromstr(s.data(), s.size());
-}
+std::string toString();
+void set(oboe_metadata_t *md);
+void fromString(std::string s);
 
 // this new object is managed by SWIG %newobject
-// static Metadata *copy() {
-//   return new Metadata(context::get());
-// }
+static Metadata *copy();
 
-void clear() {
-  oboe_context_clear();
-}
-
-bool isValid() {
-  return oboe_context_is_valid();
-}
-
-void init() {
-  oboe_init();
-}
+void clear();
+bool isValid();
+void init();
 
 // these new objects are managed by SWIG %newobject
 Event *createEvent();
 Event *startTrace();
 
 }  // namespace context
-}  // namespace oboe
+}  // namespace nodoboe
 }  // namespace appneta
 
 #endif
