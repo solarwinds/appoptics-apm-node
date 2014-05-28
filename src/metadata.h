@@ -20,6 +20,7 @@ class Metadata : public node::ObjectWrap {
     static NAN_METHOD(copy);
     static NAN_METHOD(isValid);
     static NAN_METHOD(toString);
+    static NAN_METHOD(createEvent);
 
   public:
     Metadata();

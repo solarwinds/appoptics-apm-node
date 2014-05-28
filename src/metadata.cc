@@ -87,6 +87,25 @@ NAN_METHOD(Metadata::toString) {
   }
 }
 
+// Create an event from this metadata instance
+NAN_METHOD(Metadata::createEvent) {
+  NanScope();
+
+  // Unwrap the Metadata instance from V8
+  Metadata* self = ObjectWrap::Unwrap<Metadata>(args.This());
+
+  // Construct a new metadata instance from the event metadata
+  Event* event = new Event(&event->metadata);
+  Local<Object> handle;
+  event->Wrap(handle);
+
+  // Return a new instance of it.
+  // TODO: wrapping a local and using as an arg is probably bad.
+  // I should see if returning a handle works correctly.
+  Local<Value> argv[1] = { handle };
+  NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
+}
+
 // Creates a new Javascript instance
 NAN_METHOD(Metadata::New) {
   NanScope();

@@ -106,7 +106,13 @@ void init() {
 }
 
 // these new objects are managed by SWIG %newobject
-Event *createEvent();
-Event *startTrace();
+Event *createEvent() {
+  return new Event(Context::get());
+}
+Event *startTrace() {
+  oboe_metadata_t *md = Context::get();
+  oboe_metadata_random(md);
+  return new Event();
+}
 
 }  // namespace context
