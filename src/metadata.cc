@@ -6,18 +6,17 @@ Persistent<FunctionTemplate> Metadata::constructor;
 
 Metadata::Metadata() {}
 
+// Allow construction of clones
 Metadata::Metadata(oboe_metadata_t *md) {
   oboe_metadata_copy(&metadata, md);
 }
 
+// Remember to cleanup the metadata struct when garbage collected
 Metadata::~Metadata() {
   oboe_metadata_destroy(&metadata);
 }
 
-oboe_metadata_t* Metadata::getMetadata() {
-  return &metadata;
-}
-
+// Transform a string back into a metadata instance
 NAN_METHOD(Metadata::fromString) {
   NanScope();
 
@@ -34,6 +33,7 @@ NAN_METHOD(Metadata::fromString) {
   NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
 }
 
+// Make a new metadata instance with randomized data
 NAN_METHOD(Metadata::makeRandom) {
   NanScope();
 
@@ -49,6 +49,7 @@ NAN_METHOD(Metadata::makeRandom) {
   NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
 }
 
+// Copy the contents of the metadata instance to a new instance
 NAN_METHOD(Metadata::copy) {
   NanScope();
 
@@ -56,6 +57,7 @@ NAN_METHOD(Metadata::copy) {
   NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
 }
 
+// Verify that the state of the metadata instance is valid
 NAN_METHOD(Metadata::isValid) {
   NanScope();
 
@@ -64,18 +66,24 @@ NAN_METHOD(Metadata::isValid) {
   NanReturnValue(NanNew<Boolean>(status));
 }
 
+// Serialize a metadata object to a string
 NAN_METHOD(Metadata::toString) {
   NanScope();
 
+  // Unwrap the Metadata instance from V8
   Metadata* self = ObjectWrap::Unwrap<Metadata>(args.This());
 
+  // Convert the contents to a character array
   char buf[OBOE_MAX_METADATA_PACK_LEN];
-
   int rc = oboe_metadata_tostr(&self->metadata, buf, sizeof(buf) - 1);
+
+  // If it worked, return it
   if (rc == 0) {
-      NanReturnValue(NanNew<String>(buf));
+    NanReturnValue(NanNew<String>(buf));
+
+  // Otherwise, return an empty string
   } else {
-      NanReturnEmptyString();
+    NanReturnEmptyString();
   }
 }
 

@@ -62,7 +62,7 @@ void set(oboe_metadata_t *md);
 void fromString(std::string s);
 
 // this new object is managed by SWIG %newobject
-static Metadata *copy();
+Metadata *copy();
 
 void clear();
 bool isValid();

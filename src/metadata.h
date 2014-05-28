@@ -25,7 +25,6 @@ class Metadata : public node::ObjectWrap {
     Metadata();
     Metadata(oboe_metadata_t*);
     static void Init(Handle<Object>);
-    oboe_metadata_t* getMetadata();
 };
 
 #endif

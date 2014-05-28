@@ -9,6 +9,7 @@
 using v8::Handle;
 using v8::Object;
 
+// Register the exposed parts of the module
 void Init(Handle<Object> exports) {
 	NanScope();
 
@@ -16,9 +17,6 @@ void Init(Handle<Object> exports) {
   // context::Init(exports);
   Event::Init(exports);
   config::Init(exports);
-
-	// Initialize oboe
-	oboe_init();
 }
 
 NODE_MODULE(node_oboe, Init)

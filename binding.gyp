@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'node-oboe',
-      "include_dirs" : [
+      'include_dirs': [
         "<!(node -e \"require('nan')\")"
       ],
       'sources': [
