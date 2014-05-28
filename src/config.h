@@ -1,7 +1,5 @@
 #include "node-oboe.h"
 
-namespace appneta {
-namespace nodoboe {
 namespace config {
 
 using namespace v8;
@@ -36,11 +34,9 @@ NAN_METHOD(checkVersion) {
 }
 
 void Init(Handle<Object> exports) {
-  NODE_SET_METHOD(exports, "getVersion", getRevision);
+  NODE_SET_METHOD(exports, "getVersion", getVersion);
   NODE_SET_METHOD(exports, "getRevision", getRevision);
-  NODE_SET_METHOD(exports, "checkVersion", getRevision);
+  NODE_SET_METHOD(exports, "checkVersion", checkVersion);
 }
 
 }  // namespace config
-}  // namespace nodoboe
-}  // namespace appneta

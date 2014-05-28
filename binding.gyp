@@ -6,12 +6,11 @@
         "<!(node -e \"require('nan')\")"
       ],
       'sources': [
-        'src/oboe.h',
         'src/node-oboe.cc',
-        'src/metadata.h',
-        'src/context.h',
+        'src/metadata.cc',
+        'src/context.cc',
         'src/config.h',
-        'src/event.h',
+        'src/event.cc',
       ],
       'conditions': [
         ['OS=="linux"', {

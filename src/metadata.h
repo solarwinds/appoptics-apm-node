@@ -1,29 +1,31 @@
 #ifndef OBOE_METADATA_H
 #define OBOE_METADATA_H
 
-#include <node.h>
+#include "node-oboe.h"
+#include <iostream>
 
-namespace appneta {
-namespace nodoboe {
+using namespace v8;
 
 class Metadata : public node::ObjectWrap {
   friend class Event;
 
   private:
-    explicit Metadata();
-    explicit Metadata(oboe_metadata_t*);
     ~Metadata();
 
-    oboe_metadata_t* metadata;
-    static v8::Persistent<v8::FunctionTemplate> constructor;
+    oboe_metadata_t metadata;
+    static Persistent<FunctionTemplate> constructor;
     static NAN_METHOD(New);
+    static NAN_METHOD(fromString);
+    static NAN_METHOD(makeRandom);
+    static NAN_METHOD(copy);
+    static NAN_METHOD(isValid);
+    static NAN_METHOD(toString);
 
   public:
-    static void Init(v8::Handle<v8::Object>);
+    Metadata();
+    Metadata(oboe_metadata_t*);
+    static void Init(Handle<Object>);
     oboe_metadata_t* getMetadata();
 };
-
-}  // namespace nodoboe
-}  // namespace appneta
 
 #endif

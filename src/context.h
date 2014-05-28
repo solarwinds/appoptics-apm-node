@@ -1,11 +1,9 @@
 #ifndef OBOE_CONTEXT_H
 #define OBOE_CONTEXT_H
 
+#include "node-oboe.h"
+#include "metadata.h"
 #include <string>
-#include <node.h>
-
-namespace appneta {
-namespace nodoboe {
 
 class Metadata;
 class Event;
@@ -75,7 +73,5 @@ Event *createEvent();
 Event *startTrace();
 
 }  // namespace context
-}  // namespace nodoboe
-}  // namespace appneta
 
 #endif

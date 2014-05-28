@@ -6,6 +6,6 @@
 #include <uv.h>
 #include <v8.h>
 
-#include "oboe.h"
+#include <oboe/oboe.h>
 
 #endif  // NODE_OBOE_H_

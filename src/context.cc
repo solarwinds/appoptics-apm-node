@@ -1,8 +1,5 @@
 #include "context.h"
-#include "metadata.h"
 
-namespace appneta {
-namespace nodoboe {
 namespace context {
 
 /**
@@ -92,7 +89,7 @@ void fromString(std::string s) {
 }
 
 // this new object is managed by SWIG %newobject
-static Metadata *copy() {
+Metadata *copy() {
   return new Metadata(context::get());
 }
 
@@ -113,5 +110,3 @@ Event *createEvent();
 Event *startTrace();
 
 }  // namespace context
-}  // namespace nodoboe
-}  // namespace appneta
