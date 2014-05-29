@@ -1,4 +1,4 @@
-#include "event.h"
+#include "node-oboe.h"
 
 using namespace v8;
 
@@ -6,11 +6,11 @@ Persistent<FunctionTemplate> Event::constructor;
 
 // Construct a blank event from the context metadata
 Event::Event() {
-  oboe_event_init(&event, context::get());
+  oboe_event_init(&event, OboeContext::get());
 }
 
 // Construct a new event point an edge at another
-Event::Event(const oboe_metadata_t *md, bool addEdge=true) {
+Event::Event(const oboe_metadata_t *md, bool addEdge) {
   // both methods copy metadata from md -> this
   if (addEdge) {
     // create_event automatically adds edge in event to md

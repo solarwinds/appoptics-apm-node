@@ -1,6 +1,4 @@
-#include "context.h"
-
-namespace context {
+#include "node-oboe.h"
 
 /**
  * Set the tracing mode.
@@ -10,7 +8,7 @@ namespace context {
  * - OBOE_TRACE_ALWAYS(1) to start a new trace if needed, or
  * - OBOE_TRACE_THROUGH(2) to only add to an existing trace.
  */
-void setTracingMode(int newMode) {
+void OboeContext::setTracingMode(int newMode) {
   oboe_settings_cfg_tracing_mode_set(newMode);
 }
 
@@ -24,7 +22,7 @@ void setTracingMode(int newMode) {
  *
  * @param newRate A number between 0 (none) and OBOE_SAMPLE_RESOLUTION (a million)
  */
-void setDefaultSampleRate(int newRate) {
+void OboeContext::setDefaultSampleRate(int newRate) {
   oboe_settings_cfg_sample_rate_set(newRate);
 }
 
@@ -45,7 +43,7 @@ void setDefaultSampleRate(int newRate) {
  * @return Zero to not trace; otherwise return the sample rate used in the low order
  *         bytes 0 to 2 and the sample source in the higher-order byte 3.
  */
-int sampleRequest(
+int OboeContext::sampleRequest(
   std::string layer,
   std::string in_xtrace,
   std::string in_tv_meta
@@ -64,14 +62,14 @@ int sampleRequest(
 }
 
 // returns pointer to current context (from thread-local storage)
-oboe_metadata_t *get() {
+oboe_metadata_t* OboeContext::get() {
   return oboe_context_get();
 }
 
-std::string toString() {
+std::string OboeContext::toString() {
   char buf[OBOE_MAX_METADATA_PACK_LEN];
 
-  oboe_metadata_t *md = context::get();
+  oboe_metadata_t *md = OboeContext::get();
   int rc = oboe_metadata_tostr(md, buf, sizeof(buf) - 1);
   if (rc == 0) {
     return std::string(buf);
@@ -80,39 +78,37 @@ std::string toString() {
   }
 }
 
-void set(oboe_metadata_t *md) {
+void OboeContext::set(oboe_metadata_t *md) {
   oboe_context_set(md);
 }
 
-void fromString(std::string s) {
+void OboeContext::fromString(std::string s) {
   oboe_context_set_fromstr(s.data(), s.size());
 }
 
 // this new object is managed by SWIG %newobject
-Metadata *copy() {
-  return new Metadata(context::get());
+Metadata* OboeContext::copy() {
+  return new Metadata(OboeContext::get());
 }
 
-void clear() {
+void OboeContext::clear() {
   oboe_context_clear();
 }
 
-bool isValid() {
+bool OboeContext::isValid() {
   return oboe_context_is_valid();
 }
 
-void init() {
+void OboeContext::init() {
   oboe_init();
 }
 
 // these new objects are managed by SWIG %newobject
-Event *createEvent() {
-  return new Event(Context::get());
+Event* OboeContext::createEvent() {
+  return new Event(OboeContext::get());
 }
-Event *startTrace() {
-  oboe_metadata_t *md = Context::get();
+Event* OboeContext::startTrace() {
+  oboe_metadata_t* md = OboeContext::get();
   oboe_metadata_random(md);
   return new Event();
 }
-
-}  // namespace context

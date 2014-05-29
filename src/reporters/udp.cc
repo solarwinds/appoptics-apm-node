@@ -1,4 +1,4 @@
-#include "udp.h"
+#include "../node-oboe.h"
 
 using namespace v8;
 
@@ -35,7 +35,7 @@ NAN_METHOD(UdpReporter::sendReport) {
     Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
     md = &metadata->metadata;
   } else {
-    md = context::get();
+    md = OboeContext::get();
   }
 
   bool status = oboe_reporter_send(&self->reporter, md, &event->event) >= 0;

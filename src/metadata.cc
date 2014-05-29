@@ -1,4 +1,5 @@
-#include "metadata.h"
+#include "node-oboe.h"
+#include <iostream>
 
 using namespace v8;
 
@@ -95,7 +96,7 @@ NAN_METHOD(Metadata::createEvent) {
   Metadata* self = ObjectWrap::Unwrap<Metadata>(args.This());
 
   // Construct a new metadata instance from the event metadata
-  Event* event = new Event(&event->metadata);
+  Event* event = new Event(&self->metadata);
   Local<Object> handle;
   event->Wrap(handle);
 
