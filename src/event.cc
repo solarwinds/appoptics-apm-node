@@ -209,7 +209,7 @@ void Event::Init(Handle<Object> exports) {
   // Prepare constructor template
   Handle<FunctionTemplate> ctor = NanNew<FunctionTemplate>(New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("OboeEvent"));
+  ctor->SetClassName(NanSymbol("Event"));
   NanAssignPersistent(constructor, ctor);
 
   // Prototype
@@ -220,5 +220,5 @@ void Event::Init(Handle<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "metadataString", Event::metadataString);
   NODE_SET_PROTOTYPE_METHOD(ctor, "startTrace", Event::startTrace);
 
-  exports->Set(NanSymbol("OboeEvent"), ctor->GetFunction());
+  exports->Set(NanSymbol("Event"), ctor->GetFunction());
 }

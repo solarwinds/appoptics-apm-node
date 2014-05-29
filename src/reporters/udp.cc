@@ -22,8 +22,11 @@ UdpReporter::~UdpReporter() {
 NAN_METHOD(UdpReporter::sendReport) {
   NanScope();
 
-  if (args.Length() > 1) {
+  if (args.Length() != 1) {
     return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsObject()) {
+    return NanThrowError("Must supply an event instance");
   }
 
   UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
@@ -84,11 +87,11 @@ void UdpReporter::Init(Handle<Object> exports) {
   // Prepare constructor template
   Handle<FunctionTemplate> ctor = NanNew<FunctionTemplate>(New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("OboeUdpReporter"));
+  ctor->SetClassName(NanSymbol("UdpReporter"));
   NanAssignPersistent(constructor, ctor);
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(ctor, "sendReport", UdpReporter::sendReport);
 
-  exports->Set(NanSymbol("OboeUdpReporter"), ctor->GetFunction());
+  exports->Set(NanSymbol("UdpReporter"), ctor->GetFunction());
 }

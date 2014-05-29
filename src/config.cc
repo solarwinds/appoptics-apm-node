@@ -34,10 +34,15 @@ NAN_METHOD(Config::checkVersion) {
   NanReturnValue(NanNew<Boolean>(status));
 }
 
-void Config::Init(Handle<Object> exports) {
+void Config::Init(Handle<Object> module) {
+  NanScope();
+
+  Local<Object> exports = NanNew<Object>();
   NODE_SET_METHOD(exports, "getVersion", Config::getVersion);
   NODE_SET_METHOD(exports, "getRevision", Config::getRevision);
   NODE_SET_METHOD(exports, "checkVersion", Config::checkVersion);
+
+  module->Set(String::NewSymbol("Config"), exports);
 }
 
 #endif

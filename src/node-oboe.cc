@@ -15,8 +15,8 @@ void Init(Handle<Object> exports) {
 	NanScope();
 
 	UdpReporter::Init(exports);
+  OboeContext::Init(exports);
   Metadata::Init(exports);
-  // context::Init(exports);
   Event::Init(exports);
   Config::Init(exports);
 }

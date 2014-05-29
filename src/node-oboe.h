@@ -44,19 +44,25 @@ class OboeContext {
   friend class Metadata;
   friend class Event;
 
-  static void setTracingMode(int);
-  static void setDefaultSampleRate(int);
-  static int sampleRequest(std::string, std::string, std::string);
-  static oboe_metadata_t *get(); // used internally
-  static std::string toString();
-  static void set(oboe_metadata_t*);
-  static void fromString(std::string);
-  static Metadata *copy();
-  static void clear();
-  static bool isValid();
-  static void init();
-  static Event *createEvent();
-  static Event *startTrace();
+  // used internally
+  static oboe_metadata_t *get();
+
+  // V8 conversion
+  static NAN_METHOD(setTracingMode);
+  static NAN_METHOD(setDefaultSampleRate);
+  static NAN_METHOD(sampleRequest);
+  static NAN_METHOD(toString);
+  static NAN_METHOD(set);
+  static NAN_METHOD(fromString);
+  static NAN_METHOD(copy);
+  static NAN_METHOD(clear);
+  static NAN_METHOD(isValid);
+  static NAN_METHOD(init);
+  static NAN_METHOD(createEvent);
+  static NAN_METHOD(startTrace);
+
+  public:
+    static void Init(Handle<Object>);
 };
 
 class Event : public node::ObjectWrap {

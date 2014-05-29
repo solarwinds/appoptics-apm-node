@@ -8,8 +8,20 @@
  * - OBOE_TRACE_ALWAYS(1) to start a new trace if needed, or
  * - OBOE_TRACE_THROUGH(2) to only add to an existing trace.
  */
-void OboeContext::setTracingMode(int newMode) {
-  oboe_settings_cfg_tracing_mode_set(newMode);
+NAN_METHOD(OboeContext::setTracingMode) {
+  NanScope();
+
+  // Validate arguments
+  if (args.Length() != 1) {
+    return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsNumber()) {
+    return NanThrowError("Mode must be a number");
+  }
+
+  oboe_settings_cfg_tracing_mode_set(args[0]->NumberValue());
+
+  NanReturnUndefined();
 }
 
 /**
@@ -22,8 +34,20 @@ void OboeContext::setTracingMode(int newMode) {
  *
  * @param newRate A number between 0 (none) and OBOE_SAMPLE_RESOLUTION (a million)
  */
-void OboeContext::setDefaultSampleRate(int newRate) {
-  oboe_settings_cfg_sample_rate_set(newRate);
+NAN_METHOD(OboeContext::setDefaultSampleRate) {
+  NanScope();
+
+  // Validate arguments
+  if (args.Length() != 1) {
+    return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsNumber()) {
+    return NanThrowError("Mode must be a number");
+  }
+
+  oboe_settings_cfg_sample_rate_set(args[0]->NumberValue());
+
+  NanReturnUndefined();
 }
 
 /**
@@ -43,22 +67,39 @@ void OboeContext::setDefaultSampleRate(int newRate) {
  * @return Zero to not trace; otherwise return the sample rate used in the low order
  *         bytes 0 to 2 and the sample source in the higher-order byte 3.
  */
-int OboeContext::sampleRequest(
-  std::string layer,
-  std::string in_xtrace,
-  std::string in_tv_meta
-) {
+NAN_METHOD(OboeContext::sampleRequest) {
+  NanScope();
+
+  // Validate arguments
+  if (args.Length() != 3) {
+    return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsString()) {
+    return NanThrowError("Layer name must be a string");
+  }
+  if (!args[1]->IsString()) {
+    return NanThrowError("X-Trace ID must be a string");
+  }
+  if (!args[2]->IsString()) {
+    return NanThrowError("AppView Web ID must be a string");
+  }
+
   int sample_rate = 0;
   int sample_source = 0;
   int rc = oboe_sample_layer(
-    layer.c_str(),
-    in_xtrace.c_str(),
-    in_tv_meta.c_str(),
+    *String::Utf8Value(args[0]),
+    *String::Utf8Value(args[1]),
+    *String::Utf8Value(args[2]),
     &sample_rate,
     &sample_source
   );
 
-  return (rc == 0 ? 0 : (((sample_source & 0xFF) << 24) | (sample_rate & 0xFFFFFF)));
+  int res = 0;
+  if (rc != 0) {
+    res = ((sample_source & 0xFF) << 24) | (sample_rate & 0xFFFFFF);
+  }
+
+  NanReturnValue(NanNew<Number>(res));
 }
 
 // returns pointer to current context (from thread-local storage)
@@ -66,49 +107,126 @@ oboe_metadata_t* OboeContext::get() {
   return oboe_context_get();
 }
 
-std::string OboeContext::toString() {
+NAN_METHOD(OboeContext::toString) {
+  NanScope();
+
   char buf[OBOE_MAX_METADATA_PACK_LEN];
 
   oboe_metadata_t *md = OboeContext::get();
   int rc = oboe_metadata_tostr(md, buf, sizeof(buf) - 1);
   if (rc == 0) {
-    return std::string(buf);
+    NanReturnValue(NanNew<String>(buf));
   } else {
-    return std::string(); // throw exception?
+    NanReturnEmptyString();
   }
 }
 
-void OboeContext::set(oboe_metadata_t *md) {
-  oboe_context_set(md);
+NAN_METHOD(OboeContext::set) {
+  NanScope();
+
+  // Validate arguments
+  if (args.Length() != 1) {
+    return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsObject()) {
+    return NanThrowError("You must supply a Metadata instance");
+  }
+
+  // Unwrap metadata instance from arguments
+  Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+
+  oboe_context_set(&metadata->metadata);
+
+  NanReturnUndefined();
 }
 
-void OboeContext::fromString(std::string s) {
-  oboe_context_set_fromstr(s.data(), s.size());
+NAN_METHOD(OboeContext::fromString) {
+  NanScope();
+
+  // Validate arguments
+  if (args.Length() != 1) {
+    return NanThrowError("Wrong number of arguments");
+  }
+  if (!args[0]->IsString()) {
+    return NanThrowTypeError("You must supply a string");
+  }
+
+  // Get string data from arguments
+  std::string val(*String::Utf8Value(args[0]));
+
+  // Set the context data from the converted string
+  oboe_context_set_fromstr(val.data(), val.size());
+
+  NanReturnUndefined();
 }
 
-// this new object is managed by SWIG %newobject
-Metadata* OboeContext::copy() {
-  return new Metadata(OboeContext::get());
+NAN_METHOD(OboeContext::copy) {
+  NanScope();
+
+  Metadata* metadata = new Metadata(OboeContext::get());
+  Local<Object> handle;
+  metadata->Wrap(handle);
+
+  NanReturnValue(handle);
 }
 
-void OboeContext::clear() {
+NAN_METHOD(OboeContext::clear) {
+  NanScope();
   oboe_context_clear();
+  NanReturnUndefined();
 }
 
-bool OboeContext::isValid() {
-  return oboe_context_is_valid();
+NAN_METHOD(OboeContext::isValid) {
+  NanScope();
+
+  NanReturnValue(NanNew<Boolean>(oboe_context_is_valid()));
 }
 
-void OboeContext::init() {
+NAN_METHOD(OboeContext::init) {
+  NanScope();
   oboe_init();
+  NanReturnUndefined();
 }
 
-// these new objects are managed by SWIG %newobject
-Event* OboeContext::createEvent() {
-  return new Event(OboeContext::get());
+NAN_METHOD(OboeContext::createEvent) {
+  NanScope();
+
+  Event* event = new Event(OboeContext::get());
+  Local<Object> handle;
+  event->Wrap(handle);
+
+  NanReturnValue(handle);
 }
-Event* OboeContext::startTrace() {
+
+NAN_METHOD(OboeContext::startTrace) {
+  NanScope();
+
   oboe_metadata_t* md = OboeContext::get();
   oboe_metadata_random(md);
-  return new Event();
+
+  Event* event = new Event();
+  Local<Object> handle;
+  event->Wrap(handle);
+
+  NanReturnValue(handle);
+}
+
+void OboeContext::Init(Handle<Object> module) {
+  NanScope();
+
+  Local<Object> exports = NanNew<Object>();
+  NODE_SET_METHOD(exports, "setTracingMode", OboeContext::setTracingMode);
+  NODE_SET_METHOD(exports, "setDefaultSampleRate", OboeContext::setDefaultSampleRate);
+  NODE_SET_METHOD(exports, "sampleRequest", OboeContext::sampleRequest);
+  NODE_SET_METHOD(exports, "toString", OboeContext::toString);
+  NODE_SET_METHOD(exports, "set", OboeContext::set);
+  NODE_SET_METHOD(exports, "fromString", OboeContext::fromString);
+  NODE_SET_METHOD(exports, "copy", OboeContext::copy);
+  NODE_SET_METHOD(exports, "clear", OboeContext::clear);
+  NODE_SET_METHOD(exports, "isValid", OboeContext::isValid);
+  NODE_SET_METHOD(exports, "init", OboeContext::init);
+  NODE_SET_METHOD(exports, "createEvent", OboeContext::createEvent);
+  NODE_SET_METHOD(exports, "startTrace", OboeContext::startTrace);
+
+  module->Set(String::NewSymbol("Context"), exports);
 }

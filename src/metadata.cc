@@ -139,7 +139,7 @@ void Metadata::Init(Handle<Object> exports) {
   // Prepare constructor template
   Handle<FunctionTemplate> ctor = NanNew<FunctionTemplate>(New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("OboeMetadata"));
+  ctor->SetClassName(NanSymbol("Metadata"));
   NanAssignPersistent(constructor, ctor);
 
   // Statics
@@ -151,5 +151,5 @@ void Metadata::Init(Handle<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "isValid", Metadata::isValid);
   NODE_SET_PROTOTYPE_METHOD(ctor, "toString", Metadata::toString);
 
-  exports->Set(NanSymbol("OboeMetadata"), ctor->GetFunction());
+  exports->Set(NanSymbol("Metadata"), ctor->GetFunction());
 }
