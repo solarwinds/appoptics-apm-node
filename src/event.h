@@ -8,6 +8,8 @@
 using namespace v8;
 
 class Event : public node::ObjectWrap {
+  friend class UdpReporter;
+
   private:
     explicit Event();
     explicit Event(const oboe_metadata_t*, bool);

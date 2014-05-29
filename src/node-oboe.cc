@@ -1,6 +1,7 @@
 #include "node-oboe.h"
 
 // Components
+#include "reporters/udp.h"
 #include "metadata.h"
 #include "context.h"
 #include "config.h"

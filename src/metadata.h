@@ -6,8 +6,11 @@
 
 using namespace v8;
 
+class Event;
+
 class Metadata : public node::ObjectWrap {
   friend class Event;
+  friend class UdpReporter;
 
   private:
     ~Metadata();

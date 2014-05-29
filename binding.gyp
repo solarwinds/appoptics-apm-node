@@ -7,6 +7,7 @@
       ],
       'sources': [
         'src/node-oboe.cc',
+        'src/reporters/udp.cc',
         'src/metadata.cc',
         'src/context.cc',
         'src/config.h',
