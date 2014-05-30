@@ -1,23 +1,40 @@
 var oboe = require('../lib/addon')
 
 describe('event', function () {
+  var event
+
+  it('should construct', function () {
+    event = new oboe.Event()
+  })
+
+  it('should add info', function () {
+    event.addInfo('key', 'val')
+  })
+
+  it('should add edge', function () {
+    var meta = new oboe.Metadata()
+    event.addEdge(meta)
+  })
+
+  it('should add edge string', function () {
+    var meta = new oboe.Metadata()
+    event.addEdgeStr(meta.toString())
+  })
+
+  it.skip('should get metadata', function () {
+    var meta = event.getMetadata()
+    console.log('meta is', meta)
+  })
+
   it('should serialize metadata to id string', function () {
-    var event = new oboe.Event
     var meta = event.metadataString()
     meta.should.be.an.instanceof(String).with.lengthOf(58)
     meta[0].should.equal('1')
     meta[1].should.equal('B')
   })
-})
 
-describe('reporters/udp', function () {
-  var reporter
-
-  it('should construct', function () {
-    reporter = new oboe.UdpReporter('127.0.0.1')
-  })
-
-  it('should report event', function () {
-    reporter.sendReport(new oboe.Event)
+  it('should start tracing, returning a new instance', function () {
+    var meta = new oboe.Metadata()
+    var event2 = event.startTrace(meta)
   })
 })

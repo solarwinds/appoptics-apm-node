@@ -150,6 +150,7 @@ void Metadata::Init(Handle<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(ctor, "copy", Metadata::copy);
   NODE_SET_PROTOTYPE_METHOD(ctor, "isValid", Metadata::isValid);
   NODE_SET_PROTOTYPE_METHOD(ctor, "toString", Metadata::toString);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "createEvent", Metadata::createEvent);
 
   exports->Set(NanSymbol("Metadata"), ctor->GetFunction());
 }

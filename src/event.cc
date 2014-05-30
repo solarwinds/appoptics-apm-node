@@ -1,7 +1,5 @@
 #include "node-oboe.h"
 
-using namespace v8;
-
 Persistent<FunctionTemplate> Event::constructor;
 
 // Construct a blank event from the context metadata
@@ -86,7 +84,7 @@ NAN_METHOD(Event::addEdge) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
 
   // Unwrap metadata instance from arguments
-  Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+  Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
   // Attempt to add the edge
   bool status = oboe_event_add_edge(&self->event, &metadata->metadata) == 0;
@@ -99,7 +97,7 @@ NAN_METHOD(Event::addEdgeStr) {
   NanScope();
 
   // Validate arguments
-  if (args.Length() != 2) {
+  if (args.Length() != 1) {
     return NanThrowError("Wrong number of arguments");
   }
   if (!args[0]->IsString()) {
@@ -131,11 +129,13 @@ NAN_METHOD(Event::getMetadata) {
   Local<Object> handle;
   metadata->Wrap(handle);
 
+  NanReturnValue(handle);
+
   // Return a new instance of it.
   // TODO: wrapping a local and using as an arg is probably bad.
   // I should see if returning a handle works correctly.
-  Local<Value> argv[1] = { handle };
-  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
+  // Local<Value> argv[1] = { handle };
+  // NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Get the metadata of an event as a string
@@ -175,7 +175,7 @@ NAN_METHOD(Event::startTrace) {
   }
 
   // Unwrap metadata from arguments
-  Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+  Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
   // Create new event from metadata
   Event* event = new Event(&metadata->metadata, false);

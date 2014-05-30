@@ -8,6 +8,7 @@
  * - OBOE_TRACE_ALWAYS(1) to start a new trace if needed, or
  * - OBOE_TRACE_THROUGH(2) to only add to an existing trace.
  */
+// TODO: Make this fail on inputs not in 0, 1, 2
 NAN_METHOD(OboeContext::setTracingMode) {
   NanScope();
 
@@ -34,6 +35,7 @@ NAN_METHOD(OboeContext::setTracingMode) {
  *
  * @param newRate A number between 0 (none) and OBOE_SAMPLE_RESOLUTION (a million)
  */
+// TODO: Make this fail on values that exceed OBOE_SAMPLE_RESOLUTION
 NAN_METHOD(OboeContext::setDefaultSampleRate) {
   NanScope();
 
@@ -67,6 +69,7 @@ NAN_METHOD(OboeContext::setDefaultSampleRate) {
  * @return Zero to not trace; otherwise return the sample rate used in the low order
  *         bytes 0 to 2 and the sample source in the higher-order byte 3.
  */
+// TODO: Figure out how to catch and throw "liboboe: Error loading /var/lib/tracelyzer/settings" message
 NAN_METHOD(OboeContext::sampleRequest) {
   NanScope();
 
