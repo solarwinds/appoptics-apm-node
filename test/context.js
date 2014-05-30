@@ -25,7 +25,7 @@ describe('context', function () {
     throw new Error('setTracingMode should fail on invalid inputs')
   })
 
-  it('should set default sample rate to an invalid input', function () {
+  it('should set default sample rate', function () {
     oboe.Context.setDefaultSampleRate(100000)
   })
 
@@ -51,7 +51,7 @@ describe('context', function () {
     oboe.Context.toString().should.equal(string)
   })
 
-  it.skip('should copy context to metadata instance', function () {
+  it('should copy context to metadata instance', function () {
     var metadata = oboe.Context.copy()
     oboe.Context.toString().should.equal(metadata.toString())
   })
@@ -67,12 +67,12 @@ describe('context', function () {
     oboe.Context.isValid().should.equal(false)
   })
 
-  it.skip('should create an event from the current context', function () {
+  it('should create an event from the current context', function () {
     var event = oboe.Context.createEvent()
     event.should.be.an.instanceof(oboe.Event)
   })
 
-  it.skip('should start a trace from the current context', function () {
+  it('should start a trace from the current context', function () {
     var event = oboe.Context.startTrace()
     event.should.be.an.instanceof(oboe.Event)
   })

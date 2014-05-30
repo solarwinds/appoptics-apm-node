@@ -124,18 +124,8 @@ NAN_METHOD(Event::getMetadata) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
   oboe_event_t* event = &self->event;
 
-  // Construct a new metadata instance from the event metadata
-  Metadata* metadata = new Metadata(&event->metadata);
-  Local<Object> handle;
-  metadata->Wrap(handle);
-
-  NanReturnValue(handle);
-
-  // Return a new instance of it.
-  // TODO: wrapping a local and using as an arg is probably bad.
-  // I should see if returning a handle works correctly.
-  // Local<Value> argv[1] = { handle };
-  // NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
+  Handle<Value> argv[1] = { External::New((void *) &event->metadata) };
+  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Get the metadata of an event as a string
@@ -177,12 +167,8 @@ NAN_METHOD(Event::startTrace) {
   // Unwrap metadata from arguments
   Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
-  // Create new event from metadata
-  Event* event = new Event(&metadata->metadata, false);
-
-  // NOTE: This is wrong. Need to make a new `this` somehow.
-  event->Wrap(args.This());
-  NanReturnValue(args.This());
+  Handle<Value> argv[1] = { External::New((void *) &metadata->metadata) };
+  NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Creates a new Javascript instance
@@ -191,7 +177,21 @@ NAN_METHOD(Event::New) {
 
   // Invoked as constructor: `new Event(...)`
   if (args.IsConstructCall()) {
-    Event* event = new Event();
+    Event* event;
+
+    if (args.Length() == 1) {
+      oboe_metadata_t* context;
+      if (args[0]->IsExternal()) {
+        context = (oboe_metadata_t*) External::Unwrap(args[0]);
+      } else {
+        Metadata* from = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+        context = &from->metadata;
+      }
+      event = new Event(context, false);
+    } else {
+      event = new Event();
+    }
+
     event->Wrap(args.This());
 		NanReturnValue(args.This());
 

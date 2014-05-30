@@ -21,9 +21,8 @@ describe('event', function () {
     event.addEdgeStr(meta.toString())
   })
 
-  it.skip('should get metadata', function () {
+  it('should get metadata', function () {
     var meta = event.getMetadata()
-    console.log('meta is', meta)
   })
 
   it('should serialize metadata to id string', function () {

@@ -8,6 +8,6 @@ describe('reporters/udp', function () {
   })
 
   it('should report event', function () {
-    reporter.sendReport(new oboe.Event)
+    reporter.sendReport(new oboe.Event())
   })
 })

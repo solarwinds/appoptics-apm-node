@@ -13,15 +13,15 @@ describe('metadata', function () {
     string.should.equal('')
   })
 
-  it.skip('should construct from string', function () {
+  it('should construct from string', function () {
     oboe.Metadata.fromString(string).toString().should.equal(string)
   })
 
-  it.skip('should construct from random data', function () {
+  it('should construct from random data', function () {
     oboe.Metadata.makeRandom().toString().should.not.equal('')
   })
 
-  it.skip('should clone itself', function () {
+  it('should clone itself', function () {
     var rand = oboe.Metadata.makeRandom()
     rand.copy().toString().should.equal(rand.toString())
   })
@@ -30,7 +30,7 @@ describe('metadata', function () {
     metadata.isValid().should.equal(true)
   })
 
-  it.skip('should create an event', function () {
+  it('should create an event', function () {
     var event = metadata.createEvent()
     event.should.be.an.instanceof(oboe.Event)
   })

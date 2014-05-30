@@ -11,6 +11,18 @@
 
 #include <oboe/oboe.h>
 
+// Little hack for new externals
+#ifndef BINDINGS_CNAN_H
+#define BINDINGS_CSNAN_H
+# if (NODE_MODULE_VERSION > 0x000B)
+#  define CSNanNewExternal(Value) v8::External::New(v8::Isolate::GetCurrent(), \
+    Value)
+# else
+#  define CSNanNewExternal(Value) v8::External::New(Value)
+# endif
+#endif //BINDINGS_CSNAN_H
+
+
 using namespace v8;
 
 class Event;

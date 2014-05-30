@@ -26,12 +26,8 @@ NAN_METHOD(Metadata::fromString) {
   oboe_metadata_t md;
   oboe_metadata_fromstr(&md, s.data(), s.size());
 
-  Metadata* metadata = new Metadata(&md);
-  Local<Object> handle;
-  metadata->Wrap(handle);
-
-  Local<Value> argv[1] = { handle };
-  NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
+  Handle<Value> argv[1] = { External::New((void *) &md) };
+  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Make a new metadata instance with randomized data
@@ -42,20 +38,18 @@ NAN_METHOD(Metadata::makeRandom) {
   oboe_metadata_init(&md);
   oboe_metadata_random(&md);
 
-  Metadata* metadata = new Metadata(&md);
-  Local<Object> handle;
-  metadata->Wrap(handle);
-
-  Local<Value> argv[1] = { handle };
-  NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
+  Handle<Value> argv[1] = { External::New((void *) &md) };
+  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Copy the contents of the metadata instance to a new instance
 NAN_METHOD(Metadata::copy) {
   NanScope();
 
-  Local<Value> argv[1] = { args.This() };
-  NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
+  Metadata* self = ObjectWrap::Unwrap<Metadata>(args.This());
+
+  Handle<Value> argv[1] = { External::New((void *) &self->metadata) };
+  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 // Verify that the state of the metadata instance is valid
@@ -95,15 +89,7 @@ NAN_METHOD(Metadata::createEvent) {
   // Unwrap the Metadata instance from V8
   Metadata* self = ObjectWrap::Unwrap<Metadata>(args.This());
 
-  // Construct a new metadata instance from the event metadata
-  Event* event = new Event(&self->metadata);
-  Local<Object> handle;
-  event->Wrap(handle);
-
-  // Return a new instance of it.
-  // TODO: wrapping a local and using as an arg is probably bad.
-  // I should see if returning a handle works correctly.
-  Local<Value> argv[1] = { handle };
+  Handle<Value> argv[1] = { External::New((void *) &self->metadata) };
   NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
 }
 
@@ -116,8 +102,14 @@ NAN_METHOD(Metadata::New) {
     Metadata* obj;
 
     if (args.Length() == 1) {
-      Metadata* from = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
-      obj = new Metadata(&from->metadata);
+      oboe_metadata_t* context;
+      if (args[0]->IsExternal()) {
+        context = (oboe_metadata_t*) External::Unwrap(args[0]);
+      } else {
+        Metadata* from = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+        context = &from->metadata;
+      }
+      obj = new Metadata(context);
     } else {
       obj = new Metadata();
     }

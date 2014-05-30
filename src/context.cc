@@ -166,11 +166,8 @@ NAN_METHOD(OboeContext::fromString) {
 NAN_METHOD(OboeContext::copy) {
   NanScope();
 
-  Metadata* metadata = new Metadata(OboeContext::get());
-  Local<Object> handle;
-  metadata->Wrap(handle);
-
-  NanReturnValue(handle);
+  Handle<Value> argv[1] = { External::New((void *) OboeContext::get()) };
+  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 NAN_METHOD(OboeContext::clear) {
@@ -194,11 +191,8 @@ NAN_METHOD(OboeContext::init) {
 NAN_METHOD(OboeContext::createEvent) {
   NanScope();
 
-  Event* event = new Event(OboeContext::get());
-  Local<Object> handle;
-  event->Wrap(handle);
-
-  NanReturnValue(handle);
+  Handle<Value> argv[1] = { External::New((void *) OboeContext::get()) };
+  NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
 }
 
 NAN_METHOD(OboeContext::startTrace) {
@@ -207,11 +201,8 @@ NAN_METHOD(OboeContext::startTrace) {
   oboe_metadata_t* md = OboeContext::get();
   oboe_metadata_random(md);
 
-  Event* event = new Event();
-  Local<Object> handle;
-  event->Wrap(handle);
-
-  NanReturnValue(handle);
+  Handle<Value> argv[0] = {};
+  NanReturnValue(Event::constructor->GetFunction()->NewInstance(0, argv));
 }
 
 void OboeContext::Init(Handle<Object> module) {
