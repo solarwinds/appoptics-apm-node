@@ -8,17 +8,19 @@ describe('metadata', function () {
     metadata = new oboe.Metadata()
   })
 
+  it('should construct from random data', function () {
+    metadata = oboe.Metadata.makeRandom()
+    metadata.toString().should.not.equal('')
+  })
+
   it('should serialize to string', function () {
     string = metadata.toString()
-    string.should.equal('')
+    string.should.not.equal('')
   })
 
   it('should construct from string', function () {
-    oboe.Metadata.fromString(string).toString().should.equal(string)
-  })
-
-  it('should construct from random data', function () {
-    oboe.Metadata.makeRandom().toString().should.not.equal('')
+    metadata = oboe.Metadata.fromString(string)
+    metadata.toString().should.equal(string)
   })
 
   it('should clone itself', function () {
