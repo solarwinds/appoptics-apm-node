@@ -16,9 +16,15 @@ describe('config', function () {
     revision.should.equal(1)
   })
 
-  it('should check versions', function () {
+  it('should check valid versions', function () {
     var check = oboe.Config.checkVersion(version, revision)
     check.should.be.an.instanceof(Boolean)
     check.should.equal(true)
+  })
+
+  it('should check invalid versions', function () {
+    var check = oboe.Config.checkVersion(10000, 0)
+    check.should.be.an.instanceof(Boolean)
+    check.should.equal(false)
   })
 })

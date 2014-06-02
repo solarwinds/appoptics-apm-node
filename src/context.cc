@@ -17,10 +17,15 @@ NAN_METHOD(OboeContext::setTracingMode) {
     return NanThrowError("Wrong number of arguments");
   }
   if (!args[0]->IsNumber()) {
-    return NanThrowError("Mode must be a number");
+    return NanThrowError("Tracing mode must be a number");
   }
 
-  oboe_settings_cfg_tracing_mode_set(args[0]->NumberValue());
+  int mode = args[0]->NumberValue();
+  if (mode > 2) {
+    return NanThrowError("Invalid tracing mode");
+  }
+
+  oboe_settings_cfg_tracing_mode_set(mode);
 
   NanReturnUndefined();
 }
@@ -44,10 +49,15 @@ NAN_METHOD(OboeContext::setDefaultSampleRate) {
     return NanThrowError("Wrong number of arguments");
   }
   if (!args[0]->IsNumber()) {
-    return NanThrowError("Mode must be a number");
+    return NanThrowError("Sample rate must be a number");
   }
 
-  oboe_settings_cfg_sample_rate_set(args[0]->NumberValue());
+  int rate = args[0]->NumberValue();
+  if (rate > OBOE_SAMPLE_RESOLUTION) {
+    return NanThrowError("Sample rate out of range");
+  }
+
+  oboe_settings_cfg_sample_rate_set(rate);
 
   NanReturnUndefined();
 }

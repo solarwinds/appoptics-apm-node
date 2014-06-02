@@ -14,6 +14,11 @@ using v8::Object;
 void Init(Handle<Object> exports) {
 	NanScope();
 
+	exports->Set(NanSymbol("MAX_SAMPLE_RATE"), NanNew<Uint32>(OBOE_SAMPLE_RESOLUTION));
+	exports->Set(NanSymbol("MAX_METADATA_PACK_LEN"), NanNew<Uint32>(OBOE_MAX_METADATA_PACK_LEN));
+	exports->Set(NanSymbol("MAX_TASK_ID_LEN"), NanNew<Uint32>(OBOE_MAX_TASK_ID_LEN));
+	exports->Set(NanSymbol("MAX_OP_ID_LEN"), NanNew<Uint32>(OBOE_MAX_OP_ID_LEN));
+
 	UdpReporter::Init(exports);
   OboeContext::Init(exports);
   Metadata::Init(exports);

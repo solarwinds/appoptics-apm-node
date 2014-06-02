@@ -22,7 +22,7 @@ UdpReporter::~UdpReporter() {
 NAN_METHOD(UdpReporter::sendReport) {
   NanScope();
 
-  if (args.Length() != 1) {
+  if (args.Length() < 1) {
     return NanThrowError("Wrong number of arguments");
   }
   if (!args[0]->IsObject()) {
@@ -30,19 +30,18 @@ NAN_METHOD(UdpReporter::sendReport) {
   }
 
   UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
-
-  Event* event = ObjectWrap::Unwrap<Event>(args.This());
+  Event* event = ObjectWrap::Unwrap<Event>(args[0]->ToObject());
 
   oboe_metadata_t *md;
   if (args.Length() == 2 && args[1]->IsObject()) {
-    Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+    Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[1]->ToObject());
     md = &metadata->metadata;
   } else {
     md = OboeContext::get();
   }
 
-  bool status = oboe_reporter_send(&self->reporter, md, &event->event) >= 0;
-  NanReturnValue(NanNew<Boolean>(status));
+  int status = oboe_reporter_send(&self->reporter, md, &event->event);
+  NanReturnValue(NanNew<Boolean>(status >= 0));
 }
 
 // Creates a new Javascript instance
@@ -57,24 +56,30 @@ NAN_METHOD(UdpReporter::New) {
     return NanThrowError("Address must be a string");
   }
 
-  char* addr = *String::Utf8Value(args[0]);
-
-  // Port is optional
-  char* port = NULL;
-  Local<Value> portLocal;
-  if (args.Length() > 1 && args[1]->IsString()) {
-    port = *String::Utf8Value(args[1]);
-    portLocal = args[1];
-  }
+  String::Utf8Value v8_addr(args[0]);
+  const char* addr = *v8_addr;
 
   // Invoked as constructor: `new MyObject(...)`
   if (args.IsConstructCall()) {
-    UdpReporter* obj = new UdpReporter(addr, port);
+    UdpReporter* obj;
+
+    if (args.Length() > 1 && (args[1]->IsString() || args[1]->IsNumber())) {
+      String::Utf8Value port(args[1]);
+      obj = new UdpReporter(addr, *port);
+    } else {
+      obj = new UdpReporter(addr);
+    }
+
     obj->Wrap(args.This());
     NanReturnValue(args.This());
 
   // Invoked as plain function `MyObject(...)`, turn into construct call.
   } else {
+    Local<Value> portLocal;
+    if (args.Length() > 1 && (args[1]->IsString() || args[1]->IsNumber())) {
+      portLocal = args[1];
+    }
+
     Local<Value> argv[2] = { args[0], portLocal };
     NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
   }
