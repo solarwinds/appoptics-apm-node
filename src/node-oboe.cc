@@ -19,6 +19,10 @@ void Init(Handle<Object> exports) {
 	exports->Set(NanSymbol("MAX_TASK_ID_LEN"), NanNew<Uint32>(OBOE_MAX_TASK_ID_LEN));
 	exports->Set(NanSymbol("MAX_OP_ID_LEN"), NanNew<Uint32>(OBOE_MAX_OP_ID_LEN));
 
+	exports->Set(NanSymbol("TRACE_NEVER"), NanNew<Uint32>(OBOE_TRACE_NEVER));
+	exports->Set(NanSymbol("TRACE_ALWAYS"), NanNew<Uint32>(OBOE_TRACE_ALWAYS));
+	exports->Set(NanSymbol("TRACE_THROUGH"), NanNew<Uint32>(OBOE_TRACE_THROUGH));
+
 	UdpReporter::Init(exports);
   OboeContext::Init(exports);
   Metadata::Init(exports);

@@ -97,12 +97,16 @@ NAN_METHOD(OboeContext::sampleRequest) {
     return NanThrowError("AppView Web ID must be a string");
   }
 
+  String::Utf8Value layer_name(args[0]);
+  String::Utf8Value in_xtrace(args[1]);
+  String::Utf8Value in_tv_meta(args[2]);
+
   int sample_rate = 0;
   int sample_source = 0;
   int rc = oboe_sample_layer(
-    *String::Utf8Value(args[0]),
-    *String::Utf8Value(args[1]),
-    *String::Utf8Value(args[2]),
+    *layer_name,
+    *in_xtrace,
+    *in_tv_meta,
     &sample_rate,
     &sample_source
   );

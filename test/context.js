@@ -6,13 +6,13 @@ describe('context', function () {
   })
 
   it('should set tracing mode to never', function () {
-    oboe.Context.setTracingMode(0)
+    oboe.Context.setTracingMode(oboe.TRACE_NEVER)
   })
   it('should set tracing mode to always', function () {
-    oboe.Context.setTracingMode(1)
+    oboe.Context.setTracingMode(oboe.TRACE_ALWAYS)
   })
   it('should set tracing mode to through', function () {
-    oboe.Context.setTracingMode(2)
+    oboe.Context.setTracingMode(oboe.TRACE_THROUGH)
   })
   it('should set tracing mode to an out-of-range input', function () {
     try {
@@ -55,7 +55,7 @@ describe('context', function () {
   it('should check if a request should be sampled', function () {
     oboe.Context.setDefaultSampleRate(oboe.MAX_SAMPLE_RATE)
     var check = oboe.Context.sampleRequest('a', 'b', 'c')
-    console.log('check is', check)
+    check.should.equal(17777216)
   })
 
   it('should serialize context to string', function () {
@@ -63,21 +63,29 @@ describe('context', function () {
     string.should.equal('1B00000000000000000000000000000000000000000000000000000000')
   })
 
-  it('should set context to metadata instance', function () {
-    var metadata = new oboe.Metadata()
-    oboe.Context.set(metadata)
-    oboe.Context.toString().should.equal(metadata.toString())
+  it('should set context from metadata string', function () {
+    var event = oboe.Context.createEvent()
+    var string = event.getMetadata().toString()
+    oboe.Context.fromString(string)
+    var v = oboe.Context.toString()
+    v.should.not.equal('')
+    v.should.equal(string)
   })
 
-  it('should set context from metadata string', function () {
-    var string = (new oboe.Metadata()).toString()
-    oboe.Context.fromString(string)
-    oboe.Context.toString().should.equal(string)
+  it('should set context to metadata instance', function () {
+    var event = oboe.Context.createEvent()
+    var metadata = event.getMetadata()
+    oboe.Context.set(metadata)
+    var v = oboe.Context.toString()
+    v.should.not.equal('')
+    v.should.equal(metadata.toString())
   })
 
   it('should copy context to metadata instance', function () {
     var metadata = oboe.Context.copy()
-    oboe.Context.toString().should.equal(metadata.toString())
+    var v = oboe.Context.toString()
+    v.should.not.equal('')
+    v.should.equal(metadata.toString())
   })
 
   it('should clear the context', function () {
@@ -87,8 +95,16 @@ describe('context', function () {
     oboe.Context.toString().should.equal(string)
   })
 
-  it('should be valid', function () {
+  it('should be invalid when empty', function () {
     oboe.Context.isValid().should.equal(false)
+  })
+
+  // TODO: Figure out how to get isValid to work
+  it.skip('should be valid when not empty', function () {
+    var event = oboe.Context.createEvent()
+    var metadata = event.getMetadata()
+    oboe.Context.set(metadata)
+    oboe.Context.isValid().should.equal(true)
   })
 
   it('should create an event from the current context', function () {

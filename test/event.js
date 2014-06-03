@@ -23,6 +23,7 @@ describe('event', function () {
 
   it('should get metadata', function () {
     var meta = event.getMetadata()
+    meta.should.be.an.instanceof(oboe.Metadata)
   })
 
   it('should serialize metadata to id string', function () {
