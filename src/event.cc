@@ -76,42 +76,28 @@ NAN_METHOD(Event::addEdge) {
   if (args.Length() != 1) {
     return NanThrowError("Wrong number of arguments");
   }
-  if (!args[0]->IsObject()) {
-    return NanThrowTypeError("Must supply an edge metadata");
+  if (!args[0]->IsObject() && !args[0]->IsString()) {
+    return NanThrowTypeError("Must supply an edge metadata instance or string");
   }
 
   // Unwrap event instance from V8
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
 
-  // Unwrap metadata instance from arguments
-  Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+  bool status;
+  if (args[0]->IsObject()) {
+    // Unwrap metadata instance from arguments
+    Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
-  // Attempt to add the edge
-  bool status = oboe_event_add_edge(&self->event, &metadata->metadata) == 0;
+    // Attempt to add the edge
+    status = oboe_event_add_edge(&self->event, &metadata->metadata) == 0;
+  } else {
+    // Get string data from arguments
+    String::Utf8Value v8_val(args[0]);
+    std::string val(*v8_val);
 
-  NanReturnValue(NanNew<Boolean>(status));
-}
-
-// Add an edge by string value
-NAN_METHOD(Event::addEdgeStr) {
-  NanScope();
-
-  // Validate arguments
-  if (args.Length() != 1) {
-    return NanThrowError("Wrong number of arguments");
+    // Attempt to add edge
+    status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size()) == 0;
   }
-  if (!args[0]->IsString()) {
-    return NanThrowTypeError("Must supply an edge string");
-  }
-
-  // Unwrap event instance from V8
-  Event* self = ObjectWrap::Unwrap<Event>(args.This());
-
-  // Get string data from arguments
-  std::string val(*String::Utf8Value(args[0]));
-
-  // Attempt to add edge
-  bool status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size()) == 0;
 
   NanReturnValue(NanNew<Boolean>(status));
 }
@@ -124,12 +110,23 @@ NAN_METHOD(Event::getMetadata) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
   oboe_event_t* event = &self->event;
 
-  Handle<Value> argv[1] = { External::New((void *) &event->metadata) };
-  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
+  // Make an empty object template with space for internal field pointers
+  Handle<ObjectTemplate> t = NanNew<ObjectTemplate>();
+  t->SetInternalFieldCount(2);
+
+  // Construct an object with our internal field pointer
+  Local<Object> obj = t->NewInstance();
+
+  // Attach the internal field pointer
+  NanSetInternalFieldPointer(obj, 1, (void *) &event->metadata);
+
+  // Use the object as an argument in the event constructor
+  Handle<Value> argv[1] = { obj };
+  NanReturnValue(NanNew(Metadata::constructor)->GetFunction()->NewInstance(1, argv));
 }
 
 // Get the metadata of an event as a string
-NAN_METHOD(Event::metadataString) {
+NAN_METHOD(Event::toString) {
   NanScope();
 
   // Unwrap the event instance from V8
@@ -167,39 +164,42 @@ NAN_METHOD(Event::startTrace) {
   // Unwrap metadata from arguments
   Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
-  Handle<Value> argv[1] = { External::New((void *) &metadata->metadata) };
-  NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
+  // Make an empty object template with space for internal field pointers
+	Handle<ObjectTemplate> t = NanNew<ObjectTemplate>();
+	t->SetInternalFieldCount(2);
+
+  // Construct an object with our internal field pointer
+	Local<Object> obj = t->NewInstance();
+
+  // Attach the internal field pointer
+  NanSetInternalFieldPointer(obj, 1, (void *) &metadata->metadata);
+
+  // Use the object as an argument in the event constructor
+  Handle<Value> argv[1] = { obj };
+  NanReturnValue(NanNew(Event::constructor)->GetFunction()->NewInstance(1, argv));
 }
 
 // Creates a new Javascript instance
 NAN_METHOD(Event::New) {
   NanScope();
 
-  // Invoked as constructor: `new Event(...)`
-  if (args.IsConstructCall()) {
-    Event* event;
-
-    if (args.Length() == 1) {
-      oboe_metadata_t* context;
-      if (args[0]->IsExternal()) {
-        context = (oboe_metadata_t*) External::Unwrap(args[0]);
-      } else {
-        Metadata* from = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
-        context = &from->metadata;
-      }
-      event = new Event(context, false);
-    } else {
-      event = new Event();
-    }
-
-    event->Wrap(args.This());
-		NanReturnValue(args.This());
-
-  // Invoked as plain function `Event(...)`, turn into construct call.
-  } else {
-    Local<Value> argv[0] = {};
-    NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
+  if (!args.IsConstructCall()) {
+    return NanThrowError("Event() must be called as a constructor");
   }
+
+  Event* event;
+  if (args.Length() == 1) {
+    void* ptr = NanGetInternalFieldPointer(args[0].As<Object>(), 1);
+    oboe_metadata_t* context = static_cast<oboe_metadata_t*>(ptr);
+
+    event = new Event(context, false);
+  } else {
+    event = new Event();
+  }
+
+  event->Wrap(args.This());
+  NanSetInternalFieldPointer(args.This(), 1, &event->event);
+	NanReturnValue(args.This());
 }
 
 // Wrap the C++ object so V8 can understand it
@@ -208,17 +208,16 @@ void Event::Init(Handle<Object> exports) {
 
   // Prepare constructor template
   Handle<FunctionTemplate> ctor = NanNew<FunctionTemplate>(New);
-  ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("Event"));
+  ctor->InstanceTemplate()->SetInternalFieldCount(2);
+  ctor->SetClassName(NanNew<String>("Event"));
   NanAssignPersistent(constructor, ctor);
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(ctor, "addInfo", Event::addInfo);
   NODE_SET_PROTOTYPE_METHOD(ctor, "addEdge", Event::addEdge);
-  NODE_SET_PROTOTYPE_METHOD(ctor, "addEdgeStr", Event::addEdgeStr);
   NODE_SET_PROTOTYPE_METHOD(ctor, "getMetadata", Event::getMetadata);
-  NODE_SET_PROTOTYPE_METHOD(ctor, "metadataString", Event::metadataString);
+  NODE_SET_PROTOTYPE_METHOD(ctor, "toString", Event::toString);
   NODE_SET_PROTOTYPE_METHOD(ctor, "startTrace", Event::startTrace);
 
-  exports->Set(NanSymbol("Event"), ctor->GetFunction());
+  exports->Set(NanNew<String>("Event"), ctor->GetFunction());
 }

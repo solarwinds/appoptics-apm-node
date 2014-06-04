@@ -42,7 +42,7 @@ void Config::Init(Handle<Object> module) {
   NODE_SET_METHOD(exports, "getRevision", Config::getRevision);
   NODE_SET_METHOD(exports, "checkVersion", Config::checkVersion);
 
-  module->Set(String::NewSymbol("Config"), exports);
+  module->Set(NanNew<String>("Config"), exports);
 }
 
 #endif

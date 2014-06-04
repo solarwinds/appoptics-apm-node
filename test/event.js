@@ -16,9 +16,9 @@ describe('event', function () {
     event.addEdge(meta)
   })
 
-  it('should add edge string', function () {
+  it('should add edge as string', function () {
     var meta = new oboe.Metadata()
-    event.addEdgeStr(meta.toString())
+    event.addEdge(meta.toString())
   })
 
   it('should get metadata', function () {
@@ -27,7 +27,7 @@ describe('event', function () {
   })
 
   it('should serialize metadata to id string', function () {
-    var meta = event.metadataString()
+    var meta = event.toString()
     meta.should.be.an.instanceof(String).with.lengthOf(58)
     meta[0].should.equal('1')
     meta[1].should.equal('B')

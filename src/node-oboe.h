@@ -11,18 +11,6 @@
 
 #include <oboe/oboe.h>
 
-// Little hack for new externals
-#ifndef BINDINGS_CNAN_H
-#define BINDINGS_CSNAN_H
-# if (NODE_MODULE_VERSION > 0x000B)
-#  define CSNanNewExternal(Value) v8::External::New(v8::Isolate::GetCurrent(), \
-    Value)
-# else
-#  define CSNanNewExternal(Value) v8::External::New(Value)
-# endif
-#endif //BINDINGS_CSNAN_H
-
-
 using namespace v8;
 
 class Event;
@@ -65,7 +53,6 @@ class OboeContext {
   static NAN_METHOD(sampleRequest);
   static NAN_METHOD(toString);
   static NAN_METHOD(set);
-  static NAN_METHOD(fromString);
   static NAN_METHOD(copy);
   static NAN_METHOD(clear);
   static NAN_METHOD(isValid);
@@ -92,9 +79,8 @@ class Event : public node::ObjectWrap {
   static NAN_METHOD(New);
   static NAN_METHOD(addInfo);
   static NAN_METHOD(addEdge);
-  static NAN_METHOD(addEdgeStr);
   static NAN_METHOD(getMetadata);
-  static NAN_METHOD(metadataString);
+  static NAN_METHOD(toString);
   static NAN_METHOD(startTrace);
 
   public:

@@ -63,15 +63,6 @@ describe('context', function () {
     string.should.equal('1B00000000000000000000000000000000000000000000000000000000')
   })
 
-  it('should set context from metadata string', function () {
-    var event = oboe.Context.createEvent()
-    var string = event.getMetadata().toString()
-    oboe.Context.fromString(string)
-    var v = oboe.Context.toString()
-    v.should.not.equal('')
-    v.should.equal(string)
-  })
-
   it('should set context to metadata instance', function () {
     var event = oboe.Context.createEvent()
     var metadata = event.getMetadata()
@@ -79,6 +70,15 @@ describe('context', function () {
     var v = oboe.Context.toString()
     v.should.not.equal('')
     v.should.equal(metadata.toString())
+  })
+
+  it('should set context from metadata string', function () {
+    var event = oboe.Context.createEvent()
+    var string = event.getMetadata().toString()
+    oboe.Context.set(string)
+    var v = oboe.Context.toString()
+    v.should.not.equal('')
+    v.should.equal(string)
   })
 
   it('should copy context to metadata instance', function () {
@@ -95,18 +95,6 @@ describe('context', function () {
     oboe.Context.toString().should.equal(string)
   })
 
-  it('should be invalid when empty', function () {
-    oboe.Context.isValid().should.equal(false)
-  })
-
-  // TODO: Figure out how to get isValid to work
-  it.skip('should be valid when not empty', function () {
-    var event = oboe.Context.createEvent()
-    var metadata = event.getMetadata()
-    oboe.Context.set(metadata)
-    oboe.Context.isValid().should.equal(true)
-  })
-
   it('should create an event from the current context', function () {
     var event = oboe.Context.createEvent()
     event.should.be.an.instanceof(oboe.Event)
@@ -115,5 +103,15 @@ describe('context', function () {
   it('should start a trace from the current context', function () {
     var event = oboe.Context.startTrace()
     event.should.be.an.instanceof(oboe.Event)
+  })
+
+  it('should be invalid when empty', function () {
+    oboe.Context.clear()
+    oboe.Context.isValid().should.equal(false)
+  })
+
+  it('should be valid when not empty', function () {
+    var event = oboe.Context.startTrace()
+    oboe.Context.isValid().should.equal(true)
   })
 })

@@ -48,6 +48,10 @@ NAN_METHOD(UdpReporter::sendReport) {
 NAN_METHOD(UdpReporter::New) {
   NanScope();
 
+  if (!args.IsConstructCall()) {
+    return NanThrowError("UdpReporter() must be called as a constructor");
+  }
+
   // Validate arguments
   if (args.Length() < 1) {
     return NanThrowError("Wrong number of arguments");
@@ -58,31 +62,17 @@ NAN_METHOD(UdpReporter::New) {
 
   String::Utf8Value v8_addr(args[0]);
   const char* addr = *v8_addr;
+  UdpReporter* obj;
 
-  // Invoked as constructor: `new MyObject(...)`
-  if (args.IsConstructCall()) {
-    UdpReporter* obj;
-
-    if (args.Length() > 1 && (args[1]->IsString() || args[1]->IsNumber())) {
-      String::Utf8Value port(args[1]);
-      obj = new UdpReporter(addr, *port);
-    } else {
-      obj = new UdpReporter(addr);
-    }
-
-    obj->Wrap(args.This());
-    NanReturnValue(args.This());
-
-  // Invoked as plain function `MyObject(...)`, turn into construct call.
+  if (args.Length() > 1 && (args[1]->IsString() || args[1]->IsNumber())) {
+    String::Utf8Value port(args[1]);
+    obj = new UdpReporter(addr, *port);
   } else {
-    Local<Value> portLocal;
-    if (args.Length() > 1 && (args[1]->IsString() || args[1]->IsNumber())) {
-      portLocal = args[1];
-    }
-
-    Local<Value> argv[2] = { args[0], portLocal };
-    NanReturnValue(constructor->GetFunction()->NewInstance(0, argv));
+    obj = new UdpReporter(addr);
   }
+
+  obj->Wrap(args.This());
+  NanReturnValue(args.This());
 }
 
 // Wrap the C++ object so V8 can understand it
@@ -92,11 +82,11 @@ void UdpReporter::Init(Handle<Object> exports) {
   // Prepare constructor template
   Handle<FunctionTemplate> ctor = NanNew<FunctionTemplate>(New);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
-  ctor->SetClassName(NanSymbol("UdpReporter"));
+  ctor->SetClassName(NanNew<String>("UdpReporter"));
   NanAssignPersistent(constructor, ctor);
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(ctor, "sendReport", UdpReporter::sendReport);
 
-  exports->Set(NanSymbol("UdpReporter"), ctor->GetFunction());
+  exports->Set(NanNew<String>("UdpReporter"), ctor->GetFunction());
 }

@@ -14,14 +14,14 @@ using v8::Object;
 void Init(Handle<Object> exports) {
 	NanScope();
 
-	exports->Set(NanSymbol("MAX_SAMPLE_RATE"), NanNew<Uint32>(OBOE_SAMPLE_RESOLUTION));
-	exports->Set(NanSymbol("MAX_METADATA_PACK_LEN"), NanNew<Uint32>(OBOE_MAX_METADATA_PACK_LEN));
-	exports->Set(NanSymbol("MAX_TASK_ID_LEN"), NanNew<Uint32>(OBOE_MAX_TASK_ID_LEN));
-	exports->Set(NanSymbol("MAX_OP_ID_LEN"), NanNew<Uint32>(OBOE_MAX_OP_ID_LEN));
+	exports->Set(NanNew<String>("MAX_SAMPLE_RATE"), NanNew<Uint32>(OBOE_SAMPLE_RESOLUTION));
+	exports->Set(NanNew<String>("MAX_METADATA_PACK_LEN"), NanNew<Uint32>(OBOE_MAX_METADATA_PACK_LEN));
+	exports->Set(NanNew<String>("MAX_TASK_ID_LEN"), NanNew<Uint32>(OBOE_MAX_TASK_ID_LEN));
+	exports->Set(NanNew<String>("MAX_OP_ID_LEN"), NanNew<Uint32>(OBOE_MAX_OP_ID_LEN));
 
-	exports->Set(NanSymbol("TRACE_NEVER"), NanNew<Uint32>(OBOE_TRACE_NEVER));
-	exports->Set(NanSymbol("TRACE_ALWAYS"), NanNew<Uint32>(OBOE_TRACE_ALWAYS));
-	exports->Set(NanSymbol("TRACE_THROUGH"), NanNew<Uint32>(OBOE_TRACE_THROUGH));
+	exports->Set(NanNew<String>("TRACE_NEVER"), NanNew<Uint32>(OBOE_TRACE_NEVER));
+	exports->Set(NanNew<String>("TRACE_ALWAYS"), NanNew<Uint32>(OBOE_TRACE_ALWAYS));
+	exports->Set(NanNew<String>("TRACE_THROUGH"), NanNew<Uint32>(OBOE_TRACE_THROUGH));
 
 	UdpReporter::Init(exports);
   OboeContext::Init(exports);

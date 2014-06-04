@@ -145,34 +145,24 @@ NAN_METHOD(OboeContext::set) {
   if (args.Length() != 1) {
     return NanThrowError("Wrong number of arguments");
   }
-  if (!args[0]->IsObject()) {
-    return NanThrowError("You must supply a Metadata instance");
+  if (!args[0]->IsObject() && !args[0]->IsString()) {
+    return NanThrowError("You must supply a Metadata instance or string");
   }
 
-  // Unwrap metadata instance from arguments
-  Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
+  if (args[0]->IsObject()) {
+    // Unwrap metadata instance from arguments
+    Metadata* metadata = node::ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
-  oboe_context_set(&metadata->metadata);
+    // Set the context data from the metadata instance
+    oboe_context_set(&metadata->metadata);
+  } else {
+    // Get string data from arguments
+    String::Utf8Value v8_val(args[0]);
+    std::string val(*v8_val);
 
-  NanReturnUndefined();
-}
-
-NAN_METHOD(OboeContext::fromString) {
-  NanScope();
-
-  // Validate arguments
-  if (args.Length() != 1) {
-    return NanThrowError("Wrong number of arguments");
+    // Set the context data from the converted string
+    oboe_context_set_fromstr(val.data(), val.size());
   }
-  if (!args[0]->IsString()) {
-    return NanThrowTypeError("You must supply a string");
-  }
-
-  // Get string data from arguments
-  std::string val(*String::Utf8Value(args[0]));
-
-  // Set the context data from the converted string
-  oboe_context_set_fromstr(val.data(), val.size());
 
   NanReturnUndefined();
 }
@@ -180,8 +170,19 @@ NAN_METHOD(OboeContext::fromString) {
 NAN_METHOD(OboeContext::copy) {
   NanScope();
 
-  Handle<Value> argv[1] = { External::New((void *) OboeContext::get()) };
-  NanReturnValue(Metadata::constructor->GetFunction()->NewInstance(1, argv));
+  // Make an empty object template with space for internal field pointers
+  Handle<ObjectTemplate> t = NanNew<ObjectTemplate>();
+  t->SetInternalFieldCount(2);
+
+  // Construct an object with our internal field pointer
+  Local<Object> obj = t->NewInstance();
+
+  // Attach the internal field pointer
+  NanSetInternalFieldPointer(obj, 1, OboeContext::get());
+
+  // Use the object as an argument in the event constructor
+  Handle<Value> argv[1] = { obj };
+  NanReturnValue(NanNew(Metadata::constructor)->GetFunction()->NewInstance(1, argv));
 }
 
 NAN_METHOD(OboeContext::clear) {
@@ -205,8 +206,19 @@ NAN_METHOD(OboeContext::init) {
 NAN_METHOD(OboeContext::createEvent) {
   NanScope();
 
-  Handle<Value> argv[1] = { External::New((void *) OboeContext::get()) };
-  NanReturnValue(Event::constructor->GetFunction()->NewInstance(1, argv));
+  // Make an empty object template with space for internal field pointers
+  Handle<ObjectTemplate> t = NanNew<ObjectTemplate>();
+  t->SetInternalFieldCount(2);
+
+  // Construct an object with our internal field pointer
+  Local<Object> obj = t->NewInstance();
+
+  // Attach the internal field pointer
+  NanSetInternalFieldPointer(obj, 1, OboeContext::get());
+
+  // Use the object as an argument in the event constructor
+  Handle<Value> argv[1] = { obj };
+  NanReturnValue(NanNew(Event::constructor)->GetFunction()->NewInstance(1, argv));
 }
 
 NAN_METHOD(OboeContext::startTrace) {
@@ -216,7 +228,7 @@ NAN_METHOD(OboeContext::startTrace) {
   oboe_metadata_random(md);
 
   Handle<Value> argv[0] = {};
-  NanReturnValue(Event::constructor->GetFunction()->NewInstance(0, argv));
+  NanReturnValue(NanNew(Event::constructor)->GetFunction()->NewInstance(0, argv));
 }
 
 void OboeContext::Init(Handle<Object> module) {
@@ -228,7 +240,6 @@ void OboeContext::Init(Handle<Object> module) {
   NODE_SET_METHOD(exports, "sampleRequest", OboeContext::sampleRequest);
   NODE_SET_METHOD(exports, "toString", OboeContext::toString);
   NODE_SET_METHOD(exports, "set", OboeContext::set);
-  NODE_SET_METHOD(exports, "fromString", OboeContext::fromString);
   NODE_SET_METHOD(exports, "copy", OboeContext::copy);
   NODE_SET_METHOD(exports, "clear", OboeContext::clear);
   NODE_SET_METHOD(exports, "isValid", OboeContext::isValid);
@@ -236,5 +247,5 @@ void OboeContext::Init(Handle<Object> module) {
   NODE_SET_METHOD(exports, "createEvent", OboeContext::createEvent);
   NODE_SET_METHOD(exports, "startTrace", OboeContext::startTrace);
 
-  module->Set(String::NewSymbol("Context"), exports);
+  module->Set(NanNew<String>("Context"), exports);
 }
