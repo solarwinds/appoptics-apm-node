@@ -1,4 +1,4 @@
-var oboe = require('../lib/addon')
+var oboe = require('../')
 
 describe('event', function () {
   var event

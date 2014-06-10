@@ -17,7 +17,7 @@ class Event;
 
 class Metadata : public node::ObjectWrap {
   friend class UdpReporter;
-  // friend class FileReporter;
+  friend class FileReporter;
   friend class OboeContext;
   friend class Event;
 
@@ -41,6 +41,7 @@ class Metadata : public node::ObjectWrap {
 
 class OboeContext {
   friend class UdpReporter;
+  friend class FileReporter;
   friend class Metadata;
   friend class Event;
 
@@ -66,12 +67,13 @@ class OboeContext {
 
 class Event : public node::ObjectWrap {
   friend class UdpReporter;
-  // friend class FileReporter;
+  friend class FileReporter;
   friend class OboeContext;
   friend class Metadata;
+  friend class Log;
 
   explicit Event();
-  explicit Event(const oboe_metadata_t*, bool addEdge=true);
+  explicit Event(const oboe_metadata_t*, bool);
   ~Event();
 
   oboe_event_t event;
@@ -100,6 +102,19 @@ class UdpReporter : public node::ObjectWrap {
     static void Init(Handle<Object>);
 };
 
+class FileReporter : public node::ObjectWrap {
+  ~FileReporter();
+  FileReporter(const char*);
+
+  oboe_reporter_t reporter;
+  static Persistent<FunctionTemplate> constructor;
+  static NAN_METHOD(New);
+  static NAN_METHOD(sendReport);
+
+  public:
+    static void Init(Handle<Object>);
+};
+
 class Config {
   static NAN_METHOD(getRevision);
   static NAN_METHOD(getVersion);
@@ -107,6 +122,22 @@ class Config {
 
   public:
     static void Init(Handle<Object>);
+};
+
+class Log {
+  public:
+    static void event (const char *msg, Event* event) {
+      printf("%s:\n", msg);
+      oboe_event_t *e = &event->event;
+      bson b;
+      bson_buffer* buf = &e->bbuf;
+      bson_from_buffer(&b, buf);
+      bson_print(&b);
+
+      printf("finished? %d\n", buf->finished);
+
+      printf("\n");
+    }
 };
 
 #endif  // NODE_OBOE_H_

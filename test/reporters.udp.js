@@ -1,4 +1,4 @@
-var oboe = require('../lib/addon')
+var oboe = require('../')
 var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
 
@@ -17,15 +17,16 @@ describe('reporters/udp', function () {
     server.on('error', emitter.emit.bind(emitter, 'error'))
     server.on('listening', done)
 
-    server.bind(7831)
+    server.bind(4567)
   })
 
   it('should construct', function () {
+    // reporter = new oboe.UdpReporter('127.0.0.1', 4567)
     reporter = new oboe.UdpReporter('127.0.0.1')
   })
 
   it('should report event', function (done) {
-    var event = new oboe.Event()
+    var event = oboe.Context.createEvent()
 
     // Receive the message from the udp server and verify the id matches
     emitter.on('message', function (msg) {
