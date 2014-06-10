@@ -125,16 +125,71 @@ class Config {
 };
 
 class Log {
-  public:
-    static void event (const char *msg, Event* event) {
+public:
+    static void method (const char *msg) {
       printf("%s:\n", msg);
-      oboe_event_t *e = &event->event;
-      bson b;
+    }
+
+    static void event (const char *msg, Event* e) {
+      printf("%s:\n", msg);
+      event(&e->event);
+    }
+
+    static void event (Event* e) {
+      event(&e->event);
+    }
+
+    static void event (oboe_event_t *e) {
       bson_buffer* buf = &e->bbuf;
+
+      // Print the bson_buffer contents as json
+      printf("oboe_event_t {\n");
+      printf("  char* buf = \"%s\";\n", buf->buf);
+      printf("  char* cur = \"%s\";\n", buf->cur);
+      printf("  int bufSize = %d;\n", buf->bufSize);
+      printf("  int stackPos = %d;\n", buf->stackPos);
+      printf("  bson_bool_t finished = %d;\n", buf->finished);
+      printf("  int stack[32] = [\n");
+      int i;
+      for (i = 0; i < 32; i++) {
+         printf("    %d,\n", buf->stack[i]);
+      }
+      printf("  ];\n");
+      printf("}\n\n");
+
+      bson b;
       bson_from_buffer(&b, buf);
       bson_print(&b);
 
-      printf("finished? %d\n", buf->finished);
+      printf("\n");
+    }
+
+    static void metadata (const char *msg, const oboe_metadata_t *m) {
+      printf("%s:\n", msg);
+      metadata(m);
+    }
+
+    static void metadata (const oboe_metadata_t *m) {
+      int task_len = m->task_len;
+      int op_len = m->op_len;
+      int i;
+
+      // Print the bson_buffer contents as json
+      printf("oboe_metadata_t {\n");
+      printf("  size_t task_len = %d;\n", task_len);
+      printf("  size_t op_len = %d;\n", op_len);
+      printf("  oboe_ids_t ids = {\n");
+      printf("    uint8_t task_id[%d] = [\n", task_len);
+      for (i = 0; i < task_len; i++) {
+         printf("      %d,\n", m->ids.task_id[i]);
+      }
+      printf("    ]\n");
+      printf("    uint8_t op_id[%d] = [\n", op_len);
+      for (i = 0; i < op_len; i++) {
+         printf("      %d,\n", m->ids.op_id[i]);
+      }
+      printf("    ]\n");
+      printf("}\n");
 
       printf("\n");
     }

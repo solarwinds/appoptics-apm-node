@@ -225,7 +225,11 @@ NAN_METHOD(OboeContext::startTrace) {
   NanScope();
 
   oboe_metadata_t* md = OboeContext::get();
+  Log::method("Context::StartTrace");
+  
+  Log::metadata(md);
   oboe_metadata_random(md);
+  Log::metadata(md);
 
   Handle<Value> argv[0] = {};
   NanReturnValue(NanNew(Event::constructor)->GetFunction()->NewInstance(0, argv));

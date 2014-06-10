@@ -4,9 +4,13 @@ Persistent<FunctionTemplate> Event::constructor;
 
 // Construct a blank event from the context metadata
 Event::Event() {
-  int status = oboe_event_init(&event, OboeContext::get());
-  printf("created event: %d\n", status);
-  Log::event("Event::Event", this);
+  const oboe_metadata_t* md = OboeContext::get();
+  int status = oboe_event_init(&event, md);
+  
+  Log::method("Event::Event");
+  printf("status: %d\n", status);
+  Log::metadata(md);
+  Log::event(this);
 }
 
 // Construct a new event point an edge at another
@@ -22,8 +26,10 @@ Event::Event(const oboe_metadata_t *md, bool addEdge) {
     status = oboe_event_init(&event, md);
   }
 
-  printf("created event: %d\n", status);
-  Log::event("Event::Event", this);
+  Log::method("Event::Event");
+  printf("status: %d\n", status);
+  Log::metadata(md);
+  Log::event(this);
 }
 
 // Remember to cleanup the struct when garbage collected
@@ -51,7 +57,8 @@ NAN_METHOD(Event::addInfo) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
   oboe_event_t* event = &self->event;
 
-  Log::event("Event::addInfo (before)", self);
+  Log::method("Event::addInfo");
+  Log::event(self);
 
   // Get key string from arguments and prepare a status variable
   String::Utf8Value v8_key(args[0]);
@@ -90,7 +97,7 @@ NAN_METHOD(Event::addInfo) {
     // return NanThrowError("Failed to add info");
   // }
 
-  Log::event("Event::addInfo (after)", self);
+  Log::event(self);
 
   NanReturnValue(NanNew<Boolean>(status == 0));
 }
@@ -110,8 +117,6 @@ NAN_METHOD(Event::addEdge) {
   // Unwrap event instance from V8
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
 
-  Log::event("Event::addEdge (before)", self);
-
   bool status;
   if (args[0]->IsObject()) {
     // Unwrap metadata instance from arguments
@@ -128,7 +133,8 @@ NAN_METHOD(Event::addEdge) {
     status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size()) == 0;
   }
 
-  Log::event("Event::addEdge (after)", self);
+  Log::method("Event::addInfo");
+  Log::event(self);
 
   NanReturnValue(NanNew<Boolean>(status));
 }
@@ -218,10 +224,13 @@ NAN_METHOD(Event::New) {
     return NanThrowError("Event() must be called as a constructor");
   }
 
+  Log::method("Event::New");
+
   Event* event;
   if (args.Length() > 0) {
     void* ptr = NanGetInternalFieldPointer(args[0].As<Object>(), 1);
     oboe_metadata_t* context = static_cast<oboe_metadata_t*>(ptr);
+    Log::metadata(context);
 
     bool addEdge = true;
     if (args.Length() == 2 && args[1]->IsBoolean()) {
@@ -232,6 +241,8 @@ NAN_METHOD(Event::New) {
   } else {
     event = new Event();
   }
+
+  Log::event(event);
 
   event->Wrap(args.This());
   NanSetInternalFieldPointer(args.This(), 1, &event->event);
