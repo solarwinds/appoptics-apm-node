@@ -98,7 +98,10 @@ NAN_METHOD(Event::addEdge) {
     std::string val(*v8_val);
 
     // Attempt to add edge
-    oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size());
+    int status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size());
+    printf("status is: %d\n", status);
+    printf("v8 val is: %s\n", *v8_val);
+    printf("val is: %s\n", val.c_str());
   }
 
   NanReturnUndefined();
