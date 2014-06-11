@@ -4,38 +4,24 @@ Persistent<FunctionTemplate> Event::constructor;
 
 // Construct a blank event from the context metadata
 Event::Event() {
-  const oboe_metadata_t* md = OboeContext::get();
-  int status = oboe_event_init(&event, md);
-
-  Log::method("Event::Event()");
-  printf("status: %d\n", status);
-  Log::metadata(md);
-  Log::event(this);
+  oboe_event_init(&event, OboeContext::get());
 }
 
 // Construct a new event point an edge at another
 Event::Event(const oboe_metadata_t *md, bool addEdge) {
-  int status;
-
   // both methods copy metadata from md -> this
   if (addEdge) {
     // create_event automatically adds edge in event to md
-    status = oboe_metadata_create_event(md, &event);
+    oboe_metadata_create_event(md, &event);
   } else {
     // initializes new Event with this md's task_id & new random op_id; no edges set
-    status = oboe_event_init(&event, md);
+    oboe_event_init(&event, md);
   }
-
-  Log::method("Event::Event(const oboe_metadata_t *md, bool addEdge)");
-  printf("status: %d\n", status);
-  Log::metadata(md);
-  Log::event(this);
 }
 
 // Remember to cleanup the struct when garbage collected
 Event::~Event() {
-  int status = oboe_event_destroy(&event);
-  printf("destroyed event: %d\n", status);
+  oboe_event_destroy(&event);
 }
 
 // Add info to the event
@@ -57,20 +43,14 @@ NAN_METHOD(Event::addInfo) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
   oboe_event_t* event = &self->event;
 
-  // Log::method("Event::addInfo");
-  // Log::event(self);
-
   // Get key string from arguments and prepare a status variable
   String::Utf8Value v8_key(args[0]);
   const char* key = *v8_key;
-  int status;
 
   // Handle number values
   if (args[1]->IsNumber()) {
     const double val = args[1]->NumberValue();
-
-    // printf("{\"%s\":%f}\n", key, val);
-    status = oboe_event_add_info_double(event, key, val);
+    oboe_event_add_info_double(event, key, val);
 
   // Handle string values
   } else {
@@ -79,27 +59,16 @@ NAN_METHOD(Event::addInfo) {
     char* val = *v8_val;
     int len = strlen(val);
 
-    // printf("{\"%s\":\"%s\"}\n", key, val);
-
     // Detect if we should add as binary or a string
     // TODO: Should probably use buffers for binary data...
     if (memchr(val, '\0', len)) {
-      // printf("adding binary data\n");
-      status = oboe_event_add_info_binary(event, key, val, len);
+      oboe_event_add_info_binary(event, key, val, len);
     } else {
-      // printf("adding regular data\n");
-      status = oboe_event_add_info(event, key, val);
+      oboe_event_add_info(event, key, val);
     }
   }
 
-  // printf("status is: %d\n", status);
-  // if (status != 0) {
-    // return NanThrowError("Failed to add info");
-  // }
-
-  // Log::event(self);
-
-  NanReturnValue(NanNew<Boolean>(status == 0));
+  NanReturnUndefined();
 }
 
 // Add an edge from a metadata instance
@@ -117,26 +86,22 @@ NAN_METHOD(Event::addEdge) {
   // Unwrap event instance from V8
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
 
-  bool status;
   if (args[0]->IsObject()) {
     // Unwrap metadata instance from arguments
     Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
     // Attempt to add the edge
-    status = oboe_event_add_edge(&self->event, &metadata->metadata) == 0;
+    oboe_event_add_edge(&self->event, &metadata->metadata);
   } else {
     // Get string data from arguments
     String::Utf8Value v8_val(args[0]);
     std::string val(*v8_val);
 
     // Attempt to add edge
-    status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size()) == 0;
+    oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size());
   }
 
-  // Log::method("Event::addInfo");
-  // Log::event(self);
-
-  NanReturnValue(NanNew<Boolean>(status));
+  NanReturnUndefined();
 }
 
 // Get the metadata of an event
@@ -224,13 +189,10 @@ NAN_METHOD(Event::New) {
     return NanThrowError("Event() must be called as a constructor");
   }
 
-  Log::method("Event::New");
-
   Event* event;
   if (args.Length() > 0) {
     void* ptr = NanGetInternalFieldPointer(args[0].As<Object>(), 1);
     oboe_metadata_t* context = static_cast<oboe_metadata_t*>(ptr);
-    Log::metadata(context);
 
     bool addEdge = true;
     if (args.Length() == 2 && args[1]->IsBoolean()) {
@@ -241,8 +203,6 @@ NAN_METHOD(Event::New) {
   } else {
     event = new Event();
   }
-
-  Log::event(event);
 
   event->Wrap(args.This());
   NanSetInternalFieldPointer(args.This(), 1, &event->event);

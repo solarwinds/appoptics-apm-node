@@ -36,8 +36,6 @@ NAN_METHOD(FileReporter::sendReport) {
     md = OboeContext::get();
   }
 
-  Log::event("UdpReporter::sendReport", event);
-
   int status = oboe_reporter_send(&self->reporter, md, &event->event);
   NanReturnValue(NanNew<Boolean>(status >= 0));
 }
