@@ -143,7 +143,7 @@ public:
       bson_buffer* buf = &e->bbuf;
 
       // Print the bson_buffer contents as json
-      printf("oboe_event_t {\n");
+      printf("oboe_event_t.bson_buffer {\n");
       printf("  char* buf = \"%s\";\n", buf->buf);
       printf("  char* cur = \"%s\";\n", buf->cur);
       printf("  int bufSize = %d;\n", buf->bufSize);

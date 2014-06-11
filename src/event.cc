@@ -6,8 +6,8 @@ Persistent<FunctionTemplate> Event::constructor;
 Event::Event() {
   const oboe_metadata_t* md = OboeContext::get();
   int status = oboe_event_init(&event, md);
-  
-  Log::method("Event::Event");
+
+  Log::method("Event::Event()");
   printf("status: %d\n", status);
   Log::metadata(md);
   Log::event(this);
@@ -26,7 +26,7 @@ Event::Event(const oboe_metadata_t *md, bool addEdge) {
     status = oboe_event_init(&event, md);
   }
 
-  Log::method("Event::Event");
+  Log::method("Event::Event(const oboe_metadata_t *md, bool addEdge)");
   printf("status: %d\n", status);
   Log::metadata(md);
   Log::event(this);
@@ -57,8 +57,8 @@ NAN_METHOD(Event::addInfo) {
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
   oboe_event_t* event = &self->event;
 
-  Log::method("Event::addInfo");
-  Log::event(self);
+  // Log::method("Event::addInfo");
+  // Log::event(self);
 
   // Get key string from arguments and prepare a status variable
   String::Utf8Value v8_key(args[0]);
@@ -97,7 +97,7 @@ NAN_METHOD(Event::addInfo) {
     // return NanThrowError("Failed to add info");
   // }
 
-  Log::event(self);
+  // Log::event(self);
 
   NanReturnValue(NanNew<Boolean>(status == 0));
 }
@@ -133,8 +133,8 @@ NAN_METHOD(Event::addEdge) {
     status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size()) == 0;
   }
 
-  Log::method("Event::addInfo");
-  Log::event(self);
+  // Log::method("Event::addInfo");
+  // Log::event(self);
 
   NanReturnValue(NanNew<Boolean>(status));
 }

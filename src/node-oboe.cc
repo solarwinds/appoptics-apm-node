@@ -30,6 +30,8 @@ void Init(Handle<Object> exports) {
   Metadata::Init(exports);
   Event::Init(exports);
   Config::Init(exports);
+
+	oboe_init();
 }
 
 NODE_MODULE(node_oboe, Init)
