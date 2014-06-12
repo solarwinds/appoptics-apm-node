@@ -1,4 +1,4 @@
-var oboe = require('../')
+var oboe = require('../lib/addon')
 
 describe('metadata', function () {
   var metadata

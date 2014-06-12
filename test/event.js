@@ -1,4 +1,4 @@
-var oboe = require('../')
+var oboe = require('../lib/addon')
 
 describe('event', function () {
   var event
@@ -35,6 +35,6 @@ describe('event', function () {
 
   it('should start tracing, returning a new instance', function () {
     var meta = new oboe.Metadata()
-    var event2 = event.startTrace(meta)
+    var event2 = oboe.Event.startTrace(meta)
   })
 })

@@ -1,4 +1,4 @@
-var oboe = require('../')
+var oboe = require('../lib/addon')
 var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
 
@@ -21,8 +21,7 @@ describe('reporters/udp', function () {
   })
 
   it('should construct', function () {
-    // reporter = new oboe.UdpReporter('127.0.0.1', 4567)
-    reporter = new oboe.UdpReporter('127.0.0.1')
+    reporter = new oboe.UdpReporter('127.0.0.1', 4567)
   })
 
   it('should report event', function (done) {

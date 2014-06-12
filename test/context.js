@@ -1,4 +1,4 @@
-var oboe = require('../')
+var oboe = require('../lib/addon')
 
 describe('context', function () {
   it('should initialize', function () {
