@@ -222,12 +222,14 @@ void Event::Init(Handle<Object> exports) {
   ctor->SetClassName(NanNew<String>("Event"));
   NanAssignPersistent(constructor, ctor);
 
+  // Statics
+  NODE_SET_METHOD(ctor, "startTrace", Event::startTrace);
+
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(ctor, "addInfo", Event::addInfo);
   NODE_SET_PROTOTYPE_METHOD(ctor, "addEdge", Event::addEdge);
   NODE_SET_PROTOTYPE_METHOD(ctor, "getMetadata", Event::getMetadata);
   NODE_SET_PROTOTYPE_METHOD(ctor, "toString", Event::toString);
-  NODE_SET_PROTOTYPE_METHOD(ctor, "startTrace", Event::startTrace);
 
   exports->Set(NanNew<String>("Event"), ctor->GetFunction());
 }
