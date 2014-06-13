@@ -21,7 +21,7 @@ NAN_METHOD(OboeContext::setTracingMode) {
   }
 
   int mode = args[0]->NumberValue();
-  if (mode > 2) {
+  if (mode < 0 || mode > 2) {
     return NanThrowError("Invalid tracing mode");
   }
 
@@ -53,7 +53,7 @@ NAN_METHOD(OboeContext::setDefaultSampleRate) {
   }
 
   int rate = args[0]->NumberValue();
-  if (rate > OBOE_SAMPLE_RESOLUTION) {
+  if (rate < 1 || rate > OBOE_SAMPLE_RESOLUTION) {
     return NanThrowError("Sample rate out of range");
   }
 
@@ -111,12 +111,13 @@ NAN_METHOD(OboeContext::sampleRequest) {
     &sample_source
   );
 
-  int res = 0;
-  if (rc != 0) {
-    res = ((sample_source & 0xFF) << 24) | (sample_rate & 0xFFFFFF);
-  }
+  // Store rc, sample_source and sample_rate in an array
+  Handle<Array> array = NanNew<Array>(2);
+  array->Set(0, NanNew<Number>(rc));
+  array->Set(1, NanNew<Number>(sample_source));
+  array->Set(2, NanNew<Number>(sample_rate));
 
-  NanReturnValue(NanNew<Number>(res));
+  NanReturnValue(array);
 }
 
 // returns pointer to current context (from thread-local storage)
