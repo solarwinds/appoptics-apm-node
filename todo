@@ -1,6 +1,16 @@
 TODO:
 - change Event::addInfo to Event::set and add Event::get? (oboe does not appear to support getting info)
 - Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
+- Use continuation-local-storage to track layer references across async boundaries.
+- Allow Layer construct to be a two-event sync trace or four-event async trace.
+- Track stack unwinding to link and send events in correct order on the way out.
+- Correctly link edges of parallel async actions that could resolve in a non-deterministic order.
+- Make sure low-level log.js and trace.js work correctly, without needing to handle context internally.
+- Port over request sampling to work with new layer tracer, when I figure out what the API is.
+- Cleanup old stuff in index.js--the bottom half will not apply anymore, when layer tracing API is done.
+
+Ideas:
+- Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.
 
 Concerns:
 - How to handle cancelables? (ie: setTimeout, setInterval)
