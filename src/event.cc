@@ -47,8 +47,13 @@ NAN_METHOD(Event::addInfo) {
   String::Utf8Value v8_key(args[0]);
   const char* key = *v8_key;
 
-  // Handle number values
-  if (args[1]->IsNumber()) {
+  // Handle integer values
+  if (args[1]->IsInt32()) {
+    int64_t val = args[1]->Int32Value();
+    oboe_event_add_info_int64(event, key, val);
+
+  // Handle double values
+  } else if (args[1]->IsNumber()) {
     const double val = args[1]->NumberValue();
     oboe_event_add_info_double(event, key, val);
 
