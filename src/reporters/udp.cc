@@ -41,7 +41,6 @@ NAN_METHOD(UdpReporter::sendReport) {
   }
 
   int status = oboe_reporter_send(&self->reporter, md, &event->event);
-  printf("udp send status is: %d\n", status);
   NanReturnValue(NanNew<Boolean>(status >= 0));
 }
 
