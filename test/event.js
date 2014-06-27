@@ -12,12 +12,14 @@ describe('event', function () {
   })
 
   it('should add edge', function () {
-    var meta = new oboe.Metadata()
+    var e = new oboe.Event()
+    var meta = e.getMetadata()
     event.addEdge(meta)
   })
 
   it('should add edge as string', function () {
-    var meta = new oboe.Metadata()
+    var e = new oboe.Event()
+    var meta = e.toString()
     event.addEdge(meta.toString())
   })
 

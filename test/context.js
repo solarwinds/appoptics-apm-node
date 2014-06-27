@@ -62,6 +62,7 @@ describe('context', function () {
   })
 
   it('should serialize context to string', function () {
+    oboe.Context.clear()
     var string = oboe.Context.toString()
     string.should.equal('1B00000000000000000000000000000000000000000000000000000000')
   })
