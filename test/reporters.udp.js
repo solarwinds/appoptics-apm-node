@@ -1,4 +1,4 @@
-var oboe = require('../lib/addon')
+var oboe = require('..').addon
 var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
 
