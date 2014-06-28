@@ -35,8 +35,8 @@ NAN_METHOD(Event::addInfo) {
   if (!args[0]->IsString()) {
     return NanThrowTypeError("Key must be a string");
   }
-  if (!args[1]->IsString() && !args[1]->IsNumber()) {
-    return NanThrowTypeError("Value must be a string or number");
+  if (!args[1]->IsString() && !args[1]->IsNumber() && !args[1]->IsBoolean()) {
+    return NanThrowTypeError("Value must be a boolean, string or number");
   }
 
   // Unwrap event instance from V8
@@ -49,7 +49,12 @@ NAN_METHOD(Event::addInfo) {
   int status;
 
   // Handle integer values
-  if (args[1]->IsInt32()) {
+  if (args[1]->IsBoolean()) {
+    bool val = args[1]->BooleanValue();
+    status = oboe_event_add_info_bool(event, key, val);
+
+  // Handle double values
+  } else if (args[1]->IsInt32()) {
     int64_t val = args[1]->Int32Value();
     status = oboe_event_add_info_int64(event, key, val);
 
