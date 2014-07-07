@@ -56,9 +56,9 @@ describe('context', function () {
     oboe.Context.setDefaultSampleRate(oboe.MAX_SAMPLE_RATE)
     var check = oboe.Context.sampleRequest('a', 'b', 'c')
     check.should.be.an.instanceof(Array)
-    check.should.have.property(0, 1)
+    check.should.have.property(0, 0)
     check.should.have.property(1, 1)
-    check.should.have.property(2, 1000000)
+    check.should.have.property(2, oboe.MAX_SAMPLE_RATE)
   })
 
   it('should serialize context to string', function () {

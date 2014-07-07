@@ -1,8 +1,7 @@
 TODO:
-- change Event::addInfo to Event::set and add Event::get? (oboe does not appear to support getting info)
 - Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
-- Correctly link edges of parallel async actions that could resolve in a non-deterministic order.
-- Make sure low-level log.js and trace.js work correctly, without needing to handle context internally.
+- Write tests for async event descended from sync and async parents
+- Do not layer.descend unless in an active trace
 
 Ideas:
 - Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.

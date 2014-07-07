@@ -84,32 +84,56 @@ NAN_METHOD(OboeContext::sampleRequest) {
   NanScope();
 
   // Validate arguments
-  if (args.Length() != 3) {
+  if (args.Length() < 1) {
     return NanThrowError("Wrong number of arguments");
   }
+
+  char* layer_name;
+  char* in_xtrace;
+  char* in_tv_meta;
+
+  // The first argument must be a string
   if (!args[0]->IsString()) {
     return NanThrowError("Layer name must be a string");
   }
-  if (!args[1]->IsString()) {
-    return NanThrowError("X-Trace ID must be a string");
-  }
-  if (!args[2]->IsString()) {
-    return NanThrowError("AppView Web ID must be a string");
+  String::Utf8Value layer_name_v8(args[0]);
+  layer_name = *layer_name_v8;
+
+  // If the second argument is present, it must be a string
+  if (args.Length() >= 2) {
+    if ( ! args[1]->IsString()) {
+      return NanThrowError("X-Trace ID must be a string");
+    }
+    String::Utf8Value in_xtrace_v8(args[1]);
+    in_xtrace = *in_xtrace_v8;
+  } else {
+    in_xtrace = *"";
   }
 
-  String::Utf8Value layer_name(args[0]);
-  String::Utf8Value in_xtrace(args[1]);
-  String::Utf8Value in_tv_meta(args[2]);
+  // If the third argument is present, it must be a string
+  if (args.Length() >= 3) {
+    if ( ! args[2]->IsString()) {
+      return NanThrowError("AppView Web ID must be a string");
+    }
+    String::Utf8Value in_tv_meta_v8(args[2]);
+    in_tv_meta = *in_tv_meta_v8;
+  } else {
+    in_tv_meta = *"";
+  }
+
+  printf("attempting to sample %s %s %s\n", layer_name, in_xtrace, in_tv_meta);
 
   int sample_rate = 0;
   int sample_source = 0;
   int rc = oboe_sample_layer(
-    *layer_name,
-    *in_xtrace,
-    *in_tv_meta,
+    layer_name,
+    in_xtrace,
+    in_tv_meta,
     &sample_rate,
     &sample_source
   );
+
+  printf("sample result is %d %d %d\n", rc, sample_source, sample_rate);
 
   // Store rc, sample_source and sample_rate in an array
   Handle<Array> array = NanNew<Array>(2);
