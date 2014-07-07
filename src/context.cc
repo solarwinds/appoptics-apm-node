@@ -121,8 +121,6 @@ NAN_METHOD(OboeContext::sampleRequest) {
     in_tv_meta = *"";
   }
 
-  printf("attempting to sample %s %s %s\n", layer_name, in_xtrace, in_tv_meta);
-
   int sample_rate = 0;
   int sample_source = 0;
   int rc = oboe_sample_layer(
@@ -132,8 +130,6 @@ NAN_METHOD(OboeContext::sampleRequest) {
     &sample_rate,
     &sample_source
   );
-
-  printf("sample result is %d %d %d\n", rc, sample_source, sample_rate);
 
   // Store rc, sample_source and sample_rate in an array
   Handle<Array> array = NanNew<Array>(2);

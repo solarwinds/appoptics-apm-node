@@ -67,18 +67,18 @@ describe('basics', function () {
   })
 
   it('should support sampling', function () {
-    var event = new oboe.Event('test', 'entry')
-
+    oboe.traceMode = 'always'
     oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
     var s = oboe.sample('test')
     s.should.not.be.false
 
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
+    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE / 2
     var samples = []
-    for (var i = 0; i < 10; i++) {
-      s = oboe.sample('test')
-      samples.push(s)
+    for (var i = 0; i < 100; i++) {
+      s = oboe.sample(Math.random().toString())
+      samples.push(!!s[0])
     }
     samples.should.containEql(false)
+    samples.should.containEql(true)
   })
 })
