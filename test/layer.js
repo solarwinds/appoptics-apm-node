@@ -7,11 +7,8 @@ var addon = oboe.addon
 var Layer = oboe.Layer
 
 describe('layer', function () {
-  var emitter = new Emitter
-  var reporter
-  var after
-
   var server = dgram.createSocket('udp4')
+  var emitter = new Emitter
 
   before(function (done) {
     emitter.on('error', server.close.bind(server))
@@ -24,6 +21,11 @@ describe('layer', function () {
 
     // Connect to test server
     oboe.reporter = new addon.UdpReporter('127.0.0.1', 1234)
+  })
+
+  after(function (done) {
+    server.on('close', done)
+    server.close()
   })
 
   it('should construct valid layer', function () {

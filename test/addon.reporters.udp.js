@@ -3,12 +3,9 @@ var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
 
 describe('reporters/udp', function () {
+  var server = dgram.createSocket('udp4')
   var emitter = new Emitter
   var reporter
-  var remote
-  var after
-
-  var server = dgram.createSocket('udp4')
 
   before(function (done) {
     emitter.on('error', server.close.bind(server))
@@ -18,6 +15,11 @@ describe('reporters/udp', function () {
     server.on('listening', done)
 
     server.bind(4567)
+  })
+
+  after(function (done) {
+    server.on('close', done)
+    server.close()
   })
 
   it('should construct', function () {
