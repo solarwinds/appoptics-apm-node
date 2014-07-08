@@ -1,6 +1,6 @@
 var oboe = require('..').addon
 
-describe('config', function () {
+describe('addon.config', function () {
   var version
   var revision
 

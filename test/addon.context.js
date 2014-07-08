@@ -1,6 +1,6 @@
 var oboe = require('..').addon
 
-describe('context', function () {
+describe('addon.context', function () {
   it('should initialize', function () {
     oboe.Context.init()
   })

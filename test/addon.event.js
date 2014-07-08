@@ -1,6 +1,6 @@
 var oboe = require('..').addon
 
-describe('event', function () {
+describe('addon.event', function () {
   var event
 
   it('should construct', function () {

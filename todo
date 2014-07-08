@@ -2,6 +2,7 @@ TODO:
 - Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
 - Write tests for async event descended from sync and async parents
 - Do not layer.descend unless in an active trace
+- Write tests to around asynchrony occurring within a request
 
 Ideas:
 - Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.

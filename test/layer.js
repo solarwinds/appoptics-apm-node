@@ -10,6 +10,9 @@ describe('layer', function () {
   var server = dgram.createSocket('udp4')
   var emitter = new Emitter
 
+  //
+  // Intercept tracelyzer messages for analysis
+  //
   before(function (done) {
     emitter.on('error', server.close.bind(server))
 

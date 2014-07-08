@@ -1,6 +1,6 @@
 var oboe = require('..').addon
 
-describe('metadata', function () {
+describe('addon.metadata', function () {
   var metadata
   var string
 

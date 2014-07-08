@@ -11,6 +11,9 @@ describe('event', function () {
   var emitter = new Emitter
   var event
 
+  //
+  // Intercept tracelyzer messages for analysis
+  //
   before(function (done) {
     emitter.on('error', server.close.bind(server))
 
