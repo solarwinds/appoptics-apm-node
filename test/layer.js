@@ -31,6 +31,9 @@ describe('layer', function () {
     server.close()
   })
 
+  //
+  // Verify basic structural integrity
+  //
   it('should construct valid layer', function () {
     var layer = new Layer('test', null, {})
 
@@ -41,6 +44,9 @@ describe('layer', function () {
     layer.events.entry.opId.should.not.match(/^0*$/)
   })
 
+  //
+  // Verify base layer reporting
+  //
   it('should report sync boundaries', function (done) {
     var name = 'test'
     var data = { Foo: 'bar' }
@@ -146,6 +152,9 @@ describe('layer', function () {
     })
   })
 
+  //
+  // Verify behaviour when reporting nested layers
+  //
   it('should report nested sync boundaries', function (done) {
     var outerData = { Foo: 'bar' }
     var innerData = { Baz: 'buz' }
@@ -198,6 +207,71 @@ describe('layer', function () {
     outer.run(function () {
       inner = Layer.last.descend('inner', innerData)
       inner.run(function () {})
+    })
+  })
+
+  it('should report nested boundaries of async event with sync event', function (done) {
+    var outerData = { Foo: 'bar' }
+    var innerData = { Baz: 'buz' }
+    var outer, inner
+
+    var checks = [
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.entry))
+        msg.should.match(/Layer\W*outer/)
+        msg.should.match(/Label\W*entry/)
+
+        Object.keys(outerData).forEach(function (key) {
+          msg.should.match(new RegExp(key + '\\W*' + outerData[key]))
+        })
+      },
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
+        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
+        msg.should.match(/Layer\W*inner/)
+        msg.should.match(/Label\W*entry/)
+
+        Object.keys(innerData).forEach(function (key) {
+          msg.should.match(new RegExp(key + '\\W*' + innerData[key]))
+        })
+      },
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.exit))
+        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
+        msg.should.match(/Layer\W*inner/)
+        msg.should.match(/Label\W*exit/)
+      },
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
+        msg.should.match(new RegExp('Edge\\W*' + inner.events.exit.opId))
+        msg.should.match(/Layer\W*outer/)
+        msg.should.match(/Label\W*exit/)
+        emitter.removeAllListeners('message')
+        done()
+      }
+    ]
+
+    emitter.on('message', function (msg) {
+      checks.shift()(msg.toString())
+    })
+
+    outer = new Layer('outer', null, outerData)
+    outer.run(function () {
+      inner = Layer.last.descend('inner', innerData)
+      inner.run(function (wrap) {
+        var done = wrap(function (err, res) {
+          should.not.exist(err)
+          should.exist(res)
+          res.should.equal('foo')
+        })
+
+        setImmediate(function () {
+          done(null, 'foo')
+        })
+      })
     })
   })
 })

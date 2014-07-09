@@ -73,6 +73,8 @@ describe('probes.http', function () {
       },
 
       checkers['http-response-end-entry'],
+      checkers['http-response-write-entry'],
+      checkers['http-response-write-exit'],
       checkers['http-response-end-exit'],
 
       function (msg) {
