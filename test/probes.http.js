@@ -4,6 +4,8 @@ var dgram = require('dgram')
 
 var oboe = require('..')
 var addon = oboe.addon
+oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
+
 var http = require('http')
 var request = require('request')
 

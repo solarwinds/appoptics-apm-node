@@ -5,6 +5,7 @@ var dgram = require('dgram')
 var oboe = require('..')
 var addon = oboe.addon
 var Event = oboe.Event
+oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
 describe('event', function () {
   var server = dgram.createSocket('udp4')
