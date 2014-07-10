@@ -1,6 +1,6 @@
-var oboe = require('../lib/addon')
+var oboe = require('..').addon
 
-describe('context', function () {
+describe('addon.context', function () {
   it('should initialize', function () {
     oboe.Context.init()
   })
@@ -55,10 +55,14 @@ describe('context', function () {
   it('should check if a request should be sampled', function () {
     oboe.Context.setDefaultSampleRate(oboe.MAX_SAMPLE_RATE)
     var check = oboe.Context.sampleRequest('a', 'b', 'c')
-    check.should.equal(17777216)
+    check.should.be.an.instanceof(Array)
+    check.should.have.property(0, 0)
+    check.should.have.property(1, 1)
+    check.should.have.property(2, oboe.MAX_SAMPLE_RATE)
   })
 
   it('should serialize context to string', function () {
+    oboe.Context.clear()
     var string = oboe.Context.toString()
     string.should.equal('1B00000000000000000000000000000000000000000000000000000000')
   })

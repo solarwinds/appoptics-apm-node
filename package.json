@@ -5,21 +5,29 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "install": "node-gyp rebuild"
+    "install": "node-gyp rebuild",
+    "coverage": "npm run coverage:report",
+    "coverage:build": "rm -rf coverage && istanbul cover _mocha",
+    "coverage:report": "npm run coverage:build && istanbul report",
+    "coverage:html": "npm run coverage:report && xdg-open coverage/lcov-report/index.html"
   },
   "author": {
     "name": "Stephen Belanger",
-    "email": "<sbelanger@appneta.com>"
+    "email": "sbelanger@appneta.com"
   },
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
     "bindings": "^1.2.0",
+    "continuation-local-storage": "^3.0.0",
     "debug": "^1.0.0",
     "nan": "^1.1.2"
   },
   "devDependencies": {
+    "istanbul": "^0.2.13",
     "mocha": "^1.20.0",
-    "should": "^3.3.2"
+    "request": "^2.37.0",
+    "should": "^3.3.2",
+    "yuidocjs": "^0.3.50"
   }
 }

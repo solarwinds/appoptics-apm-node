@@ -1,40 +1,67 @@
-var oboe = require('../lib/addon')
+var Emitter = require('events').EventEmitter
+var should = require('should')
+var dgram = require('dgram')
+
+var oboe = require('..')
+var addon = oboe.addon
+var Event = oboe.Event
+oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
 describe('event', function () {
+  var server = dgram.createSocket('udp4')
+  var emitter = new Emitter
   var event
 
-  it('should construct', function () {
-    event = new oboe.Event()
+  //
+  // Intercept tracelyzer messages for analysis
+  //
+  before(function (done) {
+    emitter.on('error', server.close.bind(server))
+
+    server.on('message', emitter.emit.bind(emitter, 'message'))
+    server.on('error', emitter.emit.bind(emitter, 'error'))
+    server.on('listening', done)
+
+    server.bind(5432)
+
+    // Connect to test server
+    oboe.reporter = new addon.UdpReporter('127.0.0.1', 5432)
   })
 
-  it('should add info', function () {
-    event.addInfo('key', 'val')
+  after(function (done) {
+    server.on('close', done)
+    server.close()
   })
 
-  it('should add edge', function () {
-    var meta = new oboe.Metadata()
-    event.addEdge(meta)
+  it('should construct valid event', function () {
+    event = new Event('test', 'entry')
+    event.should.have.property('Layer', 'test')
+    event.should.have.property('Label', 'entry')
+    event.should.have.property('taskId').and.not.match(/^0*$/)
+    event.should.have.property('opId').and.not.match(/^0*$/)
   })
 
-  it('should add edge as string', function () {
-    var meta = new oboe.Metadata()
-    event.addEdge(meta.toString())
+  it('should enter the event context', function () {
+    var context = addon.Context.toString()
+    event.enter()
+    addon.Context.toString().should.not.equal(context)
   })
 
-  it('should get metadata', function () {
-    var meta = event.getMetadata()
-    meta.should.be.an.instanceof(oboe.Metadata)
-  })
+  it('should send the event', function (done) {
+    var event2 = new Event('test', 'exit', event.event)
 
-  it('should serialize metadata to id string', function () {
-    var meta = event.toString()
-    meta.should.be.an.instanceof(String).with.lengthOf(58)
-    meta[0].should.equal('1')
-    meta[1].should.equal('B')
-  })
+    emitter.on('message', function (msg) {
+      msg = msg.toString()
+      msg.should.match(new RegExp('X-Trace\\W*' + event2))
+      msg.should.match(new RegExp('Edge\\W*' + event.opId))
+      msg.should.match(/Layer\W*test/)
+      msg.should.match(/Label\W*exit/)
+      done()
+    })
 
-  it('should start tracing, returning a new instance', function () {
-    var meta = new oboe.Metadata()
-    var event2 = oboe.Event.startTrace(meta)
+    // NOTE: events must be sent within a request store context
+    oboe.requestStore.run(function () {
+      event2.send()
+    })
   })
 })

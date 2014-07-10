@@ -35,8 +35,8 @@ NAN_METHOD(Event::addInfo) {
   if (!args[0]->IsString()) {
     return NanThrowTypeError("Key must be a string");
   }
-  if (!args[1]->IsString() && !args[1]->IsNumber()) {
-    return NanThrowTypeError("Value must be a string or number");
+  if (!args[1]->IsString() && !args[1]->IsNumber() && !args[1]->IsBoolean()) {
+    return NanThrowTypeError("Value must be a boolean, string or number");
   }
 
   // Unwrap event instance from V8
@@ -46,11 +46,22 @@ NAN_METHOD(Event::addInfo) {
   // Get key string from arguments and prepare a status variable
   String::Utf8Value v8_key(args[0]);
   const char* key = *v8_key;
+  int status;
 
-  // Handle number values
-  if (args[1]->IsNumber()) {
+  // Handle integer values
+  if (args[1]->IsBoolean()) {
+    bool val = args[1]->BooleanValue();
+    status = oboe_event_add_info_bool(event, key, val);
+
+  // Handle double values
+  } else if (args[1]->IsInt32()) {
+    int64_t val = args[1]->Int32Value();
+    status = oboe_event_add_info_int64(event, key, val);
+
+  // Handle double values
+  } else if (args[1]->IsNumber()) {
     const double val = args[1]->NumberValue();
-    oboe_event_add_info_double(event, key, val);
+    status = oboe_event_add_info_double(event, key, val);
 
   // Handle string values
   } else {
@@ -62,10 +73,14 @@ NAN_METHOD(Event::addInfo) {
     // Detect if we should add as binary or a string
     // TODO: Should probably use buffers for binary data...
     if (memchr(val, '\0', len)) {
-      oboe_event_add_info_binary(event, key, val, len);
+      status = oboe_event_add_info_binary(event, key, val, len);
     } else {
-      oboe_event_add_info(event, key, val);
+      status = oboe_event_add_info(event, key, val);
     }
+  }
+
+  if (status == -1) {
+    return NanThrowError("Failed to add info");
   }
 
   NanReturnUndefined();
@@ -85,23 +100,25 @@ NAN_METHOD(Event::addEdge) {
 
   // Unwrap event instance from V8
   Event* self = ObjectWrap::Unwrap<Event>(args.This());
+  int status;
 
   if (args[0]->IsObject()) {
     // Unwrap metadata instance from arguments
     Metadata* metadata = ObjectWrap::Unwrap<Metadata>(args[0]->ToObject());
 
     // Attempt to add the edge
-    oboe_event_add_edge(&self->event, &metadata->metadata);
+    status = oboe_event_add_edge(&self->event, &metadata->metadata);
   } else {
     // Get string data from arguments
-    String::Utf8Value v8_val(args[0]);
-    std::string val(*v8_val);
+    String::Utf8Value edge(args[0]);
+    std::string val(*edge);
 
     // Attempt to add edge
-    int status = oboe_event_add_edge_fromstr(&self->event, val.c_str(), val.size());
-    printf("status is: %d\n", status);
-    printf("v8 val is: %s\n", *v8_val);
-    printf("val is: %s\n", val.c_str());
+    status = oboe_event_add_edge_fromstr(&self->event, *edge, strlen(*edge));
+  }
+
+  if (status == -1) {
+    return NanThrowError("Failed to add edge");
   }
 
   NanReturnUndefined();
