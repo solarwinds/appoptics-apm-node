@@ -1,32 +1,21 @@
+var helper = require('./helper')
 var oboe = require('..').addon
-var Emitter = require('events').EventEmitter
-var dgram = require('dgram')
 
 describe('addon.reporters.udp', function () {
-  var server = dgram.createSocket('udp4')
-  var emitter = new Emitter
-  var reporter
+  var emitter
 
   //
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    emitter.on('error', server.close.bind(server))
-
-    server.on('message', emitter.emit.bind(emitter, 'message'))
-    server.on('error', emitter.emit.bind(emitter, 'error'))
-    server.on('listening', done)
-
-    server.bind(4567)
+    emitter = helper.tracelyzer(4567, done)
   })
-
   after(function (done) {
-    server.on('close', done)
-    server.close()
+    emitter.close(done)
   })
 
   it('should construct', function () {
-    reporter = new oboe.UdpReporter('127.0.0.1', 4567)
+    new oboe.UdpReporter('127.0.0.1', 4567)
   })
 
   it('should report event', function (done) {
@@ -38,6 +27,6 @@ describe('addon.reporters.udp', function () {
       done()
     })
 
-    reporter.sendReport(event)
+    emitter.reporter.sendReport(event)
   })
 })

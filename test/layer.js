@@ -1,35 +1,21 @@
-var Emitter = require('events').EventEmitter
+var helper = require('./helper')
 var should = require('should')
-var dgram = require('dgram')
-
 var oboe = require('..')
 var addon = oboe.addon
 var Layer = oboe.Layer
 oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
 describe('layer', function () {
-  var server = dgram.createSocket('udp4')
-  var emitter = new Emitter
+  var emitter
 
   //
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    emitter.on('error', server.close.bind(server))
-
-    server.on('message', emitter.emit.bind(emitter, 'message'))
-    server.on('error', emitter.emit.bind(emitter, 'error'))
-    server.on('listening', done)
-
-    server.bind(1234)
-
-    // Connect to test server
-    oboe.reporter = new addon.UdpReporter('127.0.0.1', 1234)
+    emitter = helper.tracelyzer(1234, done)
   })
-
   after(function (done) {
-    server.on('close', done)
-    server.close()
+    emitter.close(done)
   })
 
   //
@@ -211,7 +197,7 @@ describe('layer', function () {
     })
   })
 
-  it('should report nested boundaries of async event with sync event', function (done) {
+  it('should report nested boundaries of async event within sync event', function (done) {
     var outerData = { Foo: 'bar' }
     var innerData = { Baz: 'buz' }
     var outer, inner
@@ -243,7 +229,7 @@ describe('layer', function () {
       function (msg) {
         msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + inner.events.exit.opId))
+        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
         msg.should.match(/Layer\W*outer/)
         msg.should.match(/Label\W*exit/)
       },
@@ -261,7 +247,7 @@ describe('layer', function () {
         msg.should.match(new RegExp('X-Trace\\W*' + inner.events.asyncExit))
         msg.should.match(new RegExp('Edge\\W*' + inner.events.asyncEntry.opId))
         msg.should.match(/Layer\W*inner \(callback\)/)
-        msg.should.match(/Label\W*entry/)
+        msg.should.match(/Label\W*exit/)
       },
       // Inner exit (async)
       function (msg) {
@@ -276,7 +262,6 @@ describe('layer', function () {
     ]
 
     emitter.on('message', function (msg) {
-      console.log(msg.toString())
       checks.shift()(msg.toString())
     })
 
@@ -293,6 +278,94 @@ describe('layer', function () {
         setImmediate(function () {
           done(null, 'foo')
         })
+      })
+    })
+  })
+
+  it('should report nested boundaries of sync event within async event', function (done) {
+    var outerData = { Foo: 'bar' }
+    var innerData = { Baz: 'buz' }
+    var outer, inner
+
+    var checks = [
+      // Outer entry (async)
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.entry))
+        msg.should.match(/Layer\W*outer/)
+        msg.should.match(/Label\W*entry/)
+
+        Object.keys(outerData).forEach(function (key) {
+          msg.should.match(new RegExp(key + '\\W*' + outerData[key]))
+        })
+      },
+      // Outer entry (async callback)
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.asyncEntry))
+        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
+        msg.should.match(/Layer\W*outer \(callback\)/)
+        msg.should.match(/Label\W*entry/)
+      },
+      // Inner entry
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.asyncEntry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
+        msg.should.match(new RegExp('Edge\\W*' + outer.events.asyncEntry.opId))
+        msg.should.match(/Layer\W*inner/)
+        msg.should.match(/Label\W*entry/)
+
+        Object.keys(innerData).forEach(function (key) {
+          msg.should.match(new RegExp(key + '\\W*' + innerData[key]))
+        })
+      },
+      // Inner exit
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.exit))
+        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
+        msg.should.match(/Layer\W*inner/)
+        msg.should.match(/Label\W*exit/)
+      },
+      // Outer exit (async callback)
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.asyncEntry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.asyncExit))
+        msg.should.match(new RegExp('Edge\\W*' + inner.events.exit.opId))
+        msg.should.match(/Layer\W*outer \(callback\)/)
+        msg.should.match(/Label\W*exit/)
+      },
+      // Outer exit (async)
+      function (msg) {
+        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
+        msg.should.match(new RegExp('Edge\\W*' + outer.events.asyncExit.opId))
+        msg.should.match(/Layer\W*outer/)
+        msg.should.match(/Label\W*exit/)
+        emitter.removeAllListeners('message')
+        done()
+      }
+    ]
+
+    emitter.on('message', function (msg) {
+      console.log(msg.toString())
+      checks.shift()(msg.toString())
+    })
+
+    outer = new Layer('outer', null, outerData)
+    outer.run(function (wrap) {
+      var done = wrap(function (err, res) {
+        should.not.exist(err)
+        should.exist(res)
+        res.should.equal('foo')
+
+        inner = Layer.last.descend('inner', innerData)
+        inner.run(function () {
+
+        })
+      })
+
+      setImmediate(function () {
+        done(null, 'foo')
       })
     })
   })

@@ -1,7 +1,5 @@
-var Emitter = require('events').EventEmitter
+var helper = require('./helper')
 var should = require('should')
-var dgram = require('dgram')
-
 var oboe = require('..')
 var addon = oboe.addon
 oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
@@ -12,30 +10,16 @@ var request = require('request')
 function noop () {}
 
 describe('probes.http', function () {
-  var server = dgram.createSocket('udp4')
-  var emitter = new Emitter
+  var emitter
 
   //
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    oboe.traceMode = 'always'
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-
-    emitter.on('error', server.close.bind(server))
-    server.on('message', emitter.emit.bind(emitter, 'message'))
-    server.on('error', emitter.emit.bind(emitter, 'error'))
-    server.on('listening', done)
-
-    server.bind(1234)
-
-    // Connect to test server
-    oboe.reporter = new addon.UdpReporter('127.0.0.1', 1234)
+    emitter = helper.tracelyzer(1234, done)
   })
-
   after(function (done) {
-    server.on('close', done)
-    server.close()
+    emitter.close(done)
   })
 
   //
