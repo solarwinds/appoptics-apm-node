@@ -9,13 +9,6 @@ var http = require('http')
 
 function noop () {}
 
-function defaulter (fn) {
-  var value
-  return function () {
-    return value || (value = fn())
-  }
-}
-
 describe('probes.http', function () {
   var emitter
 
