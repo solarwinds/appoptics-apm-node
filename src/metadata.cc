@@ -21,7 +21,8 @@ Metadata::~Metadata() {
 NAN_METHOD(Metadata::fromString) {
   NanScope();
 
-  std::string s(*String::Utf8Value(args[0]));
+  String::Utf8Value v8_s(args[0]);
+  std::string s(*v8_s);
 
   oboe_metadata_t md;
   oboe_metadata_fromstr(&md, s.data(), s.size());

@@ -17,7 +17,7 @@ class Event;
 
 class Metadata : public node::ObjectWrap {
   friend class UdpReporter;
-  // friend class FileReporter;
+  friend class FileReporter;
   friend class OboeContext;
   friend class Event;
 
@@ -41,6 +41,7 @@ class Metadata : public node::ObjectWrap {
 
 class OboeContext {
   friend class UdpReporter;
+  friend class FileReporter;
   friend class Metadata;
   friend class Event;
 
@@ -66,12 +67,13 @@ class OboeContext {
 
 class Event : public node::ObjectWrap {
   friend class UdpReporter;
-  // friend class FileReporter;
+  friend class FileReporter;
   friend class OboeContext;
   friend class Metadata;
+  friend class Log;
 
   explicit Event();
-  explicit Event(const oboe_metadata_t*, bool addEdge=true);
+  explicit Event(const oboe_metadata_t*, bool);
   ~Event();
 
   oboe_event_t event;
@@ -90,6 +92,19 @@ class Event : public node::ObjectWrap {
 class UdpReporter : public node::ObjectWrap {
   ~UdpReporter();
   UdpReporter(const char*, const char*);
+
+  oboe_reporter_t reporter;
+  static Persistent<FunctionTemplate> constructor;
+  static NAN_METHOD(New);
+  static NAN_METHOD(sendReport);
+
+  public:
+    static void Init(Handle<Object>);
+};
+
+class FileReporter : public node::ObjectWrap {
+  ~FileReporter();
+  FileReporter(const char*);
 
   oboe_reporter_t reporter;
   static Persistent<FunctionTemplate> constructor;

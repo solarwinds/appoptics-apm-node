@@ -6,6 +6,7 @@
 #include "config.cc"
 #include "event.cc"
 #include "reporters/udp.cc"
+#include "reporters/file.cc"
 
 using v8::Handle;
 using v8::Object;
@@ -23,11 +24,14 @@ void Init(Handle<Object> exports) {
 	exports->Set(NanNew<String>("TRACE_ALWAYS"), NanNew<Uint32>(OBOE_TRACE_ALWAYS));
 	exports->Set(NanNew<String>("TRACE_THROUGH"), NanNew<Uint32>(OBOE_TRACE_THROUGH));
 
+	FileReporter::Init(exports);
 	UdpReporter::Init(exports);
   OboeContext::Init(exports);
   Metadata::Init(exports);
   Event::Init(exports);
   Config::Init(exports);
+
+	oboe_init();
 }
 
 NODE_MODULE(node_oboe, Init)

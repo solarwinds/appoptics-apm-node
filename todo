@@ -1,2 +1,14 @@
 TODO:
-- change Event::addInfo to Event::set and add Event::get? (oboe does not appear to support getting info)
+- Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
+- More http probe tests
+  - Validate behaviour of asynchrony within a request
+  - Simulate continuing from X-Trace-ID header
+  - Validate X-Forwarded-* headers get added to http entry event
+  - Upstream latency headers (x-request-start, x-queue-start, x-queue-time)
+  - Validate `always` trace mode behaviour
+
+Ideas:
+- Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.
+
+Concerns:
+- How to handle cancelables? (ie: setTimeout, setInterval)
