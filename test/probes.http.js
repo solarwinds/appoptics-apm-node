@@ -74,10 +74,10 @@ describe('probes.http', function () {
         msg.should.match(/Label\W*entry/)
       },
 
-      checkers['http-response-end-entry'],
-      checkers['http-response-write-entry'],
-      checkers['http-response-write-exit'],
-      checkers['http-response-end-exit'],
+      // checkers['http-response-end-entry'],
+      // checkers['http-response-write-entry'],
+      // checkers['http-response-write-exit'],
+      // checkers['http-response-end-exit'],
 
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
@@ -112,15 +112,15 @@ describe('probes.http', function () {
         msg.should.match(/Label\W*entry/)
       },
 
-      checkers['http-response-write-entry'],
-      checkers['http-response-write-exit'],
+      // checkers['http-response-write-entry'],
+      // checkers['http-response-write-exit'],
 
       // Note that, if the stream has been writtern to already,
       // calls to end will defer to calling write before ending
-      checkers['http-response-end-entry'],
-      checkers['http-response-write-entry'],
-      checkers['http-response-write-exit'],
-      checkers['http-response-end-exit'],
+      // checkers['http-response-end-entry'],
+      // checkers['http-response-write-entry'],
+      // checkers['http-response-write-exit'],
+      // checkers['http-response-end-exit'],
 
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
