@@ -8,14 +8,14 @@ describe('addon.reporters.udp', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(4567, done)
+    emitter = helper.tracelyzer(done)
   })
   after(function (done) {
     emitter.close(done)
   })
 
   it('should construct', function () {
-    new oboe.UdpReporter('127.0.0.1', 4567)
+    new oboe.UdpReporter('127.0.0.1')
   })
 
   it('should report event', function (done) {

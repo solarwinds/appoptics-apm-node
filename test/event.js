@@ -13,7 +13,7 @@ describe('event', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(1234, done)
+    emitter = helper.tracelyzer(done)
   })
   after(function (done) {
     emitter.close(done)

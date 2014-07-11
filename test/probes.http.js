@@ -1,13 +1,20 @@
+var debug = require('debug')('probes-http')
 var helper = require('./helper')
 var should = require('should')
 var oboe = require('..')
 var addon = oboe.addon
-oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
-var http = require('http')
 var request = require('request')
+var http = require('http')
 
 function noop () {}
+
+function defaulter (fn) {
+  var value
+  return function () {
+    return value || (value = fn())
+  }
+}
 
 describe('probes.http', function () {
   var emitter
@@ -16,7 +23,9 @@ describe('probes.http', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(1234, done)
+    emitter = helper.tracelyzer(done)
+    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
+    oboe.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -49,6 +58,7 @@ describe('probes.http', function () {
   //
   it('should send traces for http routing and response layers', function (done) {
     var server = http.createServer(function (req, res) {
+      debug('request started')
       res.end('done')
     })
 
@@ -56,6 +66,7 @@ describe('probes.http', function () {
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*entry/)
+        debug('entry is valid')
       },
 
       // checkers['http-response-end-entry'],
@@ -66,6 +77,8 @@ describe('probes.http', function () {
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*exit/)
+        debug('exit is valid')
+
         emitter.removeAllListeners('message')
         server.close(done)
       }
@@ -77,6 +90,7 @@ describe('probes.http', function () {
 
     server.listen(function () {
       var port = server.address().port
+      debug('test server listening on port ' + port)
       request('http://localhost:' + port)
     })
   })
@@ -86,6 +100,7 @@ describe('probes.http', function () {
   //
   it('should send traces for each write to response stream', function (done) {
     var server = http.createServer(function (req, res) {
+      debug('request started')
       res.write('wait...')
       res.end('done')
     })
@@ -94,6 +109,7 @@ describe('probes.http', function () {
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*entry/)
+        debug('entry is valid')
       },
 
       // checkers['http-response-write-entry'],
@@ -109,6 +125,8 @@ describe('probes.http', function () {
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*exit/)
+        debug('exit is valid')
+
         emitter.removeAllListeners('message')
         server.close(done)
       }
@@ -120,6 +138,7 @@ describe('probes.http', function () {
 
     server.listen(function () {
       var port = server.address().port
+      debug('test server listening on port ' + port)
       request('http://localhost:' + port)
     })
   })
