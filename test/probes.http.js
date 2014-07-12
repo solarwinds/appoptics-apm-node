@@ -135,4 +135,46 @@ describe('probes.http', function () {
       request('http://localhost:' + port)
     })
   })
+
+  it('should continue tracing when receiving an xtrace id header', function (done) {
+    var server = http.createServer(function (req, res) {
+      debug('request started')
+      res.end('done')
+    })
+
+    var origin = new oboe.Event()
+
+    var checks = [
+      function (msg) {
+        msg.should.match(new RegExp('Layer\\W*http', 'i'))
+        msg.should.match(new RegExp('Edge\\W*' + origin.opId, 'i'))
+        msg.should.match(/Label\W*entry/)
+        debug('entry is valid')
+      }
+    ]
+
+    emitter.on('message', function (msg) {
+      var check = checks.shift()
+      if (check) {
+        check(msg.toString())
+      }
+
+      if ( ! checks.length) {
+        emitter.removeAllListeners('message')
+        server.close(done)
+      }
+    })
+
+    server.listen(function () {
+      var port = server.address().port
+      debug('test server listening on port ' + port)
+      var options = {
+        url: 'http://localhost:' + port,
+        headers: {
+          'X-Trace': origin.toString()
+        }
+      }
+      request(options)
+    })
+  })
 })
