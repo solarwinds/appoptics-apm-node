@@ -3,7 +3,6 @@ var should = require('should')
 var oboe = require('..')
 var addon = oboe.addon
 var Event = oboe.Event
-oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
 describe('event', function () {
   var emitter
@@ -14,6 +13,8 @@ describe('event', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
+    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
+    oboe.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

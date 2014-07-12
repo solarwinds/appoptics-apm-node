@@ -3,7 +3,6 @@ var should = require('should')
 var oboe = require('..')
 var addon = oboe.addon
 var Layer = oboe.Layer
-oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
 
 describe('layer', function () {
   var emitter
@@ -13,6 +12,8 @@ describe('layer', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
+    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
+    oboe.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

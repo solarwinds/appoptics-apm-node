@@ -23,11 +23,7 @@ describe('basics', function () {
     oboe.traceMode.should.equal(oboe.addon.TRACE_THROUGH)
   })
 
-  it('should get sample rate', function () {
-    oboe.sampleRate.should.equal(oboe.addon.MAX_SAMPLE_RATE)
-  })
-
-  it('should set sample rate', function () {
+  it('should set and get sample rate', function () {
     oboe.sampleRate = 100
     oboe.sampleRate.should.equal(100)
   })
