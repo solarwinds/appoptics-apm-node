@@ -177,4 +177,63 @@ describe('probes.http', function () {
       request(options)
     })
   })
+
+  //
+  // Validate the various headers that get passed through to the event
+  //
+  var passthroughHeaders = {
+    'X-Forwarded-For': 'Forwarded-For',
+    'X-Forwarded-Host': 'Forwarded-Host',
+    'X-Forwarded-Port': 'Forwarded-Port',
+    'X-Forwarded-Proto': 'Forwarded-Proto',
+    'X-Request-Start': 'Request-Start',
+    'X-Queue-Start': 'Request-Start',
+    'X-Queue-Time': 'Queue-Time'
+  }
+
+  Object.keys(passthroughHeaders).forEach(function (key) {
+    var val = passthroughHeaders[key]
+
+    var headers = {}
+    headers[key] = 'test'
+
+    it('should map ' + key + ' header to event.' + val, function (done) {
+      var server = http.createServer(function (req, res) {
+        debug('request started')
+        res.end('done')
+      })
+
+      var checks = [
+        function (msg) {
+          msg.should.match(new RegExp('Layer\\W*http', 'i'))
+          msg.should.match(new RegExp(val + '\\W*test', 'i'))
+          msg.should.match(/Label\W*entry/)
+          debug('entry is valid')
+        }
+      ]
+
+      emitter.on('message', function (msg) {
+        var check = checks.shift()
+        if (check) {
+          check(msg.toString())
+        }
+
+        if ( ! checks.length) {
+          emitter.removeAllListeners('message')
+          server.close(done)
+        }
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        debug('test server listening on port ' + port)
+        var options = {
+          url: 'http://localhost:' + port,
+          headers: headers
+        }
+        request(options)
+      })
+    })
+  })
+
 })
