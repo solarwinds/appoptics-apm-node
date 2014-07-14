@@ -7,8 +7,6 @@ var addon = oboe.addon
 var request = require('request')
 var http = require('http')
 
-function noop () {}
-
 describe('probes.http', function () {
   var emitter
 
@@ -23,6 +21,23 @@ describe('probes.http', function () {
   after(function (done) {
     emitter.close(done)
   })
+
+  //
+  // Helper to run checks against a server
+  //
+  function doChecks (checks, done) {
+    emitter.on('message', function (msg) {
+      var check = checks.shift()
+      if (check) {
+        check(msg.toString())
+      }
+
+      if ( ! checks.length) {
+        emitter.removeAllListeners('message')
+        done()
+      }
+    })
+  }
 
   //
   // Generic message checkers for response events
@@ -55,7 +70,7 @@ describe('probes.http', function () {
       res.end('done')
     })
 
-    var checks = [
+    doChecks([
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*entry/)
@@ -71,14 +86,9 @@ describe('probes.http', function () {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*exit/)
         debug('exit is valid')
-
-        emitter.removeAllListeners('message')
-        server.close(done)
       }
-    ]
-
-    emitter.on('message', function (msg) {
-      checks.shift()(msg.toString())
+    ], function () {
+      server.close(done)
     })
 
     server.listen(function () {
@@ -98,7 +108,7 @@ describe('probes.http', function () {
       res.end('done')
     })
 
-    var checks = [
+    doChecks([
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*entry/)
@@ -119,14 +129,9 @@ describe('probes.http', function () {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(/Label\W*exit/)
         debug('exit is valid')
-
-        emitter.removeAllListeners('message')
-        server.close(done)
       }
-    ]
-
-    emitter.on('message', function (msg) {
-      checks.shift()(msg.toString())
+    ], function () {
+      server.close(done)
     })
 
     server.listen(function () {
@@ -136,6 +141,9 @@ describe('probes.http', function () {
     })
   })
 
+  //
+  // Verify X-Trace header results in a continued trace
+  //
   it('should continue tracing when receiving an xtrace id header', function (done) {
     var server = http.createServer(function (req, res) {
       debug('request started')
@@ -144,37 +152,65 @@ describe('probes.http', function () {
 
     var origin = new oboe.Event()
 
-    var checks = [
+    doChecks([
       function (msg) {
         msg.should.match(new RegExp('Layer\\W*http', 'i'))
         msg.should.match(new RegExp('Edge\\W*' + origin.opId, 'i'))
         msg.should.match(/Label\W*entry/)
         debug('entry is valid')
       }
-    ]
-
-    emitter.on('message', function (msg) {
-      var check = checks.shift()
-      if (check) {
-        check(msg.toString())
-      }
-
-      if ( ! checks.length) {
-        emitter.removeAllListeners('message')
-        server.close(done)
-      }
+    ], function () {
+      server.close(done)
     })
 
     server.listen(function () {
       var port = server.address().port
       debug('test server listening on port ' + port)
-      var options = {
+      request({
         url: 'http://localhost:' + port,
         headers: {
           'X-Trace': origin.toString()
         }
+      })
+    })
+  })
+
+  //
+  // Verify always trace mode forwards X-TV-Meta header and sampling data
+  //
+  it('should forward X-TV-Meta header and sampling data in always trace mode', function (done) {
+    var server = http.createServer(function (req, res) {
+      debug('request started')
+      res.end('done')
+    })
+
+    doChecks([
+      function (msg) {
+        msg.should.match(new RegExp('Layer\\W*http', 'i'))
+        msg.should.match(/X-TV-Meta\W*foo/)
+        msg.should.match(/SampleSource\W*/)
+        msg.should.match(/SampleRate\W*/)
+        msg.should.match(/Label\W*entry/)
+        debug('entry is valid')
+      },
+      function (msg) {
+        msg.should.match(new RegExp('Layer\\W*http', 'i'))
+        msg.should.match(/Label\W*exit/)
+        debug('exit is valid')
       }
-      request(options)
+    ], function () {
+      server.close(done)
+    })
+
+    server.listen(function () {
+      var port = server.address().port
+      debug('test server listening on port ' + port)
+      request({
+        url: 'http://localhost:' + port,
+        headers: {
+          'X-TV-Meta': 'foo'
+        }
+      })
     })
   })
 
