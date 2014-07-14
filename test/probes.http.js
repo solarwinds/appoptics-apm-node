@@ -215,6 +215,39 @@ describe('probes.http', function () {
   })
 
   //
+  // Verify behaviour of asyncrony within a request
+  //
+  it('should trace correctly within asyncrony', function (done) {
+    var server = http.createServer(function (req, res) {
+      debug('request started')
+      setTimeout(function () {
+        res.end('done')
+      }, 10)
+    })
+
+    doChecks([
+      function (msg) {
+        msg.should.match(new RegExp('Layer\\W*http', 'i'))
+        msg.should.match(/Label\W*entry/)
+        debug('entry is valid')
+      },
+      function (msg) {
+        msg.should.match(new RegExp('Layer\\W*http', 'i'))
+        msg.should.match(/Label\W*exit/)
+        debug('exit is valid')
+      }
+    ], function () {
+      server.close(done)
+    })
+
+    server.listen(function () {
+      var port = server.address().port
+      debug('test server listening on port ' + port)
+      request('http://localhost:' + port)
+    })
+  })
+
+  //
   // Validate the various headers that get passed through to the event
   //
   var passthroughHeaders = {

@@ -1,8 +1,5 @@
 TODO:
 - Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
-- More http probe tests
-  - Validate behaviour of asynchrony within a request
-  - Validate `always` trace mode behaviour
 
 Ideas:
 - Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.
