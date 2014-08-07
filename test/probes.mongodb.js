@@ -439,8 +439,7 @@ describe('probes.mongodb', function () {
 			}
 
 			httpTest(function (done) {
-				// db.collection('test').group(keys, query, initial, reduce, done)
-				db.collection('test').group(['a'], query, initial, reduce, done)
+				db.collection('test').group(keys, query, initial, reduce, done)
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
@@ -448,8 +447,40 @@ describe('probes.mongodb', function () {
 					msg.should.match(new RegExp('Group_Initial\\W*' + JSON.stringify(initial)))
 					msg.should.match(new RegExp('Group_Condition\\W*' + JSON.stringify(query)))
 					msg.should.match(new RegExp('Group_Reduce\\W*' + stringFn(reduce)))
-					// msg.should.match(new RegExp('Group_Key\\W*' + stringFn(keys)))
+					msg.should.match(new RegExp('Group_Key\\W*' + stringFn(keys)))
 					msg.should.match(/QueryOp\W*group/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
+		it('should map_reduce', function (done) {
+      var map = function () { emit(this.foo, 1); };
+      var reduce = function (k, vals) { return 1; };
+
+			// Escape regex characters in function
+			function stringFn (fn) {
+				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+			}
+
+			httpTest(function (done) {
+				db.collection('test').mapReduce(map, reduce, {
+					out: {
+						replace: 'tempCollection',
+						readPreference : 'secondary'
+					}
+				}, done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(new RegExp('Map_Function\\W*' + stringFn(map)))
+					msg.should.match(new RegExp('Reduce_Function\\W*' + stringFn(reduce)))
+					msg.should.match(/QueryOp\W*map_reduce/)
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
