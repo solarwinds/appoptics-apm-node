@@ -35,6 +35,7 @@ describe('probes.mongodb', function () {
 	// Helper to run checks against a server
 	//
 	function doChecks (checks, done) {
+		emitter.removeAllListeners('message')
 		emitter.on('message', function (msg) {
 			var check = checks.shift()
 			if (check) {
@@ -42,7 +43,6 @@ describe('probes.mongodb', function () {
 			}
 
 			if ( ! checks.length) {
-				emitter.removeAllListeners('message')
 				done()
 			}
 		})
@@ -60,8 +60,11 @@ describe('probes.mongodb', function () {
 			debug('exit is valid')
 		},
 		'common-mongodb': function (msg) {
-			msg.should.match(/Flavor\W*mongodb/)
 			msg.should.match(/Collection\W*test/)
+			check['base-mongodb'](msg)
+		},
+		'base-mongodb': function (msg) {
+			msg.should.match(/Flavor\W*mongodb/)
 			msg.should.match(/Database\W*test/)
 			msg.should.match(/RemoteHost\W*/)
 		}
@@ -72,7 +75,7 @@ describe('probes.mongodb', function () {
 			debug('request started')
 			test(function (err, data) {
 				if (err) return done(err)
-				res.end(JSON.stringify(data))
+				res.end('done')
 			})
 		})
 
@@ -90,9 +93,97 @@ describe('probes.mongodb', function () {
 	}
 
 	//
-	// Basic queries
+	// Tests
 	//
+	describe('databases', function () {
+		it('should drop', function (done) {
+			httpTest(function (done) {
+				db.dropDatabase('test', done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/QueryOp\W*drop/)
+					check['base-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+	})
+
+	describe('collections', function () {
+
+		beforeEach(function (done) {
+			db.dropCollection('test', function () {
+				db.dropCollection('test2', function () {
+					done()
+				})
+			})
+		})
+
+		it('should create_collection', function (done) {
+			httpTest(function (done) {
+				db.createCollection('test', done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/QueryOp\W*create_collection/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
+		it('should rename', function (done) {
+			db.createCollection('test', function () {
+				httpTest(function (done) {
+					db.renameCollection('test', 'test2', done)
+				}, [
+					function (msg) {
+						msg.should.match(/Layer\W*mongodb/)
+						msg.should.match(/Label\W*entry/)
+						msg.should.match(/New_Collection_Name\W*test2/)
+						msg.should.match(/QueryOp\W*rename/)
+						check['common-mongodb'](msg)
+					},
+					function (msg) {
+						msg.should.match(/Layer\W*mongodb/)
+						msg.should.match(/Label\W*exit/)
+					}
+				], done)
+			})
+		})
+
+		it('should drop_collection', function (done) {
+			db.createCollection('test', function () {
+				httpTest(function (done) {
+					db.dropCollection('test', done)
+				}, [
+					function (msg) {
+						msg.should.match(/Layer\W*mongodb/)
+						msg.should.match(/Label\W*entry/)
+						msg.should.match(/QueryOp\W*drop_collection/)
+						check['common-mongodb'](msg)
+					},
+					function (msg) {
+						msg.should.match(/Layer\W*mongodb/)
+						msg.should.match(/Label\W*exit/)
+					}
+				], done)
+			})
+		})
+
+	})
+
 	describe('basic queries', function () {
+
 		it('should insert', function (done) {
 			httpTest(function (done) {
 				db.collection('test').insert({ foo: 'bar' }, done)
@@ -111,9 +202,27 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
+		it('should find_and_modify', function (done) {
+			httpTest(function (done) {
+				db.collection('test').findAndModify({ foo: 'bar' }, [], { baz: 'buz' }, done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/Query\W*{"foo":"bar"/)
+					msg.should.match(/QueryOp\W*find_and_modify/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
 		it('should update', function (done) {
 			httpTest(function (done) {
-				db.collection('test').update({ foo: 'bar' }, { baz: 'buz' }, done)
+				db.collection('test').update({ foo: 'bar' }, { bax: 'bux' }, done)
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
@@ -129,7 +238,7 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
-		it('should findOne', function (done) {
+		it('should find', function (done) {
 			httpTest(function (done) {
 				db.collection('test').findOne({ foo: 'bar', baz: 'buz' }, done)
 			}, [
@@ -138,6 +247,24 @@ describe('probes.mongodb', function () {
 					msg.should.match(/Label\W*entry/)
 					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
 					msg.should.match(/QueryOp\W*find/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
+		it('should distinct', function (done) {
+			httpTest(function (done) {
+				db.collection('test').distinct('foo', done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/Key\W*foo/)
+					msg.should.match(/QueryOp\W*distinct/)
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
@@ -182,10 +309,12 @@ describe('probes.mongodb', function () {
 				}
 			], done)
 		})
+
 	})
 
 	describe('indexes', function () {
-		it('should create an index', function (done) {
+
+		it('should create_index', function (done) {
 			httpTest(function (done) {
 				db.collection('test').createIndex('foo', done)
 			}, [
@@ -204,7 +333,7 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
-		it('should drop an index', function (done) {
+		it('should drop_index', function (done) {
 			httpTest(function (done) {
 				db.collection('test').dropIndex('foo_1', done)
 			}, [
@@ -223,7 +352,7 @@ describe('probes.mongodb', function () {
 		})
 
 		// TODO: Make this pass
-		it.skip('should ensure an index', function (done) {
+		it.skip('should ensure_index', function (done) {
 			httpTest(function (done) {
 				db.collection('test').ensureIndex('foo', done)
 			}, [
@@ -242,7 +371,7 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
-		it('should fetch index information', function (done) {
+		it('should index_information', function (done) {
 			httpTest(function (done) {
 				db.collection('test').indexInformation(done)
 			}, [
@@ -275,6 +404,60 @@ describe('probes.mongodb', function () {
 				}
 			], done)
 		})
+
+		it('should drop_indexes', function (done) {
+			httpTest(function (done) {
+				db.collection('test').dropAllIndexes(done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/Index\W*\*/)
+					msg.should.match(/QueryOp\W*drop_indexes/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
 	})
 
+	describe('aggregation', function () {
+
+		it('should group', function (done) {
+			var keys = function (doc) { return { a: doc.a }; };
+			var query = { foo: 'bar' }
+			var initial = { count: 0 }
+			var reduce = function (obj, prev) { prev.count++; };
+
+			// Escape regex characters in function
+			function stringFn (fn) {
+				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+			}
+
+			httpTest(function (done) {
+				// db.collection('test').group(keys, query, initial, reduce, done)
+				db.collection('test').group(['a'], query, initial, reduce, done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(new RegExp('Group_Initial\\W*' + JSON.stringify(initial)))
+					msg.should.match(new RegExp('Group_Condition\\W*' + JSON.stringify(query)))
+					msg.should.match(new RegExp('Group_Reduce\\W*' + stringFn(reduce)))
+					// msg.should.match(new RegExp('Group_Key\\W*' + stringFn(keys)))
+					msg.should.match(/QueryOp\W*group/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
+	})
 })
