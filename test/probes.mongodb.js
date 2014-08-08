@@ -141,6 +141,23 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
+		it('should options', function (done) {
+			httpTest(function (done) {
+				db.collection('test').options(done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/QueryOp\W*options/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
 		it('should rename', function (done) {
 			db.createCollection('test', function () {
 				httpTest(function (done) {
@@ -459,8 +476,8 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should map_reduce', function (done) {
-      var map = function () { emit(this.foo, 1); };
-      var reduce = function (k, vals) { return 1; };
+			var map = function () { emit(this.foo, 1); };
+			var reduce = function (k, vals) { return 1; };
 
 			// Escape regex characters in function
 			function stringFn (fn) {
@@ -481,6 +498,37 @@ describe('probes.mongodb', function () {
 					msg.should.match(new RegExp('Map_Function\\W*' + stringFn(map)))
 					msg.should.match(new RegExp('Reduce_Function\\W*' + stringFn(reduce)))
 					msg.should.match(/QueryOp\W*map_reduce/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+
+		it('should inline_map_reduce', function (done) {
+			var map = function () { emit(this.foo, 1); };
+			var reduce = function (k, vals) { return 1; };
+
+			// Escape regex characters in function
+			function stringFn (fn) {
+				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+			}
+
+			httpTest(function (done) {
+				db.collection('test').mapReduce(map, reduce, {
+					out: {
+						inline: true
+					}
+				}, done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(new RegExp('Map_Function\\W*' + stringFn(map)))
+					msg.should.match(new RegExp('Reduce_Function\\W*' + stringFn(reduce)))
+					msg.should.match(/QueryOp\W*inline_map_reduce/)
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
