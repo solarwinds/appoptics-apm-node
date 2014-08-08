@@ -272,7 +272,7 @@ describe('layer', function () {
       function (msg) {
         msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
+        msg.should.match(new RegExp('Edge\\W*' + outer.events.exit.opId))
         msg.should.match(/Layer\W*inner/)
         msg.should.match(/Label\W*entry/)
 
@@ -290,9 +290,6 @@ describe('layer', function () {
       },
     ]
 
-    emitter.on('message', function (msg) {
-      console.log(msg.toString())
-    })
     doChecks(checks, done)
 
     outer = new Layer('outer', null, outerData)
