@@ -201,20 +201,29 @@ describe('probes.mongodb', function () {
 
 	describe('basic queries', function () {
 
+		var query_check = {
+			'insert-entry': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*entry/)
+				msg.should.match(/Query\W*{"foo":"bar"/)
+				msg.should.match(/QueryOp\W*insert/)
+				check['common-mongodb'](msg)
+			},
+			'insert-exit': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			}
+		}
+
 		it('should insert', function (done) {
 			httpTest(function (done) {
 				db.collection('test').insert({ foo: 'bar' }, done)
 			}, [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar"/)
-					msg.should.match(/QueryOp\W*insert/)
-					check['common-mongodb'](msg)
+					query_check['insert-entry'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					query_check['insert-exit'](msg)
 				}
 			], done)
 		})
@@ -327,25 +336,70 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
+		it('should save', function (done) {
+			httpTest(function (done) {
+				db.collection('test').save({ foo: 'bar', baz: 'buz' }, done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
+					msg.should.match(/QueryOp\W*save/)
+					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					query_check['insert-entry'](msg)
+				},
+				function (msg) {
+					query_check['insert-exit'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], function () {
+				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
+			})
+		})
+
 	})
 
 	describe('indexes', function () {
+
+		var index_check = {
+			'create-entry': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*entry/)
+				msg.should.match(/Index\W*foo_1/)
+				msg.should.match(/Query\W*{"foo":1}/)
+				msg.should.match(/QueryOp\W*create_index/)
+				check['common-mongodb'](msg)
+			},
+			'create-exit': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			},
+			'info-entry': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*entry/)
+				msg.should.match(/QueryOp\W*index_information/)
+				check['common-mongodb'](msg)
+			},
+			'info-exit': function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			}
+		}
 
 		it('should create_index', function (done) {
 			httpTest(function (done) {
 				db.collection('test').createIndex('foo', done)
 			}, [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Index\W*foo_1/)
-					msg.should.match(/Query\W*{"foo":1}/)
-					msg.should.match(/QueryOp\W*create_index/)
-					check['common-mongodb'](msg)
+					index_check['create-entry'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					index_check['create-exit'](msg)
 				}
 			], done)
 		})
@@ -369,17 +423,28 @@ describe('probes.mongodb', function () {
 		})
 
 		// TODO: Make this pass
-		it.skip('should ensure_index', function (done) {
+		it('should ensure_index', function (done) {
 			httpTest(function (done) {
-				db.collection('test').ensureIndex('foo', done)
+				db.collection('test').ensureIndex({ foo: 1 }, done)
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*entry/)
 					msg.should.match(/Index\W*foo_1/)
-					msg.should.match(/Query\W*{"foo":1}/)
 					msg.should.match(/QueryOp\W*ensure_index/)
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					index_check['info-entry'](msg)
+				},
+				function (msg) {
+					index_check['info-exit'](msg)
+				},
+				function (msg) {
+					index_check['create-entry'](msg)
+				},
+				function (msg) {
+					index_check['create-exit'](msg)
 				},
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
@@ -393,14 +458,10 @@ describe('probes.mongodb', function () {
 				db.collection('test').indexInformation(done)
 			}, [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/QueryOp\W*index_information/)
-					check['common-mongodb'](msg)
+					index_check['info-entry'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					index_check['info-exit'](msg)
 				}
 			], done)
 		})
