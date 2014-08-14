@@ -370,8 +370,7 @@ describe('probes.mongodb', function () {
 			'create-entry': function (msg) {
 				msg.should.match(/Layer\W*mongodb/)
 				msg.should.match(/Label\W*entry/)
-				msg.should.match(/Index\W*foo_1/)
-				msg.should.match(/Query\W*{"foo":1}/)
+				msg.should.match(/Index\W*foo/)
 				msg.should.match(/QueryOp\W*create_index/)
 				check['common-mongodb'](msg)
 			},
