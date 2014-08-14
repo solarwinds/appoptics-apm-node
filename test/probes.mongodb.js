@@ -134,6 +134,8 @@ describe('probes.mongodb', function () {
 					msg.should.match(/QueryOp\W*create_collection/)
 					check['common-mongodb'](msg)
 				},
+				function () {},
+				function () {},
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*exit/)
@@ -151,6 +153,8 @@ describe('probes.mongodb', function () {
 					msg.should.match(/QueryOp\W*options/)
 					check['common-mongodb'](msg)
 				},
+				function () {},
+				function () {},
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*exit/)
@@ -275,6 +279,8 @@ describe('probes.mongodb', function () {
 					msg.should.match(/QueryOp\W*find/)
 					check['common-mongodb'](msg)
 				},
+				function () {},
+				function () {},
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*exit/)
@@ -436,6 +442,8 @@ describe('probes.mongodb', function () {
 				function (msg) {
 					index_check['info-entry'](msg)
 				},
+				function () {},
+				function () {},
 				function (msg) {
 					index_check['info-exit'](msg)
 				},
@@ -459,6 +467,8 @@ describe('probes.mongodb', function () {
 				function (msg) {
 					index_check['info-entry'](msg)
 				},
+				function () {},
+				function () {},
 				function (msg) {
 					index_check['info-exit'](msg)
 				}
@@ -599,4 +609,26 @@ describe('probes.mongodb', function () {
 		})
 
 	})
+
+	describe('cursors', function () {
+		it('should find', function (done) {
+			httpTest(function (done) {
+				db.collection('test').find({ foo: 'bar' }).nextObject(done)
+			}, [
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*entry/)
+					msg.should.match(/CursorId\W*/)
+					msg.should.match(/QueryOp\W*find/)
+					msg.should.match(/Query\W*{"foo":"bar"}/)
+					check['base-mongodb'](msg)
+				},
+				function (msg) {
+					msg.should.match(/Layer\W*mongodb/)
+					msg.should.match(/Label\W*exit/)
+				}
+			], done)
+		})
+	})
+
 })
