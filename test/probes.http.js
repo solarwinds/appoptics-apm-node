@@ -39,6 +39,8 @@ describe('probes.http', function () {
     })
   }
 
+  describe('http-server', function () {
+
   //
   // Generic message checkers for response events
   //
@@ -305,4 +307,62 @@ describe('probes.http', function () {
     })
   })
 
+  })
+
+  describe('http-client', function () {
+  	var check = {
+  		'http-entry': function (msg) {
+  			msg.should.match(/Layer\W*http/)
+  			msg.should.match(/Label\W*entry/)
+  			debug('entry is valid')
+  		},
+  		'http-exit': function (msg) {
+  			msg.should.match(/Layer\W*http/)
+  			msg.should.match(/Label\W*exit/)
+  			debug('exit is valid')
+  		}
+  	}
+
+  	function httpTest (test, validations, done) {
+  		var server = http.createServer(function (req, res) {
+  			debug('request started')
+  			test(function (err, data) {
+  				if (err) return done(err)
+  				res.end('done')
+  			})
+  		})
+
+  		validations.unshift(check['http-entry'])
+  		validations.push(check['http-exit'])
+  		doChecks(validations, function () {
+  			server.close(done)
+  		})
+
+  		server.listen(function () {
+  			var port = server.address().port
+  			debug('test server listening on port ' + port)
+  			request('http://localhost:' + port)
+  		})
+  	}
+
+    it('should trace http-client', function (done) {
+      httpTest(function (done) {
+        http.get('http://google.com', done.bind(null, null)).on('error', done)
+      }, [
+        function (msg) {
+          msg.should.match(/Layer\W*http-client/)
+          msg.should.match(/ServiceArg\W*\//)
+          msg.should.match(/RemoteHost\W*google.com/)
+          msg.should.match(/RemoteProtocol\W*http/)
+          msg.should.match(/IsService\W*yes/)
+          msg.should.match(/Label\W*entry/)
+        },
+        function (msg) {
+          msg.should.match(/Layer\W*http-client/)
+          msg.should.match(/HTTPStatus\W*\d*/)
+          msg.should.match(/Label\W*exit/)
+        }
+      ], done)
+    })
+  })
 })
