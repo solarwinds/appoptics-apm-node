@@ -352,16 +352,19 @@ describe('probes.http', function () {
 
       server.listen(function () {
         var port = server.address().port
-        var url = 'http://localhost:' + port
+        var url = 'http://localhost:' + port + '/?foo=bar'
+
+        // Escape regex characters in function
+        function stringFn (fn) {
+          return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+        }
 
         httpTest(function (done) {
           http.get(url, done.bind(null, null)).on('error', done)
         }, [
           function (msg) {
             msg.should.match(/Layer\W*http-client/)
-            msg.should.match(/ServiceArg\W*\//)
-            msg.should.match(/RemoteHost\W*localhost:\d*/)
-            msg.should.match(/RemoteProtocol\W*http/)
+            msg.should.match(new RegExp('RemoteURL\\W*' + stringFn(url)))
             msg.should.match(/IsService\W*yes/)
             msg.should.match(/Label\W*entry/)
           },
