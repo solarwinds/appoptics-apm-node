@@ -268,26 +268,6 @@ describe('probes.mongodb', function () {
 			], done)
 		})
 
-		it('should find', function (done) {
-			httpTest(function (done) {
-				db.collection('test').findOne({ foo: 'bar', baz: 'buz' }, done)
-			}, [
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
-					msg.should.match(/QueryOp\W*find/)
-					check['common-mongodb'](msg)
-				},
-				function () {},
-				function () {},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
-				}
-			], done)
-		})
-
 		it('should distinct', function (done) {
 			httpTest(function (done) {
 				db.collection('test').distinct('foo', done)
