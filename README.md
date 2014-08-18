@@ -63,8 +63,8 @@ npm run docs
 ## Support
 
 If you find a bug or would like to request an enhancement, feel free to file
-an issue. For all other support requests, see our support portal or on IRC @
-#appneta on Freenode.
+an issue. For all other support requests, see our support portal or on
+IRC @ #appneta on Freenode.
 
 ## Contributing
 
