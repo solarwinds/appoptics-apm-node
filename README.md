@@ -69,7 +69,7 @@ IRC @ #appneta on Freenode.
 ## Contributing
 
 You are obviously a person of great sense and intelligence. We happily
-appreciate all contributions to the oboe gem whether it is documentation,
+appreciate all contributions to the oboe module whether it is documentation,
 a bug fix, new instrumentation for a library or framework or anything else
 we haven't thought of.
 
