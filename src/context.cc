@@ -107,7 +107,7 @@ NAN_METHOD(OboeContext::sampleRequest) {
     String::Utf8Value in_xtrace_v8(args[1]);
     in_xtrace = *in_xtrace_v8;
   } else {
-    in_xtrace = *"";
+    in_xtrace = (char*)"";
   }
 
   // If the third argument is present, it must be a string
@@ -118,7 +118,7 @@ NAN_METHOD(OboeContext::sampleRequest) {
     String::Utf8Value in_tv_meta_v8(args[2]);
     in_tv_meta = *in_tv_meta_v8;
   } else {
-    in_tv_meta = *"";
+    in_tv_meta = (char*)"";
   }
 
   int sample_rate = 0;
