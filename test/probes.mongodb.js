@@ -98,7 +98,7 @@ describe('probes.mongodb', function () {
 	describe('databases', function () {
 		it('should drop', function (done) {
 			httpTest(function (done) {
-				db.dropDatabase('test', done)
+				db.dropDatabase(done)
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
