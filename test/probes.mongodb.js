@@ -293,21 +293,30 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should count', function (done) {
-			httpTest(function (done) {
-				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			var steps = [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*entry/)
 					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
 					msg.should.match(/QueryOp\W*count/)
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
 				}
-			], done)
+			]
+
+			// The db.command used in collection.count called cursor.nextObject
+			if (semver.satisfies(pkg.version, '>=1.3.10 <1.3.17')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			})
+
+			httpTest(function (done) {
+				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
+			}, steps, done)
 		})
 
 		it('should remove', function (done) {
