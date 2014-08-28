@@ -50,12 +50,12 @@ describe('probes.mongodb', function () {
 
 	var check = {
 		'http-entry': function (msg) {
-			msg.should.match(/Layer\W*http/)
+			msg.should.match(/Layer\W*nodejs/)
 			msg.should.match(/Label\W*entry/)
 			debug('entry is valid')
 		},
 		'http-exit': function (msg) {
-			msg.should.match(/Layer\W*http/)
+			msg.should.match(/Layer\W*nodejs/)
 			msg.should.match(/Label\W*exit/)
 			debug('exit is valid')
 		},
