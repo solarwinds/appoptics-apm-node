@@ -4,9 +4,15 @@ var should = require('should')
 var oboe = require('..')
 var addon = oboe.addon
 
+var semver = require('semver')
 var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
+
+var requirePatch = require('../lib/require-patch')
+requirePatch.disable()
+var pkg = require('mongodb/package.json')
+requirePatch.enable()
 
 describe('probes.mongodb', function () {
 	var emitter
@@ -98,7 +104,7 @@ describe('probes.mongodb', function () {
 	describe('databases', function () {
 		it('should drop', function (done) {
 			httpTest(function (done) {
-				db.dropDatabase('test', done)
+				db.dropDatabase(done)
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
@@ -287,21 +293,30 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should count', function (done) {
-			httpTest(function (done) {
-				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			var steps = [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*entry/)
 					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
 					msg.should.match(/QueryOp\W*count/)
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
 				}
-			], done)
+			]
+
+			// The db.command used in collection.count called cursor.nextObject
+			if (semver.satisfies(pkg.version, '>=1.3.10 <1.3.17')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			})
+
+			httpTest(function (done) {
+				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
+			}, steps, done)
 		})
 
 		it('should remove', function (done) {
@@ -409,13 +424,11 @@ describe('probes.mongodb', function () {
 
 		// TODO: Make this pass
 		it('should ensure_index', function (done) {
-			httpTest(function (done) {
-				db.collection('test').ensureIndex({ foo: 1 }, done)
-			}, [
+			var steps = [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Index\W*foo_1/)
+					msg.should.match(/Index\W*{"foo":1}/)
 					msg.should.match(/QueryOp\W*ensure_index/)
 					check['common-mongodb'](msg)
 				},
@@ -426,18 +439,26 @@ describe('probes.mongodb', function () {
 				function () {},
 				function (msg) {
 					index_check['info-exit'](msg)
-				},
-				function (msg) {
-					index_check['create-entry'](msg)
-				},
-				function (msg) {
-					index_check['create-exit'](msg)
-				},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
 				}
-			], done)
+			]
+
+			if (semver.satisfies(pkg.version, '1.4.x')) {
+				steps.push(function (msg) {
+					index_check['create-entry'](msg)
+				})
+				steps.push(function (msg) {
+					index_check['create-exit'](msg)
+				})
+			}
+
+			steps.push(function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			})
+
+			httpTest(function (done) {
+				db.collection('test').ensureIndex({ foo: 1 }, done)
+			}, steps, done)
 		})
 
 		it('should index_information', function (done) {
