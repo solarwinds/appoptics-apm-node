@@ -53,10 +53,11 @@ describe('addon.context', function () {
   })
 
   it('should check if a request should be sampled', function () {
+    oboe.Context.setTracingMode(oboe.TRACE_ALWAYS)
     oboe.Context.setDefaultSampleRate(oboe.MAX_SAMPLE_RATE)
     var check = oboe.Context.sampleRequest('a', 'b', 'c')
     check.should.be.an.instanceof(Array)
-    check.should.have.property(0, 0)
+    check.should.have.property(0, 1)
     check.should.have.property(1, 1)
     check.should.have.property(2, oboe.MAX_SAMPLE_RATE)
   })
@@ -66,7 +67,6 @@ describe('addon.context', function () {
     var string = oboe.Context.toString()
     string.should.equal('1B00000000000000000000000000000000000000000000000000000000')
   })
-
   it('should set context to metadata instance', function () {
     var event = oboe.Context.createEvent()
     var metadata = event.getMetadata()
@@ -75,7 +75,6 @@ describe('addon.context', function () {
     v.should.not.equal('')
     v.should.equal(metadata.toString())
   })
-
   it('should set context from metadata string', function () {
     var event = oboe.Context.createEvent()
     var string = event.getMetadata().toString()
@@ -84,14 +83,12 @@ describe('addon.context', function () {
     v.should.not.equal('')
     v.should.equal(string)
   })
-
   it('should copy context to metadata instance', function () {
     var metadata = oboe.Context.copy()
     var v = oboe.Context.toString()
     v.should.not.equal('')
     v.should.equal(metadata.toString())
   })
-
   it('should clear the context', function () {
     var string = '1B00000000000000000000000000000000000000000000000000000000'
     oboe.Context.toString().should.not.equal(string)
@@ -103,7 +100,6 @@ describe('addon.context', function () {
     var event = oboe.Context.createEvent()
     event.should.be.an.instanceof(oboe.Event)
   })
-
   it('should start a trace from the current context', function () {
     var event = oboe.Context.startTrace()
     event.should.be.an.instanceof(oboe.Event)
@@ -113,7 +109,6 @@ describe('addon.context', function () {
     oboe.Context.clear()
     oboe.Context.isValid().should.equal(false)
   })
-
   it('should be valid when not empty', function () {
     var event = oboe.Context.startTrace()
     oboe.Context.isValid().should.equal(true)
