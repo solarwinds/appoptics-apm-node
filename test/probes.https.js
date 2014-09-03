@@ -1,8 +1,8 @@
 var debug = require('debug')('probes-https')
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
+var tv = require('..')
+var addon = tv.addon
 
 var request = require('request')
 var https = require('https')
@@ -25,8 +25,8 @@ describe('probes.https', function () {
     originalFlag = process.env.NODE_TLS_REJECT_UNAUTHORIZED
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
@@ -123,7 +123,7 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      var origin = new oboe.Event()
+      var origin = new tv.Event()
 
       doChecks([
         function (msg) {
