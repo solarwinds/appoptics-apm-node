@@ -1,4 +1,5 @@
 #!/usr/bin/env node
 var path = require('path')
-global.oboe = require('node-oboe')
-require(path.resolve(process.cwd(), process.argv[2]))
+global.tv = require('traceview')
+var entry = process.argv.splice(1, 1)
+require(path.resolve(process.cwd(), entry))

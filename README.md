@@ -1,6 +1,6 @@
-# nodoboe
+# TraceView
 
-The oboe module provides AppNeta [TraceView](http://www.appneta.com/application-performance-management/) instrumentation for Node.JS.
+The `traceview` module provides AppNeta [TraceView](http://www.appneta.com/application-performance-management/) instrumentation for Node.JS.
 
 It has the ability to report performance metrics on an array of libraries,
 databases and frameworks.
@@ -16,16 +16,16 @@ view metrics.  Get yours, [it's free](http://www.appneta.com/products/traceview-
 
 ## Installation
 
-The oboe module is [available on npm](http://npmjs.org/package/oboe) and can be installed with:
+The `traceview` module is [available on npm](http://npmjs.org/package/traceview) and can be installed with:
 
 ```
-npm install oboe
+npm install traceview
 ```
 
 Then, at the top of your main js file for your app, add this:
 
 ```
-require('oboe')
+require('traceview')
 ```
 
 ## Testing
@@ -81,7 +81,7 @@ make changes after the fact.
 ## Developer Resources
 
 We at AppNeta have made a large effort to expose as much technical information
-as possible to assist developers wishing to contribute to the oboe module.
+as possible to assist developers wishing to contribute to the traceview module.
 Below are the three major sources for information and help for developers:
 
 * The [TraceView blog](http://www.appneta.com/blog) has a constant stream of

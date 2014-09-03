@@ -1,8 +1,8 @@
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
-var Layer = oboe.Layer
+var tv = require('..')
+var addon = tv.addon
+var Layer = tv.Layer
 
 describe('layer', function () {
   var emitter
@@ -12,8 +12,8 @@ describe('layer', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

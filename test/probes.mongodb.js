@@ -1,8 +1,8 @@
 var debug = require('debug')('probes-mongodb')
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
+var tv = require('..')
+var addon = tv.addon
 
 var semver = require('semver')
 var request = require('request')
@@ -23,8 +23,8 @@ describe('probes.mongodb', function () {
 	//
 	before(function (done) {
 		emitter = helper.tracelyzer(done)
-		oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-		oboe.traceMode = 'always'
+		tv.sampleRate = addon.MAX_SAMPLE_RATE
+		tv.traceMode = 'always'
 	})
 	before(function (done) {
 		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
@@ -406,7 +406,10 @@ describe('probes.mongodb', function () {
 
 		it('should drop_index', function (done) {
 			httpTest(function (done) {
-				db.collection('test').dropIndex('foo_1', done)
+				db.collection('test').dropIndex('foo_1', function (err, res) {
+					if (err) return done(err)
+					done(res.ok ? null : new Error('did not drop index'))
+				})
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
