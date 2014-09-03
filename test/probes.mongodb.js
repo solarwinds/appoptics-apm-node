@@ -406,7 +406,10 @@ describe('probes.mongodb', function () {
 
 		it('should drop_index', function (done) {
 			httpTest(function (done) {
-				db.collection('test').dropIndex('foo_1', done)
+				db.collection('test').dropIndex('foo_1', function (err, res) {
+					if (err) return done(err)
+					done(res.ok ? null : new Error('did not drop index'))
+				})
 			}, [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
