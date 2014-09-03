@@ -2,8 +2,8 @@ var debug = require('debug')('mock-tracelyzer')
 var log = require('debug')('mock-tracelyzer-message')
 var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
-var oboe = require('..')
-var addon = oboe.addon
+var tv = require('..')
+var addon = tv.addon
 
 exports.tracelyzer = function (done) {
   // Pick a random port
@@ -36,10 +36,10 @@ exports.tracelyzer = function (done) {
   server.bind(port)
 
   // Create and use reporter pointing to mock tracelyzer
-  oboe.reporter = new addon.UdpReporter('127.0.0.1', port)
+  tv.reporter = new addon.UdpReporter('127.0.0.1', port)
 
   // Expose some things through the emitter
-  emitter.reporter = oboe.reporter
+  emitter.reporter = tv.reporter
   emitter.server = server
   emitter.port = port
 

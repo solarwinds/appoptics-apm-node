@@ -1,8 +1,8 @@
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
-var Event = oboe.Event
+var tv = require('..')
+var addon = tv.addon
+var Event = tv.Event
 
 describe('event', function () {
   var emitter
@@ -13,8 +13,8 @@ describe('event', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -47,7 +47,7 @@ describe('event', function () {
     })
 
     // NOTE: events must be sent within a request store context
-    oboe.requestStore.run(function () {
+    tv.requestStore.run(function () {
       event2.send()
     })
   })
