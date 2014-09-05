@@ -151,4 +151,25 @@ describe('probes.redis', function () {
     }, steps, done)
   })
 
+  //
+  // Test a simple res.end() call in an http server
+  //
+  it('should not interfere with pub/sub', function (done) {
+    httpTest(function (done) {
+      var producer = redis.createClient()
+
+      client.on('subscribe', function () {
+        producer.publish('foo', 'bar')
+      })
+
+      client.on('message', function (channel, message) {
+        channel.should.equal('foo')
+        message.should.equal('bar')
+        done()
+      })
+
+      client.subscribe('foo')
+    }, [], done)
+  })
+
 })
