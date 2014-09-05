@@ -80,22 +80,75 @@ describe('probes.redis', function () {
   //
   // Test a simple res.end() call in an http server
   //
-  it('should work', function (done) {
-		httpTest(function (done) {
+  it('should support single commands', function (done) {
+    httpTest(function (done) {
       client.set('foo', 'bar', done)
-		}, [
-			function (msg) {
+    }, [
+      function (msg) {
         msg.should.match(/Layer\W*redis/)
-				msg.should.match(/Label\W*entry/)
+        msg.should.match(/Label\W*entry/)
         msg.should.match(/KVOp\W*set/)
         msg.should.match(/KVKey\W*foo/)
-			},
-			function (msg) {
-				msg.should.match(/Layer\W*redis/)
-				msg.should.match(/Label\W*exit/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*exit/)
         msg.should.match(/KVHit\W*/)
-			}
-		], done)
+      }
+    ], done)
+  })
+
+  //
+  // Test a simple res.end() call in an http server
+  //
+  it('should support multi', function (done) {
+    var steps = [
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*entry/)
+        msg.should.match(/KVOp\W*MULTI/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*entry/)
+        msg.should.match(/KVOp\W*set/)
+        msg.should.match(/KVKey\W*foo/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*entry/)
+        msg.should.match(/KVOp\W*get/)
+        msg.should.match(/KVKey\W*foo/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*entry/)
+        msg.should.match(/KVOp\W*EXEC/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*exit/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*exit/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*exit/)
+      },
+      function (msg) {
+        msg.should.match(/Layer\W*redis/)
+        msg.should.match(/Label\W*exit/)
+      }
+    ]
+
+    httpTest(function (done) {
+      client.multi()
+        .set('foo', 'bar')
+        .get('foo')
+        .exec(done)
+    }, steps, done)
   })
 
 })
