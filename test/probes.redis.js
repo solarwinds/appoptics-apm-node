@@ -106,7 +106,7 @@ describe('probes.redis', function () {
       function (msg) {
         msg.should.match(/Layer\W*redis/)
         msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*MULTI/)
+        msg.should.match(/KVOp\W*multi/)
       },
       function (msg) {
         msg.should.match(/Layer\W*redis/)
@@ -123,7 +123,7 @@ describe('probes.redis', function () {
       function (msg) {
         msg.should.match(/Layer\W*redis/)
         msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*EXEC/)
+        msg.should.match(/KVOp\W*exec/)
       },
       function (msg) {
         msg.should.match(/Layer\W*redis/)
