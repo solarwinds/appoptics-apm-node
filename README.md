@@ -1,3 +1,5 @@
+[![Stories in Ready](https://badge.waffle.io/appneta/node-traceview.svg?label=ready&title=Ready)](http://waffle.io/appneta/node-traceview)
+
 # TraceView
 
 The `traceview` module provides AppNeta [TraceView](http://www.appneta.com/application-performance-management/) instrumentation for Node.JS.
