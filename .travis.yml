@@ -1,0 +1,26 @@
+language: node_js
+
+cache:
+  directories:
+  - node_modules
+
+node_js:
+  - "0.11"
+  - "0.10"
+  - "0.8"
+
+install:
+  - wget https://files.appneta.com/install_appneta.sh
+  - sudo sh ./install_appneta.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+
+before_script:
+  - npm install
+
+script: "npm test"
+
+services:
+  - mongodb
+  - redis
+
+matrix:
+  allow_failures:
