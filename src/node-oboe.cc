@@ -11,8 +11,10 @@
 using v8::Handle;
 using v8::Object;
 
+extern "C" {
+
 // Register the exposed parts of the module
-void Init(Handle<Object> exports) {
+void init(Handle<Object> exports) {
 	NanScope();
 
 	exports->Set(NanNew<String>("MAX_SAMPLE_RATE"), NanNew<Uint32>(OBOE_SAMPLE_RESOLUTION));
@@ -34,4 +36,6 @@ void Init(Handle<Object> exports) {
 	oboe_init();
 }
 
-NODE_MODULE(node_oboe, Init)
+NODE_MODULE(node_oboe, init)
+
+}

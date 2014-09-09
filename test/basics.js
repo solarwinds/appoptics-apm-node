@@ -3,12 +3,11 @@ var tv = require('..')
 var Layer = tv.Layer
 
 describe('basics', function () {
-  it('should get trace mode', function () {
-    tv.traceMode.should.equal(tv.addon.TRACE_THROUGH)
-  })
-
   it('should set trace mode', function () {
     tv.traceMode = tv.addon.TRACE_ALWAYS
+  })
+
+  it('should get trace mode', function () {
     tv.traceMode.should.equal(tv.addon.TRACE_ALWAYS)
   })
 
@@ -28,12 +27,11 @@ describe('basics', function () {
     tv.sampleRate.should.equal(100)
   })
 
-  it('should get sample source', function () {
-    should.not.exist(tv.sampleSource)
-  })
-
   it('should set sample source', function () {
     tv.sampleSource = 100
+  })
+
+  it('should get sample source', function () {
     tv.sampleSource.should.equal(100)
   })
 
@@ -68,13 +66,12 @@ describe('basics', function () {
     var s = tv.sample('test')
     s.should.not.be.false
 
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE / 2
+    tv.sampleRate = 1
     var samples = []
     for (var i = 0; i < 100; i++) {
       s = tv.sample(Math.random().toString())
       samples.push(!!s[0])
     }
     samples.should.containEql(false)
-    samples.should.containEql(true)
   })
 })

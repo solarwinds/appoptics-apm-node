@@ -119,7 +119,7 @@ describe('layer', function () {
         res.should.equal('foo')
       })
 
-      setImmediate(function () {
+      process.nextTick(function () {
         cb(null, 'foo')
       })
     })
@@ -237,7 +237,7 @@ describe('layer', function () {
           res.should.equal('foo')
         })
 
-        setImmediate(function () {
+        process.nextTick(function () {
           delayed(null, 'foo')
         })
       })
@@ -305,7 +305,7 @@ describe('layer', function () {
         })
       })
 
-      setImmediate(function () {
+      process.nextTick(function () {
         delayed(null, 'foo')
       })
     })

@@ -29,7 +29,7 @@ exports.tracelyzer = function (done) {
   // Wait for the server to become available
   server.on('listening', function () {
     debug('mock tracelyzer (port ' + port + ') listening')
-    setImmediate(done)
+    process.nextTick(done)
   })
 
   // Start mock tracelyzer
@@ -47,7 +47,7 @@ exports.tracelyzer = function (done) {
   emitter.close = function (done) {
     server.on('close', function () {
       debug('mock tracelyzer (port ' + port + ') closed')
-      setImmediate(done)
+      process.nextTick(done)
     })
     server.close()
   }
