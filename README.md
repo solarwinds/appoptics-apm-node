@@ -140,4 +140,4 @@ To see the code related to the C++ extension, take a look in `src`.
 
 Copyright (c) 2014 Appneta
 
-Released under the AppNeta Open License, Version 1.0
+Released under the [AppNeta Open License](http://www.appneta.com/appneta-license), Version 1.0
