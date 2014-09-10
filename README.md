@@ -15,7 +15,7 @@ view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-
 ## Dependencies
 
 - Linux
-- node.js v0.10+
+- node.js v0.8+
 - liboboe installed at standard lib path
     - (installed as part of TraceView signup; node-traceview is a noop without it)
 
