@@ -21,16 +21,24 @@ view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-
 
 ## Installation
 
-The `traceview` module is [available on npm](http://npmjs.org/package/traceview) and can be installed with:
+The `traceview` module is [available on npm](http://npmjs.org/package/traceview) and can be installed by navigating to your app root and running:
 
 ```
-npm install traceview
+npm install --save traceview
 ```
 
 Then, at the top of your main js file for your app, add this:
 
 ```
 require('traceview')
+```
+
+## Upgrading
+
+To upgrade an existing installation, navigate to your app root and run:
+
+```
+npm install --save traceview@latest
 ```
 
 ## Testing
