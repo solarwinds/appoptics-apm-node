@@ -1,9 +1,0 @@
-TODO:
-- Figure out why Event::addEdge doesn't work with strings. (I can avoid it for now.)
-- Fix to edge back to async entry events from sync exit of the layer it was called in
-
-Ideas:
-- Orphan any traces within a request that start but do not complete before the request exit? Depends on if the server is smart enough to understand that--entry event MUST be sent due to timestamping in sendReport.
-
-Concerns:
-- How to handle cancelables? (ie: setTimeout, setInterval)
