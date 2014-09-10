@@ -10,13 +10,14 @@ It has the ability to report performance metrics on an array of libraries,
 databases and frameworks.
 
 It requires a [TraceView](http://www.appneta.com/products/traceview/) account to
-view metrics.  Get yours, [it's free](http://www.appneta.com/products/traceview-free-account/).
+view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-free-account/).
 
 ## Dependencies
 
 - Linux
 - node.js v0.10+
 - liboboe installed at standard lib path
+    - (installed as part of TraceView signup; node-traceview is a noop without it)
 
 ## Installation
 
@@ -93,9 +94,9 @@ great technical articles.  (See [A Gentle X-Trace Introduction](http://www.appne
 for details on the basic methodology that TraceView uses to gather structured
 performance data across hosts and stacks.)
 
-* The [TraceView Knowledge Base](https://support.tv.appneta.com) has a large
-collection of technical articles or, if needed, you can submit a support
-request directly to the team.
+* The [TraceView Knowledge Base](https://support.appneta.com/cloud/traceview)
+has a large collection of technical articles or, if needed, you can submit a
+support request directly to the team.
 
 * You can also reach the TraceView team on our IRC channel #appneta on freenode.
 
