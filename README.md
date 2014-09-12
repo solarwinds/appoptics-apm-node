@@ -37,6 +37,10 @@ Then, at the top of your main js file for your app, add this:
 require('traceview')
 ```
 
+## Configuration
+
+See our instructions page on [configuring traceview for node](https://support.appneta.com/cloud/configuring-nodejs-instrumentation).
+
 ## Upgrading
 
 To upgrade an existing installation, navigate to your app root and run:
