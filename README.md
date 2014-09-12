@@ -39,7 +39,7 @@ require('traceview')
 
 ## Configuration
 
-See our instructions page on [configuring traceview for node](https://support.appneta.com/cloud/configuring-nodejs-instrumentation).
+See our documentation on [configuring traceview for node](https://support.appneta.com/cloud/configuring-nodejs-instrumentation).
 
 ## Upgrading
 
