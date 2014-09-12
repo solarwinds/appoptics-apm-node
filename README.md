@@ -19,6 +19,10 @@ view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-
 - liboboe installed at standard lib path
     - (installed as part of TraceView signup; node-traceview is a noop without it)
 
+## Release Notes
+
+Here you can see the [history of what we've released](https://support.appneta.com/cloud/nodejs-instrumentation-release-notes) and also the different framewoks and versions we support.
+
 ## Installation
 
 The `traceview` module is [available on npm](http://npmjs.org/package/traceview) and can be installed by navigating to your app root and running:
