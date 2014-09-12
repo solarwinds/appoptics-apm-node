@@ -1,5 +1,5 @@
-var debug = require('debug')('mock-tracelyzer')
-var log = require('debug')('mock-tracelyzer-message')
+var debug = require('debug')('traceview:test:helper')
+var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
 var dgram = require('dgram')
 var tv = require('..')
@@ -53,4 +53,56 @@ exports.tracelyzer = function (done) {
   }
 
   return emitter
+}
+
+var request = require('request')
+var http = require('http')
+
+var check = {
+  'http-entry': function (msg) {
+    msg.should.match(/Layer\W*nodejs/)
+    msg.should.match(/Label\W*entry/)
+    debug('entry is valid')
+  },
+  'http-exit': function (msg) {
+    msg.should.match(/Layer\W*nodejs/)
+    msg.should.match(/Label\W*exit/)
+    debug('exit is valid')
+  }
+}
+
+function doChecks (emitter, checks, done) {
+  emitter.on('message', function (msg) {
+    var check = checks.shift()
+    if (check) {
+      check(msg.toString())
+    }
+
+    if ( ! checks.length) {
+      emitter.removeAllListeners('message')
+      done()
+    }
+  })
+}
+
+exports.httpTest = function (emitter, test, validations, done) {
+  var server = http.createServer(function (req, res) {
+    debug('request started')
+    test(function (err, data) {
+      if (err) return done(err)
+      res.end('done')
+    })
+  })
+
+  validations.unshift(check['http-entry'])
+  validations.push(check['http-exit'])
+  doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  server.listen(function () {
+    var port = server.address().port
+    debug('test server listening on port ' + port)
+    request('http://localhost:' + port)
+  })
 }
