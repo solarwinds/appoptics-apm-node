@@ -21,7 +21,7 @@ view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-
 
 ## Release Notes
 
-Here you can see the [history of what we've released](https://support.appneta.com/cloud/nodejs-instrumentation-release-notes) and also the different framewoks and versions we support.
+Here you can see the [history of what we've released](https://support.appneta.com/cloud/nodejs-instrumentation-release-notes) and also the different frameworks and versions that we support.
 
 ## Installation
 
