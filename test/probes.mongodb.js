@@ -15,6 +15,7 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 describe('probes.mongodb', function () {
+	this.timeout(5000)
 	var emitter
 	var db
 
