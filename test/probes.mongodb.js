@@ -132,22 +132,29 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should create_collection', function (done) {
-			httpTest(function (done) {
-				db.createCollection('test', done)
-			}, [
+			var steps = [
 				function (msg) {
 					msg.should.match(/Layer\W*mongodb/)
 					msg.should.match(/Label\W*entry/)
 					msg.should.match(/QueryOp\W*create_collection/)
 					check['common-mongodb'](msg)
-				},
-				function () {},
-				function () {},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
 				}
-			], done)
+			]
+
+			// The db.command used in collection.count called cursor.nextObject
+			if (semver.satisfies(pkg.version, '<1.4.11')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(function (msg) {
+				msg.should.match(/Layer\W*mongodb/)
+				msg.should.match(/Label\W*exit/)
+			})
+
+			httpTest(function (done) {
+				db.createCollection('test', done)
+			}, steps, done)
 		})
 
 		it('should options', function (done) {
@@ -438,13 +445,17 @@ describe('probes.mongodb', function () {
 				},
 				function (msg) {
 					index_check['info-entry'](msg)
-				},
-				function () {},
-				function () {},
-				function (msg) {
-					index_check['info-exit'](msg)
 				}
 			]
+
+			if (semver.satisfies(pkg.version, '<1.4.11')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(function (msg) {
+				index_check['info-exit'](msg)
+			})
 
 			if (semver.satisfies(pkg.version, '1.4.x')) {
 				steps.push(function (msg) {
@@ -466,18 +477,24 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should index_information', function (done) {
-			httpTest(function (done) {
-				db.collection('test').indexInformation(done)
-			}, [
+			var steps = [
 				function (msg) {
 					index_check['info-entry'](msg)
-				},
-				function () {},
-				function () {},
-				function (msg) {
-					index_check['info-exit'](msg)
 				}
-			], done)
+			]
+
+			if (semver.satisfies(pkg.version, '<1.4.11')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(function (msg) {
+				index_check['info-exit'](msg)
+			})
+
+			httpTest(function (done) {
+				db.collection('test').indexInformation(done)
+			}, steps, done)
 		})
 
 		it('should reindex', function (done) {
