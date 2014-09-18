@@ -189,6 +189,32 @@ describe('probes.postgres', function () {
           done(err)
         })
       })
+
+      it('should trace evented style', function (done) {
+        helper.httpTest(emitter, function (done) {
+          pg.connect(conString, function (err, client, free) {
+            if (err) {
+              free(err)
+              done(err)
+              return
+            }
+
+            var q = client.query('select * from "table" where "foo" = \'bar\'')
+            q.on('end', done.bind(null, null))
+            q.on('error', function () {
+              done()
+            })
+          })
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.match(/Query\W*select \* from "table" where "foo" = 'bar'/)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 
