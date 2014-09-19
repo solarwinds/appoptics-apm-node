@@ -29,7 +29,7 @@ describe('probes.http', function () {
     emitter.on('message', function (msg) {
       var check = checks.shift()
       if (check) {
-        check(msg.toString())
+        check(msg)
       }
 
       if ( ! checks.length) {
@@ -51,13 +51,13 @@ describe('probes.http', function () {
 
       doChecks([
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -83,13 +83,13 @@ describe('probes.http', function () {
 
       doChecks([
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -116,9 +116,9 @@ describe('probes.http', function () {
 
       doChecks([
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(new RegExp('Edge\\W*' + origin.opId, 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
+          msg.should.have.property('Edge', origin.opId)
           debug('entry is valid')
         }
       ], function () {
@@ -148,16 +148,16 @@ describe('probes.http', function () {
 
       doChecks([
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/X-TV-Meta\W*foo/)
-          msg.should.match(/SampleSource\W*/)
-          msg.should.match(/SampleRate\W*/)
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
+          msg.should.have.property('X-TV-Meta', 'foo')
+          msg.should.have.property('SampleSource')
+          msg.should.have.property('SampleRate')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -189,13 +189,13 @@ describe('probes.http', function () {
 
       doChecks([
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -236,9 +236,9 @@ describe('probes.http', function () {
 
         var checks = [
           function (msg) {
-            msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-            msg.should.match(new RegExp(val + '\\W*test', 'i'))
-            msg.should.match(/Label\W*entry/)
+            msg.should.have.property('Layer', 'nodejs')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property(val, 'test')
             debug('entry is valid')
           }
         ]
@@ -246,7 +246,7 @@ describe('probes.http', function () {
         emitter.on('message', function (msg) {
           var check = checks.shift()
           if (check) {
-            check(msg.toString())
+            check(msg)
           }
 
           if ( ! checks.length) {
@@ -271,13 +271,13 @@ describe('probes.http', function () {
   describe('http-client', function () {
   	var check = {
   		'http-entry': function (msg) {
-  			msg.should.match(/Layer\W*nodejs/)
-  			msg.should.match(/Label\W*entry/)
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'entry')
   			debug('entry is valid')
   		},
   		'http-exit': function (msg) {
-  			msg.should.match(/Layer\W*nodejs/)
-  			msg.should.match(/Label\W*exit/)
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'exit')
   			debug('exit is valid')
   		}
   	}
@@ -324,17 +324,21 @@ describe('probes.http', function () {
           http.get(url, done.bind(null, null)).on('error', done)
         }, [
           function (msg) {
-            msg.should.match(/Layer\W*http-client/)
-            msg.should.match(new RegExp('RemoteURL\\W*' + stringFn(url)))
-            msg.should.match(/IsService\W*yes/)
-            msg.should.match(/Label\W*entry/)
+            msg.should.have.property('Layer', 'http-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
           },
-          function () {},
-          function () {},
           function (msg) {
-            msg.should.match(/Layer\W*http-client/)
-            msg.should.match(/HTTPStatus\W*\d*/)
-            msg.should.match(/Label\W*exit/)
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'http-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
           }
         ], done)
       })

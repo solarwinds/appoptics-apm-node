@@ -23,7 +23,7 @@ describe('addon.reporters.udp', function () {
 
     // Receive the message from the udp server and verify the id matches
     emitter.on('message', function (msg) {
-      msg.toString().should.match(new RegExp(event.toString(), 'i'))
+      msg.should.have.property('X-Trace', event.toString())
       done()
     })
 

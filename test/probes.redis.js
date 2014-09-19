@@ -7,7 +7,7 @@ var addon = oboe.addon
 var request = require('request')
 var http = require('http')
 
-var redis = require("redis")
+var redis = require('redis')
 var client = redis.createClient()
 
 describe('probes.redis', function () {
@@ -25,75 +25,29 @@ describe('probes.redis', function () {
     emitter.close(done)
   })
 
-  //
-  // Helper to run checks against a server
-  //
-  function doChecks (checks, done) {
-    emitter.on('message', function (msg) {
-      var check = checks.shift()
-      if (check) {
-        check(msg.toString())
-      }
-
-      if ( ! checks.length) {
-        emitter.removeAllListeners('message')
-        done()
-      }
-    })
+  var check = {
+    'redis-exit': function (msg) {
+      msg.should.have.property('Layer', 'redis')
+      msg.should.have.property('Label', 'exit')
+    }
   }
-
-	var check = {
-		'http-entry': function (msg) {
-			msg.should.match(/Layer\W*nodejs/)
-			msg.should.match(/Label\W*entry/)
-			debug('entry is valid')
-		},
-		'http-exit': function (msg) {
-			msg.should.match(/Layer\W*nodejs/)
-			msg.should.match(/Label\W*exit/)
-			debug('exit is valid')
-		}
-	}
-
-	function httpTest (test, validations, done) {
-		var server = http.createServer(function (req, res) {
-			debug('request started')
-			test(function (err, data) {
-				if (err) return done(err)
-				res.end('done')
-			})
-		})
-
-		validations.unshift(check['http-entry'])
-		validations.push(check['http-exit'])
-		doChecks(validations, function () {
-			server.close(done)
-		})
-
-		server.listen(function () {
-			var port = server.address().port
-			debug('test server listening on port ' + port)
-			request('http://localhost:' + port)
-		})
-	}
 
   //
   // Test a simple res.end() call in an http server
   //
   it('should support single commands', function (done) {
-    httpTest(function (done) {
+    helper.httpTest(emitter, function (done) {
       client.set('foo', 'bar', done)
     }, [
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*set/)
-        msg.should.match(/KVKey\W*foo/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'set')
+        msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
-        msg.should.match(/KVHit\W*/)
+        msg.should.have.property('KVHit')
+        check['redis-exit'](msg)
       }
     ], done)
   })
@@ -104,46 +58,42 @@ describe('probes.redis', function () {
   it('should support multi', function (done) {
     var steps = [
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*multi/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'multi')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*set/)
-        msg.should.match(/KVKey\W*foo/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'set')
+        msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*get/)
-        msg.should.match(/KVKey\W*foo/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'get')
+        msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*exec/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'exec')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
+        check['redis-exit'](msg)
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
+        check['redis-exit'](msg)
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
+        check['redis-exit'](msg)
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
+        check['redis-exit'](msg)
       }
     ]
 
-    httpTest(function (done) {
+    helper.httpTest(emitter, function (done) {
       client.multi()
         .set('foo', 'bar')
         .get('foo')
@@ -155,7 +105,7 @@ describe('probes.redis', function () {
   // Test a simple res.end() call in an http server
   //
   it('should not interfere with pub/sub', function (done) {
-    httpTest(function (done) {
+    helper.httpTest(emitter, function (done) {
       var producer = redis.createClient()
 
       client.on('subscribe', function () {

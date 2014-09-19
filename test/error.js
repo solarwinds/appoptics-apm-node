@@ -35,16 +35,17 @@ describe('error', function () {
       })
     }, [
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/KVOp\W*set/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('KVOp', 'set')
+        msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.match(/Layer\W*redis/)
-        msg.should.match(/Label\W*exit/)
-        msg.should.match(/ErrorClass\W*Error/)
-        msg.should.match(/ErrorMsg\W*/)
-        msg.should.match(/Backtrace\W*/)
+        msg.should.have.property('Layer', 'redis')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg')
+        msg.should.have.property('Backtrace')
       }
     ], done)
   })
