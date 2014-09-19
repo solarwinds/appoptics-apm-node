@@ -2,6 +2,7 @@ var debug = require('debug')('traceview:test:helper')
 var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
 var BSON = require('bson').BSONPure.BSON
+var extend = require('util')._extend
 var request = require('request')
 var dgram = require('dgram')
 var https = require('https')
@@ -130,4 +131,21 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
     debug('test server listening on port ' + port)
     request('https://localhost:' + port)
   })
+}
+
+exports.run = function (context, path) {
+  context.data = context.data || {}
+  var mod = require('./' + path)
+
+  if (mod.data) {
+    var data = mod.data
+    if (typeof data === 'function') {
+      data = data(context)
+    }
+    extend(context.data, data)
+  }
+
+  return function (done) {
+    return mod.run(context, done)
+  }
 }

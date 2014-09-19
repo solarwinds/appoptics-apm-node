@@ -11,6 +11,7 @@ var redis = require('redis')
 var client = redis.createClient()
 
 describe('probes.redis', function () {
+  var ctx = { redis: client }
   var emitter
 
   //
@@ -36,9 +37,7 @@ describe('probes.redis', function () {
   // Test a simple res.end() call in an http server
   //
   it('should support single commands', function (done) {
-    helper.httpTest(emitter, function (done) {
-      client.set('foo', 'bar', done)
-    }, [
+    helper.httpTest(emitter, helper.run(ctx, 'redis/set'), [
       function (msg) {
         msg.should.have.property('Layer', 'redis')
         msg.should.have.property('Label', 'entry')
@@ -93,33 +92,14 @@ describe('probes.redis', function () {
       }
     ]
 
-    helper.httpTest(emitter, function (done) {
-      client.multi()
-        .set('foo', 'bar')
-        .get('foo')
-        .exec(done)
-    }, steps, done)
+    helper.httpTest(emitter, helper.run(ctx, 'redis/multi'), steps, done)
   })
 
   //
   // Test a simple res.end() call in an http server
   //
   it('should not interfere with pub/sub', function (done) {
-    helper.httpTest(emitter, function (done) {
-      var producer = redis.createClient()
-
-      client.on('subscribe', function () {
-        producer.publish('foo', 'bar')
-      })
-
-      client.on('message', function (channel, message) {
-        channel.should.equal('foo')
-        message.should.equal('bar')
-        done()
-      })
-
-      client.subscribe('foo')
-    }, [], done)
+    helper.httpTest(emitter, helper.run(ctx, 'redis/pubsub'), [], done)
   })
 
 })

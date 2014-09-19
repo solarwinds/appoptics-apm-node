@@ -8,6 +8,7 @@ var request = require('request')
 var http = require('http')
 
 describe('probes.http', function () {
+  var ctx = { http: http }
   var emitter
 
   //
@@ -22,23 +23,6 @@ describe('probes.http', function () {
     emitter.close(done)
   })
 
-  //
-  // Helper to run checks against a server
-  //
-  function doChecks (checks, done) {
-    emitter.on('message', function (msg) {
-      var check = checks.shift()
-      if (check) {
-        check(msg)
-      }
-
-      if ( ! checks.length) {
-        emitter.removeAllListeners('message')
-        done()
-      }
-    })
-  }
-
   describe('http-server', function () {
     //
     // Test a simple res.end() call in an http server
@@ -49,7 +33,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
@@ -81,7 +65,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
@@ -114,7 +98,7 @@ describe('probes.http', function () {
 
       var origin = new tv.Event()
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
@@ -146,7 +130,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
@@ -187,7 +171,7 @@ describe('probes.http', function () {
         }, 10)
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
@@ -234,25 +218,15 @@ describe('probes.http', function () {
           res.end('done')
         })
 
-        var checks = [
+        helper.doChecks(emitter, [
           function (msg) {
             msg.should.have.property('Layer', 'nodejs')
             msg.should.have.property('Label', 'entry')
             msg.should.have.property(val, 'test')
             debug('entry is valid')
           }
-        ]
-
-        emitter.on('message', function (msg) {
-          var check = checks.shift()
-          if (check) {
-            check(msg)
-          }
-
-          if ( ! checks.length) {
-            emitter.removeAllListeners('message')
-            server.close(done)
-          }
+        ], function () {
+          server.close(done)
         })
 
         server.listen(function () {
@@ -282,28 +256,6 @@ describe('probes.http', function () {
   		}
   	}
 
-  	function httpTest (test, validations, done) {
-  		var server = http.createServer(function (req, res) {
-  			debug('request started')
-  			test(function (err, data) {
-  				if (err) return done(err)
-  				res.end('done')
-  			})
-  		})
-
-  		validations.unshift(check['http-entry'])
-  		validations.push(check['http-exit'])
-  		doChecks(validations, function () {
-  			server.close(done)
-  		})
-
-  		server.listen(function () {
-  			var port = server.address().port
-  			debug('test server listening on port ' + port)
-  			request('http://localhost:' + port)
-  		})
-  	}
-
     // TODO: Verify edges...kind of hard with all the regex matching...
     it('should trace http-client', function (done) {
       var server = http.createServer(function (req, res) {
@@ -312,21 +264,14 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'http://localhost:' + port + '/?foo=bar'
+        ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'http/client')
 
-        // Escape regex characters in function
-        function stringFn (fn) {
-          return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-        }
-
-        httpTest(function (done) {
-          http.get(url, done.bind(null, null)).on('error', done)
-        }, [
+        helper.httpTest(emitter, mod, [
           function (msg) {
             msg.should.have.property('Layer', 'http-client')
             msg.should.have.property('Label', 'entry')
-            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {

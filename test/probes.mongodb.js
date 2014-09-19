@@ -16,6 +16,7 @@ requirePatch.enable()
 
 describe('probes.mongodb', function () {
 	this.timeout(5000)
+	var ctx = {}
 	var emitter
 	var db
 
@@ -30,7 +31,7 @@ describe('probes.mongodb', function () {
 	before(function (done) {
 		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
 			if (err) return done(err)
-			db = _db
+			ctx.mongo = db = _db
 			done()
 		})
 	})
@@ -59,9 +60,7 @@ describe('probes.mongodb', function () {
 	//
 	describe('databases', function () {
 		it('should drop', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.dropDatabase(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/databases/drop'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -101,15 +100,16 @@ describe('probes.mongodb', function () {
 
 			steps.push(check['mongo-exit'])
 
-			helper.httpTest(emitter, function (done) {
-				db.createCollection('test', done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/collections/create_collection'),
+				steps,
+				done
+			)
 		})
 
 		it('should options', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').options(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/options'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -124,9 +124,7 @@ describe('probes.mongodb', function () {
 
 		it('should rename', function (done) {
 			db.createCollection('test', function () {
-				helper.httpTest(emitter, function (done) {
-					db.renameCollection('test', 'test2', done)
-				}, [
+				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/rename'), [
 					function (msg) {
 						msg.should.have.property('Layer', 'mongodb')
 						msg.should.have.property('Label', 'entry')
@@ -141,9 +139,7 @@ describe('probes.mongodb', function () {
 
 		it('should drop_collection', function (done) {
 			db.createCollection('test', function () {
-				helper.httpTest(emitter, function (done) {
-					db.dropCollection('test', done)
-				}, [
+				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/drop_collection'), [
 					function (msg) {
 						msg.should.have.property('Layer', 'mongodb')
 						msg.should.have.property('Label', 'entry')
@@ -169,9 +165,7 @@ describe('probes.mongodb', function () {
 		}
 
 		it('should insert', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').insert({ foo: 'bar' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/insert'), [
 				function (msg) {
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					query_check['insert-entry'](msg)
@@ -183,9 +177,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should find_and_modify', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').findAndModify({ foo: 'bar' }, [], { baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/find_and_modify'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -201,9 +193,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should update', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').update({ foo: 'bar' }, { bax: 'bux' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/update'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -218,9 +208,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should distinct', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').distinct('foo', done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/distinct'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -255,15 +243,16 @@ describe('probes.mongodb', function () {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/count'),
+				steps,
+				done
+			)
 		})
 
 		it('should remove', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/remove'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -278,9 +267,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should save', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').save({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/save'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -323,9 +310,7 @@ describe('probes.mongodb', function () {
 		}
 
 		it('should create_index', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').createIndex('foo', done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/create_index'), [
 				function (msg) {
 					msg.should.have.property('Index', '"foo"')
 					index_check['create-entry'](msg)
@@ -337,12 +322,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should drop_index', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').dropIndex('foo_1', function (err, res) {
-					if (err) return done(err)
-					done(res.ok ? null : new Error('did not drop index'))
-				})
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_index'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -393,9 +373,12 @@ describe('probes.mongodb', function () {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').ensureIndex({ foo: 1 }, done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/ensure_index'),
+				steps,
+				done
+			)
 		})
 
 		it('should index_information', function (done) {
@@ -414,15 +397,16 @@ describe('probes.mongodb', function () {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').indexInformation(done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/index_information'),
+				steps,
+				done
+			)
 		})
 
 		it('should reindex', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').reIndex(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/reindex'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -436,9 +420,7 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should drop_indexes', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').dropAllIndexes(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_indexes'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -457,23 +439,16 @@ describe('probes.mongodb', function () {
 	describe('aggregation', function () {
 
 		it('should group', function (done) {
-			var keys = function (doc) { return { a: doc.a }; };
-			var query = { foo: 'bar' }
-			var initial = { count: 0 }
-			var reduce = function (obj, prev) { prev.count++; };
-
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').group(keys, query, initial, reduce, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/group'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'group')
 
-					msg.should.have.property('Group_Initial', JSON.stringify(initial))
-					msg.should.have.property('Group_Condition', JSON.stringify(query))
-					msg.should.have.property('Group_Reduce', reduce.toString())
-					msg.should.have.property('Group_Key', keys.toString())
+					msg.should.have.property('Group_Initial', JSON.stringify(ctx.data.initial))
+					msg.should.have.property('Group_Condition', JSON.stringify(ctx.data.query))
+					msg.should.have.property('Group_Reduce', ctx.data.reduce.toString())
+					msg.should.have.property('Group_Key', ctx.data.keys.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
@@ -483,24 +458,14 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should map_reduce', function (done) {
-			var map = function () { emit(this.foo, 1); };
-			var reduce = function (k, vals) { return 1; };
-
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').mapReduce(map, reduce, {
-					out: {
-						replace: 'tempCollection',
-						readPreference : 'secondary'
-					}
-				}, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/map_reduce'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'map_reduce')
 
-					msg.should.have.property('Map_Function', map.toString())
-					msg.should.have.property('Reduce_Function', reduce.toString())
+					msg.should.have.property('Map_Function', ctx.data.map.toString())
+					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
@@ -510,23 +475,14 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should inline_map_reduce', function (done) {
-			var map = function () { emit(this.foo, 1); };
-			var reduce = function (k, vals) { return 1; };
-
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').mapReduce(map, reduce, {
-					out: {
-						inline: true
-					}
-				}, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/inline_map_reduce'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'inline_map_reduce')
 
-					msg.should.have.property('Map_Function', map.toString())
-					msg.should.have.property('Reduce_Function', reduce.toString())
+					msg.should.have.property('Map_Function', ctx.data.map.toString())
+					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
@@ -539,9 +495,7 @@ describe('probes.mongodb', function () {
 
 	describe('cursors', function () {
 		it('should find', function (done) {
-			helper.httpTest(emitter, function (done) {
-				db.collection('test').find({ foo: 'bar' }).nextObject(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/cursors/find'), [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')

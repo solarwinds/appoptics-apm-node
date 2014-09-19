@@ -8,6 +8,7 @@ var request = require('request')
 var https = require('https')
 
 describe('probes.https', function () {
+  var ctx = { https: https }
   var emitter
 
   var options = {
@@ -273,16 +274,14 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'https://localhost:' + port + '/?foo=bar'
+        ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/client')
 
-        helper.httpsTest(emitter, options, function (done) {
-          https.get(url, done.bind(null, null)).on('error', done)
-        }, [
+        helper.httpsTest(emitter, options, mod, [
           function (msg) {
             msg.should.have.property('Layer', 'https-client')
             msg.should.have.property('Label', 'entry')
-            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {

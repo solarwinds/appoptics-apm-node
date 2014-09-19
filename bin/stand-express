@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+if (module.parent) return
+
+//
+// Install the traceview agent
+//
+var tv = require('..')
+
+//
+// Load our various dependencies
+//
+var express = require('express')
+var stand = require('./stand')
+
+//
+// Load the task file
+//
+var args = process.argv
+if (args.length < 3) {
+  throw new Error('You must supply the path of a task to run')
+}
+
+var task = stand.load(args[2])
+
+//
+// Determine port to run server on
+//
+var port = process.env.PORT || 3000
+
+//
+// Before starting, ensure all contexts are available and connected
+//
+stand.getContext({ port: port }, function (err, context) {
+  if (err) throw err
+
+  //
+  // The http server simply runs the task and returns the serialized response
+  //
+  var server = express()
+
+  server.get('/', function (req, res) {
+    task.run(context, function (err, data) {
+      if (err) {
+        res.send(500, err.stack)
+      } else {
+        res.send(data)
+      }
+    })
+  })
+
+  server.listen(port, function () {
+    console.log('server started at http://localhost:%s', port)
+  })
+})
