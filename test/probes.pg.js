@@ -41,6 +41,7 @@ describe('probes.postgres', function () {
   // Test against both native and js postgres drivers
   //
   Object.keys(drivers).forEach(function (type) {
+    var ctx = {}
     var pg
     var db
 
@@ -60,22 +61,19 @@ describe('probes.postgres', function () {
 
     describe(type, function () {
       before(function (done) {
-        pg = drivers[type]()
+        ctx.pg = pg = drivers[type]()
+        pg.address = conString
         var client = new pg.Client(conString)
         client.connect(function (err) {
           if (err) return done(err)
-          db = client
+          pg.db = db = client
+          ctx.pg = pg
           done()
         })
       })
 
       it('should trace a basic query', function (done) {
-        helper.httpTest(emitter, function (done) {
-          db.query('SELECT $1::int AS number', ['1'], function (err) {
-            db.end()
-            done(err)
-          })
-        }, [
+        helper.httpTest(emitter, helper.run(ctx, 'pg/basic'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -88,20 +86,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace through a connection pool', function (done) {
-        helper.httpTest(emitter, function (done) {
-          pg.connect(conString, function (err, client, free) {
-            if (err) {
-              free(err)
-              done(err)
-              return
-            }
-
-            client.query('SELECT $1::int AS number', ['1'], function (err) {
-              free(err)
-              done(err)
-            })
-          })
-        }, [
+        helper.httpTest(emitter, helper.run(ctx, 'pg/pool'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -114,35 +99,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace prepared statements', function (done) {
-        helper.httpTest(emitter, function (done) {
-          pg.connect(conString, function (err, client, free) {
-            if (err) {
-              free(err)
-              done(err)
-              return
-            }
-
-            client.query({
-              text: 'SELECT $1::int AS number',
-              name: 'select n',
-              values: ['1']
-            }, function (err) {
-              if (err) {
-                free(err)
-                done(err)
-                return
-              }
-
-              client.query({
-                name: 'select n',
-                values: ['2']
-              }, function (err) {
-                free(err)
-                done(err)
-              })
-            })
-          })
-        }, [
+        helper.httpTest(emitter, helper.run(ctx, 'pg/prepared'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -163,20 +120,7 @@ describe('probes.postgres', function () {
       })
 
       it('should sanitize query string, when not using value list', function (done) {
-        tv.pg.sanitizeSql = true
-        helper.httpTest(emitter, function (done) {
-          pg.connect(conString, function (err, client, free) {
-            if (err) {
-              free(err)
-              done(err)
-              return
-            }
-
-            client.query('select * from "table" where "key" = \'value\'', function (err) {
-              done()
-            })
-          })
-        }, [
+        helper.httpTest(emitter, helper.run(ctx, 'pg/sanitize'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "table" where "key" = \'?\'')
@@ -184,28 +128,11 @@ describe('probes.postgres', function () {
           function (msg) {
             checks.exit(msg)
           }
-        ], function (err) {
-          tv.pg.sanitizeSql = false
-          done(err)
-        })
+        ], done)
       })
 
       it('should trace evented style', function (done) {
-        helper.httpTest(emitter, function (done) {
-          pg.connect(conString, function (err, client, free) {
-            if (err) {
-              free(err)
-              done(err)
-              return
-            }
-
-            var q = client.query('select * from "table" where "foo" = \'bar\'')
-            q.on('end', done.bind(null, null))
-            q.on('error', function () {
-              done()
-            })
-          })
-        }, [
+        helper.httpTest(emitter, helper.run(ctx, 'pg/evented'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "table" where "foo" = \'bar\'')

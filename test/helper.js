@@ -145,6 +145,8 @@ exports.run = function (context, path) {
     extend(context.data, data)
   }
 
+  context.tv = tv
+
   return function (done) {
     return mod.run(context, done)
   }

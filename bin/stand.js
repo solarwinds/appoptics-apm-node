@@ -3,8 +3,10 @@
 //
 var MongoDB = require('mongodb').MongoClient
 var redis = require('redis').createClient()
+var postgres = require('pg')
 var https = require('https')
 var http = require('http')
+var tv = require('..')
 
 //
 // Load task file
@@ -26,6 +28,7 @@ exports.getContext = function (context, done) {
       context.redis = redis
       context.https = https
       context.http = http
+      context.tv = tv
       done()
     },
 
@@ -33,9 +36,25 @@ exports.getContext = function (context, done) {
     // Mongo needs to connect and add the db to the context
     //
     function (done) {
-      MongoDB.connect('mongodb://localhost/test', function (err, db) {
+      var address = 'mongodb://localhost/test'
+      MongoDB.connect(address, function (err, db) {
         if (err) return done(err)
         context.mongo = db
+        context.mongo.address = address
+        done()
+      })
+    },
+
+    //
+    // Postgres also needs to connect and add db to context
+    //
+    function (done) {
+      var pg = context.pg = postgres
+      pg.address = 'postgres://postgres@localhost/test'
+      var client = new pg.Client(pg.address)
+      client.connect(function (err) {
+        if (err) return done(err)
+        pg.db = client
         done()
       })
     }
