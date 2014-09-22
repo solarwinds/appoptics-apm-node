@@ -23,7 +23,7 @@ describe('layer', function () {
     emitter.on('message', function (msg) {
       var check = checks.shift()
       if (check) {
-        check(msg.toString())
+        check(msg)
       }
 
       if ( ! checks.length) {
@@ -40,10 +40,12 @@ describe('layer', function () {
     var layer = new Layer('test', null, {})
 
     layer.should.have.property('events')
-    layer.events.should.have.property('entry')
-    layer.events.should.have.property('exit')
-    layer.events.entry.taskId.should.not.match(/^0*$/)
-    layer.events.entry.opId.should.not.match(/^0*$/)
+    var events = ['entry','exit']
+    events.forEach(function (event) {
+      layer.events.should.have.property(event)
+      layer.events[event].taskId.should.not.match(/^0*$/)
+      layer.events[event].opId.should.not.match(/^0*$/)
+    })
   })
 
   //
@@ -58,21 +60,20 @@ describe('layer', function () {
 
     var checks = [
       function (msg) {
-        msg = msg.toString()
-        msg.should.match(new RegExp('X-Trace\\W*' + e.entry, 'i'))
-        msg.should.match(new RegExp('Layer\\W*' + name, 'i'))
-        msg.should.match(/Label\W*entry/)
+        msg.should.have.property('X-Trace', e.entry.toString())
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('Layer', name)
 
         Object.keys(data).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + data[key], 'i'))
+          msg.should.have.property(key, data[key])
         })
       },
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
-        msg.should.match(new RegExp('X-Trace\\W*' + e.exit, 'i'))
-        msg.should.match(new RegExp('Edge\\W*' + e.entry.opId, 'i'))
-        msg.should.match(new RegExp('Layer\\W*' + name, 'i'))
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
+        msg.should.have.property('X-Trace', e.exit.toString())
+        msg.should.have.property('Edge', e.entry.opId)
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('Layer', name)
       }
     ]
 
@@ -93,21 +94,21 @@ describe('layer', function () {
     var checks = [
       // Verify structure of entry event
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*' + e.entry, 'i'))
-        msg.should.match(new RegExp('Layer\\W*' + name, 'i'))
-        msg.should.match(/Label[^\s]*entry/)
+        msg.should.have.property('X-Trace', e.entry.toString())
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('Layer', name)
 
         Object.keys(data).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + data[key], 'i'))
+          msg.should.have.property(key, data[key])
         })
       },
       // Verify structure of exit event
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
-        msg.should.match(new RegExp('X-Trace\\W*' + e.exit, 'i'))
-        msg.should.match(new RegExp('Edge\\W*' + e.entry.opId, 'i'))
-        msg.should.match(new RegExp('Layer\\W*' + name, 'i'))
-        msg.should.match(/Label[^\s]*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
+        msg.should.have.property('X-Trace', e.exit.toString())
+        msg.should.have.property('Edge', e.entry.opId)
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('Layer', name)
       }
     ]
 
@@ -135,38 +136,38 @@ describe('layer', function () {
 
     var checks = [
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.entry))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*entry/)
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(outerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + outerData[key]))
+          msg.should.have.property(key, outerData[key])
         })
       },
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*entry/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId.toString())
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(innerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + innerData[key]))
+          msg.should.have.property(key, innerData[key])
         })
       },
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId.toString())
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'exit')
       },
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + inner.events.exit.opId))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.exit.opId.toString())
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'exit')
       }
     ]
 
@@ -187,41 +188,41 @@ describe('layer', function () {
     var checks = [
       // Outer entry
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.entry))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*entry/)
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(outerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + outerData[key]))
+          msg.should.have.property(key, outerData[key])
         })
       },
       // Inner entry (async)
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*entry/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(innerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + innerData[key]))
+          msg.should.have.property(key, innerData[key])
         })
       },
       // Outer exit
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'exit')
       },
       // Inner exit (async)
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.exit.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.exit.taskId))
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId)
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'exit')
       }
     ]
 
@@ -252,41 +253,41 @@ describe('layer', function () {
     var checks = [
       // Outer entry (async)
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.entry))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*entry/)
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(outerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + outerData[key]))
+          msg.should.have.property(key, outerData[key])
         })
       },
       // Outer exit (async)
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + outer.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.entry.opId))
-        msg.should.match(/Layer\W*outer/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'exit')
       },
       // Inner entry
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.entry))
-        msg.should.match(new RegExp('Edge\\W*' + outer.events.exit.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*entry/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.exit.opId)
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'entry')
 
         Object.keys(innerData).forEach(function (key) {
-          msg.should.match(new RegExp(key + '\\W*' + innerData[key]))
+          msg.should.have.property(key, innerData[key])
         })
       },
       // Inner exit
       function (msg) {
-        msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
-        msg.should.match(new RegExp('X-Trace\\W*' + inner.events.exit))
-        msg.should.match(new RegExp('Edge\\W*' + inner.events.entry.opId))
-        msg.should.match(/Layer\W*inner/)
-        msg.should.match(/Label\W*exit/)
+        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId)
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'exit')
       },
     ]
 

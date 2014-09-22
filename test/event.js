@@ -38,11 +38,10 @@ describe('event', function () {
     var event2 = new Event('test', 'exit', event.event)
 
     emitter.on('message', function (msg) {
-      msg = msg.toString()
-      msg.should.match(new RegExp('X-Trace\\W*' + event2))
-      msg.should.match(new RegExp('Edge\\W*' + event.opId))
-      msg.should.match(/Layer\W*test/)
-      msg.should.match(/Label\W*exit/)
+      msg.should.have.property('X-Trace', event2.toString())
+      msg.should.have.property('Edge', event.opId)
+      msg.should.have.property('Layer', 'test')
+      msg.should.have.property('Label', 'exit')
       done()
     })
 

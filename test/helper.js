@@ -1,7 +1,12 @@
 var debug = require('debug')('traceview:test:helper')
 var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
+var BSON = require('bson').BSONPure.BSON
+var extend = require('util')._extend
+var request = require('request')
 var dgram = require('dgram')
+var https = require('https')
+var http = require('http')
 var tv = require('..')
 var addon = tv.addon
 
@@ -23,8 +28,10 @@ exports.tracelyzer = function (done) {
 
   // Forward events
   emitter.on('error', server.close.bind(server))
-  server.on('message', emitter.emit.bind(emitter, 'message'))
   server.on('error', emitter.emit.bind(emitter, 'error'))
+  server.on('message', function (msg) {
+    emitter.emit('message', BSON.deserialize(msg))
+  })
 
   // Wait for the server to become available
   server.on('listening', function () {
@@ -55,27 +62,11 @@ exports.tracelyzer = function (done) {
   return emitter
 }
 
-var request = require('request')
-var http = require('http')
-
-var check = {
-  'http-entry': function (msg) {
-    msg.should.match(/Layer\W*nodejs/)
-    msg.should.match(/Label\W*entry/)
-    debug('entry is valid')
-  },
-  'http-exit': function (msg) {
-    msg.should.match(/Layer\W*nodejs/)
-    msg.should.match(/Label\W*exit/)
-    debug('exit is valid')
-  }
-}
-
-function doChecks (emitter, checks, done) {
+exports.doChecks = function (emitter, checks, done) {
   emitter.on('message', function (msg) {
     var check = checks.shift()
     if (check) {
-      check(msg.toString())
+      check(msg)
     }
 
     if ( ! checks.length) {
@@ -83,6 +74,19 @@ function doChecks (emitter, checks, done) {
       done()
     }
   })
+}
+
+var check = {
+  'http-entry': function (msg) {
+    msg.should.have.property('Layer', 'nodejs')
+    msg.should.have.property('Label', 'entry')
+    debug('entry is valid')
+  },
+  'http-exit': function (msg) {
+    msg.should.have.property('Layer', 'nodejs')
+    msg.should.have.property('Label', 'exit')
+    debug('exit is valid')
+  }
 }
 
 exports.httpTest = function (emitter, test, validations, done) {
@@ -96,7 +100,7 @@ exports.httpTest = function (emitter, test, validations, done) {
 
   validations.unshift(check['http-entry'])
   validations.push(check['http-exit'])
-  doChecks(emitter, validations, function () {
+  exports.doChecks(emitter, validations, function () {
     server.close(done)
   })
 
@@ -105,4 +109,43 @@ exports.httpTest = function (emitter, test, validations, done) {
     debug('test server listening on port ' + port)
     request('http://localhost:' + port)
   })
+}
+
+exports.httpsTest = function (emitter, options, test, validations, done) {
+  var server = https.createServer(options, function (req, res) {
+    debug('request started')
+    test(function (err, data) {
+      if (err) return done(err)
+      res.end('done')
+    })
+  })
+
+  validations.unshift(check['http-entry'])
+  validations.push(check['http-exit'])
+  exports.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  server.listen(function () {
+    var port = server.address().port
+    debug('test server listening on port ' + port)
+    request('https://localhost:' + port)
+  })
+}
+
+exports.run = function (context, path) {
+  context.data = context.data || {}
+  var mod = require('./' + path)
+
+  if (mod.data) {
+    var data = mod.data
+    if (typeof data === 'function') {
+      data = data(context)
+    }
+    extend(context.data, data)
+  }
+
+  return function (done) {
+    return mod.run(context, done)
+  }
 }

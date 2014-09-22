@@ -8,6 +8,7 @@ var request = require('request')
 var https = require('https')
 
 describe('probes.https', function () {
+  var ctx = { https: https }
   var emitter
 
   var options = {
@@ -33,23 +34,6 @@ describe('probes.https', function () {
     emitter.close(done)
   })
 
-  //
-  // Helper to run checks against a server
-  //
-  function doChecks (checks, done) {
-    emitter.on('message', function (msg) {
-      var check = checks.shift()
-      if (check) {
-        check(msg.toString())
-      }
-
-      if ( ! checks.length) {
-        emitter.removeAllListeners('message')
-        done()
-      }
-    })
-  }
-
   describe('https-server', function () {
     //
     // Test a simple res.end() call in an http server
@@ -60,15 +44,15 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -92,15 +76,15 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -125,11 +109,11 @@ describe('probes.https', function () {
 
       var origin = new tv.Event()
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(new RegExp('Edge\\W*' + origin.opId, 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
+          msg.should.have.property('Edge', origin.opId)
           debug('entry is valid')
         }
       ], function () {
@@ -157,18 +141,18 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/X-TV-Meta\W*foo/)
-          msg.should.match(/SampleSource\W*/)
-          msg.should.match(/SampleRate\W*/)
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
+          msg.should.have.property('X-TV-Meta', 'foo')
+          msg.should.have.property('SampleSource')
+          msg.should.have.property('SampleRate')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -198,15 +182,15 @@ describe('probes.https', function () {
         }, 10)
       })
 
-      doChecks([
+      helper.doChecks(emitter, [
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*entry/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'entry')
           debug('entry is valid')
         },
         function (msg) {
-          msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-          msg.should.match(/Label\W*exit/)
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
           debug('exit is valid')
         }
       ], function () {
@@ -245,25 +229,15 @@ describe('probes.https', function () {
           res.end('done')
         })
 
-        var checks = [
+        helper.doChecks(emitter, [
           function (msg) {
-            msg.should.match(new RegExp('Layer\\W*nodejs', 'i'))
-            msg.should.match(new RegExp(val + '\\W*test', 'i'))
-            msg.should.match(/Label\W*entry/)
+            msg.should.have.property('Layer', 'nodejs')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property(val, 'test')
             debug('entry is valid')
           }
-        ]
-
-        emitter.on('message', function (msg) {
-          var check = checks.shift()
-          if (check) {
-            check(msg.toString())
-          }
-
-          if ( ! checks.length) {
-            emitter.removeAllListeners('message')
-            server.close(done)
-          }
+        ], function () {
+          server.close(done)
         })
 
         server.listen(function () {
@@ -282,40 +256,17 @@ describe('probes.https', function () {
   describe('https-client', function () {
   	var check = {
   		'http-entry': function (msg) {
-  			msg.should.match(/Layer\W*nodejs/)
-  			msg.should.match(/Label\W*entry/)
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'entry')
   			debug('entry is valid')
   		},
   		'http-exit': function (msg) {
-  			msg.should.match(/Layer\W*nodejs/)
-  			msg.should.match(/Label\W*exit/)
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'exit')
   			debug('exit is valid')
   		}
   	}
 
-  	function httpsTest (test, validations, done) {
-  		var server = https.createServer(options, function (req, res) {
-  			debug('request started')
-  			test(function (err, data) {
-  				if (err) return done(err)
-  				res.end('done')
-  			})
-  		})
-
-  		validations.unshift(check['http-entry'])
-  		validations.push(check['http-exit'])
-  		doChecks(validations, function () {
-  			server.close(done)
-  		})
-
-  		server.listen(function () {
-  			var port = server.address().port
-  			debug('test server listening on port ' + port)
-  			request('https://localhost:' + port)
-  		})
-  	}
-
-    // TODO: Verify edges...kind of hard with all the regex matching...
     it('should trace https-client', function (done) {
       var server = https.createServer(options, function (req, res) {
         res.end('done')
@@ -323,29 +274,26 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'https://localhost:' + port + '/?foo=bar'
+        ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/client')
 
-        // Escape regex characters in function
-        function stringFn (fn) {
-          return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-        }
-
-        httpsTest(function (done) {
-          https.get(url, done.bind(null, null)).on('error', done)
-        }, [
+        helper.httpsTest(emitter, options, mod, [
           function (msg) {
-            msg.should.match(/Layer\W*https-client/)
-            msg.should.match(new RegExp('RemoteURL\\W*' + stringFn(url)))
-            msg.should.match(/IsService\W*yes/)
-            msg.should.match(/Label\W*entry/)
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', ctx.data.url)
+            msg.should.have.property('IsService', 'yes')
           },
-          function () {},
-          function () {},
           function (msg) {
-            msg.should.match(/Layer\W*https-client/)
-            msg.should.match(/HTTPStatus\W*\d*/)
-            msg.should.match(/Label\W*exit/)
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
           }
         ], done)
       })

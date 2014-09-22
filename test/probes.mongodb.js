@@ -16,6 +16,7 @@ requirePatch.enable()
 
 describe('probes.mongodb', function () {
 	this.timeout(5000)
+	var ctx = {}
 	var emitter
 	var db
 
@@ -30,7 +31,7 @@ describe('probes.mongodb', function () {
 	before(function (done) {
 		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
 			if (err) return done(err)
-			db = _db
+			ctx.mongo = db = _db
 			done()
 		})
 	})
@@ -38,65 +39,20 @@ describe('probes.mongodb', function () {
 		emitter.close(done)
 	})
 
-	//
-	// Helper to run checks against a server
-	//
-	function doChecks (checks, done) {
-		emitter.removeAllListeners('message')
-		emitter.on('message', function (msg) {
-			var check = checks.shift()
-			if (check) {
-				check(msg.toString())
-			}
-
-			if ( ! checks.length) {
-				done()
-			}
-		})
-	}
-
 	var check = {
-		'http-entry': function (msg) {
-			msg.should.match(/Layer\W*nodejs/)
-			msg.should.match(/Label\W*entry/)
-			debug('entry is valid')
-		},
-		'http-exit': function (msg) {
-			msg.should.match(/Layer\W*nodejs/)
-			msg.should.match(/Label\W*exit/)
-			debug('exit is valid')
-		},
 		'common-mongodb': function (msg) {
-			msg.should.match(/Collection\W*test/)
+			msg.should.have.property('Collection', 'test')
 			check['base-mongodb'](msg)
 		},
 		'base-mongodb': function (msg) {
-			msg.should.match(/Flavor\W*mongodb/)
-			msg.should.match(/Database\W*test/)
-			msg.should.match(/RemoteHost\W*/)
+			msg.should.have.property('Flavor', 'mongodb')
+			msg.should.have.property('Database', 'test')
+			msg.should.have.property('RemoteHost')
+		},
+		'mongo-exit': function (msg) {
+			msg.should.have.property('Layer', 'mongodb')
+			msg.should.have.property('Label', 'exit')
 		}
-	}
-
-	function httpTest (test, validations, done) {
-		var server = http.createServer(function (req, res) {
-			debug('request started')
-			test(function (err, data) {
-				if (err) return done(err)
-				res.end('done')
-			})
-		})
-
-		validations.unshift(check['http-entry'])
-		validations.push(check['http-exit'])
-		doChecks(validations, function () {
-			server.close(done)
-		})
-
-		server.listen(function () {
-			var port = server.address().port
-			debug('test server listening on port ' + port)
-			request('http://localhost:' + port)
-		})
 	}
 
 	//
@@ -104,19 +60,14 @@ describe('probes.mongodb', function () {
 	//
 	describe('databases', function () {
 		it('should drop', function (done) {
-			httpTest(function (done) {
-				db.dropDatabase(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/databases/drop'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/QueryOp\W*drop/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'drop')
 					check['base-mongodb'](msg)
 				},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
-				}
+				check['mongo-exit']
 			], done)
 		})
 	})
@@ -134,9 +85,9 @@ describe('probes.mongodb', function () {
 		it('should create_collection', function (done) {
 			var steps = [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/QueryOp\W*create_collection/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'create_collection')
 					check['common-mongodb'](msg)
 				}
 			]
@@ -147,70 +98,55 @@ describe('probes.mongodb', function () {
 				steps.push(function () {})
 			}
 
-			steps.push(function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
-			})
+			steps.push(check['mongo-exit'])
 
-			httpTest(function (done) {
-				db.createCollection('test', done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/collections/create_collection'),
+				steps,
+				done
+			)
 		})
 
 		it('should options', function (done) {
-			httpTest(function (done) {
-				db.collection('test').options(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/options'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/QueryOp\W*options/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'options')
 					check['common-mongodb'](msg)
 				},
 				function () {},
 				function () {},
-				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
-				}
+				check['mongo-exit']
 			], done)
 		})
 
 		it('should rename', function (done) {
 			db.createCollection('test', function () {
-				httpTest(function (done) {
-					db.renameCollection('test', 'test2', done)
-				}, [
+				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/rename'), [
 					function (msg) {
-						msg.should.match(/Layer\W*mongodb/)
-						msg.should.match(/Label\W*entry/)
-						msg.should.match(/New_Collection_Name\W*test2/)
-						msg.should.match(/QueryOp\W*rename/)
+						msg.should.have.property('Layer', 'mongodb')
+						msg.should.have.property('Label', 'entry')
+						msg.should.have.property('QueryOp', 'rename')
+						msg.should.have.property('New_Collection_Name', 'test2')
 						check['common-mongodb'](msg)
 					},
-					function (msg) {
-						msg.should.match(/Layer\W*mongodb/)
-						msg.should.match(/Label\W*exit/)
-					}
+					check['mongo-exit']
 				], done)
 			})
 		})
 
 		it('should drop_collection', function (done) {
 			db.createCollection('test', function () {
-				httpTest(function (done) {
-					db.dropCollection('test', done)
-				}, [
+				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/drop_collection'), [
 					function (msg) {
-						msg.should.match(/Layer\W*mongodb/)
-						msg.should.match(/Label\W*entry/)
-						msg.should.match(/QueryOp\W*drop_collection/)
+						msg.should.have.property('Layer', 'mongodb')
+						msg.should.have.property('Label', 'entry')
+						msg.should.have.property('QueryOp', 'drop_collection')
 						check['common-mongodb'](msg)
 					},
-					function (msg) {
-						msg.should.match(/Layer\W*mongodb/)
-						msg.should.match(/Label\W*exit/)
-					}
+					check['mongo-exit']
 				], done)
 			})
 		})
@@ -221,81 +157,67 @@ describe('probes.mongodb', function () {
 
 		var query_check = {
 			'insert-entry': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*entry/)
-				msg.should.match(/Query\W*{"foo":"bar"/)
-				msg.should.match(/QueryOp\W*insert/)
+				msg.should.have.property('Layer', 'mongodb')
+				msg.should.have.property('Label', 'entry')
+				msg.should.have.property('QueryOp', 'insert')
 				check['common-mongodb'](msg)
-			},
-			'insert-exit': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
 			}
 		}
 
 		it('should insert', function (done) {
-			httpTest(function (done) {
-				db.collection('test').insert({ foo: 'bar' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/insert'), [
 				function (msg) {
+					msg.should.have.property('Query', '{"foo":"bar"}')
 					query_check['insert-entry'](msg)
 				},
 				function (msg) {
-					query_check['insert-exit'](msg)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should find_and_modify', function (done) {
-			httpTest(function (done) {
-				db.collection('test').findAndModify({ foo: 'bar' }, [], { baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/find_and_modify'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar"/)
-					msg.should.match(/QueryOp\W*find_and_modify/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'find_and_modify')
+					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'exit')
 				}
 			], done)
 		})
 
 		it('should update', function (done) {
-			httpTest(function (done) {
-				db.collection('test').update({ foo: 'bar' }, { bax: 'bux' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/update'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar"/)
-					msg.should.match(/QueryOp\W*update/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'update')
+					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should distinct', function (done) {
-			httpTest(function (done) {
-				db.collection('test').distinct('foo', done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/distinct'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Key\W*foo/)
-					msg.should.match(/QueryOp\W*distinct/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'distinct')
+					msg.should.have.property('Key', 'foo')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
@@ -303,10 +225,10 @@ describe('probes.mongodb', function () {
 		it('should count', function (done) {
 			var steps = [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
-					msg.should.match(/QueryOp\W*count/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'count')
+					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
 				}
 			]
@@ -318,53 +240,50 @@ describe('probes.mongodb', function () {
 			}
 
 			steps.push(function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
+				check['mongo-exit'](msg)
 			})
 
-			httpTest(function (done) {
-				db.collection('test').count({ foo: 'bar', baz: 'buz' }, done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/count'),
+				steps,
+				done
+			)
 		})
 
 		it('should remove', function (done) {
-			httpTest(function (done) {
-				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/remove'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
-					msg.should.match(/QueryOp\W*delete/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'delete')
+					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should save', function (done) {
-			httpTest(function (done) {
-				db.collection('test').save({ foo: 'bar', baz: 'buz' }, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/save'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Query\W*{"foo":"bar","baz":"buz"}/)
-					msg.should.match(/QueryOp\W*save/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'save')
+					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
+					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					query_check['insert-entry'](msg)
 				},
 				function (msg) {
-					query_check['insert-exit'](msg)
+					check['mongo-exit'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], function () {
 				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
@@ -377,70 +296,53 @@ describe('probes.mongodb', function () {
 
 		var index_check = {
 			'create-entry': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*entry/)
-				msg.should.match(/Index\W*foo/)
-				msg.should.match(/QueryOp\W*create_index/)
+				msg.should.have.property('Layer', 'mongodb')
+				msg.should.have.property('Label', 'entry')
+				msg.should.have.property('QueryOp', 'create_index')
 				check['common-mongodb'](msg)
-			},
-			'create-exit': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
 			},
 			'info-entry': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*entry/)
-				msg.should.match(/QueryOp\W*index_information/)
+				msg.should.have.property('Layer', 'mongodb')
+				msg.should.have.property('Label', 'entry')
+				msg.should.have.property('QueryOp', 'index_information')
 				check['common-mongodb'](msg)
-			},
-			'info-exit': function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
 			}
 		}
 
 		it('should create_index', function (done) {
-			httpTest(function (done) {
-				db.collection('test').createIndex('foo', done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/create_index'), [
 				function (msg) {
+					msg.should.have.property('Index', '"foo"')
 					index_check['create-entry'](msg)
 				},
 				function (msg) {
-					index_check['create-exit'](msg)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should drop_index', function (done) {
-			httpTest(function (done) {
-				db.collection('test').dropIndex('foo_1', function (err, res) {
-					if (err) return done(err)
-					done(res.ok ? null : new Error('did not drop index'))
-				})
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_index'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Index\W*foo_1/)
-					msg.should.match(/QueryOp\W*drop_index/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'drop_index')
+					msg.should.have.property('Index', 'foo_1')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
-		// TODO: Make this pass
 		it('should ensure_index', function (done) {
 			var steps = [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Index\W*{"foo":1}/)
-					msg.should.match(/QueryOp\W*ensure_index/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'ensure_index')
+					msg.should.have.property('Index', '{"foo":1}')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
@@ -454,26 +356,29 @@ describe('probes.mongodb', function () {
 			}
 
 			steps.push(function (msg) {
-				index_check['info-exit'](msg)
+				check['mongo-exit'](msg)
 			})
 
 			if (semver.satisfies(pkg.version, '1.4.x')) {
 				steps.push(function (msg) {
+					msg.should.have.property('Index', '{"foo":1}')
 					index_check['create-entry'](msg)
 				})
 				steps.push(function (msg) {
-					index_check['create-exit'](msg)
+					check['mongo-exit'](msg)
 				})
 			}
 
 			steps.push(function (msg) {
-				msg.should.match(/Layer\W*mongodb/)
-				msg.should.match(/Label\W*exit/)
+				check['mongo-exit'](msg)
 			})
 
-			httpTest(function (done) {
-				db.collection('test').ensureIndex({ foo: 1 }, done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/ensure_index'),
+				steps,
+				done
+			)
 		})
 
 		it('should index_information', function (done) {
@@ -489,45 +394,42 @@ describe('probes.mongodb', function () {
 			}
 
 			steps.push(function (msg) {
-				index_check['info-exit'](msg)
+				check['mongo-exit'](msg)
 			})
 
-			httpTest(function (done) {
-				db.collection('test').indexInformation(done)
-			}, steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/index_information'),
+				steps,
+				done
+			)
 		})
 
 		it('should reindex', function (done) {
-			httpTest(function (done) {
-				db.collection('test').reIndex(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/reindex'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/QueryOp\W*reindex/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'reindex')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should drop_indexes', function (done) {
-			httpTest(function (done) {
-				db.collection('test').dropAllIndexes(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_indexes'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/Index\W*\*/)
-					msg.should.match(/QueryOp\W*drop_indexes/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'drop_indexes')
+					msg.should.have.property('Index', '*')
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
@@ -537,95 +439,54 @@ describe('probes.mongodb', function () {
 	describe('aggregation', function () {
 
 		it('should group', function (done) {
-			var keys = function (doc) { return { a: doc.a }; };
-			var query = { foo: 'bar' }
-			var initial = { count: 0 }
-			var reduce = function (obj, prev) { prev.count++; };
-
-			// Escape regex characters in function
-			function stringFn (fn) {
-				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-			}
-
-			httpTest(function (done) {
-				db.collection('test').group(keys, query, initial, reduce, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/group'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(new RegExp('Group_Initial\\W*' + JSON.stringify(initial)))
-					msg.should.match(new RegExp('Group_Condition\\W*' + JSON.stringify(query)))
-					msg.should.match(new RegExp('Group_Reduce\\W*' + stringFn(reduce)))
-					msg.should.match(new RegExp('Group_Key\\W*' + stringFn(keys)))
-					msg.should.match(/QueryOp\W*group/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'group')
+
+					msg.should.have.property('Group_Initial', JSON.stringify(ctx.data.initial))
+					msg.should.have.property('Group_Condition', JSON.stringify(ctx.data.query))
+					msg.should.have.property('Group_Reduce', ctx.data.reduce.toString())
+					msg.should.have.property('Group_Key', ctx.data.keys.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should map_reduce', function (done) {
-			var map = function () { emit(this.foo, 1); };
-			var reduce = function (k, vals) { return 1; };
-
-			// Escape regex characters in function
-			function stringFn (fn) {
-				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-			}
-
-			httpTest(function (done) {
-				db.collection('test').mapReduce(map, reduce, {
-					out: {
-						replace: 'tempCollection',
-						readPreference : 'secondary'
-					}
-				}, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/map_reduce'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(new RegExp('Map_Function\\W*' + stringFn(map)))
-					msg.should.match(new RegExp('Reduce_Function\\W*' + stringFn(reduce)))
-					msg.should.match(/QueryOp\W*map_reduce/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'map_reduce')
+
+					msg.should.have.property('Map_Function', ctx.data.map.toString())
+					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
 
 		it('should inline_map_reduce', function (done) {
-			var map = function () { emit(this.foo, 1); };
-			var reduce = function (k, vals) { return 1; };
-
-			// Escape regex characters in function
-			function stringFn (fn) {
-				return fn.toString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-			}
-
-			httpTest(function (done) {
-				db.collection('test').mapReduce(map, reduce, {
-					out: {
-						inline: true
-					}
-				}, done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/inline_map_reduce'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(new RegExp('Map_Function\\W*' + stringFn(map)))
-					msg.should.match(new RegExp('Reduce_Function\\W*' + stringFn(reduce)))
-					msg.should.match(/QueryOp\W*inline_map_reduce/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'inline_map_reduce')
+
+					msg.should.have.property('Map_Function', ctx.data.map.toString())
+					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
@@ -634,20 +495,17 @@ describe('probes.mongodb', function () {
 
 	describe('cursors', function () {
 		it('should find', function (done) {
-			httpTest(function (done) {
-				db.collection('test').find({ foo: 'bar' }).nextObject(done)
-			}, [
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/cursors/find'), [
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*entry/)
-					msg.should.match(/CursorId\W*/)
-					msg.should.match(/QueryOp\W*find/)
-					msg.should.match(/Query\W*{"foo":"bar"}/)
+					msg.should.have.property('Layer', 'mongodb')
+					msg.should.have.property('Label', 'entry')
+					msg.should.have.property('QueryOp', 'find')
+					msg.should.have.property('Query', '{"foo":"bar"}')
+					msg.should.have.property('CursorId')
 					check['base-mongodb'](msg)
 				},
 				function (msg) {
-					msg.should.match(/Layer\W*mongodb/)
-					msg.should.match(/Label\W*exit/)
+					check['mongo-exit'](msg)
 				}
 			], done)
 		})
