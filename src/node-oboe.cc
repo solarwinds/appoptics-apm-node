@@ -1,6 +1,7 @@
 #include "node-oboe.h"
 
 // Components
+#include "sanitizer.cc"
 #include "metadata.cc"
 #include "context.cc"
 #include "config.cc"
@@ -28,7 +29,8 @@ void init(Handle<Object> exports) {
 
 	FileReporter::Init(exports);
 	UdpReporter::Init(exports);
-  OboeContext::Init(exports);
+	OboeContext::Init(exports);
+	Sanitizer::Init(exports);
   Metadata::Init(exports);
   Event::Init(exports);
   Config::Init(exports);
