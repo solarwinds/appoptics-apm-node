@@ -124,4 +124,11 @@ class Config {
     static void Init(Handle<Object>);
 };
 
+class Sanitizer {
+  static NAN_METHOD(sanitize);
+
+  public:
+    static void Init(Handle<Object>);
+};
+
 #endif  // NODE_OBOE_H_
