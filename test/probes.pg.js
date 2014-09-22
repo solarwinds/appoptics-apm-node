@@ -46,15 +46,15 @@ describe('probes.postgres', function () {
 
     var checks = {
       entry: function (msg) {
-        msg.should.match(/Layer\W*postgres/)
-        msg.should.match(/Label\W*entry/)
-        msg.should.match(/Database\W*test/)
-        msg.should.match(/Flavor\W*postgresql/)
-        msg.should.match(/RemoteHost\W*localhost:5432/)
+        msg.should.have.property('Layer', 'postgres')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('Database', 'test')
+        msg.should.have.property('Flavor', 'postgresql')
+        msg.should.have.property('RemoteHost', 'localhost:5432')
       },
       exit: function (msg) {
-        msg.should.match(/Layer\W*postgres/)
-        msg.should.match(/Label\W*exit/)
+        msg.should.have.property('Layer', 'postgres')
+        msg.should.have.property('Label', 'exit')
       }
     }
 
@@ -78,8 +78,8 @@ describe('probes.postgres', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*SELECT \$1::int AS number/)
-            msg.should.match(/QueryArgs\W*\["1"\]/)
+            msg.should.have.property('Query', 'SELECT $1::int AS number')
+            msg.should.have.property('QueryArgs', '["1"]')
           },
           function (msg) {
             checks.exit(msg)
@@ -104,8 +104,8 @@ describe('probes.postgres', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*SELECT \$1::int AS number/)
-            msg.should.match(/QueryArgs\W*\["1"\]/)
+            msg.should.have.property('Query', 'SELECT $1::int AS number')
+            msg.should.have.property('QueryArgs', '["1"]')
           },
           function (msg) {
             checks.exit(msg)
@@ -145,16 +145,16 @@ describe('probes.postgres', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*SELECT \$1::int AS number/)
-            msg.should.match(/QueryArgs\W*\["1"\]/)
+            msg.should.have.property('Query', 'SELECT $1::int AS number')
+            msg.should.have.property('QueryArgs', '["1"]')
           },
           function (msg) {
             checks.exit(msg)
           },
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*SELECT \$1::int AS number/)
-            msg.should.match(/QueryArgs\W*\["2"\]/)
+            msg.should.have.property('Query', 'SELECT $1::int AS number')
+            msg.should.have.property('QueryArgs', '["2"]')
           },
           function (msg) {
             checks.exit(msg)
@@ -179,7 +179,7 @@ describe('probes.postgres', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*select \* from "table" where "key" = '\?'/)
+            msg.should.have.property('Query', 'select * from "table" where "key" = \'?\'')
           },
           function (msg) {
             checks.exit(msg)
@@ -208,7 +208,7 @@ describe('probes.postgres', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.match(/Query\W*select \* from "table" where "foo" = 'bar'/)
+            msg.should.have.property('Query', 'select * from "table" where "foo" = \'bar\'')
           },
           function (msg) {
             checks.exit(msg)
