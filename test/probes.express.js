@@ -1,8 +1,9 @@
 var debug = require('debug')('probes-express')
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
+var rum = require('../lib/rum')
+var tv = require('..')
+var addon = tv.addon
 
 var request = require('request')
 var express = require('express')
@@ -10,10 +11,17 @@ var fs = require('fs')
 
 // String interpolation templating
 function tmpl (text, data) {
-  return text.replace(/{{([^{}]*)}}/g, function (a, expression) {
+  return text.replace(/#{([^{}]*)}/g, function (a, expression) {
     var fn = new Function('data', 'with (data) { return ' + expression + ' }')
     return fn(data)
   })
+}
+
+function after (n, fn) {
+  return function () {
+    n--
+    if (n == 0) fn()
+  }
 }
 
 describe('probes.express', function () {
@@ -24,8 +32,8 @@ describe('probes.express', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -200,6 +208,83 @@ describe('probes.express', function () {
       var port = server.address().port
       debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should include RUM scripts', function (done) {
+    tv.rumId = 'foo'
+    var app = express()
+    var locals
+    var exit
+
+    // Define simply template engine
+    app.set('views', __dirname)
+    app.set('view engine', 'tmpl')
+    app.engine('tmpl', function (file, locals, fn) {
+      fs.readFile(file, function (err, data) {
+        fn(null, tmpl(data.toString(), locals))
+      })
+    })
+
+    // Define route to render template that should inject rum scripts
+    app.get('/', function (req, res) {
+      // Store exit event for use in response tests
+      exit = res._http_layer.events.exit
+      res.render('rum')
+    })
+
+    // Define tracelyzer message validations
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', 'express-route')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('TemplateFile')
+        msg.should.have.property('TemplateLanguage', '.tmpl')
+        msg.should.have.property('Locals')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Label', 'exit')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', 'express-route')
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/')
+        msg.should.have.property('Action', '(anonymous)')
+      }
+    ]
+
+    // Delay completion until both test paths end
+    var complete = after(2, function () {
+      server.close(done)
+      delete tv.rumId
+    })
+
+    // Run tracelyzer checks
+    helper.doChecks(emitter, validations, complete)
+
+    // Start server and make a request
+    var server = app.listen(function () {
+      var port = server.address().port
+      debug('test server listening on port ' + port)
+      request('http://localhost:' + port, function (a, b, body) {
+        // Verify that the rum scripts are included in the body
+        body.should.containEql(rum.header(tv.rumId, exit.toString()))
+        body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+        complete()
+      })
     })
   })
 
