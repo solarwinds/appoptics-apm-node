@@ -1,6 +1,7 @@
 var debug = require('debug')('probes-express')
 var helper = require('./helper')
 var should = require('should')
+var semver = require('semver')
 var rum = require('../lib/rum')
 var tv = require('..')
 var addon = tv.addon
@@ -8,6 +9,8 @@ var addon = tv.addon
 var request = require('request')
 var express = require('express')
 var fs = require('fs')
+
+var pkg = require('express/package.json')
 
 // String interpolation templating
 function tmpl (text, data) {
@@ -146,7 +149,7 @@ describe('probes.express', function () {
     })
   })
 
-  it('should trace render layer', function (done) {
+  function renderTest (done) {
     var app = express()
     var locals
 
@@ -162,7 +165,10 @@ describe('probes.express', function () {
       locals = {
         name: req.params.name
       }
-      res.render('hello', locals)
+
+      // NOTE: We need to do Object.create() here because
+      // express 3.x and earlier pollute this object
+      res.render('hello', Object.create(locals))
     })
 
     var validations = [
@@ -209,9 +215,9 @@ describe('probes.express', function () {
       debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
-  })
+  }
 
-  it('should include RUM scripts', function (done) {
+  function rumTest (done) {
     tv.rumId = 'foo'
     var app = express()
     var locals
@@ -286,6 +292,13 @@ describe('probes.express', function () {
         complete()
       })
     })
-  })
+  }
 
+  if (semver.satisfies(pkg.version, '< 3.2.0')) {
+    it.skip('should trace render layer', renderTest)
+    it.skip('should include RUM scripts', rumTest)
+  } else {
+    it('should trace render layer', renderTest)
+    it('should include RUM scripts', rumTest)
+  }
 })
