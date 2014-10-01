@@ -30,6 +30,8 @@ describe('error', function () {
   //
   it('should add error properties to exit', function (done) {
     helper.httpTest(emitter, function (done) {
+      client.ready = false
+      client.enable_offline_queue = false
       client.set('foo', null, function (err) {
         done()
       })
