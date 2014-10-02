@@ -53,6 +53,14 @@ describe('probes.express', function () {
       msg.should.have.property('Label', 'exit')
       debug('exit is valid')
     },
+    'express-entry': function (msg) {
+      msg.should.have.property('Layer', 'express')
+      msg.should.have.property('Label', 'entry')
+    },
+    'express-exit': function (msg) {
+      msg.should.have.property('Layer', 'express')
+      msg.should.have.property('Label', 'exit')
+    },
     'render-exit': function (msg) {
       msg.should.have.property('Layer', 'render')
       msg.should.have.property('Label', 'exit')
@@ -73,8 +81,14 @@ describe('probes.express', function () {
       function (msg) {
         check['http-entry'](msg)
       },
+      function (msg) {
+        check['express-entry'](msg)
+      },
       function () {},
       function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
       function (msg) {
         check['http-exit'](msg)
         msg.should.have.property('Controller', '/hello/:name')
@@ -109,6 +123,9 @@ describe('probes.express', function () {
         check['http-entry'](msg)
       },
       function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
         msg.should.have.property('ProfileName', 'express-route')
@@ -133,9 +150,10 @@ describe('probes.express', function () {
         msg.should.have.property('ProfileName', 'express-route')
       },
       function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'responder')
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -176,12 +194,15 @@ describe('probes.express', function () {
         check['http-entry'](msg)
       },
       function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
         msg.should.have.property('ProfileName', 'express-route')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
         msg.should.have.property('TemplateLanguage', '.tmpl')
@@ -192,13 +213,16 @@ describe('probes.express', function () {
         })
       },
       function (msg) {
-        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
         msg.should.have.property('ProfileName', 'express-route')
+      },
+      function (msg) {
+        check['express-exit'](msg)
       },
       function (msg) {
         check['http-exit'](msg)
@@ -245,25 +269,31 @@ describe('probes.express', function () {
         check['http-entry'](msg)
       },
       function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
         msg.should.have.property('ProfileName', 'express-route')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
         msg.should.have.property('TemplateLanguage', '.tmpl')
         msg.should.have.property('Locals')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'render')
+        msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
         msg.should.have.property('ProfileName', 'express-route')
+      },
+      function (msg) {
+        check['express-exit'](msg)
       },
       function (msg) {
         check['http-exit'](msg)
