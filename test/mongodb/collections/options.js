@@ -1,3 +1,5 @@
 exports.run = function (ctx, done) {
-  ctx.mongo.collection('test').options(done)
+  ctx.mongo.collection('test').options(function () {
+    done()
+  })
 }
