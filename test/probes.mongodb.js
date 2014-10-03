@@ -109,17 +109,23 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should options', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/options'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'options')
 					check['common-mongodb'](msg)
-				},
-				function () {},
-				function () {},
-				check['mongo-exit']
-			], done)
+				}
+			]
+
+			if (semver.satisfies(pkg.version, '< 1.4.13')) {
+				steps.push(function () {})
+				steps.push(function () {})
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/options'), steps, done)
 		})
 
 		it('should rename', function (done) {
