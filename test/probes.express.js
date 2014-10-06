@@ -205,11 +205,11 @@ describe('probes.express', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
         msg.should.have.property('TemplateLanguage', '.tmpl')
-        msg.should.have.property('Locals')
-        var Locals = JSON.parse(msg.Locals)
-        Object.keys(locals).forEach(function (key) {
-          Locals.should.have.property(key, locals[key])
-        })
+        // msg.should.have.property('Locals')
+        // var Locals = JSON.parse(msg.Locals)
+        // Object.keys(locals).forEach(function (key) {
+        //   Locals.should.have.property(key, locals[key])
+        // })
       },
       function (msg) {
         msg.should.have.property('Layer', 'express-render')
@@ -278,7 +278,6 @@ describe('probes.express', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
         msg.should.have.property('TemplateLanguage', '.tmpl')
-        msg.should.have.property('Locals')
       },
       function (msg) {
         msg.should.have.property('Layer', 'express-render')
