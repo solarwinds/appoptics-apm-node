@@ -63,10 +63,23 @@ exports.tracelyzer = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done) {
+  var first = true
+  var edge
+
   emitter.on('message', function (msg) {
     var check = checks.shift()
     if (check) {
       check(msg)
+    }
+
+    // Always verify that a valid X-Trace ID is present
+    msg.should.have.property('X-Trace').and.match(/^1B[0-9A-F]{56}$/)
+
+    // After the first event, verify valid edges are present
+    if (first) {
+      first = false
+    } else {
+      msg.should.have.property('Edge').and.match(/^[0-9A-F]{16}$/)
     }
 
     if ( ! checks.length) {
