@@ -2,4 +2,4 @@
 var path = require('path')
 global.tv = require('traceview')
 var entry = process.argv.splice(1, 1)
-require(path.resolve(process.cwd(), entry))
+require(path.resolve(process.cwd(), entry[0]))
