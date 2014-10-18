@@ -25,6 +25,10 @@ describe('probes.postgres', function () {
     emitter.close(done)
   })
 
+  beforeEach(function () {
+    emitter.removeAllListeners('message')
+  })
+
   //
   // Yes, this is super janky. But necessary because switching to
   // the native driver is destructive to the pooling mechanism.

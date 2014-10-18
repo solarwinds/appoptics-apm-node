@@ -68,7 +68,7 @@ describe('basics', function () {
 
     tv.sampleRate = 1
     var samples = []
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 1000; i++) {
       s = tv.sample(Math.random().toString())
       samples.push(!!s[0])
     }

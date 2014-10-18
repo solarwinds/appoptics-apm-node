@@ -39,6 +39,10 @@ describe('probes.mongodb', function () {
 		emitter.close(done)
 	})
 
+	beforeEach(function () {
+		emitter.removeAllListeners('message')
+	})
+
 	var check = {
 		'common-mongodb': function (msg) {
 			msg.should.have.property('Collection', 'test')
