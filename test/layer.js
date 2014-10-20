@@ -10,28 +10,16 @@ describe('layer', function () {
   //
   // Intercept tracelyzer messages for analysis
   //
-  before(function (done) {
+  beforeEach(function (done) {
+    this.timeout(5000)
     emitter = helper.tracelyzer(done)
     tv.sampleRate = addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
-  after(function (done) {
+  afterEach(function (done) {
+    this.timeout(5000)
     emitter.close(done)
   })
-
-  function doChecks (checks, done) {
-    emitter.on('message', function (msg) {
-      var check = checks.shift()
-      if (check) {
-        check(msg)
-      }
-
-      if ( ! checks.length) {
-        emitter.removeAllListeners('message')
-        done()
-      }
-    })
-  }
 
   //
   // Verify basic structural integrity
@@ -69,7 +57,6 @@ describe('layer', function () {
         })
       },
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
         msg.should.have.property('X-Trace', e.exit.toString())
         msg.should.have.property('Edge', e.entry.opId)
         msg.should.have.property('Label', 'exit')
@@ -77,7 +64,7 @@ describe('layer', function () {
       }
     ]
 
-    doChecks(checks, done)
+    helper.doChecks(emitter, checks, done)
 
     layer.run(function () {
 
@@ -104,7 +91,6 @@ describe('layer', function () {
       },
       // Verify structure of exit event
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + e.entry.taskId, 'i'))
         msg.should.have.property('X-Trace', e.exit.toString())
         msg.should.have.property('Edge', e.entry.opId)
         msg.should.have.property('Label', 'exit')
@@ -112,7 +98,7 @@ describe('layer', function () {
       }
     ]
 
-    doChecks(checks, done)
+    helper.doChecks(emitter, checks, done)
 
     layer.run(function (wrap) {
       var cb = wrap(function (err, res) {
@@ -145,7 +131,6 @@ describe('layer', function () {
         })
       },
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.entry.opId.toString())
         msg.should.have.property('Layer', 'inner')
@@ -156,14 +141,12 @@ describe('layer', function () {
         })
       },
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId.toString())
         msg.should.have.property('Layer', 'inner')
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', inner.events.exit.opId.toString())
         msg.should.have.property('Layer', 'outer')
@@ -171,7 +154,7 @@ describe('layer', function () {
       }
     ]
 
-    doChecks(checks, done)
+    helper.doChecks(emitter, checks, done)
 
     outer = new Layer('outer', null, outerData)
     outer.run(function () {
@@ -198,7 +181,6 @@ describe('layer', function () {
       },
       // Inner entry (async)
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.have.property('Layer', 'inner')
@@ -210,7 +192,6 @@ describe('layer', function () {
       },
       // Outer exit
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.have.property('Layer', 'outer')
@@ -218,7 +199,6 @@ describe('layer', function () {
       },
       // Inner exit (async)
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.exit.taskId))
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId)
         msg.should.have.property('Layer', 'inner')
@@ -226,7 +206,7 @@ describe('layer', function () {
       }
     ]
 
-    doChecks(checks, done)
+    helper.doChecks(emitter, checks, done)
 
     outer = new Layer('outer', null, outerData)
     outer.run(function () {
@@ -263,7 +243,6 @@ describe('layer', function () {
       },
       // Outer exit (async)
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.have.property('Layer', 'outer')
@@ -271,7 +250,6 @@ describe('layer', function () {
       },
       // Inner entry
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + outer.events.entry.taskId))
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.exit.opId)
         msg.should.have.property('Layer', 'inner')
@@ -283,7 +261,6 @@ describe('layer', function () {
       },
       // Inner exit
       function (msg) {
-        // msg.should.match(new RegExp('X-Trace\\W*1B' + inner.events.entry.taskId))
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId)
         msg.should.have.property('Layer', 'inner')
@@ -291,7 +268,7 @@ describe('layer', function () {
       },
     ]
 
-    doChecks(checks, done)
+    helper.doChecks(emitter, checks, done)
 
     outer = new Layer('outer', null, outerData)
     outer.run(function (wrap) {
@@ -310,5 +287,31 @@ describe('layer', function () {
         delayed(null, 'foo')
       })
     })
+  })
+
+  //
+  // Miscellaneous
+  //
+  it('should send info events', function (done) {
+    var layer = new Layer('test', null, {})
+    var e = layer.events.entry
+    var data = {
+      Foo: 'bar'
+    }
+
+    var checks = [
+      function (msg) {
+        msg.should.have.property('Label', 'info')
+        msg.should.have.property('Layer', 'test')
+
+        Object.keys(data).forEach(function (key) {
+          msg.should.have.property(key, data[key])
+        })
+      }
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    layer.info(data)
   })
 })

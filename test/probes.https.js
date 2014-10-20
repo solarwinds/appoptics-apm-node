@@ -67,38 +67,6 @@ describe('probes.https', function () {
     })
 
     //
-    // Test multiple writes to the response in an http server
-    //
-    it('should send traces for each write to response stream', function (done) {
-      var server = https.createServer(options, function (req, res) {
-        debug('request started')
-        res.write('wait...')
-        res.end('done')
-      })
-
-      helper.doChecks(emitter, [
-        function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'entry')
-          debug('entry is valid')
-        },
-        function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'exit')
-          debug('exit is valid')
-        }
-      ], function () {
-        server.close(done)
-      })
-
-      server.listen(function () {
-        var port = server.address().port
-        debug('test server listening on port ' + port)
-        request('https://localhost:' + port)
-      })
-    })
-
-    //
     // Verify X-Trace header results in a continued trace
     //
     it('should continue tracing when receiving an xtrace id header', function (done) {
@@ -267,7 +235,7 @@ describe('probes.https', function () {
   		}
   	}
 
-    it('should trace https-client', function (done) {
+    it('should trace https request', function (done) {
       var server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
@@ -276,6 +244,72 @@ describe('probes.https', function () {
       server.listen(function () {
         ctx.data = { port: server.address().port }
         var mod = helper.run(ctx, 'https/client')
+
+        helper.httpsTest(emitter, options, mod, [
+          function (msg) {
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', ctx.data.url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
+    it('should support object-based requests', function (done) {
+      var server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        var d = ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/client-object')
+        var url = 'https://' + d.hostname + ':' + d.port + d.path
+
+        helper.httpsTest(emitter, options, mod, [
+          function (msg) {
+
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
+    it('should trace streaming https request', function (done) {
+      var server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/stream')
 
         helper.httpsTest(emitter, options, mod, [
           function (msg) {

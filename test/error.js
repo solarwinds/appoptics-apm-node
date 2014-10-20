@@ -1,8 +1,9 @@
 var debug = require('debug')('traceview:test:error')
 var helper = require('./helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
+var tv = require('..')
+var addon = tv.addon
+var Event = tv.Event
 
 var request = require('request')
 var http = require('http')
@@ -18,17 +19,27 @@ describe('error', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
   })
 
   //
-  // Test a simple res.end() call in an http server
+  // Tests
   //
-  it('should add error properties to exit', function (done) {
+  it('should add error properties to event', function () {
+    var event = new Event('error-test', 'info')
+    var err = new Error('test')
+    event.error = err
+
+    event.should.have.property('ErrorClass', 'Error')
+    event.should.have.property('ErrorMsg', err.message)
+    event.should.have.property('Backtrace', err.stack)
+  })
+
+  it('should report errors in error-first callbacks', function (done) {
     helper.httpTest(emitter, function (done) {
       client.ready = false
       client.enable_offline_queue = false

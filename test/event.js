@@ -24,8 +24,12 @@ describe('event', function () {
     event = new Event('test', 'entry')
     event.should.have.property('Layer', 'test')
     event.should.have.property('Label', 'entry')
-    event.should.have.property('taskId').and.not.match(/^0*$/)
-    event.should.have.property('opId').and.not.match(/^0*$/)
+    event.should.have.property('taskId').and.match(/^[0-9A-F]{40}$/)
+    event.should.have.property('opId').and.match(/^[0-9A-F]{16}$/)
+  })
+
+  it('should convert an event to a string', function () {
+    event.toString().should.match(/^1B[0-9A-F]{56}$/)
   })
 
   it('should enter the event context', function () {
