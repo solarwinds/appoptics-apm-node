@@ -267,6 +267,40 @@ describe('probes.https', function () {
       })
     })
 
+    it('should support object-based requests', function (done) {
+      var server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        var d = ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/client-object')
+        var url = 'https://' + d.hostname + ':' + d.port + d.path
+
+        helper.httpsTest(emitter, options, mod, [
+          function (msg) {
+
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'https-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
     it('should trace streaming https request', function (done) {
       var server = https.createServer(options, function (req, res) {
         res.end('done')

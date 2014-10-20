@@ -256,6 +256,40 @@ describe('probes.http', function () {
       })
     })
 
+    it('should support object-based requests', function (done) {
+      var server = http.createServer(function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        var d = ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'http/client-object')
+        var url = 'http://' + d.hostname + ':' + d.port + d.path
+
+        helper.httpTest(emitter, mod, [
+          function (msg) {
+
+            msg.should.have.property('Layer', 'http-client')
+            msg.should.have.property('Label', 'entry')
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check['http-entry'](msg)
+          },
+          function (msg) {
+            check['http-exit'](msg)
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'http-client')
+            msg.should.have.property('Label', 'exit')
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
     it('should trace streaming http request', function (done) {
       var server = http.createServer(function (req, res) {
         res.end('done')

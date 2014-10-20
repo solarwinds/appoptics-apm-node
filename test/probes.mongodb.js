@@ -23,24 +23,23 @@ describe('probes.mongodb', function () {
 	//
 	// Intercept tracelyzer messages for analysis
 	//
-	before(function (done) {
+	beforeEach(function (done) {
+		this.timeout(5000)
 		emitter = helper.tracelyzer(done)
 		tv.sampleRate = addon.MAX_SAMPLE_RATE
 		tv.traceMode = 'always'
 	})
-	before(function (done) {
+	beforeEach(function (done) {
+		this.timeout(5000)
 		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
 			if (err) return done(err)
 			ctx.mongo = db = _db
 			done()
 		})
 	})
-	after(function (done) {
+	afterEach(function (done) {
+		this.timeout(5000)
 		emitter.close(done)
-	})
-
-	beforeEach(function () {
-		emitter.removeAllListeners('message')
 	})
 
 	var check = {

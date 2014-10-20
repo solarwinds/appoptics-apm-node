@@ -17,12 +17,14 @@ describe('probes.redis', function () {
   //
   // Intercept tracelyzer messages for analysis
   //
-  before(function (done) {
+  beforeEach(function (done) {
+    this.timeout(5000)
     emitter = helper.tracelyzer(done)
     oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
     oboe.traceMode = 'always'
   })
-  after(function (done) {
+  afterEach(function (done) {
+    this.timeout(5000)
     emitter.close(done)
   })
 

@@ -16,17 +16,15 @@ describe('probes.postgres', function () {
   //
   // Intercept tracelyzer messages for analysis
   //
-  before(function (done) {
+  beforeEach(function (done) {
+    this.timeout(5000)
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
-  after(function (done) {
+  afterEach(function (done) {
+    this.timeout(5000)
     emitter.close(done)
-  })
-
-  beforeEach(function () {
-    emitter.removeAllListeners('message')
   })
 
   //
