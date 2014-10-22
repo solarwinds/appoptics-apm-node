@@ -1,0 +1,201 @@
+var debug = require('debug')('probes-cassandra-driver')
+var helper = require('./helper')
+var should = require('should')
+var tv = require('..')
+var addon = tv.addon
+
+var cassandra
+
+//
+// Do not load unless stream.Readable exists.
+// It will fail silently, stalling the tests.
+//
+var stream = require('stream')
+var hasReadableStream = typeof stream.Readable !== 'undefined'
+if (hasReadableStream) {
+  cassandra = require('cassandra-driver')
+}
+
+describe('probes.cassandra-driver', function () {
+  var emitter
+  var ctx = {}
+  var client
+  var db
+
+  //
+  // Define some general message checks
+  //
+  var checks = {
+    entry: function (msg) {
+      msg.should.have.property('Layer', 'cassandra')
+      msg.should.have.property('Label', 'entry')
+      msg.should.have.property('Database', 'test')
+      msg.should.have.property('Flavor', 'cql')
+    },
+    info: function (msg) {
+      msg.should.have.property('Layer', 'cassandra')
+      msg.should.have.property('Label', 'info')
+      msg.should.have.property('RemoteHost', '127.0.0.1:9042')
+    },
+    exit: function (msg) {
+      msg.should.have.property('Layer', 'cassandra')
+      msg.should.have.property('Label', 'exit')
+    }
+  }
+
+  //
+  // Only run before/after when running tests
+  //
+  if (hasReadableStream) {
+    //
+    // Intercept tracelyzer messages for analysis
+    //
+    beforeEach(function (done) {
+      this.timeout(5000)
+      emitter = helper.tracelyzer(done)
+      tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+      tv.traceMode = 'always'
+    })
+    afterEach(function (done) {
+      this.timeout(5000)
+      emitter.close(done)
+    })
+
+    //
+    // Construct database client
+    //
+    beforeEach(function () {
+      client = ctx.cassandra = new cassandra.Client({
+        contactPoints: ['127.0.0.1'],
+        keyspace: 'test'
+      })
+    })
+    beforeEach(function (done) {
+      client.execute('CREATE COLUMNFAMILY IF NOT EXISTS "foo" (bar varchar, PRIMARY KEY (bar));', done)
+    })
+    beforeEach(function (done) {
+      client.batch([{
+        query: 'INSERT INTO foo (bar) values (?);',
+        params: ['baz']
+      }, {
+        query: 'INSERT INTO foo (bar) values (?);',
+        params: ['buz']
+      }], done)
+    })
+
+    it('should trace a basic query', test_basic)
+    it('should trace a prepared query', test_prepare)
+    it('should sanitize query string, when not using value list', test_sanitize)
+    it('should trace an iterator query', test_iterator)
+    it('should trace a query stream', test_stream)
+    it('should trace a batched query', test_batch)
+
+  //
+  // Otherwise, just create blank skipped tests for log visibility
+  //
+} else {
+    it.skip('should trace a basic query', test_basic)
+    it.skip('should trace a prepared query', test_prepare)
+    it.skip('should sanitize query string, when not using value list', test_sanitize)
+    it.skip('should trace an iterator query', test_iterator)
+    it.skip('should trace a query stream', test_stream)
+    it.skip('should trace a batched query', test_batch)
+  }
+
+  //
+  // Define test handlers
+  //
+  function test_basic (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/basic'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT now() FROM system.local')
+        msg.should.have.property('ConsistencyLevel', 'one')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_prepare (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/prepare'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT now() FROM system.local')
+        msg.should.have.property('ConsistencyLevel', 'one')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_sanitize (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/sanitize'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT * from foo where bar=\'?\'')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_iterator (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/iterator'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT * from foo')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_stream (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/stream'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT * from foo')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_batch (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/batch'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'BATCH')
+        msg.should.have.property('BatchQueries', '["INSERT INTO foo (bar) values (?)","INSERT INTO foo (bar) values (\'bax\')"]')
+        msg.should.have.property('BatchQueryArgs', '["bux",null]')
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+})
