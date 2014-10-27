@@ -12,6 +12,7 @@ var mysql = require('mysql')
 describe('probes.mysql', function () {
   var emitter
   var ctx = {}
+  var cluster
   var pool
   var db
 
@@ -47,12 +48,20 @@ describe('probes.mysql', function () {
       database: 'test',
       user: 'root'
     })
-    pool = db.pool = mysql.createPool({
+
+    // Set pool and pool cluster
+    var poolConfig = {
       connectionLimit: 10,
       host: 'localhost',
       database: 'test',
       user: 'root'
-    })
+    }
+
+    pool = db.pool = mysql.createPool(poolConfig)
+    cluster = db.cluster = mysql.createPoolCluster()
+    cluster.add(poolConfig)
+
+    // Connect
     db.connect(done)
   })
   afterEach(function (done) {
@@ -98,6 +107,18 @@ describe('probes.mysql', function () {
 
   it('should trace a pooled query', function (done) {
     helper.httpTest(emitter, helper.run(ctx, 'mysql/pool'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT 1')
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  })
+
+  it('should trace a cluster pooled query', function (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'mysql/pool-cluster'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
