@@ -66,7 +66,10 @@ exports.doChecks = function (emitter, checks, done) {
   var first = true
   var edge
 
+  var add = emitter.server.address()
+
   emitter.on('message', function (msg) {
+    debug('mock tracelyzer (port ' + add.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       check(msg)
@@ -82,6 +85,7 @@ exports.doChecks = function (emitter, checks, done) {
       msg.should.have.property('Edge').and.match(/^[0-9A-F]{16}$/)
     }
 
+    debug(checks.length + ' checks left')
     if ( ! checks.length) {
       emitter.removeAllListeners('message')
       done()
@@ -120,7 +124,7 @@ exports.httpTest = function (emitter, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    request('http://localhost:' + port)
+    http.get('http://localhost:' + port)
   })
 }
 
@@ -142,7 +146,7 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    request('https://localhost:' + port)
+    https.get('https://localhost:' + port)
   })
 }
 
