@@ -3,6 +3,7 @@
 //
 var MongoDB = require('mongodb').MongoClient
 var redis = require('redis').createClient()
+var cql = require('node-cassandra-cql')
 var postgres = require('pg')
 var https = require('https')
 var http = require('http')
@@ -25,6 +26,10 @@ exports.getContext = function (context, done) {
     // Some stuff works as-is
     //
     function (done) {
+      context.cql = new cql.Client({
+        hosts: ['localhost'],
+        keyspace: 'test'
+      })
       context.redis = redis
       context.https = https
       context.http = http
