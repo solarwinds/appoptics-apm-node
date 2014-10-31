@@ -23,12 +23,12 @@ describe('probes.mysql', function () {
   //
   // Intercept tracelyzer messages for analysis
   //
-  beforeEach(function (done) {
+  before(function (done) {
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
-  afterEach(function (done) {
+  after(function (done) {
     emitter.close(done)
   })
 

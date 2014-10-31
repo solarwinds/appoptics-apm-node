@@ -25,12 +25,14 @@ describe('probes.https', function () {
     // Awful hack
     originalFlag = process.env.NODE_TLS_REJECT_UNAUTHORIZED
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
     emitter = helper.tracelyzer(done)
     tv.sampleRate = addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
   after(function (done) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
+
     emitter.close(done)
   })
 

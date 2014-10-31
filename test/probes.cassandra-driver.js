@@ -50,30 +50,28 @@ describe('probes.cassandra-driver', function () {
     //
     // Intercept tracelyzer messages for analysis
     //
-    beforeEach(function (done) {
-      this.timeout(5000)
+    before(function (done) {
       emitter = helper.tracelyzer(done)
       tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
       tv.traceMode = 'always'
     })
-    afterEach(function (done) {
-      this.timeout(5000)
+    after(function (done) {
       emitter.close(done)
     })
 
     //
     // Construct database client
     //
-    beforeEach(function () {
+    before(function () {
       client = ctx.cassandra = new cassandra.Client({
         contactPoints: ['127.0.0.1'],
         keyspace: 'test'
       })
     })
-    beforeEach(function (done) {
+    before(function (done) {
       client.execute('CREATE COLUMNFAMILY IF NOT EXISTS "foo" (bar varchar, PRIMARY KEY (bar));', done)
     })
-    beforeEach(function (done) {
+    before(function (done) {
       client.batch([{
         query: 'INSERT INTO foo (bar) values (?);',
         params: ['baz']
@@ -81,6 +79,9 @@ describe('probes.cassandra-driver', function () {
         query: 'INSERT INTO foo (bar) values (?);',
         params: ['buz']
       }], done)
+    })
+    after(function (done) {
+      client.execute('TRUNCATE "foo";', done)
     })
 
     it('should trace a basic query', test_basic)

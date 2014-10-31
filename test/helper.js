@@ -13,7 +13,7 @@ var addon = tv.addon
 exports.tracelyzer = function (done) {
   // Pick a random port
   // TODO: Determine available ports on CI server
-  var port = Math.floor(Math.random() * 10000) + 1000
+  var port = Math.floor(Math.random() * 10000) + 10000
 
   // Create UDP server to mock tracelyzer
   var server = dgram.createSocket('udp4')
@@ -68,7 +68,9 @@ exports.doChecks = function (emitter, checks, done) {
 
   var add = emitter.server.address()
 
-  emitter.on('message', function (msg) {
+  emitter.removeAllListeners('message')
+
+  function onMessage (msg) {
     debug('mock tracelyzer (port ' + add.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
@@ -87,10 +89,14 @@ exports.doChecks = function (emitter, checks, done) {
 
     debug(checks.length + ' checks left')
     if ( ! checks.length) {
-      emitter.removeAllListeners('message')
+      // NOTE: This is only needed because some
+      // tests have less checks than messages
+      emitter.removeListener('message', onMessage)
       done()
     }
-  })
+  }
+
+  emitter.on('message', onMessage)
 }
 
 var check = {

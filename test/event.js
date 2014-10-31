@@ -41,7 +41,7 @@ describe('event', function () {
   it('should send the event', function (done) {
     var event2 = new Event('test', 'exit', event.event)
 
-    emitter.on('message', function (msg) {
+    emitter.once('message', function (msg) {
       msg.should.have.property('X-Trace', event2.toString())
       msg.should.have.property('Edge', event.opId)
       msg.should.have.property('Layer', 'test')

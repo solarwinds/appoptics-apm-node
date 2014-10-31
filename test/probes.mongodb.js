@@ -15,7 +15,6 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 describe('probes.mongodb', function () {
-	this.timeout(5000)
 	var ctx = {}
 	var emitter
 	var db
@@ -23,23 +22,27 @@ describe('probes.mongodb', function () {
 	//
 	// Intercept tracelyzer messages for analysis
 	//
-	beforeEach(function (done) {
-		this.timeout(5000)
+	before(function (done) {
 		emitter = helper.tracelyzer(done)
 		tv.sampleRate = addon.MAX_SAMPLE_RATE
 		tv.traceMode = 'always'
 	})
-	beforeEach(function (done) {
-		this.timeout(5000)
+	after(function (done) {
+		emitter.close(done)
+	})
+
+	//
+	// Open a fresh mongodb connection for each test
+	//
+	before(function (done) {
 		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
 			if (err) return done(err)
 			ctx.mongo = db = _db
 			done()
 		})
 	})
-	afterEach(function (done) {
-		this.timeout(5000)
-		emitter.close(done)
+	after(function (done) {
+		ctx.mongo.close(done)
 	})
 
 	var check = {

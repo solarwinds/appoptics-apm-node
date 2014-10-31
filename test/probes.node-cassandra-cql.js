@@ -50,14 +50,12 @@ describe('probes.cassandra', function () {
     //
     // Intercept tracelyzer messages for analysis
     //
-    beforeEach(function (done) {
-      this.timeout(5000)
+    before(function (done) {
       emitter = helper.tracelyzer(done)
       tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
       tv.traceMode = 'always'
     })
-    afterEach(function (done) {
-      this.timeout(5000)
+    after(function (done) {
       emitter.close(done)
     })
 
