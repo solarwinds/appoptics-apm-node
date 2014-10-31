@@ -69,7 +69,7 @@ describe('basics', function () {
     tv.sampleRate = 1
     var samples = []
     for (var i = 0; i < 1000; i++) {
-      s = tv.sample(Math.random().toString())
+      s = tv.sample('test')
       samples.push(!!s[0])
     }
     samples.should.containEql(false)
