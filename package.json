@@ -13,7 +13,8 @@
     "coverage": "npm run coverage:report",
     "coverage:build": "rm -rf coverage && istanbul cover _mocha",
     "coverage:report": "npm run coverage:build && istanbul report",
-    "coverage:html": "npm run coverage:report && xdg-open coverage/lcov-report/index.html"
+    "coverage:html": "npm run coverage:report && xdg-open coverage/lcov-report/index.html",
+    "watch:test": "onchange '{lib,test}/**/*.js' 'index.js' -- npm test"
   },
   "author": {
     "name": "Stephen Belanger",
@@ -62,6 +63,7 @@
     "mongodb": "~1.4.8",
     "mysql": "~2.5.2",
     "node-cassandra-cql": "~0.4.4",
+    "onchange": "0.0.1",
     "pg": "~3.4.2",
     "redis": "~0.12.1",
     "request": "~2.42.0",
