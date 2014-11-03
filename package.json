@@ -14,7 +14,9 @@
     "coverage:build": "rm -rf coverage && istanbul cover _mocha",
     "coverage:report": "npm run coverage:build && istanbul report",
     "coverage:html": "npm run coverage:report && xdg-open coverage/lcov-report/index.html",
-    "watch:test": "onchange '{lib,test}/**/*.js' 'index.js' -- npm test"
+    "watch:test": "onchange '{lib,test}/**/*.js' 'build/**/*.node' 'index.js' -- npm test",
+    "watch:build": "onchange 'src/**/*.{cc,h}' -- node-gyp rebuild",
+    "watch": "npm run watch:build & npm run watch:test"
   },
   "author": {
     "name": "Stephen Belanger",
