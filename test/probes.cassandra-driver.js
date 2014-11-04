@@ -59,6 +59,15 @@ describe('probes.cassandra-driver', function () {
       emitter.close(done)
     })
 
+    // Yes, this is really, actually needed.
+    // Sampling may actually prevent reporting,
+    // if the tests run too fast. >.<
+    beforeEach(function (done) {
+      setTimeout(function () {
+        done()
+      }, 100)
+    })
+
     //
     // Construct database client
     //

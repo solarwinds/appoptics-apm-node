@@ -23,6 +23,15 @@ describe('probes.http', function () {
     emitter.close(done)
   })
 
+  // Yes, this is really, actually needed.
+  // Sampling may actually prevent reporting,
+  // if the tests run too fast. >.<
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   describe('http-server', function () {
     //
     // Test a simple res.end() call in an http server
@@ -72,6 +81,11 @@ describe('probes.http', function () {
           msg.should.have.property('Label', 'entry')
           msg.should.have.property('Edge', origin.opId)
           debug('entry is valid')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
+          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -192,6 +206,11 @@ describe('probes.http', function () {
             msg.should.have.property('Label', 'entry')
             msg.should.have.property(val, 'test')
             debug('entry is valid')
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'nodejs')
+            msg.should.have.property('Label', 'exit')
+            debug('exit is valid')
           }
         ], function () {
           server.close(done)

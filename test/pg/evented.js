@@ -6,7 +6,7 @@ exports.run = function (ctx, done) {
       return
     }
 
-    var q = client.query('select * from "table" where "foo" = \'bar\'')
+    var q = client.query('select * from "test" where "foo" = \'bar\'')
     q.on('end', done.bind(null, null))
     q.on('error', function () {
       done()

@@ -8,7 +8,7 @@ exports.run = function (ctx, done) {
       return
     }
 
-    client.query('select * from "table" where "key" = \'value\'', function (err) {
+    client.query('select * from "test" where "key" = \'value\'', function (err) {
       ctx.tv.pg.sanitizeSql = false
       free()
       done()

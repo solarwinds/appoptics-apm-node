@@ -25,6 +25,15 @@ describe('probes.postgres', function () {
     emitter.close(done)
   })
 
+  // Yes, this is really, actually needed.
+  // Sampling may actually prevent reporting,
+  // if the tests run too fast. >.<
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   //
   // Yes, this is super janky. But necessary because switching to
   // the native driver is destructive to the pooling mechanism.
@@ -70,6 +79,10 @@ describe('probes.postgres', function () {
           ctx.pg = pg
           done()
         })
+      })
+
+      before(function (done) {
+        pg.db.query('CREATE TABLE IF NOT EXISTS test (foo TEXT)', done)
       })
 
       it('should trace a basic query', function (done) {
@@ -123,7 +136,7 @@ describe('probes.postgres', function () {
         helper.httpTest(emitter, helper.run(ctx, 'pg/sanitize'), [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Query', 'select * from "table" where "key" = \'?\'')
+            msg.should.have.property('Query', 'select * from "test" where "key" = \'?\'')
           },
           function (msg) {
             checks.exit(msg)
@@ -135,7 +148,7 @@ describe('probes.postgres', function () {
         helper.httpTest(emitter, helper.run(ctx, 'pg/evented'), [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Query', 'select * from "table" where "foo" = \'bar\'')
+            msg.should.have.property('Query', 'select * from "test" where "foo" = \'bar\'')
           },
           function (msg) {
             checks.exit(msg)

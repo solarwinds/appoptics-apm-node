@@ -31,6 +31,15 @@ describe('probes.mongodb', function () {
 		emitter.close(done)
 	})
 
+	// Yes, this is really, actually needed.
+	// Sampling may actually prevent reporting,
+	// if the tests run too fast. >.<
+	beforeEach(function (done) {
+		setTimeout(function () {
+			done()
+		}, 100)
+	})
+
 	//
 	// Open a fresh mongodb connection for each test
 	//

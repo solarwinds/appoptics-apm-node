@@ -10,10 +10,10 @@ var http = require('http')
 var tv = require('..')
 var addon = tv.addon
 
+var lastPort = 10000
+
 exports.tracelyzer = function (done) {
-  // Pick a random port
-  // TODO: Determine available ports on CI server
-  var port = Math.floor(Math.random() * 10000) + 10000
+  var port = lastPort++
 
   // Create UDP server to mock tracelyzer
   var server = dgram.createSocket('udp4')
@@ -21,16 +21,12 @@ exports.tracelyzer = function (done) {
   // Create emitter to forward messages
   var emitter = new Emitter
 
-  // Log messages, when debugging
-  server.on('message', function (msg) {
-    log('mock tracelyzer (port ' + port + ') received ' + msg.toString())
-  })
-
   // Forward events
-  emitter.on('error', server.close.bind(server))
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
-    emitter.emit('message', BSON.deserialize(msg))
+    var parsed = BSON.deserialize(msg)
+    log('mock tracelyzer (port ' + port + ') received', parsed)
+    emitter.emit('message', parsed)
   })
 
   // Wait for the server to become available
@@ -91,7 +87,7 @@ exports.doChecks = function (emitter, checks, done) {
     if ( ! checks.length) {
       // NOTE: This is only needed because some
       // tests have less checks than messages
-      emitter.removeListener('message', onMessage)
+      // emitter.removeListener('message', onMessage)
       done()
     }
   }

@@ -42,6 +42,15 @@ describe('probes.express', function () {
     emitter.close(done)
   })
 
+  // Yes, this is really, actually needed.
+  // Sampling may actually prevent reporting,
+  // if the tests run too fast. >.<
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   var check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')

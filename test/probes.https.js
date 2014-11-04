@@ -36,6 +36,15 @@ describe('probes.https', function () {
     emitter.close(done)
   })
 
+  // Yes, this is really, actually needed.
+  // Sampling may actually prevent reporting,
+  // if the tests run too fast. >.<
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   describe('https-server', function () {
     //
     // Test a simple res.end() call in an http server
@@ -85,6 +94,11 @@ describe('probes.https', function () {
           msg.should.have.property('Label', 'entry')
           msg.should.have.property('Edge', origin.opId)
           debug('entry is valid')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', 'nodejs')
+          msg.should.have.property('Label', 'exit')
+          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -205,6 +219,11 @@ describe('probes.https', function () {
             msg.should.have.property('Label', 'entry')
             msg.should.have.property(val, 'test')
             debug('entry is valid')
+          },
+          function (msg) {
+            msg.should.have.property('Layer', 'nodejs')
+            msg.should.have.property('Label', 'exit')
+            debug('exit is valid')
           }
         ], function () {
           server.close(done)
@@ -224,18 +243,18 @@ describe('probes.https', function () {
   })
 
   describe('https-client', function () {
-  	var check = {
-  		'http-entry': function (msg) {
+    var check = {
+      'http-entry': function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'entry')
-  			debug('entry is valid')
-  		},
-  		'http-exit': function (msg) {
+        debug('entry is valid')
+      },
+      'http-exit': function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'exit')
-  			debug('exit is valid')
-  		}
-  	}
+        debug('exit is valid')
+      }
+    }
 
     it('should trace https request', function (done) {
       var server = https.createServer(options, function (req, res) {
