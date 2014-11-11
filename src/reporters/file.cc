@@ -56,7 +56,7 @@ NAN_METHOD(FileReporter::New) {
     return NanThrowError("Address must be a string");
   }
 
-  String::Utf8Value path(args[0]);
+  NanUtf8String path(args[0]);
   FileReporter* obj = new FileReporter(*path);
 
   obj->Wrap(args.This());

@@ -90,13 +90,23 @@ class Event : public node::ObjectWrap {
 };
 
 class UdpReporter : public node::ObjectWrap {
+  UdpReporter();
   ~UdpReporter();
-  UdpReporter(const char*, const char*);
+  int connect();
+  int send(oboe_metadata_t*, oboe_event_t*);
 
+  char* host;
+  char* port;
   oboe_reporter_t reporter;
   static Persistent<FunctionTemplate> constructor;
   static NAN_METHOD(New);
   static NAN_METHOD(sendReport);
+  static NAN_SETTER(setAddress);
+  static NAN_GETTER(getAddress);
+  static NAN_SETTER(setPort);
+  static NAN_GETTER(getPort);
+  static NAN_SETTER(setHost);
+  static NAN_GETTER(getHost);
 
   public:
     static void Init(Handle<Object>);

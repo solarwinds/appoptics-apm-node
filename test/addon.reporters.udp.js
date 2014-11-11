@@ -3,6 +3,7 @@ var tv = require('..')
 var addon = tv.addon
 
 describe('addon.reporters.udp', function () {
+  var reporter
   var emitter
 
   //
@@ -18,7 +19,11 @@ describe('addon.reporters.udp', function () {
   })
 
   it('should construct', function () {
-    new addon.UdpReporter('127.0.0.1')
+    reporter = new addon.UdpReporter()
+  })
+
+  it('should connect', function () {
+    reporter.port = emitter.port
   })
 
   it('should report event', function (done) {
@@ -30,6 +35,6 @@ describe('addon.reporters.udp', function () {
       done()
     })
 
-    emitter.reporter.sendReport(event)
+    reporter.sendReport(event)
   })
 })

@@ -8,7 +8,6 @@
  * - OBOE_TRACE_ALWAYS(1) to start a new trace if needed, or
  * - OBOE_TRACE_THROUGH(2) to only add to an existing trace.
  */
-// TODO: Make this fail on inputs not in 0, 1, 2
 NAN_METHOD(OboeContext::setTracingMode) {
   NanScope();
 
@@ -79,7 +78,6 @@ NAN_METHOD(OboeContext::setDefaultSampleRate) {
  * @return Zero to not trace; otherwise return the sample rate used in the low order
  *         bytes 0 to 2 and the sample source in the higher-order byte 3.
  */
-// TODO: Figure out how to catch and throw "liboboe: Error loading /var/lib/tracelyzer/settings" message
 NAN_METHOD(OboeContext::sampleRequest) {
   NanScope();
 
@@ -96,7 +94,7 @@ NAN_METHOD(OboeContext::sampleRequest) {
   if (!args[0]->IsString()) {
     return NanThrowError("Layer name must be a string");
   }
-  String::Utf8Value layer_name_v8(args[0]);
+  NanUtf8String layer_name_v8(args[0]);
   layer_name = *layer_name_v8;
 
   // If the second argument is present, it must be a string
@@ -104,10 +102,10 @@ NAN_METHOD(OboeContext::sampleRequest) {
     if ( ! args[1]->IsString()) {
       return NanThrowError("X-Trace ID must be a string");
     }
-    String::Utf8Value in_xtrace_v8(args[1]);
+    NanUtf8String in_xtrace_v8(args[1]);
     in_xtrace = *in_xtrace_v8;
   } else {
-    in_xtrace = (char*)"";
+    in_xtrace = strdup("");
   }
 
   // If the third argument is present, it must be a string
@@ -115,10 +113,10 @@ NAN_METHOD(OboeContext::sampleRequest) {
     if ( ! args[2]->IsString()) {
       return NanThrowError("AppView Web ID must be a string");
     }
-    String::Utf8Value in_tv_meta_v8(args[2]);
+    NanUtf8String in_tv_meta_v8(args[2]);
     in_tv_meta = *in_tv_meta_v8;
   } else {
-    in_tv_meta = (char*)"";
+    in_tv_meta = strdup("");
   }
 
   int sample_rate = 0;
@@ -178,11 +176,14 @@ NAN_METHOD(OboeContext::set) {
     oboe_context_set(&metadata->metadata);
   } else {
     // Get string data from arguments
-    String::Utf8Value v8_val(args[0]);
+    NanUtf8String v8_val(args[0]);
     std::string val(*v8_val);
 
     // Set the context data from the converted string
-    oboe_context_set_fromstr(val.data(), val.size());
+    int status = oboe_context_set_fromstr(val.data(), val.size());
+    if (status != 0) {
+      return NanThrowError("Could not set context by metadata string id");
+    }
   }
 
   NanReturnUndefined();

@@ -46,9 +46,7 @@ describe('probes.express', function () {
   // Sampling may actually prevent reporting,
   // if the tests run too fast. >.<
   beforeEach(function (done) {
-    setTimeout(function () {
-      done()
-    }, 100)
+    helper.padTime(done)
   })
 
   var check = {
