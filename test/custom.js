@@ -24,29 +24,22 @@ describe('custom', function () {
   // Intercept tracelyzer messages for analysis
   //
   beforeEach(function (done) {
-    this.timeout(5000)
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
   afterEach(function (done) {
-    this.timeout(5000)
     emitter.close(done)
   })
 
   it('should custom instrument sync code', function (done) {
     helper.httpTest(emitter, function (done) {
-      tv.instrumentSync(function () {}, function (last) {
-        return last.descend('test', {
-          Foo: 'bar'
-        })
-      })
+      tv.instrument('test', function () {})
       done()
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Foo', 'bar')
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -57,11 +50,26 @@ describe('custom', function () {
 
   it('should custom instrument async code', function (done) {
     helper.httpTest(emitter, function (done) {
-      tv.instrument(soon, done, function (last) {
+      tv.instrument('test', soon, done)
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+      }
+    ], done)
+  })
+
+  it('should support builder function', function (done) {
+    helper.httpTest(emitter, function (done) {
+      tv.instrument(function (last) {
         return last.descend('test', {
           Foo: 'bar'
         })
-      })
+      }, soon, done)
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -73,5 +81,52 @@ describe('custom', function () {
         msg.should.have.property('Label', 'exit')
       }
     ], done)
+  })
+
+  it('should allow optional callback with async code', function (done) {
+    helper.httpTest(emitter, function (done) {
+      tv.instrument('test', function (doneInner) {
+        soon(function () {
+          doneInner()
+          done()
+        })
+      })
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+      }
+    ], done)
+  })
+
+  it('should include backtrace, when collectBacktraces is on', function (done) {
+    helper.httpTest(emitter, function (done) {
+      tv.instrument('test', soon, {
+        collectBacktraces: true,
+        enabled: true
+      }, done)
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('Backtrace')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+      }
+    ], done)
+  })
+
+  it('should skip when not enabled', function (done) {
+    helper.httpTest(emitter, function (done) {
+      tv.instrument('test', soon, {
+        enabled: false
+      }, done)
+    }, [], done)
   })
 })
