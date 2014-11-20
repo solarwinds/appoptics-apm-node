@@ -21,11 +21,14 @@ Metadata::~Metadata() {
 NAN_METHOD(Metadata::fromString) {
   NanScope();
 
-  String::Utf8Value v8_s(args[0]);
+  NanUtf8String v8_s(args[0]);
   std::string s(*v8_s);
 
   oboe_metadata_t md;
-  oboe_metadata_fromstr(&md, s.data(), s.size());
+  int status = oboe_metadata_fromstr(&md, s.data(), s.size());
+  if (status < 0) {
+    return NanThrowError("Failed to convert Metadata to string");
+  }
 
   // Make an empty object template with space for internal field pointers
   Handle<ObjectTemplate> t = NanNew<ObjectTemplate>();

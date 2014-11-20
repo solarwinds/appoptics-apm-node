@@ -39,10 +39,9 @@ exports.tracelyzer = function (done) {
   server.bind(port)
 
   // Create and use reporter pointing to mock tracelyzer
-  tv.reporter = new addon.UdpReporter('127.0.0.1', port)
+  tv.port = port.toString()
 
   // Expose some things through the emitter
-  emitter.reporter = tv.reporter
   emitter.server = server
   emitter.port = port
 
@@ -87,7 +86,7 @@ exports.doChecks = function (emitter, checks, done) {
     if ( ! checks.length) {
       // NOTE: This is only needed because some
       // tests have less checks than messages
-      // emitter.removeListener('message', onMessage)
+      emitter.removeListener('message', onMessage)
       done()
     }
   }
@@ -169,4 +168,15 @@ exports.run = function (context, path) {
   return function (done) {
     return mod.run(context, done)
   }
+}
+
+var pad = 150
+var last = Date.now()
+exports.padTime = function (done) {
+  var now = Date.now()
+  var diff = now - last
+  last = now
+
+  var t = Math.max(pad - diff, 1)
+  setTimeout(done, t)
 }

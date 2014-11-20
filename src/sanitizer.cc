@@ -278,8 +278,8 @@ NAN_METHOD(Sanitizer::sanitize) {
     return NanThrowError("Wrong number of arguments");
   }
 
-  String::Utf8Value v8_str(args[0]);
-  const char* input = *v8_str;
+  NanUtf8String nan_str(args[0]);
+  const char* input = *nan_str;
 
   int flag = OBOE_SQLSANITIZE_AUTO;
 

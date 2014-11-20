@@ -26,6 +26,13 @@ describe('error', function () {
     emitter.close(done)
   })
 
+  // Yes, this is really, actually needed.
+  // Sampling may actually prevent reporting,
+  // if the tests run too fast. >.<
+  beforeEach(function (done) {
+    helper.padTime(done)
+  })
+
   //
   // Tests
   //
