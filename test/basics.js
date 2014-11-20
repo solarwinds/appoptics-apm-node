@@ -1,5 +1,6 @@
 var helper = require('./helper')
 var should = require('should')
+var http = require('http')
 var tv = require('..')
 var Layer = tv.Layer
 
@@ -81,5 +82,31 @@ describe('basics', function () {
       samples.push(!!s[0])
     }
     samples.should.containEql(false)
+  })
+
+  it('should not trace in through without xtrace header', function (done) {
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'through'
+
+    var sendReport = tv.reporter.sendReport
+    tv.reporter.sendReport = function (event) {
+      tv.reporter.sendReport = sendReport
+      done(new Error('Tried to send an event'))
+    }
+
+    var server = http.createServer(function (req, res) {
+      res.end('hi')
+    })
+
+    server.listen(function () {
+      var port = server.address().port
+      http.get('http://localhost:' + port, function (res) {
+        res.on('end', function () {
+          tv.reporter.sendReport = sendReport
+          done()
+        })
+        res.resume()
+      })
+    })
   })
 })
