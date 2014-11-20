@@ -170,7 +170,7 @@ exports.run = function (context, path) {
   }
 }
 
-var pad = 150
+var pad = 250
 var last = Date.now()
 exports.padTime = function (done) {
   var now = Date.now()
