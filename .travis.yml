@@ -17,6 +17,7 @@ before_script:
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
   - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
+  - npm install -g npm
   - npm install
 
 script: "npm test"
