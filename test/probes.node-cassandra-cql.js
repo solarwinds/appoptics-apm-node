@@ -1,15 +1,15 @@
+var tv = global.tv = require('..')
+var addon = tv.addon
+
 var debug = require('debug')('probes-cassandra')
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var addon = tv.addon
-
-var cql
 
 //
 // Do not load unless stream.Readable exists.
 // It will fail silently, stalling the tests.
 //
+var cql
 var stream = require('stream')
 var hasReadableStream = typeof stream.Readable !== 'undefined'
 if (hasReadableStream) {
