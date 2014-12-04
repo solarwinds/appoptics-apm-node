@@ -109,8 +109,9 @@ var check = {
 
 exports.httpTest = function (emitter, test, validations, done) {
   var server = http.createServer(function (req, res) {
-    debug('request started')
+    debug('test started')
     test(function (err, data) {
+      debug('test started')
       if (err) return done(err)
       res.end('done')
     })
