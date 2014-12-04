@@ -1,9 +1,10 @@
+var tv = global.tv = require('..')
+var addon = tv.addon
+
 var debug = require('debug')('probes-memcached')
 var helper = require('./helper')
 var should = require('should')
 var semver = require('semver')
-var tv = global.tv = require('..')
-var addon = tv.addon
 
 var Memcached = require('memcached')
 var pkg = require('memcached/package.json')
