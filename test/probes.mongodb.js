@@ -286,25 +286,36 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should save', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/save'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'save')
 					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
-					query_check['insert-entry'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], function () {
+			]
+
+			if (semver.satisfies(pkg.version, '< 2.0.9')) {
+				steps.push(function (msg) {
+					var doc = '{"foo":"bar","baz":"buz"}'
+					if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+						doc = '[' + doc + ']'
+					}
+
+					msg.should.have.property('Query', doc)
+					query_check['insert-entry'](msg)
+				})
+				steps.push(function (msg) {
+					check['mongo-exit'](msg)
+				})
+			}
+
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
+
+			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/save'), steps, function () {
 				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
 			})
 		})
@@ -370,15 +381,15 @@ describe('probes.mongodb', function () {
 			]
 
 			if (semver.satisfies(pkg.version, '<1.4.11')) {
-				steps.push(function () {})
-				steps.push(function () {})
+				steps.push(function (msg) {})
+				steps.push(function (msg) {})
 			}
 
 			steps.push(function (msg) {
 				check['mongo-exit'](msg)
 			})
 
-			if (semver.satisfies(pkg.version, '1.4.x')) {
+			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
 				steps.push(function (msg) {
 					msg.should.have.property('Index', '{"foo":1}')
 					index_check['create-entry'](msg)
@@ -396,7 +407,10 @@ describe('probes.mongodb', function () {
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/ensure_index'),
 				steps,
-				done
+				function (err) {
+					global.hack = false
+					done(err)
+				}
 			)
 		})
 
