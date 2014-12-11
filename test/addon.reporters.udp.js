@@ -22,7 +22,11 @@ describe('addon.reporters.udp', function () {
     reporter = new addon.UdpReporter()
   })
 
-  it('should connect', function () {
+  it('should set host', function () {
+    reporter.host = '127.0.0.1'
+  })
+
+  it('should set port', function () {
     reporter.port = emitter.port
   })
 
