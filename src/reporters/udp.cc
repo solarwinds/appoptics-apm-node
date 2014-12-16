@@ -6,38 +6,40 @@ Persistent<FunctionTemplate> UdpReporter::constructor;
 
 // Construct with an address and port to report to
 UdpReporter::UdpReporter() {
-  host = strdup("localhost");
-  port = strdup("7831");
+  connected = false;
+  host = "localhost";
+  port = "7831";
 }
 
 // Remember to cleanup the udp reporter struct when garbage collected
 UdpReporter::~UdpReporter() {
-  if (&reporter != NULL) {
+  if (&reporter) {
     oboe_reporter_destroy(&reporter);
   }
 }
 
-int UdpReporter::connect() {
-  return oboe_reporter_udp_init(&reporter, host, port);
-}
-
 int UdpReporter::send(oboe_metadata_t* meta, oboe_event_t* event) {
+  if ( ! connected) {
+    int status = oboe_reporter_udp_init(&reporter, host.c_str(), port.c_str());
+    if (status != 0) {
+      return status;
+    }
+
+    connected = true;
+  }
+
   return oboe_reporter_send(&reporter, meta, event);
 }
 
 NAN_SETTER(UdpReporter::setAddress) {
   NanScope();
 
-  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
-
-  if (&self->reporter != NULL) {
-    oboe_reporter_destroy(&self->reporter);
-  }
-
   if ( ! value->IsString()) {
     NanThrowError("Address must be a string");
     return;
   }
+
+  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
 
   std::string s = *NanUtf8String(value);
   char* host = strdup(s.substr(0, s.find(":")).c_str());
@@ -47,13 +49,9 @@ NAN_SETTER(UdpReporter::setAddress) {
     return;
   }
 
+  self->connected = false;
   self->host = host;
   self->port = port;
-
-  if (self->connect() != 0) {
-    NanThrowError("UdpReporter() Failed to connect");
-    return;
-  }
 }
 NAN_GETTER(UdpReporter::getAddress) {
   NanScope();
@@ -68,22 +66,16 @@ NAN_GETTER(UdpReporter::getAddress) {
 NAN_SETTER(UdpReporter::setHost) {
   NanScope();
 
-  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
-
-  if (&self->reporter != NULL) {
-    oboe_reporter_destroy(&self->reporter);
-  }
-
   if ( ! value->IsString()) {
     NanThrowError("host must be a string");
     return;
   }
-  self->host = *NanUtf8String(value);
 
-  if (self->connect() != 0) {
-    NanThrowError("UdpReporter() Failed to connect");
-    return;
-  }
+  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
+  NanUtf8String val(value->ToString());
+
+  self->connected = false;
+  self->host = *val;
 }
 NAN_GETTER(UdpReporter::getHost) {
   NanScope();
@@ -95,24 +87,16 @@ NAN_GETTER(UdpReporter::getHost) {
 NAN_SETTER(UdpReporter::setPort) {
   NanScope();
 
-  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
-
-  if (&self->reporter != NULL) {
-    oboe_reporter_destroy(&self->reporter);
-  }
-
   if ( ! value->IsString() && ! value->IsNumber()) {
     NanThrowError("port must be a string");
     return;
   }
 
+  UdpReporter* self = ObjectWrap::Unwrap<UdpReporter>(args.This());
   NanUtf8String val(value->ToString());
-  self->port = *val;
 
-  if (self->connect() != 0) {
-    NanThrowError("UdpReporter() Failed to connect");
-    return;
-  }
+  self->connected = false;
+  self->port = *val;
 }
 NAN_GETTER(UdpReporter::getPort) {
   NanScope();
@@ -156,10 +140,6 @@ NAN_METHOD(UdpReporter::New) {
   }
 
   UdpReporter* reporter = new UdpReporter();
-  if (reporter->connect() != 0) {
-    return NanThrowError("UdpReporter() failed to connect");
-  }
-
   reporter->Wrap(args.This());
   NanReturnValue(args.This());
 }

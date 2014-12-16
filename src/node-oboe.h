@@ -12,6 +12,7 @@
 #include <oboe/oboe.h>
 
 using namespace v8;
+using namespace std;
 
 class Event;
 
@@ -92,11 +93,11 @@ class Event : public node::ObjectWrap {
 class UdpReporter : public node::ObjectWrap {
   UdpReporter();
   ~UdpReporter();
-  int connect();
   int send(oboe_metadata_t*, oboe_event_t*);
 
-  char* host;
-  char* port;
+  string host;
+  string port;
+  bool connected;
   oboe_reporter_t reporter;
   static Persistent<FunctionTemplate> constructor;
   static NAN_METHOD(New);
