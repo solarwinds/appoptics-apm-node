@@ -19,6 +19,7 @@ before_script:
   - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
   - npm install -g npm
   - npm install
+  - npm install leveldown
 
 script: "npm test"
 
