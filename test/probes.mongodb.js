@@ -106,7 +106,7 @@ describe('probes.mongodb', function () {
 			]
 
 			// The db.command used in collection.count called cursor.nextObject
-			if (semver.satisfies(pkg.version, '<1.4.11')) {
+			if (semver.satisfies(pkg.version, '<1.4.11 || >=1.4.24')) {
 				steps.push(function () {})
 				steps.push(function () {})
 			}
@@ -131,7 +131,7 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '< 1.4.13')) {
+			if (semver.satisfies(pkg.version, '< 1.4.13 || >=1.4.24')) {
 				steps.push(function () {})
 				steps.push(function () {})
 			}
@@ -380,7 +380,7 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '<1.4.11')) {
+			if (semver.satisfies(pkg.version, '<1.4.11 || >=1.4.24')) {
 				steps.push(function (msg) {})
 				steps.push(function (msg) {})
 			}
@@ -421,7 +421,7 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '<1.4.11')) {
+			if (semver.satisfies(pkg.version, '<1.4.11 || >=1.4.24')) {
 				steps.push(function () {})
 				steps.push(function () {})
 			}
