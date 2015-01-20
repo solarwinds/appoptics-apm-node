@@ -10,6 +10,9 @@ var http = require('http')
 var postgres = require('pg')
 var conString = 'postgres://postgres@localhost/test'
 
+var stream = require('stream')
+var hasDuplexStream = typeof stream.Duplex !== 'undefined'
+
 describe('probes.postgres', function () {
   var emitter
 
@@ -40,8 +43,20 @@ describe('probes.postgres', function () {
   // until the before() step of that test collection.
   //
   var drivers = {
-    javascript: function () { return postgres },
-    native: function () { return postgres.native }
+    javascript: {
+      skip: false,
+      get: function () {
+        return postgres
+      }
+    },
+    native: {
+      // Only test the native driver when Duplex streams are available,
+      // otherwise node 0.8 will crash while trying to load pg-native
+      skip: ! hasDuplexStream,
+      get: function () {
+        return postgres.native
+      }
+    }
   }
 
   //
@@ -66,9 +81,16 @@ describe('probes.postgres', function () {
       }
     }
 
-    describe(type, function () {
+    var driver = drivers[type]
+    if (driver.skip) {
+      describe.skip(type, test)
+    } else {
+      describe(type, test)
+    }
+
+    function test () {
       before(function (done) {
-        ctx.pg = pg = drivers[type]()
+        ctx.pg = pg = driver.get()
         pg.address = conString
         var client = new pg.Client(conString)
         client.connect(function (err) {
@@ -153,7 +175,7 @@ describe('probes.postgres', function () {
           }
         ], done)
       })
-    })
+    }
   })
 
 })
