@@ -35,13 +35,10 @@ describe('probes.tedious', function () {
     helper.padTime(done)
   })
 
-  function env (key) {
-    return process.env['MSSQL_' + key]
-  }
-
-  var host = env('HOST')
-  var user = env('USER')
-  var pass = env('PASS')
+  // Found some free host.
+  var host = 'traceview-test.mssql.somee.com'
+  var user = 'sbelanger_SQLLogin_1'
+  var pass = 'a8glrk5vss'
 
   var checks = {
     'mssql-entry': function (msg) {
@@ -57,31 +54,7 @@ describe('probes.tedious', function () {
     }
   }
 
-  if (host && user && pass) {
-    it('should support basic queries', test_basic)
-    it('should support parameters', test_parameters)
-    it('should support sanitization', test_sanitization)
-  } else {
-    it.skip('should support basic queries', test_basic)
-    it.skip('should support parameters', test_parameters)
-    it.skip('should support sanitization', test_sanitization)
-  }
-
-  // Query helper
-  function query (fn) {
-    var connection = new Connection({
-      database: 'test',
-      userName: user,
-      password: pass,
-      server: host
-    })
-
-    connection.on('connect', function (err) {
-      connection.execSql(fn())
-    })
-  }
-
-  function test_basic (done) {
+  it('should support basic queries', function (done) {
     helper.httpTest(emitter, function (done) {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
@@ -98,9 +71,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  }
+  })
 
-  function test_parameters (done) {
+  it('should support parameters', function (done) {
     helper.httpTest(emitter, function (done) {
       query(function () {
         var request = new Request("select @num, @msg", onComplete)
@@ -123,9 +96,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  }
+  })
 
-  function test_sanitization (done) {
+  it('should support sanitization', function (done) {
     helper.httpTest(emitter, function (done) {
       tv.tedious.sanitizeSql = true
       query(function () {
@@ -139,17 +112,31 @@ describe('probes.tedious', function () {
         return request
       })
     }, [
-      function (msg) {
-        checks['mssql-entry'](msg)
-        msg.should.have.property('Query', "select 0, @msg")
-        msg.should.have.property('QueryArgs', '{}')
-      },
-      function (msg) {
-        checks['mssql-exit'](msg)
-      }
+    function (msg) {
+      checks['mssql-entry'](msg)
+      msg.should.have.property('Query', "select 0, @msg")
+      msg.should.not.have.property('QueryArgs')
+    },
+    function (msg) {
+      checks['mssql-exit'](msg)
+    }
     ], function (err) {
       tv.tedious.sanitizeSql = false
       done(err)
+    })
+  })
+
+  // Query helper
+  function query (fn) {
+    var connection = new Connection({
+      database: 'test',
+      userName: user,
+      password: pass,
+      server: host
+    })
+
+    connection.on('connect', function (err) {
+      connection.execSql(fn())
     })
   }
 
