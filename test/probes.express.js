@@ -1,9 +1,10 @@
+var tv = require('..')
+
 var debug = require('debug')('probes-express')
 var helper = require('./helper')
 var should = require('should')
 var semver = require('semver')
 var rum = require('../lib/rum')
-var tv = require('..')
 var addon = tv.addon
 
 var request = require('request')
