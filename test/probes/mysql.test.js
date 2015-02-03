@@ -1,11 +1,9 @@
-// require('longjohn')
+var tv = require('../..')
+var addon = tv.addon
 
-var debug = require('debug')('probes-mysql')
-var helper = require('./helper')
+var helper = require('../helper')
 var should = require('should')
 var semver = require('semver')
-var tv = global.tv = require('..')
-var addon = tv.addon
 
 var request = require('request')
 var http = require('http')

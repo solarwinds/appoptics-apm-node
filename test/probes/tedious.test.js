@@ -1,7 +1,8 @@
-var tv = global.tv = require('..')
-var helper = require('./helper')
-var should = require('should')
+var tv = require('../..')
 var addon = tv.addon
+
+var helper = require('../helper')
+var should = require('should')
 
 var pkg = require('tedious/package.json')
 var tedious = require('tedious')

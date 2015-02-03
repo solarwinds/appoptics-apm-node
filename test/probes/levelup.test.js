@@ -1,8 +1,8 @@
-var debug = require('debug')('probes-levelup')
-var helper = require('./helper')
-var should = require('should')
-var tv = require('..')
+var tv = require('../..')
 var addon = tv.addon
+
+var helper = require('../helper')
+var should = require('should')
 
 var request = require('request')
 var http = require('http')

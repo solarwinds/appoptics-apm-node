@@ -154,7 +154,7 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
 
 exports.run = function (context, path) {
   context.data = context.data || {}
-  var mod = require('./' + path)
+  var mod = require('./probes/' + path)
 
   if (mod.data) {
     var data = mod.data

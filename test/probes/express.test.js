@@ -1,11 +1,11 @@
-var tv = require('..')
+var tv = require('../..')
+var addon = tv.addon
 
-var debug = require('debug')('probes-express')
-var helper = require('./helper')
+var helper = require('../helper')
 var should = require('should')
 var semver = require('semver')
-var rum = require('../lib/rum')
-var addon = tv.addon
+
+var rum = require('../../lib/rum')
 
 var request = require('request')
 var express = require('express')
@@ -54,12 +54,10 @@ describe('probes.express', function () {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
-      debug('entry is valid')
     },
     'http-exit': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'exit')
-      debug('exit is valid')
     },
     'express-entry': function (msg) {
       msg.should.have.property('Layer', 'express')
@@ -109,7 +107,6 @@ describe('probes.express', function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
   })
@@ -170,7 +167,6 @@ describe('probes.express', function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
   })
@@ -242,7 +238,6 @@ describe('probes.express', function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
   }
@@ -317,7 +312,6 @@ describe('probes.express', function () {
     // Start server and make a request
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port, function (a, b, body) {
         // Verify that the rum scripts are included in the body
         body.should.containEql(rum.header(tv.rumId, exit.toString()))

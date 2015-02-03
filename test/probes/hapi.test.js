@@ -1,11 +1,12 @@
-var debug = require('debug')('probes-hapi')
-var helper = require('./helper')
+var tv = require('../..')
+var addon = tv.addon
+
+var helper = require('../helper')
 var should = require('should')
 var semver = require('semver')
-var rum = require('../lib/rum')
+
+var rum = require('../../lib/rum')
 var path = require('path')
-var tv = require('..')
-var addon = tv.addon
 
 var request = require('request')
 var fs = require('fs')
@@ -60,12 +61,10 @@ describe('probes.hapi', function () {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
-      debug('entry is valid')
     },
     'http-exit': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'exit')
-      debug('exit is valid')
     },
     'hapi-entry': function (msg) {
       msg.should.have.property('Layer', 'hapi')

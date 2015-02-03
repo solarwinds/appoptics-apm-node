@@ -1,8 +1,7 @@
-var tv = global.tv = require('..')
+var tv = require('../..')
 var addon = tv.addon
 
-var debug = require('debug')('probes-cassandra')
-var helper = require('./helper')
+var helper = require('../helper')
 var should = require('should')
 
 //
@@ -98,7 +97,7 @@ describe('probes.cassandra', function () {
   // Define test handlers
   //
   function test_basic (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra/basic'), [
+    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/basic'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
@@ -114,7 +113,7 @@ describe('probes.cassandra', function () {
   }
 
   function test_prepared (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra/prepared'), [
+    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/prepared'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo where bar=?')
@@ -130,7 +129,7 @@ describe('probes.cassandra', function () {
   }
 
   function test_sanitize (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra/sanitize'), [
+    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/sanitize'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo where bar=\'?\'')
