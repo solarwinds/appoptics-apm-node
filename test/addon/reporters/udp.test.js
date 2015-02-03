@@ -1,5 +1,5 @@
-var helper = require('./helper')
-var tv = require('..')
+var helper = require('../../helper')
+var tv = require('../../..')
 var addon = tv.addon
 
 describe('addon.reporters.udp', function () {

@@ -1,5 +1,5 @@
-var helper = require('./helper')
-var oboe = require('..').addon
+var helper = require('../helper')
+var oboe = require('../..').addon
 
 describe('addon.context', function () {
   // Yes, this is really, actually needed.

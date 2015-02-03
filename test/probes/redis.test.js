@@ -1,8 +1,8 @@
-var debug = require('debug')('probes-redis')
-var helper = require('./helper')
+var tv = require('../..')
+var addon = tv.addon
+
+var helper = require('../helper')
 var should = require('should')
-var oboe = require('..')
-var addon = oboe.addon
 
 var request = require('request')
 var http = require('http')
@@ -19,8 +19,8 @@ describe('probes.redis', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    oboe.sampleRate = oboe.addon.MAX_SAMPLE_RATE
-    oboe.traceMode = 'always'
+    tv.sampleRate = addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

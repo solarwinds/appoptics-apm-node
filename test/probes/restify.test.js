@@ -1,10 +1,10 @@
-var debug = require('debug')('probes-restify')
-var helper = require('./helper')
+var tv = require('../..')
+var addon = tv.addon
+
+var helper = require('../helper')
 var should = require('should')
 var semver = require('semver')
-var rum = require('../lib/rum')
-var tv = require('..')
-var addon = tv.addon
+var rum = require('../../lib/rum')
 
 var request = require('request')
 var fs = require('fs')
@@ -48,12 +48,10 @@ describe('probes.restify', function () {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
-      debug('entry is valid')
     },
     'http-exit': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'exit')
-      debug('exit is valid')
     },
     'restify-entry': function (msg) {
       msg.should.have.property('Layer', 'restify')
@@ -99,7 +97,6 @@ describe('probes.restify', function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
   }
@@ -158,7 +155,6 @@ describe('probes.restify', function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      debug('test server listening on port ' + port)
       request('http://localhost:' + port + '/hello/world')
     })
   }

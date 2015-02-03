@@ -1,8 +1,8 @@
-var debug = require('debug')('probes-https')
-var helper = require('./helper')
-var should = require('should')
-var tv = require('..')
+var tv = require('../..')
 var addon = tv.addon
+
+var helper = require('../helper')
+var should = require('should')
 
 var request = require('request')
 var https = require('https')
@@ -49,7 +49,6 @@ describe('probes.https', function () {
     //
     it('should send traces for http routing and response layers', function (done) {
       var server = https.createServer(options, function (req, res) {
-        debug('request started')
         res.end('done')
       })
 
@@ -57,12 +56,10 @@ describe('probes.https', function () {
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
-          debug('entry is valid')
         },
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'exit')
-          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -70,7 +67,6 @@ describe('probes.https', function () {
 
       server.listen(function () {
         var port = server.address().port
-        debug('test server listening on port ' + port)
         request('https://localhost:' + port)
       })
     })
@@ -80,7 +76,6 @@ describe('probes.https', function () {
     //
     it('should continue tracing when receiving an xtrace id header', function (done) {
       var server = https.createServer(options, function (req, res) {
-        debug('request started')
         res.end('done')
       })
 
@@ -91,12 +86,10 @@ describe('probes.https', function () {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
           msg.should.have.property('Edge', origin.opId)
-          debug('entry is valid')
         },
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'exit')
-          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -104,7 +97,6 @@ describe('probes.https', function () {
 
       server.listen(function () {
         var port = server.address().port
-        debug('test server listening on port ' + port)
         request({
           url: 'https://localhost:' + port,
           headers: {
@@ -119,7 +111,6 @@ describe('probes.https', function () {
     //
     it('should forward X-TV-Meta header and sampling data in always trace mode', function (done) {
       var server = https.createServer(options, function (req, res) {
-        debug('request started')
         res.end('done')
       })
 
@@ -130,12 +121,10 @@ describe('probes.https', function () {
           msg.should.have.property('X-TV-Meta', 'foo')
           msg.should.have.property('SampleSource')
           msg.should.have.property('SampleRate')
-          debug('entry is valid')
         },
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'exit')
-          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -143,7 +132,6 @@ describe('probes.https', function () {
 
       server.listen(function () {
         var port = server.address().port
-        debug('test server listening on port ' + port)
         request({
           url: 'https://localhost:' + port,
           headers: {
@@ -158,7 +146,6 @@ describe('probes.https', function () {
     //
     it('should trace correctly within asyncrony', function (done) {
       var server = https.createServer(options, function (req, res) {
-        debug('request started')
         setTimeout(function () {
           res.end('done')
         }, 10)
@@ -168,12 +155,10 @@ describe('probes.https', function () {
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'entry')
-          debug('entry is valid')
         },
         function (msg) {
           msg.should.have.property('Layer', 'nodejs')
           msg.should.have.property('Label', 'exit')
-          debug('exit is valid')
         }
       ], function () {
         server.close(done)
@@ -181,7 +166,6 @@ describe('probes.https', function () {
 
       server.listen(function () {
         var port = server.address().port
-        debug('test server listening on port ' + port)
         request('https://localhost:' + port)
       })
     })
@@ -207,7 +191,6 @@ describe('probes.https', function () {
 
       it('should map ' + key + ' header to event.' + val, function (done) {
         var server = https.createServer(options, function (req, res) {
-          debug('request started')
           res.end('done')
         })
 
@@ -216,12 +199,10 @@ describe('probes.https', function () {
             msg.should.have.property('Layer', 'nodejs')
             msg.should.have.property('Label', 'entry')
             msg.should.have.property(val, 'test')
-            debug('entry is valid')
           },
           function (msg) {
             msg.should.have.property('Layer', 'nodejs')
             msg.should.have.property('Label', 'exit')
-            debug('exit is valid')
           }
         ], function () {
           server.close(done)
@@ -229,7 +210,6 @@ describe('probes.https', function () {
 
         server.listen(function () {
           var port = server.address().port
-          debug('test server listening on port ' + port)
           var options = {
             url: 'https://localhost:' + port,
             headers: headers
@@ -245,12 +225,10 @@ describe('probes.https', function () {
       'http-entry': function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'entry')
-        debug('entry is valid')
       },
       'http-exit': function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'exit')
-        debug('exit is valid')
       }
     }
 

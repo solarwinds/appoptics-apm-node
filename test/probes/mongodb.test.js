@@ -1,15 +1,15 @@
-var debug = require('debug')('probes-mongodb')
-var helper = require('./helper')
-var should = require('should')
-var tv = require('..')
+var tv = require('../..')
 var addon = tv.addon
+
+var helper = require('../helper')
+var should = require('should')
 
 var semver = require('semver')
 var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
 
-var requirePatch = require('../lib/require-patch')
+var requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
 var pkg = require('mongodb/package.json')
 requirePatch.enable()
