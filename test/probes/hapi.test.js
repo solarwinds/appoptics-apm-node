@@ -19,14 +19,6 @@ if (semver.satisfies(process.version.slice(1), '> 0.8')) {
 
 var pkg = require('hapi/package.json')
 
-// String interpolation templating
-function tmpl (text, data) {
-  return text.replace(/#{([^{}]*)}/g, function (a, expression) {
-    var fn = new Function('data', 'with (data) { return ' + expression + ' }')
-    return fn(data || {})
-  })
-}
-
 function after (n, fn) {
   return function () {
     n--
@@ -111,15 +103,7 @@ describe('probes.hapi', function () {
       views: {
         path: __dirname,
         engines: {
-          tmpl: {
-            module: {
-              compile: function (str) {
-                return function (locals) {
-                  return tmpl(str, locals)
-                }
-              }
-            }
-          }
+          ejs: require('ejs')
         }
       }
     })
@@ -189,7 +173,7 @@ describe('probes.hapi', function () {
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, reply) {
-        renderer(request, reply)('hello.tmpl', {
+        renderer(request, reply)('hello.ejs', {
           name: request.params.name
         })
       }
@@ -205,8 +189,8 @@ describe('probes.hapi', function () {
       function (msg) {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Layer', 'hapi-render')
-        msg.should.have.property('TemplateLanguage', '.tmpl')
-        msg.should.have.property('TemplateFile', 'hello.tmpl')
+        msg.should.have.property('TemplateLanguage', '.ejs')
+        msg.should.have.property('TemplateFile', 'hello.ejs')
       },
       function (msg) {
         msg.should.have.property('Label', 'exit')
@@ -240,7 +224,7 @@ describe('probes.hapi', function () {
       path: '/',
       handler: function hello (request, reply) {
         exit = request.raw.res._http_layer.events.exit
-        renderer(request, reply)('rum.tmpl')
+        renderer(request, reply)('rum.ejs')
       }
     })
 
@@ -254,8 +238,8 @@ describe('probes.hapi', function () {
       function (msg) {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Layer', 'hapi-render')
-        msg.should.have.property('TemplateLanguage', '.tmpl')
-        msg.should.have.property('TemplateFile', 'rum.tmpl')
+        msg.should.have.property('TemplateLanguage', '.ejs')
+        msg.should.have.property('TemplateFile', 'rum.ejs')
       },
       function (msg) {
         msg.should.have.property('Label', 'exit')
