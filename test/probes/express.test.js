@@ -13,14 +13,6 @@ var fs = require('fs')
 
 var pkg = require('express/package.json')
 
-// String interpolation templating
-function tmpl (text, data) {
-  return text.replace(/#{([^{}]*)}/g, function (a, expression) {
-    var fn = new Function('data', 'with (data) { return ' + expression + ' }')
-    return fn(data)
-  })
-}
-
 function after (n, fn) {
   return function () {
     n--
@@ -176,12 +168,7 @@ describe('probes.express', function () {
     var locals
 
     app.set('views', __dirname)
-    app.set('view engine', 'tmpl')
-    app.engine('tmpl', function (file, locals, fn) {
-      fs.readFile(file, function (err, data) {
-        fn(null, tmpl(data.toString(), locals))
-      })
-    })
+    app.set('view engine', 'ejs')
 
     app.get('/hello/:name', function (req, res) {
       locals = {
@@ -208,7 +195,7 @@ describe('probes.express', function () {
         msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
-        msg.should.have.property('TemplateLanguage', '.tmpl')
+        msg.should.have.property('TemplateLanguage', '.ejs')
         // msg.should.have.property('Locals')
         // var Locals = JSON.parse(msg.Locals)
         // Object.keys(locals).forEach(function (key) {
@@ -250,12 +237,7 @@ describe('probes.express', function () {
 
     // Define simply template engine
     app.set('views', __dirname)
-    app.set('view engine', 'tmpl')
-    app.engine('tmpl', function (file, locals, fn) {
-      fs.readFile(file, function (err, data) {
-        fn(null, tmpl(data.toString(), locals))
-      })
-    })
+    app.set('view engine', 'ejs')
 
     // Define route to render template that should inject rum scripts
     app.get('/', function (req, res) {
@@ -280,7 +262,7 @@ describe('probes.express', function () {
         msg.should.have.property('Layer', 'express-render')
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('TemplateFile')
-        msg.should.have.property('TemplateLanguage', '.tmpl')
+        msg.should.have.property('TemplateLanguage', '.ejs')
       },
       function (msg) {
         msg.should.have.property('Layer', 'express-render')
