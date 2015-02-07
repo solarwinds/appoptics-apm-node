@@ -5,7 +5,9 @@ cache:
   - node_modules
 
 node_js:
-  - "0.11"
+  - "1.1"
+  - "1.0"
+  - "0.12"
   - "0.10"
   - "0.8"
 
@@ -17,7 +19,7 @@ before_script:
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
   - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
-  - npm install -g npm
+  - if [[ "`node --version`" =~ ^v0.8* ]]; then npm -g install npm; fi
   - npm install
   - npm install leveldown
 
