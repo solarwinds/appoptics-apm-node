@@ -59,16 +59,16 @@ command=mysqld_safe" | tee -a $SUPERFILE
 # postgres
 #
 apt-get -y install postgresql-client postgresql-contrib postgresql libpq-dev
-ln -s /etc/postgresql/9.3/main/postgresql.conf /var/lib/postgresql/9.3/main/postgresql.conf
-sed -i -e 's/^\(host\s*all\s*all\s*127\.0\.0\.1\/32\s*\)md5/\1trust/gip' /etc/postgresql/9.3/main/pg_hba.conf
-sudo -u postgres /usr/lib/postgresql/9.3/bin/postmaster -D "/var/lib/postgresql/9.3/main" &
+ln -s /etc/postgresql/9.4/main/postgresql.conf /var/lib/postgresql/9.4/main/postgresql.conf
+sed -i -e 's/^\(host\s*all\s*all\s*127\.0\.0\.1\/32\s*\)md5/\1trust/gip' /etc/postgresql/9.4/main/pg_hba.conf
+sudo -u postgres /usr/lib/postgresql/9.4/bin/postmaster -D "/var/lib/postgresql/9.4/main" &
 sleep 5
 sudo -u postgres psql -c 'create database test;' -U postgres
 pkill postmaster
 echo "
 [program:postgresql]
 user=postgres
-command=/usr/lib/postgresql/9.3/bin/postmaster -D \"/var/lib/postgresql/9.3/main\"
+command=/usr/lib/postgresql/9.4/bin/postmaster -D \"/var/lib/postgresql/9.4/main\"
 process_name=%(program_name)s
 stopsignal=INT
 autostart=true
@@ -106,13 +106,13 @@ command=cassandra -f" | tee -a $SUPERFILE
 #
 apt-get -y install software-properties-common python-software-properties build-essential curl
 echo "" > $HOME/.bashrc
-curl https://raw.githubusercontent.com/creationix/nvm/v0.20.0/install.sh | bash
+curl https://raw.githubusercontent.com/creationix/nvm/v0.23.3/install.sh | bash
 . $HOME/.bashrc
-nvm install 0.10
-nvm alias default 0.10
+nvm install stable
+nvm alias default stable
 
 #
 # tracelyzer
-# 
+#
 wget https://files.appneta.com/install_appneta.sh
 sh ./install_appneta.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
