@@ -1,5 +1,72 @@
 #!/usr/bin/env node
+var min = require('minimist')
 var path = require('path')
-global.tv = require('traceview')
-var entry = process.argv.splice(1, 1)
-require(path.resolve(process.cwd(), entry[0]))
+
+// Get and parse argv
+var baseArgv = process.argv.slice(2)
+var argv = min(baseArgv, {
+  boolean: true
+})
+var file = argv._[0]
+
+// Find position of file in argv
+var start = 0
+for (var i = 0; i < baseArgv.length; i++) {
+  if (baseArgv[i] === file) {
+    start = i
+    break
+  }
+}
+
+// Remove wrapper args
+process.argv = process.argv.slice(0, 2).concat(baseArgv.slice(start))
+
+// Load traceview
+global.tv = require('..')
+
+// Set trace mode, if available
+if (argv.always) {
+  tv.traceMode = 'always'
+} else if (argv.through) {
+  tv.traceMode = 'through'
+} else if (argv.never) {
+  tv.traceMode = 'never'
+}
+
+// Set sample rate, if available
+if (argv.sample_rate) {
+  tv.sampleRate = argv.sample_rate
+}
+
+// Define list of flags to pass through
+var passthroughs = [
+  'sampleRate',
+  'traceMode',
+  'host',
+  'port'
+]
+
+// Pass through flag values to configs
+passthroughs.forEach(function (name) {
+  if (argv[name]) {
+    tv[name] = argv[name]
+  }
+
+  var dashed = dash(name)
+  if (argv[dashed]) {
+    tv[name] = argv[dashed]
+  }
+})
+
+// Load entrypoint file
+require(path.resolve(process.cwd(), file))
+
+//
+// Helpers
+//
+
+function dash (str) {
+  return str.replace(/([A-Z])/g, function (upper) {
+    return '-' + upper.toLowerCase()
+  })
+}
