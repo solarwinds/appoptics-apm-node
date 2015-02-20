@@ -24,6 +24,7 @@ before_script:
   - if [[ "`node --version`" =~ ^v0.8* ]]; then npm -g install npm; fi
   - npm install
   - npm install leveldown
+  - npm run install-deps || true
 
 script: "npm test"
 
