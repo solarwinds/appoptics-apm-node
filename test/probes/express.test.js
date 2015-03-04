@@ -310,4 +310,41 @@ describe('probes.express', function () {
     it('should trace render layer', renderTest)
     it('should include RUM scripts', rumTest)
   }
+
+  it('should work with supertest', function (done) {
+    var request = require('supertest')
+    var app = express()
+
+    app.get('/hello/:name', function hello (req, res) {
+      res.send('done')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, done)
+
+    request(app)
+      .get('/hello/world')
+      .expect(200)
+      .end(function (err, res) {
+        // do nothing
+      })
+  })
+
 })
