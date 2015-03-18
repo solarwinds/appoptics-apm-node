@@ -1,7 +1,7 @@
-var tv = require('../..')
+var helper = require('../helper')
+var tv = helper.tv
 var addon = tv.addon
 
-var helper = require('../helper')
 var should = require('should')
 
 var request = require('request')
@@ -11,7 +11,15 @@ var postgres = require('pg')
 var conString = 'postgres://postgres@localhost/test'
 
 var stream = require('stream')
-var hasDuplexStream = typeof stream.Duplex !== 'undefined'
+var canNative = typeof stream.Duplex !== 'undefined'
+
+if (canNative) {
+  try {
+    require('pg/lib/native')
+  } catch (e) {
+    canNative = false
+  }
+}
 
 describe('probes.postgres', function () {
   var emitter
@@ -52,7 +60,7 @@ describe('probes.postgres', function () {
     native: {
       // Only test the native driver when Duplex streams are available,
       // otherwise node 0.8 will crash while trying to load pg-native
-      skip: ! hasDuplexStream,
+      skip: ! canNative,
       get: function () {
         return postgres.native
       }

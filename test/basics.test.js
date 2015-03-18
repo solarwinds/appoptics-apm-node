@@ -70,6 +70,8 @@ describe('basics', function () {
   })
 
   it('should support sampling', function () {
+    var skipSample = tv.skipSample
+    tv.skipSample = false
     tv.traceMode = 'always'
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     var s = tv.sample('test')
@@ -82,6 +84,7 @@ describe('basics', function () {
       samples.push(!!s[0])
     }
     samples.should.containEql(false)
+    tv.skipSample = skipSample
   })
 
   it('should not trace in through without xtrace header', function (done) {

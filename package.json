@@ -7,17 +7,13 @@
     "node-tv": "./bin/node-tv"
   },
   "scripts": {
-    "test": "mocha",
-    "docs": "yuidoc .",
+    "test": "gulp test",
+    "docs": "gulp docs",
     "install": "./build.sh",
     "install-deps": "./deps.sh",
-    "coverage": "npm run coverage:report",
-    "coverage:build": "rm -rf coverage && istanbul cover _mocha",
-    "coverage:report": "npm run coverage:build && istanbul report",
-    "coverage:html": "npm run coverage:report && xdg-open coverage/lcov-report/index.html",
-    "watch:test": "onchange '{lib,test}/**/*.js' 'build/**/*.node' 'index.js' -- npm test",
-    "watch:build": "onchange 'src/**/*.{cc,h}' -- node-gyp rebuild",
-    "watch": "npm run watch:build & npm run watch:test"
+    "coverage": "gulp coverage",
+    "support-matrix": "gulp support-matrix",
+    "watch": "gulp watch"
   },
   "author": {
     "name": "Stephen Belanger",
@@ -60,14 +56,18 @@
     "sliced": "0.0.5"
   },
   "devDependencies": {
+    "alltheversions": "~1.0.0",
     "body-parser": "~1.11.0",
     "bson": "~0.2.15",
     "cassandra-driver": "~1.0.1",
     "co-views": "~0.2.0",
     "ejs": "~2.1.0",
     "express": "~4.9.3",
+    "gulp": "~3.4.0",
+    "gulp-istanbul": "~0.6.0",
+    "gulp-mocha": "~2.0.0",
+    "gulp-yuidoc": "~0.1.2",
     "hapi": "~7.5.2",
-    "istanbul": "~0.3.2",
     "koa": "~0.16.0",
     "koa-resource-router": "~0.4.0",
     "koa-route": "~2.4.0",
@@ -75,11 +75,9 @@
     "leveldown": "~1.0.0",
     "levelup": "~0.19.0",
     "memcached": "~2.1.0",
-    "mocha": "~1.21.4",
     "mongodb": "~1.4.8",
     "mysql": "~2.5.2",
     "node-cassandra-cql": "~0.4.4",
-    "onchange": "0.0.1",
     "pg": "~4.2.0",
     "pg-native": "~1.7.3",
     "redis": "~0.12.1",
@@ -87,7 +85,6 @@
     "restify": "~2.8.3",
     "should": "~4.0.4",
     "supertest": "~0.15.0",
-    "tedious": "~1.8.1",
-    "yuidocjs": "~0.3.50"
+    "tedious": "~1.8.1"
   }
 }
