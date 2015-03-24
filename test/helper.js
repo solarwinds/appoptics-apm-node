@@ -1,3 +1,6 @@
+var tv = exports.tv = require('..')
+tv.skipSample = true
+
 var debug = require('debug')('traceview:test:helper')
 var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
@@ -7,14 +10,8 @@ var request = require('request')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
-var tv = require('..')
-var addon = tv.addon
-
-var lastPort = 10000
 
 exports.tracelyzer = function (done) {
-  var port = lastPort++
-
   // Create UDP server to mock tracelyzer
   var server = dgram.createSocket('udp4')
 
@@ -24,6 +21,7 @@ exports.tracelyzer = function (done) {
   // Forward events
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
+    var port = server.address().port
     var parsed = BSON.deserialize(msg)
     log('mock tracelyzer (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
@@ -31,22 +29,22 @@ exports.tracelyzer = function (done) {
 
   // Wait for the server to become available
   server.on('listening', function () {
+    var port = server.address().port
+    tv.port = port.toString()
+    emitter.port = port
     debug('mock tracelyzer (port ' + port + ') listening')
     process.nextTick(done)
   })
 
   // Start mock tracelyzer
-  server.bind(port)
-
-  // Create and use reporter pointing to mock tracelyzer
-  tv.port = port.toString()
+  server.bind()
 
   // Expose some things through the emitter
   emitter.server = server
-  emitter.port = port
 
   // Attach close function to use in after()
   emitter.close = function (done) {
+    var port = server.address().port
     server.on('close', function () {
       debug('mock tracelyzer (port ' + port + ') closed')
       process.nextTick(done)
@@ -66,7 +64,7 @@ exports.doChecks = function (emitter, checks, done) {
   emitter.removeAllListeners('message')
 
   function onMessage (msg) {
-    debug('mock tracelyzer (port ' + add.port + ') received message', msg)
+    log('mock tracelyzer (port ' + add.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       check(msg)
@@ -111,7 +109,7 @@ exports.httpTest = function (emitter, test, validations, done) {
   var server = http.createServer(function (req, res) {
     debug('test started')
     test(function (err, data) {
-      debug('test started')
+      debug('test ended')
       if (err) return done(err)
       res.end('done')
     })
@@ -126,14 +124,15 @@ exports.httpTest = function (emitter, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    http.get('http://localhost:' + port)
+    http.get('http://localhost:' + port).on('error', done)
   })
 }
 
 exports.httpsTest = function (emitter, options, test, validations, done) {
   var server = https.createServer(options, function (req, res) {
-    debug('request started')
+    debug('test started')
     test(function (err, data) {
+      debug('test ended')
       if (err) return done(err)
       res.end('done')
     })
@@ -148,7 +147,7 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    https.get('https://localhost:' + port)
+    https.get('https://localhost:' + port).on('error', done)
   })
 }
 

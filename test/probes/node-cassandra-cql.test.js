@@ -1,7 +1,7 @@
-var tv = require('../..')
+var helper = require('../helper')
+var tv = helper.tv
 var addon = tv.addon
 
-var helper = require('../helper')
 var should = require('should')
 
 //
