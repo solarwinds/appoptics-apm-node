@@ -75,9 +75,11 @@ describe('probes.tedious', function () {
   })
 
   it('should support parameters', function (done) {
+    var request
+
     helper.httpTest(emitter, function (done) {
       query(function () {
-        var request = new Request("select @num, @msg", onComplete)
+        request = new Request("select @num, @msg", onComplete)
         request.addParameter('num', TYPES.Int, '42')
         request.addParameter('msg', TYPES.VarChar, 'hello world')
 
@@ -91,7 +93,13 @@ describe('probes.tedious', function () {
       function (msg) {
         checks['mssql-entry'](msg)
         msg.should.have.property('Query', "select @num, @msg")
-        msg.should.have.property('QueryArgs', '{"num":"42","msg":"hello world"}')
+        msg.should.have.property('QueryArgs')
+
+        var QueryArgs = JSON.parse(msg.QueryArgs)
+        var params = request.originalParameters
+
+        QueryArgs.should.have.property('num', findParam('num', params))
+        QueryArgs.should.have.property('msg', findParam('msg', params))
       },
       function (msg) {
         checks['mssql-exit'](msg)
@@ -139,6 +147,12 @@ describe('probes.tedious', function () {
     connection.on('connect', function (err) {
       connection.execSql(fn())
     })
+  }
+
+  function findParam (name, params) {
+    return params.filter(function (v) {
+      return v.name === name
+    }).shift().value
   }
 
 })
