@@ -1,7 +1,7 @@
 var semver = require('semver')
 var modules = module.exports = []
 
-test('cassandra-driver',    '>= 0.2.0 < 2.0.0')
+test('cassandra-driver',    '>= 0.2.0')
 test('co-render',           '*',                'gulp test:probe:koa')
 test('express',             '>= 3.0.0')
 test('hapi',                '>= 6.0.0')
