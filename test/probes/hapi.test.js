@@ -19,13 +19,6 @@ if (semver.satisfies(process.version.slice(1), '> 0.8')) {
 
 var pkg = require('hapi/package.json')
 
-function after (n, fn) {
-  return function () {
-    n--
-    if (n == 0) fn()
-  }
-}
-
 describe('probes.hapi', function () {
   var emitter
   var port = 3000
@@ -256,7 +249,7 @@ describe('probes.hapi', function () {
     ]
 
     // Delay completion until both test paths end
-    var complete = after(2, function () {
+    var complete = helper.after(2, function () {
       server.listener.close(done)
       delete tv.rumId
     })

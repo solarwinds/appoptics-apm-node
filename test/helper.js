@@ -180,3 +180,9 @@ exports.padTime = function (done) {
   var t = Math.max(pad - diff, 1)
   setTimeout(done, t)
 }
+
+exports.after = function (n, done) {
+  return function () {
+    --n || done()
+  }
+}

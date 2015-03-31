@@ -15,13 +15,6 @@ if (semver.satisfies(process.version.slice(1), '> 0.8')) {
   restify = require('restify')
 }
 
-function after (n, fn) {
-  return function () {
-    n--
-    if (n == 0) fn()
-  }
-}
-
 describe('probes.restify', function () {
   var emitter
 
