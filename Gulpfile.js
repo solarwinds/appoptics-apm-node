@@ -113,6 +113,10 @@ function makeTestTask (name, files) {
       read: false
     })
     .pipe(tester())
+    .once('error', function (e) {
+      console.error(e.message)
+      process.exit(1)
+    })
     .once('end', process.exit)
   })
 }
