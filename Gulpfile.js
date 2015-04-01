@@ -68,24 +68,12 @@ gulp.task('docs', function () {
     .pipe(gulp.dest('./docs'))
 })
 
-gulp.task('rebuild', function (cb) {
-  var p = spawn('npm', ['install'])
-  p.stdout.pipe(process.stdout)
-  p.stderr.pipe(process.stderr)
-  p.on('close', cb)
-})
-
 gulp.task('watch', function () {
   gulp.watch([
     '{lib,test}/**/*.js',
-    'build/**/*.node',
     'index.js'
   ], [
     'test'
-  ])
-
-  gulp.watch('src/**/*.{cc,h}', [
-    'rebuild'
   ])
 })
 

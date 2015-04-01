@@ -9,7 +9,6 @@
   "scripts": {
     "test": "gulp test",
     "docs": "gulp docs",
-    "install": "./build.sh",
     "install-deps": "./deps.sh",
     "coverage": "gulp coverage",
     "support-matrix": "gulp support-matrix",
@@ -43,14 +42,10 @@
   },
   "gypfile": true,
   "dependencies": {
-    "bindings": "~1.2.0",
-    "cls-bluebird": "~1.0.0",
-    "cls-q": "~1.1.0",
     "continuation-local-storage": "~3.1.0",
     "debug": "~2.0.0",
     "methods": "~1.1.0",
     "minimist": "~1.1.0",
-    "nan": "~1.4.1",
     "semver": "~3.0.1",
     "shimmer": "~1.0.0",
     "sliced": "0.0.5"
@@ -86,5 +81,8 @@
     "should": "~4.0.4",
     "supertest": "~0.15.0",
     "tedious": "~1.8.1"
+  },
+  "optionalDependencies": {
+    "traceview-bindings": "~1.0.0"
   }
 }
