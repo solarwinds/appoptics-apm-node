@@ -11,13 +11,16 @@ test('koa-resource-router', '*',                'gulp test:probe:koa')
 test('koa-route',           '*',                'gulp test:probe:koa')
 test('koa-router',          '*',                'gulp test:probe:koa')
 test('koa')
-test('levelup',             '>= 0.13.3')
-test('memcached',           '>= 0.1.1')
+test('levelup',             '>= 0.16.0')
+test('memcached', version('>= 0.12.0') ? [
+                            '>= 0.1.1 < 1.0.0 || >= 2.1.0'
+] : [
+                            '>= 0.1.1'
+])
 
 // Exclude 1.4.13 - 1.4.16 due to bugs
 test('mongodb', [
-                            '1.2.9 - 1.4.12',
-                            '>= 1.4.17 <2.0.0',
+                            '1.2.9 - 1.4.12 || >= 1.4.17 <2.0.0',
                             // TODO: Fix recent mongo versions
                             // '>= 2.0.8'
 ])
@@ -34,7 +37,7 @@ test('pg', version('>= 0.12.0') ? [
 ])
 test('raw-body')
 test('redis',               '>= 0.8.0')
-test('restify',             '>= 2.0.0')
+test('restify',             '>= 2.0.0 < 2.0.2 || >= 2.0.3')
 test('tedious',             '>= 0.1.5')
 
 //
