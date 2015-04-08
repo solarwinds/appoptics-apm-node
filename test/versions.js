@@ -4,13 +4,17 @@ var modules = module.exports = []
 test('cassandra-driver',    '>= 0.2.0')
 test('co-render',           '*',                'gulp test:probe:koa')
 test('express',             '>= 3.0.0')
-test('hapi',                '>= 6.0.0')
+
+// Exclude 8.3.0 due to a missing dependency bug
+test('hapi',                '>= 6.0.0 < 8.3.0 || >= 8.3.1')
 test('koa-resource-router', '*',                'gulp test:probe:koa')
 test('koa-route',           '*',                'gulp test:probe:koa')
 test('koa-router',          '*',                'gulp test:probe:koa')
 test('koa')
 test('levelup',             '>= 0.13.3')
 test('memcached',           '>= 0.1.1')
+
+// Exclude 1.4.13 - 1.4.16 due to bugs
 test('mongodb', [
                             '1.2.9 - 1.4.12',
                             '>= 1.4.17 <2.0.0',
@@ -20,6 +24,9 @@ test('mongodb', [
 test('mysql',               '> 0.9.0')
 test('node-cassandra-cql',  '>= 0.2.0')
 test('oracledb')
+
+// Exclude versions older than 2.8.4 on newer node versions,
+// as the native module in older versions is not compatible.
 test('pg', version('>= 0.12.0') ? [
                             '>= 2.8.4'
 ] : [
