@@ -7,7 +7,15 @@ var baseArgv = process.argv.slice(2)
 var argv = min(baseArgv, {
   boolean: true
 })
+
+// Get file path
 var file = argv._[0]
+
+// Print usage info, where necessary
+if ( ! file || argv.help) {
+  console.warn('Usage:  node-tv [file] [arg]...')
+  process.exit()
+}
 
 // Find position of file in argv
 var start = 0
