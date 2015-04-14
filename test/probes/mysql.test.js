@@ -98,6 +98,7 @@ describe('probes.mysql', function () {
 
   it('should trace a basic query', test_basic)
   it('should trace a query with a value list', test_values)
+  it('should trace a query with a value object', test_object)
   it('should trace a streaming query', test_stream)
 
   if (semver.satisfies(pkg.version, '>= 2.0.0')) {
@@ -122,16 +123,24 @@ describe('probes.mysql', function () {
   }
 
   function test_values (done) {
-    var last = tv.Layer.last
-    if (last) {
-      console.log('last is', last)
-    }
-
     helper.httpTest(emitter, helper.run(ctx, 'mysql/values'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT ?')
         msg.should.have.property('QueryArgs', '["1"]')
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_object (done) {
+    helper.httpTest(emitter, helper.run(ctx, 'mysql/object'), [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'INSERT INTO test SET ?')
+        msg.should.have.property('QueryArgs', '{"foo":"bar"}')
       },
       function (msg) {
         checks.exit(msg)
