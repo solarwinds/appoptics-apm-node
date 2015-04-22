@@ -51,7 +51,7 @@ npm install --save traceview@latest
 
 ## Adding Your Own Layers
 
-In addition to the default layers captured automatically, you can optionally add your own. To learn on how to modify your code to report custom layers, [read here](https://support.appneta.com/cloud/traceview/instrumentation/nodejs/custom-nodejs-instrumentation).
+In addition to the default layers captured automatically, you can optionally add your own. To learn on how to modify your code to report custom layers, [read here](https://docs.appneta.com/custom-nodejs-instrumentation).
 
 ## Testing
 
