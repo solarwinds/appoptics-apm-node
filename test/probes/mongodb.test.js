@@ -13,6 +13,7 @@ var requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
 var pkg = require('mongodb/package.json')
 requirePatch.enable()
+var db_host = process.env.MONGODB_PORT_27017_TCP_ADDR || 'localhost'
 
 describe('probes.mongodb', function () {
 	var ctx = {}
@@ -42,7 +43,7 @@ describe('probes.mongodb', function () {
 	// Open a fresh mongodb connection for each test
 	//
 	before(function (done) {
-		MongoDB.connect('mongodb://localhost/test', function (err, _db) {
+		MongoDB.connect('mongodb://' + db_host + '/test', function (err, _db) {
 			if (err) return done(err)
 			ctx.mongo = db = _db
 			done()

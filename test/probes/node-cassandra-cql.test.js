@@ -3,6 +3,7 @@ var tv = helper.tv
 var addon = tv.addon
 
 var should = require('should')
+var db_host = process.env.CASSANDRA_PORT_9042_TCP_ADDR || 'localhost'
 
 //
 // Do not load unless stream.Readable exists.
@@ -34,7 +35,7 @@ describe('probes.cassandra', function () {
     info: function (msg) {
       msg.should.have.property('Layer', 'cassandra')
       msg.should.have.property('Label', 'info')
-      msg.should.have.property('RemoteHost', 'localhost:9042')
+      msg.should.have.property('RemoteHost', db_host + ':9042')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'cassandra')
@@ -70,7 +71,7 @@ describe('probes.cassandra', function () {
     //
     before(function (done) {
       client = new cql.Client({
-        hosts: ['localhost'],
+        hosts: [db_host],
         keyspace: 'test'
       })
       ctx.cql = client

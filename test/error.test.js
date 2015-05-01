@@ -9,7 +9,8 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
-var client = redis.createClient()
+var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
+var client = redis.createClient(6379, db_host, {})
 
 describe('error', function () {
   var emitter

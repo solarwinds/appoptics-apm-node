@@ -8,7 +8,8 @@ var request = require('request')
 var http = require('http')
 
 var postgres = require('pg')
-var conString = 'postgres://postgres@localhost/test'
+var db_host = process.env.POSTGRES_PORT_5432_TCP_ADDR || 'localhost'
+var conString = 'postgres://postgres@' + db_host + '/test'
 
 var stream = require('stream')
 var canNative = typeof stream.Duplex !== 'undefined'
@@ -81,7 +82,7 @@ describe('probes.postgres', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Database', 'test')
         msg.should.have.property('Flavor', 'postgresql')
-        msg.should.have.property('RemoteHost', 'localhost:5432')
+        msg.should.have.property('RemoteHost', db_host + ':5432')
       },
       exit: function (msg) {
         msg.should.have.property('Layer', 'postgres')
