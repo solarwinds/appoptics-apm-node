@@ -10,6 +10,7 @@ var http = require('http')
 
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
+var db_host = process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost'
 
 describe('probes.mysql', function () {
   var emitter
@@ -43,7 +44,7 @@ describe('probes.mysql', function () {
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Database', 'test')
       msg.should.have.property('Flavor', 'mysql')
-      msg.should.have.property('RemoteHost', 'localhost:3306')
+      msg.should.have.property('RemoteHost', db_host + ':3306')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'mysql')
@@ -54,7 +55,7 @@ describe('probes.mysql', function () {
   if (semver.satisfies(pkg.version, '>= 2.0.0')) {
     beforeEach(function (done) {
       db = ctx.mysql = mysql.createConnection({
-        host: 'localhost',
+        host: db_host,
         database: 'test',
         user: 'root'
       })
@@ -62,7 +63,7 @@ describe('probes.mysql', function () {
       // Set pool and pool cluster
       var poolConfig = {
         connectionLimit: 10,
-        host: 'localhost',
+        host: db_host,
         database: 'test',
         user: 'root'
       }
@@ -80,7 +81,7 @@ describe('probes.mysql', function () {
   } else if (semver.satisfies(pkg.version, '>= 0.9.2')) {
     beforeEach(function () {
       db = ctx.mysql = mysql.createClient({
-        host: 'localhost',
+        host: db_host,
         database: 'test',
         user: 'root'
       })
@@ -88,7 +89,7 @@ describe('probes.mysql', function () {
   } else {
     beforeEach(function (done) {
       db = ctx.mysql = new mysql.Client({
-        host: 'localhost',
+        host: db_host,
         database: 'test',
         user: 'root'
       })

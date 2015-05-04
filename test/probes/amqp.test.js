@@ -4,6 +4,7 @@ var addon = tv.addon
 
 var should = require('should')
 var amqp = require('amqp')
+var db_host = process.env.RABBITMQ_PORT_5672_TCP_ADDR || 'localhost'
 
 describe('probes.amqp', function () {
   var emitter
@@ -49,7 +50,7 @@ describe('probes.amqp', function () {
   //
   before(function (done) {
     client = amqp.createConnection({
-      host: 'localhost'
+      host: db_host
     }, {
       reconnect: false
     })
