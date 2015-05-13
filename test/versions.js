@@ -18,11 +18,11 @@ test('memcached', version('>= 0.12.0') ? [
                             '>= 0.1.1'
 ])
 
-// Exclude 1.4.13 - 1.4.16 due to bugs
+// NOTE: Versions from mid 1.4.x to early 2.x are excluded due to mongodb bugs
 test('mongodb', [
-                            '1.2.9 - 1.4.12 || >= 1.4.17 <2.0.0',
-                            // TODO: Fix recent mongo versions
-                            // '>= 2.0.8'
+                            '1.2.9 - 1.4.12',
+                            '>= 1.4.17 <2.0.0',
+                            '>= 2.0.9'
 ])
 test('mysql',               '> 0.9.0')
 test('node-cassandra-cql',  '>= 0.2.0')
