@@ -1,4 +1,5 @@
 var tv = exports.tv = require('..')
+var realPort = tv.port
 tv.skipSample = true
 
 var debug = require('debug')('traceview:test:helper')
@@ -25,6 +26,10 @@ exports.tracelyzer = function (done) {
     var parsed = BSON.deserialize(msg)
     log('mock tracelyzer (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
+
+    if (emitter.forward) {
+      server.send(msg, 0, msg.length, Number(realPort), 'localhost', function () {})
+    }
   })
 
   // Wait for the server to become available
