@@ -8,9 +8,14 @@ var pkg = require('./package')
 
 // Define some name/path mappings for scoped test/coverage tasks
 var testTasks = {
-  'basics': 'test/*.test.js',
-  'addon': 'test/addon/*.test.js',
-  'probes': 'test/probes/*.test.js'
+  unit: 'test/*.test.js',
+  basics: 'test/basics.test.js',
+  custom: 'test/custom.test.js',
+  error: 'test/error.test.js',
+  event: 'test/event.test.js',
+  layer: 'test/layer.test.js',
+  profile: 'test/profile.test.js',
+  probes: 'test/probes/*.test.js'
 }
 
 // Dynamically define probe test/coverage tasks mapping
