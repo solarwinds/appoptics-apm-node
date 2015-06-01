@@ -7,7 +7,6 @@ var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
 var BSON = require('bson').BSONPure.BSON
 var extend = require('util')._extend
-var request = require('request')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
@@ -61,10 +60,8 @@ exports.tracelyzer = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done) {
-  var first = true
-  var edge
-
   var add = emitter.server.address()
+  var first = true
 
   emitter.removeAllListeners('message')
 
@@ -91,6 +88,9 @@ exports.doChecks = function (emitter, checks, done) {
       // tests have less checks than messages
       emitter.removeListener('message', onMessage)
       done()
+      if (emitter.forward) {
+        console.log('Trace Link:', exports.traceLink(msg['X-Trace']))
+      }
     }
   }
 
@@ -190,4 +190,8 @@ exports.after = function (n, done) {
   return function () {
     --n || done()
   }
+}
+
+exports.traceLink = function (id) {
+  return 'https://stephenappneta.tv.appneta.com/traces/view/' + id.substr(2, 40)
 }
