@@ -1,19 +1,31 @@
-var debug = require('debug')('traceview:test:error')
 var helper = require('./helper')
-var should = require('should')
 var tv = require('..')
-var addon = tv.addon
 var Event = tv.Event
 
-var request = require('request')
-var http = require('http')
-
-var redis = require('redis')
-var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
-var client = redis.createClient(6379, db_host, {})
-
 describe('error', function () {
+  var conf = { enabled: true }
+  var error = new Error('nope')
   var emitter
+
+  function testLayer (layer) {
+    return layer.descend('test')
+  }
+
+  function handleErrorTest (task, done) {
+    helper.httpTest(emitter, task, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error.message)
+        msg.should.have.property('Backtrace', error.stack)
+      }
+    ], done)
+  }
 
   //
   // Intercept tracelyzer messages for analysis
@@ -47,28 +59,25 @@ describe('error', function () {
     event.should.have.property('Backtrace', err.stack)
   })
 
+  it('should report errors in sync calls', function (done) {
+    handleErrorTest(function (done) {
+      try {
+        tv.instrument(testLayer, function () {
+          throw error
+        }, conf)
+      } catch (e) {}
+      done()
+    }, done)
+  })
+
   it('should report errors in error-first callbacks', function (done) {
-    helper.httpTest(emitter, function (done) {
-      client.ready = false
-      client.enable_offline_queue = false
-      client.set('foo', null, function (err) {
+    handleErrorTest(function (done) {
+      tv.instrument(testLayer, function (callback) {
+        callback(error)
+      }, conf, function () {
         done()
       })
-    }, [
-      function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('KVOp', 'set')
-        msg.should.have.property('KVKey', 'foo')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('ErrorClass', 'Error')
-        msg.should.have.property('ErrorMsg')
-        msg.should.have.property('Backtrace')
-      }
-    ], done)
+    }, done)
   })
 
 })
