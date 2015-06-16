@@ -46,6 +46,10 @@ describe('probes.mysql', function () {
       msg.should.have.property('Flavor', 'mysql')
       msg.should.have.property('RemoteHost', db_host + ':3306')
     },
+    info: function (msg) {
+      msg.should.have.property('Layer', 'mysql')
+      msg.should.have.property('Label', 'info')
+    },
     exit: function (msg) {
       msg.should.have.property('Layer', 'mysql')
       msg.should.have.property('Label', 'exit')
@@ -110,6 +114,7 @@ describe('probes.mysql', function () {
     it.skip('should trace a cluster pooled query', test_clustered_pool)
   }
   it('should sanitize a query', test_sanitize)
+  it('should report caller errors', test_caller_error)
 
   function test_basic (done) {
     helper.httpTest(emitter, helper.run(ctx, 'mysql/basic'), [
@@ -193,6 +198,29 @@ describe('probes.mysql', function () {
       },
       function (msg) {
         checks.exit(msg)
+      }
+    ], done)
+  }
+
+  function test_caller_error (done) {
+    var error
+    helper.httpTest(emitter, function (done) {
+      try {
+        ctx.mysql.query('SELECT ?', [function () {}], function () {})
+      } catch (err) {
+        error = err
+        done()
+      }
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query', 'SELECT ?')
+      },
+      function (msg) {
+        checks.info(msg)
+        msg.should.have.property('ErrorClass', error.constructor.name)
+        msg.should.have.property('Backtrace', error.stack)
+        msg.should.have.property('ErrorMsg', error.message)
       }
     ], done)
   }
