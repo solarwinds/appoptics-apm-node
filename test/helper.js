@@ -23,6 +23,9 @@ exports.tracelyzer = function (done) {
   server.on('message', function (msg) {
     var port = server.address().port
     var parsed = BSON.deserialize(msg)
+    if (emitter.log) {
+      console.log(parsed)
+    }
     log('mock tracelyzer (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
 

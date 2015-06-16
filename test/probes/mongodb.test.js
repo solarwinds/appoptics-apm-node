@@ -24,11 +24,13 @@ describe('probes.mongodb', function () {
 	// Intercept tracelyzer messages for analysis
 	//
 	before(function (done) {
+    tv.fs.enabled = false
 		emitter = helper.tracelyzer(done)
 		tv.sampleRate = addon.MAX_SAMPLE_RATE
 		tv.traceMode = 'always'
 	})
 	after(function (done) {
+    tv.fs.enabled = true
 		emitter.close(done)
 	})
 
