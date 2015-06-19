@@ -103,7 +103,11 @@ describe('probes.mysql', function () {
 
   it('should trace a basic query', test_basic)
   it('should trace a query with a value list', test_values)
-  it('should trace a query with a value object', test_object)
+  if (semver.satisfies(pkg.version, '>= 1.0.0')) {
+    it('should trace a query with a value object', test_object)
+  } else {
+    it.skip('should trace a query with a value object', test_object)
+  }
   it('should trace a streaming query', test_stream)
 
   if (semver.satisfies(pkg.version, '>= 2.0.0')) {
