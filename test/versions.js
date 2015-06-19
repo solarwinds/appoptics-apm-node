@@ -11,7 +11,7 @@ test('koa-resource-router', '*',                'gulp test:probe:koa')
 test('koa-route',           '*',                'gulp test:probe:koa')
 test('koa-router',          '*',                'gulp test:probe:koa')
 test('koa')
-test('levelup',             '>= 0.16.0')
+test('levelup',             '>= 0.17.0')
 test('memcached', version('>= 0.12.0') ? [
                             '>= 0.1.1 < 1.0.0 || >= 2.1.0'
 ] : [
