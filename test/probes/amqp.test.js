@@ -57,10 +57,15 @@ describe('probes.amqp', function () {
     client.on('ready', done)
   })
   after(function (done) {
-    client.on('close', function () {
+    // NOTE: 1.x has no disconnect() and socket.end() is not safe.
+    if (client.disconnect) {
+      client.on('close', function () {
+        done()
+      })
+      client.disconnect()
+    } else {
       done()
-    })
-    client.disconnect()
+    }
   })
 
   //
