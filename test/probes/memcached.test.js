@@ -40,6 +40,7 @@ describe('probes.memcached', function () {
     entry: function (msg) {
       msg.should.have.property('Layer', 'memcached')
       msg.should.have.property('Label', 'entry')
+      msg.should.have.property('RemoteHost', db_host + ':11211')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'memcached')
