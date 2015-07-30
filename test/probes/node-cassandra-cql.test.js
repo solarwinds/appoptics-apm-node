@@ -70,6 +70,12 @@ describe('probes.cassandra', function () {
     // Construct database client
     //
     before(function (done) {
+      var testClient = new cql.Client({
+        hosts: [db_host]
+      })
+      testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
+    })
+    before(function (done) {
       client = new cql.Client({
         hosts: [db_host],
         keyspace: 'test'
