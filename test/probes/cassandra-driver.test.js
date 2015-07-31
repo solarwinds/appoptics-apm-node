@@ -70,6 +70,12 @@ describe('probes.cassandra-driver', function () {
     //
     // Construct database client
     //
+    before(function (done) {
+      var testClient = new cassandra.Client({
+        contactPoints: [db_host]
+      })
+      testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
+    })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
         contactPoints: [db_host],
