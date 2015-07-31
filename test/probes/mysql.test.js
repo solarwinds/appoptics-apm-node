@@ -12,6 +12,8 @@ var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 var db_host = process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost'
 
+var soon = global.setImmediate || process.nextTick
+
 describe('probes.mysql', function () {
   var emitter
   var ctx = {}
@@ -56,14 +58,46 @@ describe('probes.mysql', function () {
     }
   }
 
-  if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-    beforeEach(function (done) {
-      db = ctx.mysql = mysql.createConnection({
-        host: db_host,
-        database: 'test',
-        user: 'root'
-      })
+  function makeDb (conf, done) {
+    var db
+    if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+      db = mysql.createConnection(conf)
+      db.connect(done)
+    } else if (semver.satisfies(pkg.version, '>= 0.9.2')) {
+      db = mysql.createClient(conf)
+      soon(done)
+    } else {
+      db = new mysql.Client(conf)
+      db.connect(done)
+    }
 
+    return db
+  }
+
+  // Ensure database/table existence
+  beforeEach(function (done) {
+    var db = makeDb({
+      host: db_host,
+      user: 'root'
+    }, function () {
+      db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
+        if (err) return done(err)
+        db.end(done)
+      })
+    })
+  })
+
+  // Make connection
+  beforeEach(function (done) {
+    db = ctx.mysql = makeDb({
+      host: db_host,
+      database: 'test',
+      user: 'root'
+    }, function () {
+      db.query('CREATE TABLE IF NOT EXISTS test (foo varchar(255));', done)
+    })
+
+    if (semver.satisfies(pkg.version, '>= 2.0.0')) {
       // Set pool and pool cluster
       var poolConfig = {
         connectionLimit: 10,
@@ -75,29 +109,12 @@ describe('probes.mysql', function () {
       pool = db.pool = mysql.createPool(poolConfig)
       cluster = db.cluster = mysql.createPoolCluster()
       cluster.add(poolConfig)
+    }
+  })
 
-      // Connect
-      db.connect(done)
-    })
+  if (semver.satisfies(pkg.version, '>= 2.0.0')) {
     afterEach(function (done) {
       db.end(done)
-    })
-  } else if (semver.satisfies(pkg.version, '>= 0.9.2')) {
-    beforeEach(function () {
-      db = ctx.mysql = mysql.createClient({
-        host: db_host,
-        database: 'test',
-        user: 'root'
-      })
-    })
-  } else {
-    beforeEach(function (done) {
-      db = ctx.mysql = new mysql.Client({
-        host: db_host,
-        database: 'test',
-        user: 'root'
-      })
-      db.connect(done)
     })
   }
 
