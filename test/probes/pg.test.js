@@ -44,6 +44,19 @@ describe('probes.postgres', function () {
     helper.padTime(done)
   })
 
+  before(function (done) {
+    var client = new postgres.Client({
+      database: 'postgres',
+      user: 'postgres'
+    })
+    client.connect(function (err) {
+      if (err) return done(err)
+      client.query('create database test;', function () {
+        done()
+      })
+    })
+  })
+
   //
   // Yes, this is super janky. But necessary because switching to
   // the native driver is destructive to the pooling mechanism.
