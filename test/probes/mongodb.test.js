@@ -108,12 +108,6 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			// The db.command used in collection.count called cursor.nextObject
-			if (semver.satisfies(pkg.version, '<1.4.11 || >1.4.23 <2.0.0')) {
-				steps.push(function () {})
-				steps.push(function () {})
-			}
-
 			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
@@ -133,11 +127,6 @@ describe('probes.mongodb', function () {
 					check['common-mongodb'](msg)
 				}
 			]
-
-			if (semver.satisfies(pkg.version, '<1.4.13 || >1.4.23 <2.0.0')) {
-				steps.push(function () {})
-				steps.push(function () {})
-			}
 
 			steps.push(check['mongo-exit'])
 
@@ -383,11 +372,6 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '<1.4.11 || >1.4.23 <2.0.0')) {
-				steps.push(function (msg) {})
-				steps.push(function (msg) {})
-			}
-
 			steps.push(function (msg) {
 				check['mongo-exit'](msg)
 			})
@@ -423,11 +407,6 @@ describe('probes.mongodb', function () {
 					index_check['info-entry'](msg)
 				}
 			]
-
-			if (semver.satisfies(pkg.version, '<1.4.11 || >1.4.23 <2.0.0')) {
-				steps.push(function () {})
-				steps.push(function () {})
-			}
 
 			steps.push(function (msg) {
 				check['mongo-exit'](msg)

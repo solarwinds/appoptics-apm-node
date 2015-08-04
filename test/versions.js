@@ -21,11 +21,23 @@ test('memcached', version('>= 0.12.0') ? [
 ])
 
 // NOTE: Versions from mid 1.4.x to early 2.x are excluded due to mongodb bugs
-test('mongodb', [
+// NOTE: DB version impacts behaviour of driver version, so support range varies
+var MONGODB_VERSION = parseInt(process.env.MONGODB_VERSION || '2', 10)
+if (MONGODB_VERSION === 2) {
+  test('mongodb', [
                             '1.2.9 - 1.4.12',
                             '>= 1.4.17 <2.0.0',
-                            '>= 2.0.9'
-])
+                            '>= 2.0.10'
+  ])
+} else {
+  test('mongodb', [
+                            '1.2.9 - 1.3.18',
+                            '1.4.0 - 1.4.10',
+                            '>= 1.4.24 <2.0.0',
+                            '>= 2.0.10'
+  ])
+}
+
 test('mysql',               '> 0.9.0')
 test('node-cassandra-cql',  '>= 0.2.0')
 test('oracledb')

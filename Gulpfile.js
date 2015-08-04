@@ -42,13 +42,6 @@ Object.keys(testTasks).forEach(function (task) {
 })
 
 // Build support-matrix tasks for each probe
-gulp.task('support-matrix', function (cb) {
-  var p = spawn('alltheversions')
-  p.stdout.pipe(process.stdout)
-  p.stderr.pipe(process.stderr)
-  p.on('close', cb)
-})
-
 require('./test/versions').map(function (mod) {
   return mod.name
 }).forEach(makeMatrixTask)

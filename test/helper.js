@@ -70,9 +70,15 @@ exports.doChecks = function (emitter, checks, done) {
 
   function onMessage (msg) {
     log('mock tracelyzer (port ' + add.port + ') received message', msg)
-    var check = checks.shift()
+    // var check = checks.shift()
+    var check = checks[0]
     if (check) {
-      check(msg)
+      try {
+        check(msg)
+        checks.shift()
+      } catch (e) {
+        // DO nothing
+      }
     }
 
     // Always verify that a valid X-Trace ID is present
