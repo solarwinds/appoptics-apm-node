@@ -54,6 +54,7 @@ test('redis',               '>= 0.8.0')
 test('restify',             '>= 2.0.0 < 2.0.2 || >= 2.0.3')
 test('tedious',             '>= 0.1.5')
 test('amqp',                '>= 0.1.8')
+test('director',            '>= 1.2.0')
 
 //
 // Helpers
