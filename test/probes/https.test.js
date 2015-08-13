@@ -43,31 +43,61 @@ describe('probes.https', function () {
     helper.padTime(done)
   })
 
+  var check = {
+    server: {
+      entry: function (msg) {
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'entry')
+      },
+      exit: function (msg) {
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'exit')
+      }
+    },
+    client: {
+      entry: function (msg) {
+        msg.should.have.property('Layer', 'https-client')
+        msg.should.have.property('Label', 'entry')
+      },
+      exit: function (msg) {
+        msg.should.have.property('Layer', 'https-client')
+        msg.should.have.property('Label', 'exit')
+      }
+    }
+  }
+
   describe('https-server', function () {
+    var conf = tv.https
+
     //
     // Test a simple res.end() call in an http server
     //
     it('should send traces for http routing and response layers', function (done) {
+      var port
       var server = https.createServer(options, function (req, res) {
         res.end('done')
       })
 
       helper.doChecks(emitter, [
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'entry')
+          check.server.entry(msg)
+          msg.should.have.property('Method', 'GET')
+          msg.should.have.property('Proto', 'https')
+          msg.should.have.property('HTTP-Host', 'localhost')
+          msg.should.have.property('Port', port)
+          msg.should.have.property('URL', '/foo?bar=baz')
+          msg.should.have.property('ClientIP')
         },
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'exit')
+          check.server.exit(msg)
         }
       ], function () {
         server.close(done)
       })
 
       server.listen(function () {
-        var port = server.address().port
-        request('https://localhost:' + port)
+        port = server.address().port
+        request('https://localhost:' + port + '/foo?bar=baz')
       })
     })
 
@@ -83,13 +113,11 @@ describe('probes.https', function () {
 
       helper.doChecks(emitter, [
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'entry')
+          check.server.entry(msg)
           msg.should.have.property('Edge', origin.opId)
         },
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'exit')
+          check.server.exit(msg)
         }
       ], function () {
         server.close(done)
@@ -116,15 +144,13 @@ describe('probes.https', function () {
 
       helper.doChecks(emitter, [
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'entry')
+          check.server.entry(msg)
           msg.should.have.property('X-TV-Meta', 'foo')
           msg.should.have.property('SampleSource')
           msg.should.have.property('SampleRate')
         },
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'exit')
+          check.server.exit(msg)
         }
       ], function () {
         server.close(done)
@@ -153,12 +179,10 @@ describe('probes.https', function () {
 
       helper.doChecks(emitter, [
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'entry')
+          check.server.entry(msg)
         },
         function (msg) {
-          msg.should.have.property('Layer', 'nodejs')
-          msg.should.have.property('Label', 'exit')
+          check.server.exit(msg)
         }
       ], function () {
         server.close(done)
@@ -167,6 +191,34 @@ describe('probes.https', function () {
       server.listen(function () {
         var port = server.address().port
         request('https://localhost:' + port)
+      })
+    })
+
+    //
+    // Verify query param filtering support
+    //
+    it('should support query param filtering', function (done) {
+      conf.includeRemoteUrlParams = false
+      var server = https.createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          msg.should.have.property('URL', '/foo')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function (err) {
+        conf.includeRemoteUrlParams = true
+        server.close(done.bind(null, err))
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        request('https://localhost:' + port + '/foo?bar=baz')
       })
     })
 
@@ -221,16 +273,7 @@ describe('probes.https', function () {
   })
 
   describe('https-client', function () {
-    var check = {
-      'http-entry': function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'entry')
-      },
-      'http-exit': function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'exit')
-      }
-    }
+    var conf = tv['https-client']
 
     it('should trace https request', function (done) {
       var server = https.createServer(options, function (req, res) {
@@ -244,20 +287,18 @@ describe('probes.https', function () {
 
         helper.httpsTest(emitter, options, mod, [
           function (msg) {
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'entry')
+            check.client.entry(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {
-            check['http-entry'](msg)
+            check.server.entry(msg)
           },
           function (msg) {
-            check['http-exit'](msg)
+            check.server.exit(msg)
           },
           function (msg) {
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'exit')
+            check.client.exit(msg)
             msg.should.have.property('HTTPStatus', 200)
           }
         ], done)
@@ -277,21 +318,18 @@ describe('probes.https', function () {
 
         helper.httpsTest(emitter, options, mod, [
           function (msg) {
-
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'entry')
+            check.client.entry(msg)
             msg.should.have.property('RemoteURL', url)
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {
-            check['http-entry'](msg)
+            check.server.entry(msg)
           },
           function (msg) {
-            check['http-exit'](msg)
+            check.server.exit(msg)
           },
           function (msg) {
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'exit')
+            check.client.exit(msg)
             msg.should.have.property('HTTPStatus', 200)
           }
         ], done)
@@ -310,21 +348,53 @@ describe('probes.https', function () {
 
         helper.httpsTest(emitter, options, mod, [
           function (msg) {
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'entry')
+            check.client.entry(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {
-            check['http-entry'](msg)
+            check.server.entry(msg)
           },
           function (msg) {
-            check['http-exit'](msg)
+            check.server.exit(msg)
           },
           function (msg) {
-            msg.should.have.property('Layer', 'https-client')
-            msg.should.have.property('Label', 'exit')
+            check.client.exit(msg)
             msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
+    it('should support query filtering', function (done) {
+      conf.includeRemoteUrlParams = false
+
+      var server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        ctx.data = { port: server.address().port }
+        var mod = helper.run(ctx, 'https/query-filtering')
+
+        helper.httpsTest(emitter, options, mod, [
+          function (msg) {
+            check.client.entry(msg)
+            var url = ctx.data.url.replace(/\?.*/, '')
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+            conf.includeRemoteUrlParams = true
           }
         ], done)
       })
