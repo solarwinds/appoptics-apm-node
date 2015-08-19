@@ -21,9 +21,13 @@ var testTasks = {
 
 var benchTasks = {
   unit: 'test/*.bench.js',
+  basics: 'test/basics.bench.js',
   custom: 'test/custom.bench.js',
   error: 'test/error.bench.js',
-  event: 'test/event.bench.js'
+  event: 'test/event.bench.js',
+  layer: 'test/layer.bench.js',
+  profile: 'test/profile.bench.js',
+  probes: 'test/probes/*.bench.js'
 }
 
 // Dynamically define probe test/coverage tasks mapping
