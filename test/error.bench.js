@@ -6,7 +6,7 @@ var Event = tv.Event
 var err = new Error('test')
 var event = new Event('error-test', 'info')
 
-suite('custom', function () {
+suite('error', function () {
   var context = {}
 
   before(function () {

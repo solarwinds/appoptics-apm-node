@@ -8,7 +8,7 @@ var event = new Event('error-test', 'info')
 
 tracelyzer.setMaxListeners(Infinity)
 
-suite('custom', function () {
+suite('event', function () {
   var context = {}
 
   before(function () {
