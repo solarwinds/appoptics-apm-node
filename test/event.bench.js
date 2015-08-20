@@ -31,7 +31,7 @@ suite('event', function () {
     event.enter()
   })
 
-  bench('enter', function (done) {
+  bench('send', function (done) {
     tracelyzer.once('message', function () { done() })
     var e = new Event('test', 'entry')
     e.send()
