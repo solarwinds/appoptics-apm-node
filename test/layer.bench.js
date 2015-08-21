@@ -35,10 +35,26 @@ suite('layer', function () {
     layer.run(noop)
   })
 
+  bench('manual sync', function (done) {
+    multi_on(tracelyzer, 2, 'message', after(2, done))
+    var layer = new Layer('test', null, {})
+    layer.enter()
+    layer.exit()
+  })
+
   bench('run async', function (done) {
     multi_on(tracelyzer, 2, 'message', after(2, done))
     var layer = new Layer('test', null, {})
     layer.run(async)
+  })
+
+  bench('manual async', function (done) {
+    multi_on(tracelyzer, 2, 'message', after(2, done))
+    var layer = new Layer('test', null, {})
+    layer.enter()
+    setImmediate(function () {
+      layer.exit()
+    })
   })
 
   bench('descend from layer', function () {
