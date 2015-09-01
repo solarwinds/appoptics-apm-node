@@ -7,5 +7,8 @@ exports.data = function (ctx) {
 }
 
 exports.run = function (ctx, done) {
-  ctx.http.get(ctx.data, done.bind(null, null)).on('error', done)
+  ctx.http.get(ctx.data, function (res) {
+    res.resume()
+    res.on('end', done.bind(null, null))
+  }).on('error', done)
 }

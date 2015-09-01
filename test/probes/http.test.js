@@ -36,6 +36,10 @@ describe('probes.http', function () {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'entry')
       },
+      info: function (msg) {
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'info')
+      },
       exit: function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'exit')
@@ -45,6 +49,10 @@ describe('probes.http', function () {
       entry: function (msg) {
         msg.should.have.property('Layer', 'http-client')
         msg.should.have.property('Label', 'entry')
+      },
+      info: function (msg) {
+        msg.should.have.property('Layer', 'http-client')
+        msg.should.have.property('Label', 'info')
       },
       exit: function (msg) {
         msg.should.have.property('Layer', 'http-client')
@@ -255,6 +263,76 @@ describe('probes.http', function () {
         })
       })
     })
+
+    //
+    // Test errors emitted on http request object
+    //
+    it('should report request errors', function (done) {
+      var error = new Error('test')
+      var port
+      var server = http.createServer(function (req, res) {
+        req.on('error', noop)
+        req.emit('error', error)
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+        },
+        function (msg) {
+          check.server.info(msg)
+          msg.should.have.property('ErrorClass', 'Error')
+          msg.should.have.property('ErrorMsg', error.message)
+          msg.should.have.property('Backtrace', error.stack)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        port = server.address().port
+        request('http://localhost:' + port + '/foo?bar=baz')
+      })
+    })
+
+    //
+    // Test errors emitted on http response object
+    //
+    it('should report response errors', function (done) {
+      var error = new Error('test')
+      var port
+      var server = http.createServer(function (req, res) {
+        res.on('error', noop)
+        res.emit('error', error)
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+        },
+        function (msg) {
+          check.server.info(msg)
+          msg.should.have.property('ErrorClass', 'Error')
+          msg.should.have.property('ErrorMsg', error.message)
+          msg.should.have.property('Backtrace', error.stack)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        port = server.address().port
+        request('http://localhost:' + port + '/foo?bar=baz')
+      })
+    })
   })
 
   describe('http-client', function () {
@@ -384,5 +462,93 @@ describe('probes.http', function () {
         ], done)
       })
     })
+
+    it('should report request errors', function (done) {
+      var server = http.createServer(function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        var url = 'http://localhost:' + port + '/?foo=bar'
+        var error = new Error('test')
+
+        helper.httpTest(emitter, function (done) {
+          var req = http.get(url, function (res) {
+            res.on('end', done)
+            res.resume()
+          })
+          req.on('error', function () {})
+          req.emit('error', error)
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.client.info(msg)
+            msg.should.have.property('ErrorClass', 'Error')
+            msg.should.have.property('ErrorMsg', error.message)
+            msg.should.have.property('Backtrace', error.stack)
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ], done)
+      })
+    })
+
+    it('should report response errors', function (done) {
+      var server = http.createServer(function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        var url = 'http://localhost:' + port + '/?foo=bar'
+        var error = new Error('test')
+
+        helper.httpTest(emitter, function (done) {
+          http.get(url, function (res) {
+            res.on('error', done.bind(null, null))
+            res.emit('error', error)
+          }).on('error', done)
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          },
+          function (msg) {
+            check.server.info(msg)
+            msg.should.have.property('ErrorClass', 'Error')
+            msg.should.have.property('ErrorMsg', error.message)
+            msg.should.have.property('Backtrace', error.stack)
+          }
+        ], done)
+      })
+    })
   })
 })
+
+function noop () {}

@@ -6,6 +6,9 @@ exports.data = function (ctx) {
 
 exports.run = function (ctx, done) {
   var req = ctx.https.get(ctx.data.url)
-  req.on('response', done.bind(null, null))
+  req.on('response', function (res) {
+    res.resume()
+    res.on('end', done.bind(null, null))
+  })
   req.on('error', done)
 }

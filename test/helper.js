@@ -140,7 +140,9 @@ exports.httpTest = function (emitter, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    http.get('http://localhost:' + port).on('error', done)
+    http.get('http://localhost:' + port, function (res) {
+      res.resume()
+    }).on('error', done)
   })
 }
 
@@ -163,7 +165,9 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
   server.listen(function () {
     var port = server.address().port
     debug('test server listening on port ' + port)
-    https.get('https://localhost:' + port).on('error', done)
+    https.get('https://localhost:' + port, function (res) {
+      res.resume()
+    }).on('error', done)
   })
 }
 
