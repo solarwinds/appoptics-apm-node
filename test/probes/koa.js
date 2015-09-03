@@ -94,11 +94,19 @@ exports.route = function (emitter, done) {
 exports.router = function (emitter, done) {
   var app = koa()
 
-  app.use(router(app))
-
-  app.get('/hello/:name', function* hello () {
+  function* hello () {
     this.body = 'done'
-  })
+  }
+
+  // Mount router
+  var r = router(app)
+  if (typeof r.routes === 'function') {
+    app.use(r.routes())
+    r.get('/hello/:name', hello)
+  } else {
+    app.use(r)
+    app.get('/hello/:name', hello)
+  }
 
   var validations = controllerValidations('get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
