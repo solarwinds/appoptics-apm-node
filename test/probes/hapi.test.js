@@ -74,7 +74,17 @@ describe('probes.hapi', function () {
     config = config || {}
     var server
 
-    if (semver.satisfies(pkg.version, '>= 8.0.0-rc1')) {
+    if (semver.satisfies(pkg.version, '>= 9.0.0')) {
+      server = new hapi.Server()
+      server.register(require('vision'), function () {
+        if (config.views) {
+          server.views(config.views)
+        }
+      })
+      server.connection({
+        port: ++port
+      })
+    } else if (semver.satisfies(pkg.version, '>= 8.0.0-rc1')) {
       server = new hapi.Server()
       if (config.views) {
         server.views(config.views)
@@ -97,6 +107,7 @@ describe('probes.hapi', function () {
     return makeServer({
       views: {
         path: __dirname,
+        relativeTo: __dirname,
         engines: {
           ejs: require('ejs')
         }
