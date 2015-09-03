@@ -5,11 +5,13 @@ tv.skipSample = true
 var debug = require('debug')('traceview:test:helper')
 var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
-var BSON = require('bson').BSONPure.BSON
 var extend = require('util')._extend
+var bson = require('bson')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
+
+var BSON = new bson.BSONPure.BSON()
 
 exports.tracelyzer = function (done) {
   // Create UDP server to mock tracelyzer
