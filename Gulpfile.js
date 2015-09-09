@@ -1,6 +1,7 @@
 var fs = require('fs')
 var gulp = require('gulp')
 var mocha = require('gulp-mocha')
+var matcha = require('gulp-matcha')
 var yuidoc = require('gulp-yuidoc')
 var istanbul = require('gulp-istanbul')
 var spawn = require('child_process').spawn
@@ -18,21 +19,48 @@ var testTasks = {
   probes: 'test/probes/*.test.js'
 }
 
+var benchTasks = {
+  unit: 'test/*.bench.js',
+  basics: 'test/basics.bench.js',
+  custom: 'test/custom.bench.js',
+  error: 'test/error.bench.js',
+  event: 'test/event.bench.js',
+  layer: 'test/layer.bench.js',
+  profile: 'test/profile.bench.js',
+  probes: 'test/probes/*.bench.js'
+}
+
 // Dynamically define probe test/coverage tasks mapping
+function regexFilter (regex) {
+  return function (file) {
+    return regex.test(file)
+  }
+}
+var probeFiles = fs.readdirSync('test/probes')
+
 var testFileRegex = /\.test\.js$/
-fs.readdirSync('test/probes').filter(function (file) {
-  return testFileRegex.test(file)
-}).forEach(function (file) {
+probeFiles.filter(regexFilter(testFileRegex)).forEach(function (file) {
   testTasks['probe:' + file.replace(testFileRegex, '')] = [
     'lib/probes/' + file.replace(testFileRegex, '.js'),
     'test/probes/' + file
   ]
 })
 
+var benchFileRegex = /\.bench\.js$/
+probeFiles.filter(regexFilter(benchFileRegex)).forEach(function (file) {
+  benchTasks['probe:' + file.replace(benchFileRegex, '')] = [
+    'test/probes/' + file
+  ]
+})
+
 // Build test tasks for each task type
 makeTestTask('test', 'test/**/*.test.js')
+makeBenchTask('bench', 'test/**/*.bench.js')
 Object.keys(testTasks).forEach(function (task) {
   makeTestTask('test:' + task, testTasks[task])
+})
+Object.keys(benchTasks).forEach(function (task) {
+  makeBenchTask('bench:' + task, benchTasks[task])
 })
 
 // Build coverage tasks for each task type
@@ -71,7 +99,8 @@ gulp.task('watch', function () {
     '{lib,test}/**/*.js',
     'index.js'
   ], [
-    'test'
+    'test',
+    'bench'
   ])
 })
 
@@ -90,6 +119,24 @@ function tester () {
   return mocha({
     reporter: 'spec',
     timeout: 5000
+  })
+}
+
+function makeBenchTask (name, files) {
+  gulp.task(name, function (done) {
+    var helper = require('./test/helper')
+
+    var tv = helper.tv
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
+
+    global.tracelyzer = helper.tracelyzer(function () {
+      gulp.src(files, {
+        read: false
+      })
+      .pipe(matcha())
+      .once('end', process.exit)
+    })
   })
 }
 
