@@ -104,15 +104,21 @@ describe('probes.hapi', function () {
     return server
   }
   function viewServer () {
-    return makeServer({
+    var config = {
       views: {
         path: __dirname,
-        relativeTo: __dirname,
         engines: {
           ejs: require('ejs')
         }
       }
-    })
+    }
+
+    // Avoid "not allowed" errors from pre-8.x versions
+    if (semver.satisfies(pkg.version, '>= 8.0.0')) {
+      config.relativeTo = __dirname
+    }
+
+    return makeServer(config)
   }
 
   function renderer (request, reply) {
