@@ -4,17 +4,19 @@ var modules = module.exports = []
 test('bluebird')
 
 test('cassandra-driver',    '>= 0.2.0')
-test('co-render',           '*',                'gulp test:probe:koa')
+test('co-render')
 test('express',             '>= 3.0.0')
 
-// Exclude 8.3.0 due to a missing dependency bug
-test('hapi',                '>= 6.0.0 < 8.3.0 || >= 8.3.1')
-test('koa-resource-router', '*',                'gulp test:probe:koa')
-test('koa-route',           '*',                'gulp test:probe:koa')
-test('koa-router',          '*',                'gulp test:probe:koa')
+// Exclude 8.3.0 and 9.0.0 due to missing dependency bugs
+test('hapi',                '>= 6.0.0 < 8.3.0 || >= 8.3.1 < 9.0.0 || >= 9.0.1')
+test('koa-resource-router')
+test('koa-route',           '>= 1.0.1')
+test('koa-router',          '>= 1.6.0')
 test('koa')
 test('levelup',             '>= 0.17.0')
-test('memcached', version('>= 0.12.0') ? [
+test('memcached', version('>= 4.0.0') ? [
+                            '>= 0.1.1 < 1.0.0 || >= 2.2.0'
+] : version('>= 0.12.0') ? [
                             '>= 0.1.1 < 1.0.0 || >= 2.1.0'
 ] : [
                             '>= 0.1.1'

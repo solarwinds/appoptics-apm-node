@@ -12,7 +12,7 @@ try {
 
 function noop () {}
 
-describe('probes/koa', function () {
+describe('probes/koa-router', function () {
   var emitter
   var tests = canGenerator && require('./koa')
 
@@ -41,10 +41,10 @@ describe('probes/koa', function () {
   // Tests
   //
   if ( ! canGenerator) {
-    it.skip('should support koa outer layer', noop)
+    it.skip('should support koa-router controllers', noop)
   } else {
-    it('should support koa outer layer', function (done) {
-      tests.basic(emitter, done)
+    it('should support koa-router controllers', function (done) {
+      tests.router(emitter, done)
     })
   }
 })
