@@ -1,8 +1,7 @@
 var helper = require('../helper')
 var tv = helper.tv
-var addon = tv.addon
 
-
+// Check for generator support
 var canGenerator = false
 try {
   eval('(function* () {})()')
@@ -12,7 +11,7 @@ try {
 
 function noop () {}
 
-describe('probes/koa', function () {
+describe('probes/co-render', function () {
   var emitter
   var tests = canGenerator && require('./koa')
 
@@ -41,10 +40,14 @@ describe('probes/koa', function () {
   // Tests
   //
   if ( ! canGenerator) {
-    it.skip('should support koa outer layer', noop)
+    it.skip('should support co-render', noop)
+    it.skip('should include RUM scripts', noop)
   } else {
-    it('should support koa outer layer', function (done) {
-      tests.basic(emitter, done)
+    it('should support co-render', function (done) {
+      tests.render(emitter, done)
+    })
+    it('should include RUM scripts', function (done) {
+      tests.rum(emitter, done)
     })
   }
 })

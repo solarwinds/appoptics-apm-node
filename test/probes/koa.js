@@ -73,6 +73,28 @@ function controllerValidations (controller, action) {
   ]
 }
 
+exports.basic = function (emitter, done) {
+  var app = koa()
+
+  app.use(function* () {
+    this.body = 'done'
+  })
+
+  helper.doChecks(emitter, [
+    function (msg) { check['http-entry'](msg) },
+    function (msg) { check['koa-entry'](msg) },
+    function (msg) { check['koa-exit'](msg) },
+    function (msg) { check['http-exit'](msg) }
+  ], function () {
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port + '/hello/world')
+  })
+}
+
 exports.route = function (emitter, done) {
   var app = koa()
 
@@ -144,11 +166,11 @@ exports.resourceRouter = function (emitter, done) {
 exports.render = function (emitter, done) {
   var app = koa()
 
-  app.use(_.get('/hello/:name', function* (name) {
+  app.use(function* () {
     this.body = yield render('hello', {
-      name: name
+      name: 'world'
     })
-  }))
+  })
 
   var validations = [
     function (msg) {
@@ -157,7 +179,6 @@ exports.render = function (emitter, done) {
     function (msg) {
       check['koa-entry'](msg)
     },
-    function () {},
     function (msg) {
       check['render-entry'](msg)
       msg.should.have.property('TemplateFile')
@@ -166,7 +187,6 @@ exports.render = function (emitter, done) {
     function (msg) {
       check['render-exit'](msg)
     },
-    function () {},
     function (msg) {
       check['koa-exit'](msg)
     },
@@ -181,7 +201,7 @@ exports.render = function (emitter, done) {
 
   var server = app.listen(function () {
     var port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    request('http://localhost:' + port)
   })
 }
 
