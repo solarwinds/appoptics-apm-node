@@ -5,5 +5,8 @@ exports.data = function (ctx) {
 }
 
 exports.run = function (ctx, done) {
-  ctx.http.get(ctx.data.url, done.bind(null, null)).on('error', done)
+  ctx.http.get(ctx.data.url, function (res) {
+    res.resume()
+    res.on('end', done.bind(null, null))
+  }).on('error', done)
 }
