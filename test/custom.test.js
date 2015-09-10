@@ -17,6 +17,17 @@ var tv = require('..')
 //
 var soon = global.setImmediate || process.nextTick
 
+// Without the native liboboe bindings present,
+// the custom instrumentation should be a no-op
+if ( ! tv.addon) {
+  describe('custom', function () {
+    it('should passthrough without addon', function (done) {
+      tv.instrument('test', soon, done)
+    })
+  })
+  return
+}
+
 describe('custom', function () {
   var emitter
 
