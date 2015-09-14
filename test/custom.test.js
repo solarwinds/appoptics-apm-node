@@ -21,7 +21,19 @@ var soon = global.setImmediate || process.nextTick
 // the custom instrumentation should be a no-op
 if ( ! tv.addon) {
   describe('custom', function () {
-    it('should passthrough without addon', function (done) {
+    it('should passthrough sync instrumentation without addon', function () {
+      var counter = 0
+      tv.instrument('test', function () {
+        counter++
+      })
+      counter.should.equal(1)
+    })
+
+    it('should passthrough async instrumentation without addon', function (done) {
+      tv.instrument('test', soon, 'foo', done)
+    })
+
+    it('should support callback shifting', function (done) {
       tv.instrument('test', soon, done)
     })
   })
