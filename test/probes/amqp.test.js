@@ -181,4 +181,38 @@ describe('probes.amqp', function () {
       q.on('queueBindOk', next)
     })
   })
+
+  if (process.env.HAS_CELERY) {
+    var celery = require('node-celery')
+
+    it('should work with celery', function (done) {
+      var client = celery.createClient({
+        CELERY_BROKER_URL: 'amqp://guest:guest@localhost:5672//',
+        CELERY_RESULT_BACKEND: 'amqp',
+        CELERY_TASK_SERIALIZER: 'json',
+        CELERY_RESULT_SERIALIZER: 'json'
+      })
+
+      client.on('error', done)
+
+      client.on('connect', function () {
+        helper.httpTest(emitter, function (done) {
+          client.call('tasks.add', [1, 1], function(data) {
+            client.end()
+            done()
+          })
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('RemoteHost', 'localhost:5672')
+            msg.should.have.property('ExchangeName', 'test')
+            console.log(msg)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
+    })
+  }
 })
