@@ -6,8 +6,7 @@ exports.data = {
 exports.run = function (ctx, done) {
   ctx.mongo.collection('test').mapReduce(ctx.data.map, ctx.data.reduce, {
     out: {
-      replace: 'tempCollection',
-      readPreference : 'secondary'
+      replace: 'tempCollection'
     }
   }, done)
 }

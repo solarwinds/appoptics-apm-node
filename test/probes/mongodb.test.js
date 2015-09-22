@@ -15,10 +15,19 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 var db_host = process.env.MONGODB_PORT_27017_TCP_ADDR || 'localhost'
 
+// TODO: Get replica set host string from CI environment variables
+if (process.env.HAS_REPLICA_SET) {
+	db_host = 'localhost:27018,localhost:27019,localhost:27020'
+}
+
 describe('probes.mongodb', function () {
 	var ctx = {}
 	var emitter
 	var db
+
+	function isReplicaSet () {
+		return db_host.split(',').length > 1
+	}
 
 	//
 	// Intercept tracelyzer messages for analysis
@@ -63,7 +72,13 @@ describe('probes.mongodb', function () {
 		'base-mongodb': function (msg) {
 			msg.should.have.property('Flavor', 'mongodb')
 			msg.should.have.property('Database', 'test')
+			if ( ! isReplicaSet()) {
+				msg.RemoteHost.should.match(/^localhost:27017/)
+			}
+		},
+		'info-mongodb': function (msg) {
 			msg.should.have.property('RemoteHost')
+				.and.should.match(/^localhost:270\d{2}/)
 		},
 		'mongo-exit': function (msg) {
 			msg.should.have.property('Layer', 'mongodb')
@@ -76,15 +91,27 @@ describe('probes.mongodb', function () {
 	//
 	describe('databases', function () {
 		it('should drop', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/databases/drop'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'drop')
 					check['base-mongodb'](msg)
-				},
-				check['mongo-exit']
-			], done)
+				}
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/databases/drop'),
+				steps,
+				done
+			)
 		})
 	})
 
@@ -108,6 +135,10 @@ describe('probes.mongodb', function () {
 				}
 			]
 
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
 			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
@@ -128,37 +159,70 @@ describe('probes.mongodb', function () {
 				}
 			]
 
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
 			steps.push(check['mongo-exit'])
 
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/options'), steps, done)
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/collections/options'),
+				steps,
+				done
+			)
 		})
 
 		it('should rename', function (done) {
 			db.createCollection('test', function () {
-				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/rename'), [
+				var steps = [
 					function (msg) {
 						msg.should.have.property('Layer', 'mongodb')
 						msg.should.have.property('Label', 'entry')
 						msg.should.have.property('QueryOp', 'rename')
 						msg.should.have.property('New_Collection_Name', 'test2')
 						check['common-mongodb'](msg)
-					},
-					check['mongo-exit']
-				], done)
+					}
+				]
+
+				if (isReplicaSet()) {
+					steps.push(check['info-mongodb'])
+				}
+
+				steps.push(check['mongo-exit'])
+
+				helper.httpTest(
+					emitter,
+					helper.run(ctx, 'mongodb/collections/rename'),
+					steps,
+					done
+				)
 			})
 		})
 
 		it('should drop_collection', function (done) {
 			db.createCollection('test', function () {
-				helper.httpTest(emitter, helper.run(ctx, 'mongodb/collections/drop_collection'), [
+				var steps = [
 					function (msg) {
 						msg.should.have.property('Layer', 'mongodb')
 						msg.should.have.property('Label', 'entry')
 						msg.should.have.property('QueryOp', 'drop_collection')
 						check['common-mongodb'](msg)
-					},
-					check['mongo-exit']
-				], done)
+					}
+				]
+
+				if (isReplicaSet()) {
+					steps.push(check['info-mongodb'])
+				}
+
+				steps.push(check['mongo-exit'])
+
+				helper.httpTest(
+					emitter,
+					helper.run(ctx, 'mongodb/collections/drop_collection'),
+					steps,
+					done
+				)
 			})
 		})
 
@@ -176,61 +240,100 @@ describe('probes.mongodb', function () {
 		}
 
 		it('should insert', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/insert'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					query_check['insert-entry'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/insert'),
+				steps,
+				done
+			)
 		})
 
 		it('should find_and_modify', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/find_and_modify'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'find_and_modify')
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					msg.should.have.property('Layer', 'mongodb')
-					msg.should.have.property('Label', 'exit')
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/find_and_modify'),
+				steps,
+				done
+			)
 		})
 
 		it('should update', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/update'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'update')
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/update'),
+				steps,
+				done
+			)
 		})
 
 		it('should distinct', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/distinct'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'distinct')
 					msg.should.have.property('Key', 'foo')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/distinct'),
+				steps,
+				done
+			)
 		})
 
 		it('should count', function (done) {
@@ -244,15 +347,17 @@ describe('probes.mongodb', function () {
 				}
 			]
 
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
 			// The db.command used in collection.count called cursor.nextObject
 			if (semver.satisfies(pkg.version, '>=1.3.10 <1.3.17')) {
 				steps.push(function () {})
 				steps.push(function () {})
 			}
 
-			steps.push(function (msg) {
-				check['mongo-exit'](msg)
-			})
+			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -263,18 +368,28 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should remove', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/remove'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'delete')
 					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/remove'),
+				steps,
+				done
+			)
 		})
 
 		it('should save', function (done) {
@@ -288,6 +403,10 @@ describe('probes.mongodb', function () {
 				}
 			]
 
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
 			if (semver.satisfies(pkg.version, '< 2.0.9')) {
 				steps.push(function (msg) {
 					var doc = '{"foo":"bar","baz":"buz"}'
@@ -298,18 +417,22 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Query', doc)
 					query_check['insert-entry'](msg)
 				})
-				steps.push(function (msg) {
-					check['mongo-exit'](msg)
-				})
+				steps.push(check['mongo-exit'])
 			}
 
-			steps.push(function (msg) {
-				check['mongo-exit'](msg)
-			})
+			steps.push(check['mongo-exit'])
 
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/queries/save'), steps, function () {
-				db.collection('test').remove({ foo: 'bar', baz: 'buz' }, done)
-			})
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/queries/save'),
+				steps,
+				function () {
+					db.collection('test').remove({
+						foo: 'bar',
+						baz: 'buz'
+					}, done)
+				}
+			)
 		})
 
 	})
@@ -332,30 +455,50 @@ describe('probes.mongodb', function () {
 		}
 
 		it('should create_index', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/create_index'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Index', '"foo"')
 					index_check['create-entry'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/create_index'),
+				steps,
+				done
+			)
 		})
 
 		it('should drop_index', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_index'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'drop_index')
 					msg.should.have.property('Index', 'foo_1')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/drop_index'),
+				steps,
+				done
+			)
 		})
 
 		it('should ensure_index', function (done) {
@@ -366,38 +509,31 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'ensure_index')
 					msg.should.have.property('Index', '{"foo":1}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					index_check['info-entry'](msg)
 				}
 			]
 
-			steps.push(function (msg) {
-				check['mongo-exit'](msg)
-			})
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(index_check['info-entry'])
+			steps.push(check['mongo-exit'])
 
 			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
 				steps.push(function (msg) {
 					msg.should.have.property('Index', '{"foo":1}')
 					index_check['create-entry'](msg)
 				})
-				steps.push(function (msg) {
-					check['mongo-exit'](msg)
-				})
+				steps.push(check['mongo-exit'])
 			}
 
-			steps.push(function (msg) {
-				check['mongo-exit'](msg)
-			})
+			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/ensure_index'),
 				steps,
-				function (err) {
-					global.hack = false
-					done(err)
-				}
+				done
 			)
 		})
 
@@ -408,9 +544,11 @@ describe('probes.mongodb', function () {
 				}
 			]
 
-			steps.push(function (msg) {
-				check['mongo-exit'](msg)
-			})
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -421,32 +559,52 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should reindex', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/reindex'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'reindex')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/reindex'),
+				steps,
+				done
+			)
 		})
 
 		it('should drop_indexes', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/indexes/drop_indexes'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'drop_indexes')
 					msg.should.have.property('Index', '*')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/indexes/drop_indexes'),
+				steps,
+				done
+			)
 		})
 
 	})
@@ -454,7 +612,7 @@ describe('probes.mongodb', function () {
 	describe('aggregation', function () {
 
 		it('should group', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/group'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -465,15 +623,26 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Group_Reduce', ctx.data.reduce.toString())
 					msg.should.have.property('Group_Key', ctx.data.keys.toString())
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/aggregation/group'),
+				steps,
+				done
+			)
 		})
 
 		it('should map_reduce', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/map_reduce'), [
+			console.log('db is', db.serverConfig)
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -482,15 +651,25 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Map_Function', ctx.data.map.toString())
 					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/aggregation/map_reduce'),
+				steps,
+				done
+			)
 		})
 
 		it('should inline_map_reduce', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/aggregation/inline_map_reduce'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -499,18 +678,28 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Map_Function', ctx.data.map.toString())
 					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/aggregation/inline_map_reduce'),
+				steps,
+				done
+			)
 		})
 
 	})
 
 	describe('cursors', function () {
 		it('should find', function (done) {
-			helper.httpTest(emitter, helper.run(ctx, 'mongodb/cursors/find'), [
+			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
 					msg.should.have.property('Label', 'entry')
@@ -518,11 +707,21 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					msg.should.have.property('CursorId')
 					check['base-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
-			], done)
+			]
+
+			if (isReplicaSet()) {
+				steps.push(check['info-mongodb'])
+			}
+
+			steps.push(check['mongo-exit'])
+
+			helper.httpTest(
+				emitter,
+				helper.run(ctx, 'mongodb/cursors/find'),
+				steps,
+				done
+			)
 		})
 	})
 

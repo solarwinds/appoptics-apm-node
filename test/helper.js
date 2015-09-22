@@ -72,14 +72,15 @@ exports.doChecks = function (emitter, checks, done) {
 
   function onMessage (msg) {
     log('mock tracelyzer (port ' + add.port + ') received message', msg)
-    // var check = checks.shift()
+    var check = checks.shift()
     var check = checks[0]
     if (check) {
       try {
         check(msg)
-        checks.shift()
       } catch (e) {
-        // DO nothing
+        if (emitter.skipOnMatchFail) {
+          checks.unshift(check)
+        }
       }
     }
 
