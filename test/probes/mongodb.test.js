@@ -641,7 +641,6 @@ describe('probes.mongodb', function () {
 		})
 
 		it('should map_reduce', function (done) {
-			console.log('db is', db.serverConfig)
 			var steps = [
 				function (msg) {
 					msg.should.have.property('Layer', 'mongodb')
