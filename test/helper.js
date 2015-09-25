@@ -32,7 +32,7 @@ exports.tracelyzer = function (done) {
     emitter.emit('message', parsed)
 
     if (emitter.forward) {
-      server.send(msg, 0, msg.length, Number(realPort), 'localhost', function () {})
+      server.send(msg, 0, msg.length, Number(realPort), '127.0.0.1', function () {})
     }
   })
 

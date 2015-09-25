@@ -73,4 +73,52 @@ describe('error', function () {
     }, done)
   })
 
+  it('should report custom errors', function (done) {
+    var error = new Error('test')
+    helper.httpTest(emitter, function (done) {
+      tv.reportError(error)
+      done()
+    }, [
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error.message)
+        msg.should.have.property('Backtrace', error.stack)
+      }
+    ], done)
+  })
+
+  it('should report custom errors within a layer', function (done) {
+    var error = new Error('test')
+    var last
+
+    helper.httpTest(emitter, function (done) {
+      tv.instrument(testLayer, function (callback) {
+        tv.reportError(error)
+        callback()
+      }, conf, done)
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error.message)
+        msg.should.have.property('Backtrace', error.stack)
+        msg.Edge.should.equal(last)
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+  })
+
 })
