@@ -7,7 +7,7 @@ var semver = require('semver')
 
 var Memcached = require('memcached')
 var pkg = require('memcached/package.json')
-var db_host = process.env.MEMCACHED_PORT_11211_TCP_ADDR || '127.0.0.1'
+var db_host = process.env.TEST_MEMCACHED_1_4 || '127.0.0.1:11211'
 
 describe('probes.memcached', function () {
   var emitter
@@ -30,7 +30,7 @@ describe('probes.memcached', function () {
   // Create client instance
   //
   before(function () {
-    mem = new Memcached(db_host + ':11211')
+    mem = new Memcached(db_host)
   })
 
   //
@@ -40,7 +40,7 @@ describe('probes.memcached', function () {
     entry: function (msg) {
       msg.should.have.property('Layer', 'memcached')
       msg.should.have.property('Label', 'entry')
-      msg.should.have.property('RemoteHost', db_host + ':11211')
+      msg.should.have.property('RemoteHost', db_host)
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'memcached')

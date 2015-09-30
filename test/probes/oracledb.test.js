@@ -9,12 +9,12 @@ try {
   oracledb = require('oracledb')
 } catch (e) {}
 
-var host = process.env.ORACLE_HOST
-var database = process.env.ORACLE_DATABASE
+var host = process.env.TEST_ORACLE
+var database = process.env.TEST_ORACLE_DBNAME
 var config = {
   connectString: host + '/' + database,
-  password: process.env.ORACLE_PASS,
-  user: process.env.ORACLE_USER
+  password: process.env.TEST_ORACLE_PASSWORD,
+  user: process.env.TEST_ORACLE_USERNAME
 }
 
 describe('probes.oracledb', function () {
@@ -34,13 +34,6 @@ describe('probes.oracledb', function () {
   })
   after(function (done) {
     emitter.close(done)
-  })
-
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
   })
 
   var checks = {

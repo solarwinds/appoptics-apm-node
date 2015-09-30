@@ -8,7 +8,7 @@ var request = require('request')
 var http = require('http')
 
 var postgres = require('pg')
-var db_host = process.env.POSTGRES_PORT_5432_TCP_ADDR || 'localhost'
+var db_host = process.env.TEST_POSTGRES_9_4 || 'localhost:5432'
 var conString = 'postgres://postgres@' + db_host + '/test'
 
 var stream = require('stream')
@@ -37,17 +37,10 @@ describe('probes.postgres', function () {
     emitter.close(done)
   })
 
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
-  })
-
   before(function (done) {
     var client = new postgres.Client({
       database: 'postgres',
-      user: 'postgres'
+      user: process.env.TEST_POSTGRES_USERNAME || 'postgres'
     })
     client.connect(function (err) {
       if (err) return done(err)
@@ -95,7 +88,7 @@ describe('probes.postgres', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Database', 'test')
         msg.should.have.property('Flavor', 'postgresql')
-        msg.should.have.property('RemoteHost', db_host + ':5432')
+        msg.should.have.property('RemoteHost', db_host)
       },
       exit: function (msg) {
         msg.should.have.property('Layer', 'postgres')

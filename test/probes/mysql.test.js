@@ -1,4 +1,5 @@
 var helper = require('../helper')
+var Address = helper.Address
 var tv = helper.tv
 var addon = tv.addon
 
@@ -10,7 +11,11 @@ var http = require('http')
 
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
-var db_host = process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost'
+
+var parts = (process.env.TEST_MYSQL_5_6 || 'localhost:3306').split(':')
+var host = parts.shift()
+var port = parts.shift()
+var addr = new Address(host, port)
 
 var soon = global.setImmediate || process.nextTick
 
@@ -33,20 +38,13 @@ describe('probes.mysql', function () {
     emitter.close(done)
   })
 
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
-  })
-
   var checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'mysql')
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Database', 'test')
       msg.should.have.property('Flavor', 'mysql')
-      msg.should.have.property('RemoteHost', db_host + ':3306')
+      msg.should.have.property('RemoteHost', addr.toString())
     },
     info: function (msg) {
       msg.should.have.property('Layer', 'mysql')
@@ -77,7 +75,8 @@ describe('probes.mysql', function () {
   // Ensure database/table existence
   beforeEach(function (done) {
     var db = makeDb({
-      host: db_host,
+      host: addr.host,
+      port: addr.port,
       user: 'root'
     }, function () {
       db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
@@ -90,7 +89,8 @@ describe('probes.mysql', function () {
   // Make connection
   beforeEach(function (done) {
     db = ctx.mysql = makeDb({
-      host: db_host,
+      host: addr.host,
+      port: addr.port,
       database: 'test',
       user: 'root'
     }, function () {
@@ -101,7 +101,8 @@ describe('probes.mysql', function () {
       // Set pool and pool cluster
       var poolConfig = {
         connectionLimit: 10,
-        host: db_host,
+        host: addr.host,
+        port: addr.port,
         database: 'test',
         user: 'root'
       }

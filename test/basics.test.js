@@ -5,13 +5,6 @@ var tv = require('..')
 var Layer = tv.Layer
 
 describe('basics', function () {
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
-  })
-
   it('should set trace mode', function () {
     tv.traceMode = tv.addon.TRACE_ALWAYS
   })

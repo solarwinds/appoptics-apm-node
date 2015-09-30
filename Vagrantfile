@@ -4,18 +4,43 @@
 $script = <<-BASH
 sudo apt-get -y update
 sudo apt-get -y install software-properties-common python-software-properties \
-  build-essential curl git wget unzip libpq-dev
+  build-essential curl git wget unzip libpq-dev libkrb5-dev
 
 # tracelyzer
 wget https://files.appneta.com/install_appneta.sh
 sudo sh ./install_appneta.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
 
 # node/nvm
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 echo 'if [[ ":$PATH:" != *":node_modules/.bin:"* ]]; then PATH=${PATH}:node_modules/.bin; fi' >> $HOME/.bashrc
 source $HOME/.nvm/nvm.sh
-nvm install iojs
-nvm alias default iojs
+nvm install stable
+nvm alias default stable
+BASH
+
+$exports = <<-BASH
+cat <<EOF >> $HOME/.bashrc
+export TEST_MONGODB_2_6=127.0.0.1:27017
+export TEST_MONGODB_3_0=127.0.0.1:27018
+export TEST_MONGODB_SET=127.0.0.1:27019,127.0.0.1:27020,127.0.0.1:27021
+export TEST_CASSANDRA_2_2=127.0.0.1:9042
+export TEST_REDIS_3_0=127.0.0.1:6379
+export TEST_MEMCACHED_1_4=127.0.0.1:11211
+export TEST_RABBITMQ_3_5=127.0.0.1:5672
+export TEST_ORACLE=127.0.0.1:1521
+export TEST_ORACLE_DBNAME=xe
+export TEST_ORACLE_USERNAME=system
+export TEST_ORACLE_PASSWORD=oracle
+export TEST_MYSQL=127.0.0.1:3306
+export TEST_MYSQL_USERNAME=
+export TEST_MYSQL_PASSWORD=
+export TEST_POSTGRES=127.0.0.1:5432
+export TEST_POSTGRES_USERNAME=postgres
+export TEST_POSTGRES_PASSWORD=
+export TEST_SQLSERVER_EX=127.0.0.1:1433
+export TEST_SQLSERVER_EX_USERNAME=sa
+export TEST_SQLSERVER_EX_PASSWORD=
+EOF
 BASH
 
 Vagrant.configure(2) do |config|
@@ -27,27 +52,103 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision 'docker' do |d|
     images = [
-      { name: 'mysql', port: 3306, args: '-e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_ROOT_PASSWORD=' },
-      { name: 'mongo', port: 27017, tag: '2' },
-      { name: 'redis', port: 6379 },
-      { name: 'postgres', port: 5432, args: '-e POSTGRES_PASSWORD=' },
-      { name: 'cassandra', port: 9042 },
-      { name: 'rabbitmq', port: 5672 },
-      { name: 'memcached', port: 11211 },
-      # { name: 'rethinkdb', port: 8080 },
+      {
+        name: 'mysql',
+        ports: [3306],
+        env: {
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes',
+          MYSQL_ROOT_PASSWORD: ''
+        }
+      },
+      {
+        name: 'mongo_2',
+        image: 'mongo',
+        ports: [27017],
+        tag: '2'
+      },
+      {
+        name: 'mongo_3',
+        image: 'mongo',
+        ports: [[27018,27017]],
+        tag: '3'
+      },
+      {
+        name: 'mongo_replset',
+        image: 'appnetaqa/mongo',
+        ports: [[27019,27017],[27020,27018],[27021,27019]],
+        tag: 'set',
+        env: {
+          REPLSETMEMBERS: 3
+        }
+      },
+      {
+        name: 'redis',
+        ports: [6379]
+      },
+      {
+        name: 'postgres',
+        ports: [5432],
+        env: {
+          POSTGRES_PASSWORD: ''
+        }
+      },
+      {
+        name: 'cassandra',
+        ports: [9042]
+      },
+      {
+        name: 'rabbitmq',
+        ports: [5672]
+      },
+      {
+        name: 'memcached',
+        ports: [11211]
+      },
+      {
+        name: 'oracle',
+        image: 'sath89/oracle-xe-11g',
+        ports: [8080,1521]
+      },
+      {
+        name: 'mssql',
+        image: 'rsmoorthy/sql2000',
+        ports: [1433]
+      },
+      # {
+      #   name: 'rethinkdb',
+      #   ports: [8080]
+      # },
     ]
 
     images.each do |image|
+      # Determine name
       name = image[:name]
-      tagged = name
+
+      # Determine image
+      tagged = image[:image].nil? ? name : image[:image]
       tagged += ':' + image[:tag] unless image[:tag].nil?
       d.pull_images tagged
+
+      # Determine base args
       args = (image[:args] || '') + ' '
-      d.run name, image: tagged, args: "#{args} -p #{image[:port]}:#{image[:port]}"
+
+      # Add port settings
+      args += image[:ports].map do |port|
+        port.is_a?(Array) ? " -p #{port[0]}:#{port[1]}" : " -p #{port}:#{port}"
+      end.join ''
+
+      # Add env settings
+      unless image[:env].nil?
+        args += image[:env].map { |k, v| " -e #{k}=#{v}" }.join ''
+      end
+
+      # Run container
+      d.run name, image: tagged, args: args
     end
   end
 
-  config.vm.provision 'shell', inline: $script, privileged: false
+  config.vm.provision 'shell', privileged: false, inline: $script
+  config.vm.provision 'shell', privileged: false, inline: $exports
 
   # Virtualbox VM
   config.vm.provider :virtualbox do |provider|
