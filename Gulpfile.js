@@ -147,7 +147,7 @@ function makeTestTask (name, files) {
     })
     .pipe(tester())
     .once('error', function (e) {
-      console.error(e.message)
+      console.error(e.stack)
       process.exit(1)
     })
     .once('end', process.exit)

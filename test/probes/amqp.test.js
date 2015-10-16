@@ -4,7 +4,7 @@ var addon = tv.addon
 
 var should = require('should')
 var amqp = require('amqp')
-var db_host = process.env.RABBITMQ_PORT_5672_TCP_ADDR || 'localhost'
+var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost'
 
 describe('probes.amqp', function () {
   var emitter
@@ -19,6 +19,7 @@ describe('probes.amqp', function () {
     entry: function (msg) {
       msg.should.have.property('Layer', 'amqp')
       msg.should.have.property('Label', 'entry')
+      msg.should.have.property('RemoteHost')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'amqp')
@@ -36,13 +37,6 @@ describe('probes.amqp', function () {
   })
   after(function (done) {
     emitter.close(done)
-  })
-
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
   })
 
   //

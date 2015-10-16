@@ -191,17 +191,6 @@ exports.run = function (context, path) {
   }
 }
 
-var pad = 250
-var last = Date.now()
-exports.padTime = function (done) {
-  var now = Date.now()
-  var diff = now - last
-  last = now
-
-  var t = Math.max(pad - diff, 1)
-  setTimeout(done, t)
-}
-
 exports.after = function (n, done) {
   return function () {
     --n || done()
@@ -210,4 +199,22 @@ exports.after = function (n, done) {
 
 exports.traceLink = function (id) {
   return 'https://stephenappneta.tv.appneta.com/traces/view/' + id.substr(2, 40)
+}
+
+function Address (host, port) {
+  this.host = host
+  this.port = port
+}
+exports.Address = Address
+Address.prototype.toString = function () {
+  return this.host + ':' + this.port
+}
+
+exports.setUntil = function (obj, prop, value, done) {
+  var old = obj[prop]
+  obj[prop] = value
+  return function () {
+    obj[prop] = old
+    done.apply(this, arguments)
+  }
 }

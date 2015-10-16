@@ -10,6 +10,10 @@ var Connection = tedious.Connection
 var Request = tedious.Request
 var TYPES = tedious.TYPES
 
+var host = process.env.TEST_SQLSERVER_EX
+var user = process.env.TEST_SQLSERVER_EX_USERNAME
+var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
+
 describe('probes.tedious', function () {
   var emitter
   var ctx = {}
@@ -29,18 +33,6 @@ describe('probes.tedious', function () {
     emitter.close(done)
   })
 
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
-  })
-
-  // Found some free host.
-  var host = 'traceview-test.mssql.somee.com'
-  var user = 'sbelanger_SQLLogin_1'
-  var pass = 'a8glrk5vss'
-
   var checks = {
     'mssql-entry': function (msg) {
       msg.should.have.property('Layer', 'mssql')
@@ -55,7 +47,17 @@ describe('probes.tedious', function () {
     }
   }
 
-  it('should support basic queries', function (done) {
+  if (host && user && pass) {
+    it('should support basic queries', test_basic)
+    it('should support parameters', test_parameters)
+    it('should support sanitization', sanitization)
+  } else {
+    it.skip('should support basic queries', test_basic)
+    it.skip('should support parameters', test_parameters)
+    it.skip('should support sanitization', test_sanitization)
+  }
+
+  function test_basic (done) {
     helper.httpTest(emitter, function (done) {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
@@ -72,9 +74,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  })
+  }
 
-  it('should support parameters', function (done) {
+  function test_parameters (done) {
     var request
 
     helper.httpTest(emitter, function (done) {
@@ -105,9 +107,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  })
+  }
 
-  it('should support sanitization', function (done) {
+  function test_sanitization (done) {
     helper.httpTest(emitter, function (done) {
       tv.tedious.sanitizeSql = true
       query(function () {
@@ -133,7 +135,7 @@ describe('probes.tedious', function () {
       tv.tedious.sanitizeSql = false
       done(err)
     })
-  })
+  }
 
   // Query helper
   function query (fn) {

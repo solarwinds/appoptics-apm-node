@@ -3,8 +3,7 @@ var tv = helper.tv
 var addon = tv.addon
 
 var should = require('should')
-var db_host = process.env.CASSANDRA_PORT_9160_TCP_ADDR || '127.0.0.1'
-var remote_host = db_host + ':9042'
+var db_host = process.env.TEST_CASSANDRA_2_2 || '127.0.0.1:9042'
 
 //
 // Do not load unless stream.Readable exists.
@@ -36,7 +35,7 @@ describe('probes.cassandra-driver', function () {
     info: function (msg) {
       msg.should.have.property('Layer', 'cassandra')
       msg.should.have.property('Label', 'info')
-      msg.should.have.property('RemoteHost', remote_host)
+      msg.should.have.property('RemoteHost')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'cassandra')
@@ -58,13 +57,6 @@ describe('probes.cassandra-driver', function () {
     })
     after(function (done) {
       emitter.close(done)
-    })
-
-    // Yes, this is really, actually needed.
-    // Sampling may actually prevent reporting,
-    // if the tests run too fast. >.<
-    beforeEach(function (done) {
-      helper.padTime(done)
     })
 
     //

@@ -1,4 +1,5 @@
 var helper = require('../helper')
+var Address = helper.Address
 var tv = helper.tv
 var addon = tv.addon
 
@@ -8,8 +9,11 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
-var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
-var client = redis.createClient(6379, db_host, {})
+var parts = (process.env.TEST_REDIS_3_0 || 'localhost:6379').split(':')
+var host = parts.shift()
+var port = parts.shift()
+var addr = new Address(host, port)
+var client = redis.createClient(addr.port, addr.host, {})
 
 describe('probes.redis', function () {
   var ctx = { redis: client }
@@ -27,14 +31,12 @@ describe('probes.redis', function () {
     emitter.close(done)
   })
 
-  // Yes, this is really, actually needed.
-  // Sampling may actually prevent reporting,
-  // if the tests run too fast. >.<
-  beforeEach(function (done) {
-    helper.padTime(done)
-  })
-
   var check = {
+    'redis-entry': function (msg) {
+      msg.should.have.property('Layer', 'redis')
+      msg.should.have.property('Label', 'entry')
+      msg.should.have.property('RemoteHost', addr.toString())
+    },
     'redis-exit': function (msg) {
       msg.should.have.property('Layer', 'redis')
       msg.should.have.property('Label', 'exit')
@@ -47,8 +49,7 @@ describe('probes.redis', function () {
   it('should support single commands', function (done) {
     helper.httpTest(emitter, helper.run(ctx, 'redis/set'), [
       function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
+        check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'set')
         msg.should.have.property('KVKey', 'foo')
       },
@@ -65,25 +66,21 @@ describe('probes.redis', function () {
   it('should support multi', function (done) {
     var steps = [
       function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
+        check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'multi')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
+        check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'set')
         msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
+        check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'get')
         msg.should.have.property('KVKey', 'foo')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'redis')
-        msg.should.have.property('Label', 'entry')
+        check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'exec')
       },
       function (msg) {

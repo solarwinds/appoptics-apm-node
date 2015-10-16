@@ -13,21 +13,27 @@ var requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
 var pkg = require('mongodb/package.json')
 requirePatch.enable()
-var db_host = process.env.MONGODB_PORT_27017_TCP_ADDR || 'localhost'
 
-// TODO: Get replica set host string from CI environment variables
-if (process.env.HAS_REPLICA_SET) {
-	db_host = 'localhost:27018,localhost:27019,localhost:27020'
+var hosts = {
+	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost',
+	"3.0": process.env.TEST_MONGODB_3_0,
+	"replica set": process.env.TEST_MONGODB_SET
 }
 
 describe('probes.mongodb', function () {
+	Object.keys(hosts).forEach(function (host) {
+		var db_host = hosts[host]
+		if ( ! db_host) return
+		describe(host, function () {
+			makeTests(db_host)
+		})
+	})
+})
+
+function makeTests (db_host) {
 	var ctx = {}
 	var emitter
 	var db
-
-	function isReplicaSet () {
-		return db_host.split(',').length > 1
-	}
 
 	//
 	// Intercept tracelyzer messages for analysis
@@ -41,13 +47,6 @@ describe('probes.mongodb', function () {
 	after(function (done) {
     tv.fs.enabled = true
 		emitter.close(done)
-	})
-
-	// Yes, this is really, actually needed.
-	// Sampling may actually prevent reporting,
-	// if the tests run too fast. >.<
-	beforeEach(function (done) {
-		helper.padTime(done)
 	})
 
 	//
@@ -72,13 +71,10 @@ describe('probes.mongodb', function () {
 		'base-mongodb': function (msg) {
 			msg.should.have.property('Flavor', 'mongodb')
 			msg.should.have.property('Database', 'test')
-			if ( ! isReplicaSet()) {
-				msg.RemoteHost.should.match(/^localhost:27017/)
-			}
 		},
 		'info-mongodb': function (msg) {
 			msg.should.have.property('RemoteHost')
-				.and.should.match(/^localhost:270\d{2}/)
+			msg.RemoteHost.should.match(/^localhost:270\d{2}/)
 		},
 		'mongo-exit': function (msg) {
 			msg.should.have.property('Layer', 'mongodb')
@@ -97,14 +93,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'drop')
 					check['base-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -132,14 +128,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'create_collection')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -156,14 +152,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'options')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -182,14 +178,14 @@ describe('probes.mongodb', function () {
 						msg.should.have.property('QueryOp', 'rename')
 						msg.should.have.property('New_Collection_Name', 'test2')
 						check['common-mongodb'](msg)
+					},
+					function (msg) {
+						check['info-mongodb'](msg)
+					},
+					function (msg) {
+						check['mongo-exit'](msg)
 					}
 				]
-
-				if (isReplicaSet()) {
-					steps.push(check['info-mongodb'])
-				}
-
-				steps.push(check['mongo-exit'])
 
 				helper.httpTest(
 					emitter,
@@ -208,14 +204,14 @@ describe('probes.mongodb', function () {
 						msg.should.have.property('Label', 'entry')
 						msg.should.have.property('QueryOp', 'drop_collection')
 						check['common-mongodb'](msg)
+					},
+					function (msg) {
+						check['info-mongodb'](msg)
+					},
+					function (msg) {
+						check['mongo-exit'](msg)
 					}
 				]
-
-				if (isReplicaSet()) {
-					steps.push(check['info-mongodb'])
-				}
-
-				steps.push(check['mongo-exit'])
 
 				helper.httpTest(
 					emitter,
@@ -244,14 +240,14 @@ describe('probes.mongodb', function () {
 				function (msg) {
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					query_check['insert-entry'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -269,14 +265,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'find_and_modify')
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb']
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -294,14 +290,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'update')
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -319,14 +315,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'distinct')
 					msg.should.have.property('Key', 'foo')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -344,12 +340,11 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'count')
 					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
 
 			// The db.command used in collection.count called cursor.nextObject
 			if (semver.satisfies(pkg.version, '>=1.3.10 <1.3.17')) {
@@ -375,14 +370,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'delete')
 					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -400,12 +395,11 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'save')
 					msg.should.have.property('Query', '{"foo":"bar","baz":"buz"}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
 
 			if (semver.satisfies(pkg.version, '< 2.0.9')) {
 				steps.push(function (msg) {
@@ -459,14 +453,14 @@ describe('probes.mongodb', function () {
 				function (msg) {
 					msg.should.have.property('Index', '"foo"')
 					index_check['create-entry'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -484,14 +478,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'drop_index')
 					msg.should.have.property('Index', 'foo_1')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -509,15 +503,17 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'ensure_index')
 					msg.should.have.property('Index', '{"foo":1}')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					index_check['info-entry'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(index_check['info-entry'])
-			steps.push(check['mongo-exit'])
 
 			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
 				steps.push(function (msg) {
@@ -541,14 +537,14 @@ describe('probes.mongodb', function () {
 			var steps = [
 				function (msg) {
 					index_check['info-entry'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -565,14 +561,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'reindex')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -590,14 +586,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('QueryOp', 'drop_indexes')
 					msg.should.have.property('Index', '*')
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -623,14 +619,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Group_Reduce', ctx.data.reduce.toString())
 					msg.should.have.property('Group_Key', ctx.data.keys.toString())
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -650,14 +646,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Map_Function', ctx.data.map.toString())
 					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -677,14 +673,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Map_Function', ctx.data.map.toString())
 					msg.should.have.property('Reduce_Function', ctx.data.reduce.toString())
 					check['common-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -706,14 +702,14 @@ describe('probes.mongodb', function () {
 					msg.should.have.property('Query', '{"foo":"bar"}')
 					msg.should.have.property('CursorId')
 					check['base-mongodb'](msg)
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
 				}
 			]
-
-			if (isReplicaSet()) {
-				steps.push(check['info-mongodb'])
-			}
-
-			steps.push(check['mongo-exit'])
 
 			helper.httpTest(
 				emitter,
@@ -723,5 +719,4 @@ describe('probes.mongodb', function () {
 			)
 		})
 	})
-
-})
+}
