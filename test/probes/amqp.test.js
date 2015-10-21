@@ -4,7 +4,7 @@ var addon = tv.addon
 
 var should = require('should')
 var amqp = require('amqp')
-var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost'
+var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost:5672'
 
 describe('probes.amqp', function () {
   var emitter
@@ -43,8 +43,13 @@ describe('probes.amqp', function () {
   // Create a connection for the tests to use
   //
   before(function (done) {
+    var parts = db_host.split(':')
+    var host = parts.shift()
+    var port = parts.shift()
+
     client = amqp.createConnection({
-      host: db_host
+      host: host,
+      port: port
     }, {
       reconnect: false
     })
@@ -81,7 +86,7 @@ describe('probes.amqp', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('RemoteHost', 'localhost:5672')
+        msg.should.have.property('RemoteHost', db_host)
       },
       function (msg) {
         checks.exit(msg)
@@ -100,7 +105,7 @@ describe('probes.amqp', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('RemoteHost', 'localhost:5672')
+        msg.should.have.property('RemoteHost', db_host)
         msg.should.have.property('ExchangeName', 'test')
       },
       function (msg) {
@@ -134,7 +139,7 @@ describe('probes.amqp', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('RemoteHost', 'localhost:5672')
+        msg.should.have.property('RemoteHost', db_host)
         msg.should.have.property('ExchangeName', 'test')
       },
       function (msg) {
@@ -159,7 +164,7 @@ describe('probes.amqp', function () {
       }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('RemoteHost', 'localhost:5672')
+        msg.should.have.property('RemoteHost', db_host)
         msg.should.have.property('ExchangeName', 'test')
       },
       function (msg) {
