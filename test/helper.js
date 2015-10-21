@@ -73,14 +73,12 @@ exports.doChecks = function (emitter, checks, done) {
   function onMessage (msg) {
     log('mock tracelyzer (port ' + add.port + ') received message', msg)
     var check = checks.shift()
-    var check = checks[0]
     if (check) {
-      try {
+      if (emitter.skipOnMatchFail) {
+        try { check(msg) }
+        catch (e) { checks.unshift(check) }
+      } else {
         check(msg)
-      } catch (e) {
-        if (emitter.skipOnMatchFail) {
-          checks.unshift(check)
-        }
       }
     }
 
@@ -120,6 +118,24 @@ var check = {
     msg.should.have.property('Label', 'exit')
     debug('exit is valid')
   }
+}
+
+exports.test = function (emitter, test, validations, done) {
+  function noop () {}
+  validations.unshift(noop)
+  validations.push(noop)
+  exports.doChecks(emitter, validations, done)
+
+  var layer = new tv.Layer('outer')
+  layer.async = true
+  layer.enter()
+
+  debug('test started')
+  test(function (err, data) {
+    debug('test ended')
+    if (err) return done(err)
+    layer.exit()
+  })
 }
 
 exports.httpTest = function (emitter, test, validations, done) {

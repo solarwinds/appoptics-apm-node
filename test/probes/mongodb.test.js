@@ -25,12 +25,12 @@ describe('probes.mongodb', function () {
 		var db_host = hosts[host]
 		if ( ! db_host) return
 		describe(host, function () {
-			makeTests(db_host)
+			makeTests(db_host, host)
 		})
 	})
 })
 
-function makeTests (db_host) {
+function makeTests (db_host, host) {
 	var ctx = {}
 	var emitter
 	var db
@@ -74,7 +74,7 @@ function makeTests (db_host) {
 		},
 		'info-mongodb': function (msg) {
 			msg.should.have.property('RemoteHost')
-			msg.RemoteHost.should.match(/^localhost:270\d{2}/)
+			msg.RemoteHost.should.match(/:270\d{2}$/)
 		},
 		'mongo-exit': function (msg) {
 			msg.should.have.property('Layer', 'mongodb')
@@ -131,11 +131,18 @@ function makeTests (db_host) {
 				},
 				function (msg) {
 					check['info-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
 			]
+
+			if (host === '2.6') {
+				steps.push(noop) // nextObject entry
+				steps.push(noop) // nextObject info
+				steps.push(noop) // nextObject exit
+			}
+
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
 
 			helper.httpTest(
 				emitter,
@@ -155,11 +162,18 @@ function makeTests (db_host) {
 				},
 				function (msg) {
 					check['info-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
 			]
+
+			if (host === '2.6') {
+				steps.push(noop) // nextObject entry
+				steps.push(noop) // nextObject info
+				steps.push(noop) // nextObject exit
+			}
+
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
 
 			helper.httpTest(
 				emitter,
@@ -397,24 +411,20 @@ function makeTests (db_host) {
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					check['info-mongodb'](msg)
-				}
-			]
-
-			if (semver.satisfies(pkg.version, '< 2.0.9')) {
-				steps.push(function (msg) {
 					var doc = '{"foo":"bar","baz":"buz"}'
-					if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-						doc = '[' + doc + ']'
-					}
-
 					msg.should.have.property('Query', doc)
 					query_check['insert-entry'](msg)
-				})
-				steps.push(check['mongo-exit'])
-			}
-
-			steps.push(check['mongo-exit'])
+				},
+				function (msg) {
+					check['info-mongodb'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
+				},
+				function (msg) {
+					check['mongo-exit'](msg)
+				}
+			]
 
 			helper.httpTest(
 				emitter,
@@ -505,21 +515,29 @@ function makeTests (db_host) {
 					check['common-mongodb'](msg)
 				},
 				function (msg) {
-					check['info-mongodb'](msg)
-				},
-				function (msg) {
 					index_check['info-entry'](msg)
 				},
 				function (msg) {
-					check['mongo-exit'](msg)
+					check['info-mongodb'](msg)
 				}
 			]
+
+			if (host === '2.6') {
+				steps.push(noop) // nextObject entry
+				steps.push(noop) // nextObject info
+				steps.push(noop) // nextObject exit
+			}
+
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
 
 			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
 				steps.push(function (msg) {
 					msg.should.have.property('Index', '{"foo":1}')
 					index_check['create-entry'](msg)
 				})
+				steps.push(check['info-mongodb'])
 				steps.push(check['mongo-exit'])
 			}
 
@@ -540,11 +558,18 @@ function makeTests (db_host) {
 				},
 				function (msg) {
 					check['info-mongodb'](msg)
-				},
-				function (msg) {
-					check['mongo-exit'](msg)
 				}
 			]
+
+			if (host === '2.6') {
+				steps.push(noop) // nextObject entry
+				steps.push(noop) // nextObject info
+				steps.push(noop) // nextObject exit
+			}
+
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
 
 			helper.httpTest(
 				emitter,
@@ -720,3 +745,5 @@ function makeTests (db_host) {
 		})
 	})
 }
+
+function noop () {}
