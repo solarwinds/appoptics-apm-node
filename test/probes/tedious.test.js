@@ -50,7 +50,7 @@ describe('probes.tedious', function () {
   if (host && user && pass) {
     it('should support basic queries', test_basic)
     it('should support parameters', test_parameters)
-    it('should support sanitization', sanitization)
+    it('should support sanitization', test_sanitization)
   } else {
     it.skip('should support basic queries', test_basic)
     it.skip('should support parameters', test_parameters)
