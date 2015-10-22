@@ -226,6 +226,15 @@ Address.prototype.toString = function () {
   return this.host + ':' + this.port
 }
 
+Address.from = function (input) {
+  return input.split(',').map(function (name) {
+    var parts = name.split(':')
+    var host = parts.shift()
+    var port = parts.shift() || ''
+    return new Address(host, port)
+  })
+}
+
 exports.setUntil = function (obj, prop, value, done) {
   var old = obj[prop]
   obj[prop] = value
