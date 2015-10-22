@@ -3,7 +3,9 @@ var tv = helper.tv
 var addon = tv.addon
 
 var should = require('should')
-var db_host = process.env.TEST_CASSANDRA_2_2 || 'localhost:9042'
+var hosts = helper.Address.from(
+  process.env.TEST_CASSANDRA_2_2 || 'localhost:9042'
+)
 
 //
 // Do not load unless stream.Readable exists.
@@ -64,13 +66,13 @@ describe('probes.cassandra', function () {
     //
     before(function (done) {
       var testClient = new cql.Client({
-        hosts: db_host.split(',')
+        hosts: hosts.map(function (v) { return v.toString() })
       })
       testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
     })
     before(function (done) {
       client = new cql.Client({
-        hosts: db_host.split(','),
+        hosts: hosts.map(function (v) { return v.toString() }),
         keyspace: 'test'
       })
       ctx.cql = client
