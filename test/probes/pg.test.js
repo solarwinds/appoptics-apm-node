@@ -1,3 +1,4 @@
+var extend = require('util')._extend
 var helper = require('../helper')
 var tv = helper.tv
 var addon = tv.addon
@@ -8,8 +9,14 @@ var request = require('request')
 var http = require('http')
 
 var postgres = require('pg')
-var db_host = process.env.TEST_POSTGRES_9_4 || 'localhost:5432'
-var conString = 'postgres://postgres@' + db_host + '/test'
+var addr = helper.Address.from(process.env.TEST_POSTGRES || 'localhost:5432')[0]
+var auth = {
+  host: addr.host,
+  port: addr.port,
+  user: process.env.TEST_POSTGRES_USERNAME || 'postgres',
+  password: process.env.TEST_POSTGRES_PASSWORD,
+  database: 'test'
+}
 
 var stream = require('stream')
 var canNative = typeof stream.Duplex !== 'undefined'
@@ -24,7 +31,6 @@ if (canNative) {
 
 describe('probes.postgres', function () {
   var emitter
-
   //
   // Intercept tracelyzer messages for analysis
   //
@@ -38,13 +44,13 @@ describe('probes.postgres', function () {
   })
 
   before(function (done) {
-    var client = new postgres.Client({
-      database: 'postgres',
-      user: process.env.TEST_POSTGRES_USERNAME || 'postgres'
-    })
+    this.timeout(10000)
+    var tmpAuth = extend(extend({}, auth), { database: 'postgres' })
+    var client = new postgres.Client(tmpAuth)
     client.connect(function (err) {
       if (err) return done(err)
       client.query('create database test;', function () {
+        client.end()
         done()
       })
     })
@@ -88,7 +94,7 @@ describe('probes.postgres', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Database', 'test')
         msg.should.have.property('Flavor', 'postgresql')
-        msg.should.have.property('RemoteHost', db_host)
+        msg.should.have.property('RemoteHost', addr.toString())
       },
       exit: function (msg) {
         msg.should.have.property('Layer', 'postgres')
@@ -105,9 +111,10 @@ describe('probes.postgres', function () {
 
     function test () {
       before(function (done) {
+        this.timeout(10000)
         ctx.pg = pg = driver.get()
-        pg.address = conString
-        var client = new pg.Client(conString)
+        pg.address = auth
+        var client = new pg.Client(auth)
         client.connect(function (err) {
           if (err) return done(err)
           pg.db = db = client

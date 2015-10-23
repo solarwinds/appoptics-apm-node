@@ -10,11 +10,14 @@ var Connection = tedious.Connection
 var Request = tedious.Request
 var TYPES = tedious.TYPES
 
-var host = process.env.TEST_SQLSERVER_EX
+var addr = helper.Address.from(
+  process.env.TEST_SQLSERVER_EX || 'localhost:1433'
+)[0]
 var user = process.env.TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
 
 describe('probes.tedious', function () {
+  this.timeout(10000)
   var emitter
   var ctx = {}
   var cluster
@@ -25,11 +28,13 @@ describe('probes.tedious', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
+    tv.fs.enabled = false
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
   })
   after(function (done) {
+    tv.fs.enabled = true
     emitter.close(done)
   })
 
@@ -39,7 +44,7 @@ describe('probes.tedious', function () {
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Database', 'test')
       msg.should.have.property('Flavor', 'mssql')
-      msg.should.have.property('RemoteHost', host + ':1433')
+      msg.should.have.property('RemoteHost', addr.toString())
     },
     'mssql-exit': function (msg) {
       msg.should.have.property('Layer', 'mssql')
@@ -47,17 +52,7 @@ describe('probes.tedious', function () {
     }
   }
 
-  if (host && user && pass) {
-    it('should support basic queries', test_basic)
-    it('should support parameters', test_parameters)
-    it('should support sanitization', test_sanitization)
-  } else {
-    it.skip('should support basic queries', test_basic)
-    it.skip('should support parameters', test_parameters)
-    it.skip('should support sanitization', test_sanitization)
-  }
-
-  function test_basic (done) {
+  it('should support basic queries', function (done) {
     helper.httpTest(emitter, function (done) {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
@@ -74,9 +69,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  }
+  })
 
-  function test_parameters (done) {
+  it('should support parameters', function (done) {
     var request
 
     helper.httpTest(emitter, function (done) {
@@ -107,9 +102,9 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  }
+  })
 
-  function test_sanitization (done) {
+  it('should support sanitization', function (done) {
     helper.httpTest(emitter, function (done) {
       tv.tedious.sanitizeSql = true
       query(function () {
@@ -123,19 +118,19 @@ describe('probes.tedious', function () {
         return request
       })
     }, [
-    function (msg) {
-      checks['mssql-entry'](msg)
-      msg.should.have.property('Query', "select 0, @msg")
-      msg.should.not.have.property('QueryArgs')
-    },
-    function (msg) {
-      checks['mssql-exit'](msg)
-    }
+      function (msg) {
+        checks['mssql-entry'](msg)
+        msg.should.have.property('Query', "select 0, @msg")
+        msg.should.not.have.property('QueryArgs')
+      },
+      function (msg) {
+        checks['mssql-exit'](msg)
+      }
     ], function (err) {
       tv.tedious.sanitizeSql = false
       done(err)
     })
-  }
+  })
 
   // Query helper
   function query (fn) {
@@ -143,10 +138,11 @@ describe('probes.tedious', function () {
       database: 'test',
       userName: user,
       password: pass,
-      server: host
+      server: addr.host,
+      port: addr.port
     })
 
-    connection.on('connect', function (err) {
+    connection.on('connect', function () {
       connection.execSql(fn())
     })
   }

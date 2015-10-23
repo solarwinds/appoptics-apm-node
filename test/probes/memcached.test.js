@@ -10,6 +10,7 @@ var pkg = require('memcached/package.json')
 var db_host = process.env.TEST_MEMCACHED_1_4 || '127.0.0.1:11211'
 
 describe('probes.memcached', function () {
+  this.timeout(10000)
   var emitter
   var ctx = {}
   var mem

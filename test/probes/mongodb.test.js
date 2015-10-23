@@ -15,7 +15,7 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 var hosts = {
-	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost',
+	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost:27017',
 	"3.0": process.env.TEST_MONGODB_3_0,
 	"replica set": process.env.TEST_MONGODB_SET
 }
@@ -74,7 +74,7 @@ function makeTests (db_host, host) {
 		},
 		'info-mongodb': function (msg) {
 			msg.should.have.property('RemoteHost')
-			msg.RemoteHost.should.match(/:270\d{2}$/)
+			msg.RemoteHost.should.match(/\w*:\d*$/)
 		},
 		'mongo-exit': function (msg) {
 			msg.should.have.property('Layer', 'mongodb')

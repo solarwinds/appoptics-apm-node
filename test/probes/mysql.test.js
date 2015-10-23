@@ -12,14 +12,11 @@ var http = require('http')
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 
-var parts = (process.env.TEST_MYSQL_5_6 || 'localhost:3306').split(':')
-var host = parts.shift()
-var port = parts.shift()
-var addr = new Address(host, port)
-
+var addr = Address.from(process.env.TEST_MYSQL || 'localhost:3306')[0]
 var soon = global.setImmediate || process.nextTick
 
 describe('probes.mysql', function () {
+  this.timeout(10000)
   var emitter
   var ctx = {}
   var cluster
@@ -77,8 +74,10 @@ describe('probes.mysql', function () {
     var db = makeDb({
       host: addr.host,
       port: addr.port,
-      user: 'root'
-    }, function () {
+      user: process.env.TEST_MYSQL_USERNAME || 'root',
+      password: process.env.TEST_MYSQL_PASSWORD
+    }, function (err) {
+      if (err) return done(err)
       db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
         if (err) return done(err)
         db.end(done)
@@ -92,8 +91,10 @@ describe('probes.mysql', function () {
       host: addr.host,
       port: addr.port,
       database: 'test',
-      user: 'root'
-    }, function () {
+      user: process.env.TEST_MYSQL_USERNAME || 'root',
+      password: process.env.TEST_MYSQL_PASSWORD
+    }, function (err) {
+      if (err) return done(err)
       db.query('CREATE TABLE IF NOT EXISTS test (foo varchar(255));', done)
     })
 
@@ -104,7 +105,8 @@ describe('probes.mysql', function () {
         host: addr.host,
         port: addr.port,
         database: 'test',
-        user: 'root'
+        user: process.env.TEST_MYSQL_USERNAME || 'root',
+        password: process.env.TEST_MYSQL_PASSWORD
       }
 
       pool = db.pool = mysql.createPool(poolConfig)
