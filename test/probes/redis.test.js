@@ -104,7 +104,7 @@ describe('probes.redis', function () {
   // Test a simple res.end() call in an http server
   //
   it('should not interfere with pub/sub', function (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'redis/pubsub'), [], done)
+    helper.test(emitter, helper.run(ctx, 'redis/pubsub'), [], done)
   })
 
 })

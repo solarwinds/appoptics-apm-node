@@ -19,6 +19,7 @@ if (hasReadableStream) {
 }
 
 describe('probes.cassandra-driver', function () {
+  this.timeout(10000)
   var emitter
   var ctx = {}
   var client
