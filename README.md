@@ -10,7 +10,7 @@ It has the ability to report performance metrics on an array of libraries,
 databases and frameworks.
 
 It requires a [TraceView](http://www.appneta.com/products/traceview/) account to
-view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview-free-account/).
+view metrics.  Get yours; [it's free](http://www.appneta.com/products/traceview/signup/index.html?Ref__c=20446).
 
 ## Dependencies
 
