@@ -67,13 +67,15 @@ describe('probes.cassandra-driver', function () {
     //
     before(function (done) {
       var testClient = new cassandra.Client({
-        contactPoints: hosts.map(function (v) { return v.toString() })
+        contactPoints: hosts.map(function (v) { return v.host }),
+        port: hosts[0].port
       })
       testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
     })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
-        contactPoints: hosts.map(function (v) { return v.toString() }),
+        contactPoints: hosts.map(function (v) { return v.host }),
+        port: hosts[0].port,
         keyspace: 'test'
       })
     })

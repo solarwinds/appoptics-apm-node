@@ -1,7 +1,7 @@
 var redis = require('redis')
 
 exports.run = function (ctx, done) {
-  var addr = ctx.redis.connectionOption
+  var addr = ctx.redis.connectionOption || ctx.redis
   var producer = redis.createClient(Number(addr.port), addr.host, {})
 
   ctx.redis.on('subscribe', function () {

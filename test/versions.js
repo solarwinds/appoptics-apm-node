@@ -64,7 +64,8 @@ function test (name, range, task) {
   modules.push({
     name: name,
     task: task || 'gulp test:probe:' + name,
-    range: range || '*'
+    range: range || '*',
+    timeout: 1000 * 60
   })
 }
 
