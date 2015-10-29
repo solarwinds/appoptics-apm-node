@@ -15,9 +15,13 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 var hosts = {
-	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost:27017',
-	"3.0": process.env.TEST_MONGODB_3_0,
-	"replica set": process.env.TEST_MONGODB_SET
+	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost:27017'
+}
+
+// Seriously mongo? Adding 3.x in a patch release?
+if (semver.satisfies(pkg.version, '>= 1.4.24')) {
+	hosts['3.0'] = process.env.TEST_MONGODB_3_0
+	hosts['replica set'] = process.env.TEST_MONGODB_SET
 }
 
 describe('probes.mongodb', function () {
@@ -30,7 +34,7 @@ describe('probes.mongodb', function () {
 	})
 })
 
-function makeTests (db_host, host) {
+function makeTests (db_host, host, self) {
 	var ctx = {}
 	var emitter
 	var db
@@ -53,6 +57,8 @@ function makeTests (db_host, host) {
 	// Open a fresh mongodb connection for each test
 	//
 	before(function (done) {
+		// AWS name resolution is slooooooooow
+		this.timeout(25000)
 		MongoDB.connect('mongodb://' + db_host + '/test', function (err, _db) {
 			if (err) return done(err)
 			ctx.mongo = db = _db
@@ -128,11 +134,14 @@ function makeTests (db_host, host) {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'create_collection')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['info-mongodb'](msg)
 				}
 			]
+
+			if (semver.satisfies(pkg.version, '>= 1.4')) {
+				steps.push(function (msg) {
+					check['info-mongodb'](msg)
+				})
+			}
 
 			if (host === '2.6') {
 				steps.push(noop) // nextObject entry
@@ -159,11 +168,14 @@ function makeTests (db_host, host) {
 					msg.should.have.property('Label', 'entry')
 					msg.should.have.property('QueryOp', 'options')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					check['info-mongodb'](msg)
 				}
 			]
+
+			if (semver.satisfies(pkg.version, '>= 1.4')) {
+				steps.push(function (msg) {
+					check['info-mongodb'](msg)
+				})
+			}
 
 			if (host === '2.6') {
 				steps.push(noop) // nextObject entry
@@ -513,24 +525,32 @@ function makeTests (db_host, host) {
 					msg.should.have.property('QueryOp', 'ensure_index')
 					msg.should.have.property('Index', '{"foo":1}')
 					check['common-mongodb'](msg)
-				},
-				function (msg) {
-					index_check['info-entry'](msg)
-				},
-				function (msg) {
-					check['info-mongodb'](msg)
 				}
 			]
 
+			// index_information
+			steps.push(function (msg) {
+				index_check['info-entry'](msg)
+			})
+			if (semver.satisfies(pkg.version, '>= 1.4')) {
+				steps.push(function (msg) {
+					check['info-mongodb'](msg)
+				})
+			}
 			if (host === '2.6') {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
 			}
-
 			steps.push(function (msg) {
 				check['mongo-exit'](msg)
 			})
+
+			if (semver.satisfies(pkg.version, '< 1.4')) {
+				steps.push(function (msg) {
+					check['info-mongodb'](msg)
+				})
+			}
 
 			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
 				steps.push(function (msg) {
@@ -541,7 +561,9 @@ function makeTests (db_host, host) {
 				steps.push(check['mongo-exit'])
 			}
 
-			steps.push(check['mongo-exit'])
+			steps.push(function (msg) {
+				check['mongo-exit'](msg)
+			})
 
 			helper.httpTest(
 				emitter,
@@ -555,11 +577,14 @@ function makeTests (db_host, host) {
 			var steps = [
 				function (msg) {
 					index_check['info-entry'](msg)
-				},
-				function (msg) {
-					check['info-mongodb'](msg)
 				}
 			]
+
+			if (semver.satisfies(pkg.version, '>= 1.4')) {
+				steps.push(function (msg) {
+					check['info-mongodb'](msg)
+				})
+			}
 
 			if (host === '2.6') {
 				steps.push(noop) // nextObject entry
