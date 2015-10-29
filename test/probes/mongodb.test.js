@@ -137,13 +137,13 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '>= 1.4')) {
+			if (semver.satisfies(pkg.version, '>= 1.4.11')) {
 				steps.push(function (msg) {
 					check['info-mongodb'](msg)
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '>= 1.4.24')) {
+			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -171,13 +171,13 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '>= 1.4')) {
+			if (semver.satisfies(pkg.version, '>= 1.4.13')) {
 				steps.push(function (msg) {
 					check['info-mongodb'](msg)
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '>= 1.4.24')) {
+			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.13 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -532,12 +532,12 @@ function makeTests (db_host, host, self) {
 			steps.push(function (msg) {
 				index_check['info-entry'](msg)
 			})
-			if (semver.satisfies(pkg.version, '>= 1.4')) {
+			if (semver.satisfies(pkg.version, '>= 1.4.11')) {
 				steps.push(function (msg) {
 					check['info-mongodb'](msg)
 				})
 			}
-			if (host === '2.6' && semver.satisfies(pkg.version, '>= 1.4.24')) {
+			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -552,7 +552,7 @@ function makeTests (db_host, host, self) {
 				})
 			}
 
-			if (semver.satisfies(pkg.version, '>= 1.4.0')) {
+			if (semver.satisfies(pkg.version, '>= 1.4')) {
 				steps.push(function (msg) {
 					msg.should.have.property('Index', '{"foo":1}')
 					index_check['create-entry'](msg)
@@ -580,13 +580,13 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			if (semver.satisfies(pkg.version, '>= 1.4')) {
+			if (semver.satisfies(pkg.version, '>= 1.4.11')) {
 				steps.push(function (msg) {
 					check['info-mongodb'](msg)
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '>= 1.4.24')) {
+			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
