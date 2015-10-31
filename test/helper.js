@@ -126,15 +126,17 @@ exports.test = function (emitter, test, validations, done) {
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
 
-  var layer = new tv.Layer('outer')
-  layer.async = true
-  layer.enter()
+  tv.requestStore.run(function () {
+    var layer = new tv.Layer('outer')
+    layer.async = true
+    layer.enter()
 
-  debug('test started')
-  test(function (err, data) {
-    debug('test ended')
-    if (err) return done(err)
-    layer.exit()
+    debug('test started')
+    test(function (err, data) {
+      debug('test ended')
+      if (err) return done(err)
+      layer.exit()
+    })
   })
 }
 
