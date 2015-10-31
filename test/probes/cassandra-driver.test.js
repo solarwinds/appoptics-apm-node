@@ -36,7 +36,6 @@ describe('probes.cassandra-driver', function () {
       msg.should.have.property('Flavor', 'cql')
     },
     info: function (msg) {
-      msg.should.have.property('Layer', 'cassandra')
       msg.should.have.property('Label', 'info')
       msg.should.have.property('RemoteHost')
     },

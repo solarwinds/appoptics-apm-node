@@ -30,7 +30,6 @@ describe('probes.http', function () {
         msg.should.have.property('Label', 'entry')
       },
       info: function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'info')
       },
       exit: function (msg) {
@@ -44,7 +43,6 @@ describe('probes.http', function () {
         msg.should.have.property('Label', 'entry')
       },
       info: function (msg) {
-        msg.should.have.property('Layer', 'http-client')
         msg.should.have.property('Label', 'info')
       },
       exit: function (msg) {

@@ -300,7 +300,6 @@ describe('layer', function () {
     var checks = [
       function (msg) {
         msg.should.have.property('Label', 'info')
-        msg.should.have.property('Layer', 'test')
 
         Object.keys(data).forEach(function (key) {
           msg.should.have.property(key, data[key])

@@ -44,7 +44,6 @@ describe('probes.mysql', function () {
       msg.should.have.property('RemoteHost', addr.toString())
     },
     info: function (msg) {
-      msg.should.have.property('Layer', 'mysql')
       msg.should.have.property('Label', 'info')
     },
     exit: function (msg) {
