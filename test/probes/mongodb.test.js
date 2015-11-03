@@ -15,7 +15,8 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 var hosts = {
-	"2.6": process.env.TEST_MONGODB_2_6 || 'localhost:27017'
+	"2.4": process.env.TEST_MONGODB_2_4 || 'localhost:27017',
+	"2.6": process.env.TEST_MONGODB_2_6
 }
 
 // Seriously mongo? Adding 3.x in a patch release?
@@ -143,7 +144,7 @@ function makeTests (db_host, host, self) {
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
+			if (/^2\.\d$/.test(host) && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -177,7 +178,7 @@ function makeTests (db_host, host, self) {
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.13 || >= 1.4.24')) {
+			if (/^2\.\d$/.test(host) && semver.satisfies(pkg.version, '< 1.4.13 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -537,7 +538,7 @@ function makeTests (db_host, host, self) {
 					check['info-mongodb'](msg)
 				})
 			}
-			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
+			if (/^2\.\d$/.test(host) && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit
@@ -586,7 +587,7 @@ function makeTests (db_host, host, self) {
 				})
 			}
 
-			if (host === '2.6' && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
+			if (/^2\.\d$/.test(host) && semver.satisfies(pkg.version, '< 1.4.11 || >= 1.4.24')) {
 				steps.push(noop) // nextObject entry
 				steps.push(noop) // nextObject info
 				steps.push(noop) // nextObject exit

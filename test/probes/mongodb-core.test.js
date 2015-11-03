@@ -15,7 +15,8 @@ var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
 var hosts = {
-	'2.6': process.env.TEST_MONGODB_2_6 || 'localhost:27017',
+	'2.4': process.env.TEST_MONGODB_2_4 || 'localhost:27017',
+	'2.6': process.env.TEST_MONGODB_2_6,
 	'3.0': process.env.TEST_MONGODB_3_0,
 	'replica set': process.env.TEST_MONGODB_SET
 }
@@ -25,12 +26,14 @@ describe('probes/mongodb-core', function () {
 		var db_host = hosts[host]
 		if ( ! db_host) return
 		describe(host, function () {
-			makeTests(db_host, host === 'replica set')
+			makeTests(db_host, host, host === 'replica set')
 		})
 	})
 })
 
-function makeTests (db_host, isReplicaSet) {
+function noop () {}
+
+function makeTests (db_host, host, isReplicaSet) {
 	var ctx = {}
 	var emitter
 	var db
@@ -401,6 +404,13 @@ function makeTests (db_host, isReplicaSet) {
 		},
 
 		indexes: function () {
+			if (host === '2.4') {
+				it.skip('should create_indexes', noop)
+				it.skip('should reindex', noop)
+				it.skip('should drop_indexes', noop)
+				return
+			}
+
 			it('should create_indexes', function (done) {
 				var index = {
 					key: { a: 1, b: 2 },
@@ -553,6 +563,11 @@ function makeTests (db_host, isReplicaSet) {
 					}, done)
 				}, steps, done)
 			})
+
+			if (host === '2.4') {
+				it.skip('should map_reduce', noop)
+				return
+			}
 
 			it('should map_reduce', function (done) {
 				function map () { emit(this.a, 1) }
