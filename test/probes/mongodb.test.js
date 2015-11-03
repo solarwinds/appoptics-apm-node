@@ -15,7 +15,7 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 var hosts = {
-	"2.4": process.env.TEST_MONGODB_2_4 || 'localhost:27017'
+	"2.4": process.env.TEST_MONGODB_2_4 || 'localhost:27017',
 	"2.6": process.env.TEST_MONGODB_2_6
 }
 
