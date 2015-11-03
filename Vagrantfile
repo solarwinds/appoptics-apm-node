@@ -20,9 +20,10 @@ BASH
 
 $exports = <<-BASH
 cat <<EOF >> $HOME/.bashrc
-export TEST_MONGODB_2_6=127.0.0.1:27017
-export TEST_MONGODB_3_0=127.0.0.1:27018
-export TEST_MONGODB_SET=127.0.0.1:27019,127.0.0.1:27020,127.0.0.1:27021
+export TEST_MONGODB_2_4=127.0.0.1:27017
+export TEST_MONGODB_2_6=127.0.0.1:27018
+export TEST_MONGODB_3_0=127.0.0.1:27019
+export TEST_MONGODB_SET=127.0.0.1:27020,127.0.0.1:27021,127.0.0.1:27022
 export TEST_CASSANDRA_2_2=127.0.0.1:9042
 export TEST_REDIS_3_0=127.0.0.1:6379
 export TEST_MEMCACHED_1_4=127.0.0.1:11211
@@ -61,21 +62,27 @@ Vagrant.configure(2) do |config|
         }
       },
       {
-        name: 'mongo_2',
+        name: 'mongo_2_4',
         image: 'mongo',
         ports: [27017],
-        tag: '2'
+        tag: '2.4'
+      },
+      {
+        name: 'mongo_2_6',
+        image: 'mongo',
+        ports: [[27018,27017]],
+        tag: '2.6'
       },
       {
         name: 'mongo_3',
         image: 'mongo',
-        ports: [[27018,27017]],
+        ports: [[27019,27017]],
         tag: '3'
       },
       {
         name: 'mongo_replset',
         image: 'appnetaqa/mongo',
-        ports: [[27019,27017],[27020,27018],[27021,27019]],
+        ports: [[27020,27017],[27021,27018],[27022,27019]],
         tag: 'set',
         env: {
           REPLSETMEMBERS: 3
