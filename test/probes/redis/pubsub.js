@@ -1,7 +1,24 @@
 var redis = require('redis')
 
+function hostAndPort (ctx) {
+  var possibilities = [
+    ctx.redis,
+    ctx.redis.options,
+    ctx.redis.connectionOption,
+  ]
+  var o
+  while (o = possibilities.shift()) {
+    if (o.host && o.port) {
+      return {
+        host: o.host,
+        port: o.port
+      }
+    }
+  }
+}
+
 exports.run = function (ctx, done) {
-  var addr = ctx.redis.connectionOption || ctx.redis.options || ctx.redis
+  var addr = hostAndPort(ctx)
   var producer = redis.createClient(Number(addr.port), addr.host, {})
 
   ctx.redis.on('subscribe', function () {
