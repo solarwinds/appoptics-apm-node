@@ -1,3 +1,13 @@
+if ( ! process.env.TEST_SQLSERVER_EX) {
+  describe('probes.tedious', function () {
+    function noop () {}
+    it.skip('should support basic queries', noop)
+    it.skip('should support parameters', noop)
+    it.skip('should support sanitization', noop)
+  })
+  return
+}
+
 var helper = require('../helper')
 var tv = helper.tv
 var addon = tv.addon
@@ -11,7 +21,7 @@ var Request = tedious.Request
 var TYPES = tedious.TYPES
 
 var addr = helper.Address.from(
-  process.env.TEST_SQLSERVER_EX || 'localhost:1433'
+  process.env.TEST_SQLSERVER_EX
 )[0]
 var user = process.env.TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
