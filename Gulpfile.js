@@ -7,80 +7,78 @@ var istanbul = require('gulp-istanbul')
 var spawn = require('child_process').spawn
 var pkg = require('./package')
 
-// Define some name/path mappings for scoped test/coverage tasks
-var testTasks = {
-  unit: 'test/*.test.js',
-  basics: 'test/basics.test.js',
-  custom: 'test/custom.test.js',
-  error: 'test/error.test.js',
-  event: 'test/event.test.js',
-  layer: 'test/layer.test.js',
-  profile: 'test/profile.test.js',
-  probes: 'test/probes/*.test.js'
-}
-
-var benchTasks = {
-  unit: 'test/*.bench.js',
-  basics: 'test/basics.bench.js',
-  custom: 'test/custom.bench.js',
-  error: 'test/error.bench.js',
-  event: 'test/event.bench.js',
-  layer: 'test/layer.bench.js',
-  profile: 'test/profile.bench.js',
-  probes: 'test/probes/*.bench.js'
-}
-
-// Dynamically define probe test/coverage tasks mapping
-function regexFilter (regex) {
-  return function (file) {
-    return regex.test(file)
+// Describe basic tasks and their associated files
+var tasks = {
+  unit: {
+    lib: 'lib/*.js',
+    test: 'test/*.test.js',
+    bench: 'test/*.bench.js',
+  },
+  probes: {
+    lib: 'lib/probes/*.js',
+    test: 'test/probes/*.test.js',
+    bench: 'test/probes/*.bench.js',
   }
 }
-var probeFiles = fs.readdirSync('test/probes')
 
-var testFileRegex = /\.test\.js$/
-probeFiles.filter(regexFilter(testFileRegex)).forEach(function (file) {
-  testTasks['probe:' + file.replace(testFileRegex, '')] = [
-    'lib/probes/' + file.replace(testFileRegex, '.js'),
-    'test/probes/' + file
-  ]
+// Describe probe tasks automatically
+var probes = fs.readdirSync('lib/probes')
+probes.forEach(function (probe) {
+  var name = probe.replace(/\.js$/, '')
+  var task = tasks['probe:' + name] = {
+    lib: 'lib/probes/' + probe
+  }
+
+  var test = 'test/probes/' + name + '.test.js'
+  if (fs.existsSync(test)) {
+    task.test = test
+  }
+
+  var bench = 'test/probes/' + name + '.bench.js'
+  if (fs.existsSync(bench)) {
+    task.bench = bench
+  }
 })
 
-var benchFileRegex = /\.bench\.js$/
-probeFiles.filter(regexFilter(benchFileRegex)).forEach(function (file) {
-  benchTasks['probe:' + file.replace(benchFileRegex, '')] = [
-    'test/probes/' + file
-  ]
-})
-
-// Build test tasks for each task type
+// Create test tasks
 makeTestTask('test', 'test/**/*.test.js')
-makeBenchTask('bench', 'test/**/*.bench.js')
-Object.keys(testTasks).forEach(function (task) {
-  makeTestTask('test:' + task, testTasks[task])
-})
-Object.keys(benchTasks).forEach(function (task) {
-  makeBenchTask('bench:' + task, benchTasks[task])
+Object.keys(tasks).forEach(function (name) {
+  var task = tasks[name]
+  if (task.test) {
+    makeTestTask('test:' + name, task.test)
+  }
 })
 
-// Build coverage tasks for each task type
+// Create coverage tasks
 makeCoverageTask('coverage', 'test/**/*.test.js')
-Object.keys(testTasks).forEach(function (task) {
-  makeCoverageTask('coverage:' + task, testTasks[task])
+Object.keys(tasks).forEach(function (name) {
+  var task = tasks[name]
+  if (task.test) {
+    makeCoverageTask('coverage:' + name, task.test, task.lib)
+  }
 })
 
-// Build support-matrix tasks for each probe
-require('./test/versions').map(function (mod) {
-  return mod.name
-}).forEach(makeMatrixTask)
-
-gulp.task('support-matrix', function (cb) {
-  var p = spawn('alltheversions', ['--verbose'])
-  p.stdout.pipe(process.stdout)
-  p.stderr.pipe(process.stderr)
-  p.on('close', cb)
+// Create benchmark tasks
+makeBenchTask('bench', 'test/**/*.bench.js')
+Object.keys(tasks).forEach(function (name) {
+  var task = tasks[name]
+  if (task.bench) {
+    makeBenchTask('bench:' + name, task.bench)
+  }
 })
 
+// Create support-matrix tasks
+require('./test/versions')
+  .map(function (mod) { return mod.name })
+  .forEach(makeMatrixTask)
+
+gulp.task('support-matrix', function () {
+  return spawn('alltheversions', ['--verbose'], {
+    stdio: 'inherit'
+  })
+})
+
+// Create auto-docs task
 gulp.task('docs', function () {
   return gulp.src('lib/**/*.js')
     .pipe(yuidoc({
@@ -94,18 +92,59 @@ gulp.task('docs', function () {
     .pipe(gulp.dest('./docs'))
 })
 
+// Create watcher task
 gulp.task('watch', function () {
-  gulp.watch([
-    '{lib,test}/**/*.js',
-    'index.js'
-  ], [
-    'test',
-    'bench'
-  ])
+  Object.keys(tasks).forEach(function (name) {
+    if (name === 'probes') return
+    var task = tasks[name]
+
+    // These spawns tasks in a child processes. This is useful for
+    // preventing state persistence between runs in a watcher and
+    // for preventing crashes or exits from ending the watcher.
+    function coverage () {
+      return spawn('gulp', ['coverage:' + name], {
+        stdio: 'inherit'
+      })
+    }
+
+    function bench () {
+      return spawn('gulp', ['bench:' + name], {
+        stdio: 'inherit'
+      })
+    }
+
+    function sequence (steps) {
+      function next() {
+        var step = steps.shift()
+        var v = step()
+        if (steps.length) {
+          v.on('close', next)
+        }
+        return v
+      }
+      return next()
+    }
+
+    gulp.watch([ task.lib ], function () {
+      var steps = []
+      if (task.test) steps.push(coverage)
+      if (task.bench) steps.push(bench)
+      return sequence(steps)
+    })
+
+    if (task.test) {
+      gulp.watch([ task.test ], coverage)
+    }
+
+    if (task.bench) {
+      gulp.watch([ task.bench ], bench)
+    }
+  })
 })
 
+// Set default task to run the watcher
 gulp.task('default', [
-  'test'
+  'watch'
 ])
 
 //
@@ -119,6 +158,10 @@ function tester () {
   return mocha({
     reporter: 'spec',
     timeout: 5000
+  })
+  .once('error', function (e) {
+    console.error(e.stack)
+    process.exit(1)
   })
 }
 
@@ -146,36 +189,40 @@ function makeTestTask (name, files) {
       read: false
     })
     .pipe(tester())
-    .once('error', function (e) {
-      console.error(e.stack)
-      process.exit(1)
-    })
     .once('end', process.exit)
   })
 }
 
-function makeCoverageTask (name, files) {
-  gulp.task(name, function () {
-    return gulp.src(files)
+function makeCoverageTask (name, files, libs) {
+  libs = libs || 'lib/**/*.js'
+
+  gulp.task('pre-' + name, function () {
+    return gulp.src(libs)
       .pipe(istanbul())
       .pipe(istanbul.hookRequire())
-      .on('finish', function () {
-        return gulp.src(files)
-          .pipe(tester())
-          .pipe(istanbul.writeReports())
-          .once('end', process.exit)
-      })
+  })
+
+  gulp.task(name, ['pre-' + name], function () {
+    return gulp.src(files)
+      .pipe(tester())
+      .pipe(istanbul.writeReports({
+        dir: './coverage/' + name
+      }))
+      .pipe(istanbul.enforceThresholds({
+        // TODO: 70% is kind of...bad.
+        thresholds: { global: 70 }
+      }))
+      .once('end', process.exit)
   })
 }
 
 function makeMatrixTask (name) {
-  gulp.task('support-matrix:' + name, function (cb) {
-    var p = spawn('alltheversions', [
+  gulp.task('support-matrix:' + name, function () {
+    return spawn('alltheversions', [
       '--module', name,
       '--verbose'
-    ])
-    p.stdout.pipe(process.stdout)
-    p.stderr.pipe(process.stderr)
-    p.on('close', cb)
+    ], {
+      stdio: 'inherit'
+    })
   })
 }
