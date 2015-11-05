@@ -5,6 +5,7 @@ test('bluebird')
 
 test('cassandra-driver',    '>= 0.2.0')
 test('co-render')
+test('director',            '>= 1.1.10')
 test('express',             '>= 3.0.0')
 
 // Exclude 8.3.0 and 9.0.0 due to missing dependency bugs
