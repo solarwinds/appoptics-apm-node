@@ -44,6 +44,20 @@ describe('probes/bluebird', function () {
     })
   })
 
+  it('should support promises', function (done) {
+    var t = indirectDone(done)
+    tv.requestStore.run(function () {
+      // Hack to look like there's a previous layer
+      tv.requestStore.set('lastLayer', true)
+
+      tv.requestStore.set('foo', 'bar')
+      delay(100).then(function () {
+        tv.requestStore.get('foo').should.equal('bar')
+        t.done()
+      }, done)
+    })
+  })
+
   it('should support promises in domains', function (done) {
     var t = indirectDone(done)
     var d = domain.create()
@@ -59,6 +73,26 @@ describe('probes/bluebird', function () {
           t.done()
         }, done)
       })
+    })
+  })
+
+  it('should not interfere with untraced promises', function (done) {
+    var t = indirectDone(done)
+    delay(100).then(function () {
+      t.done()
+    }, done)
+  })
+
+  it('should support progress callbacks', function (done) {
+    var t = indirectDone(done)
+    tv.requestStore.run(function () {
+      // Hack to look like there's a previous layer
+      tv.requestStore.set('lastLayer', true)
+
+      tv.requestStore.set('foo', 'bar')
+      delay(100).then(function () {
+        t.done()
+      }, done, function () {})
     })
   })
 })

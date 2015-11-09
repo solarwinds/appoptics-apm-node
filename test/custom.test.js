@@ -59,7 +59,7 @@ describe('custom', function () {
   })
 
   it('should custom instrument sync code', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument('test', function () {})
       done()
     }, [
@@ -75,7 +75,7 @@ describe('custom', function () {
   })
 
   it('should custom instrument async code', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument('test', soon, done)
     }, [
       function (msg) {
@@ -90,7 +90,7 @@ describe('custom', function () {
   })
 
   it('should support builder function', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument(function (last) {
         return last.descend('test', {
           Foo: 'bar'
@@ -110,7 +110,7 @@ describe('custom', function () {
   })
 
   it('should allow optional callback with async code', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument('test', function (doneInner) {
         soon(function () {
           doneInner()
@@ -130,7 +130,7 @@ describe('custom', function () {
   })
 
   it('should include backtrace, when collectBacktraces is on', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument('test', soon, {
         collectBacktraces: true,
         enabled: true
@@ -149,7 +149,7 @@ describe('custom', function () {
   })
 
   it('should skip when not enabled', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument('test', soon, {
         enabled: false
       }, done)
@@ -160,7 +160,7 @@ describe('custom', function () {
     var data = { Foo: 'bar' }
     var last
 
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument(function (layer) {
         return layer.descend('test')
       }, function (callback) {
@@ -259,7 +259,7 @@ describe('custom', function () {
       },
     ]
 
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       function makeInner (data, done) {
         var layer = Layer.last.descend('inner')
         inner.push(layer)
@@ -292,7 +292,7 @@ describe('custom', function () {
     var data = { Foo: 'bar', Partition: 'bar' }
     var last
 
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.instrument(function (layer) {
         return layer.descend('test')
       }, function (callback) {

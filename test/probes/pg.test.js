@@ -128,7 +128,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace a basic query', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/basic'), [
+        helper.test(emitter, helper.run(ctx, 'pg/basic'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -141,7 +141,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace through a connection pool', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/pool'), [
+        helper.test(emitter, helper.run(ctx, 'pg/pool'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -154,7 +154,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace prepared statements', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/prepared'), [
+        helper.test(emitter, helper.run(ctx, 'pg/prepared'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -175,7 +175,7 @@ describe('probes.postgres', function () {
       })
 
       it('should sanitize query string, when not using value list', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/sanitize'), [
+        helper.test(emitter, helper.run(ctx, 'pg/sanitize'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "test" where "key" = \'?\'')
@@ -187,7 +187,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace evented style', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/evented'), [
+        helper.test(emitter, helper.run(ctx, 'pg/evented'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "test" where "foo" = \'bar\'')

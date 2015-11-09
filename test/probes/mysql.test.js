@@ -140,7 +140,7 @@ describe('probes.mysql', function () {
   it('should report caller errors', test_caller_error)
 
   function test_basic (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/basic'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/basic'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -152,7 +152,7 @@ describe('probes.mysql', function () {
   }
 
   function test_values (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/values'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/values'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT ?')
@@ -165,7 +165,7 @@ describe('probes.mysql', function () {
   }
 
   function test_object (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/object'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/object'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'INSERT INTO test SET ?')
@@ -178,7 +178,7 @@ describe('probes.mysql', function () {
   }
 
   function test_stream (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/stream'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/stream'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -190,7 +190,7 @@ describe('probes.mysql', function () {
   }
 
   function test_pool (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/pool'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/pool'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -202,7 +202,7 @@ describe('probes.mysql', function () {
   }
 
   function test_clustered_pool (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/pool-cluster'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/pool-cluster'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -214,7 +214,7 @@ describe('probes.mysql', function () {
   }
 
   function test_sanitize (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'mysql/sanitize'), [
+    helper.test(emitter, helper.run(ctx, 'mysql/sanitize'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * FROM test WHERE "foo" = \'?\'')
@@ -227,7 +227,7 @@ describe('probes.mysql', function () {
 
   function test_caller_error (done) {
     var error
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       try {
         ctx.mysql.query('SELECT ?', [function () {}], function () {})
       } catch (err) {

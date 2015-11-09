@@ -398,7 +398,7 @@ describe('probes.https', function () {
         ctx.data = { port: server.address().port }
         var mod = helper.run(ctx, 'https/client')
 
-        helper.httpsTest(emitter, options, mod, [
+        helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
@@ -429,7 +429,7 @@ describe('probes.https', function () {
         var mod = helper.run(ctx, 'https/client-object')
         var url = 'https://' + d.hostname + ':' + d.port + d.path
 
-        helper.httpsTest(emitter, options, mod, [
+        helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
             msg.should.have.property('RemoteURL', url)
@@ -459,7 +459,7 @@ describe('probes.https', function () {
         ctx.data = { port: server.address().port }
         var mod = helper.run(ctx, 'https/stream')
 
-        helper.httpsTest(emitter, options, mod, [
+        helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
@@ -491,7 +491,7 @@ describe('probes.https', function () {
         ctx.data = { port: server.address().port }
         var mod = helper.run(ctx, 'https/query-filtering')
 
-        helper.httpsTest(emitter, options, mod, [
+        helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
             var url = ctx.data.url.replace(/\?.*/, '')
@@ -524,7 +524,7 @@ describe('probes.https', function () {
         var url = 'https://localhost:' + port + '/?foo=bar'
         var error = new Error('test')
 
-        helper.httpsTest(emitter, options, function (done) {
+        helper.test(emitter, function (done) {
           var req = https.get(url, function (res) {
             res.on('end', done)
             res.resume()
@@ -568,7 +568,7 @@ describe('probes.https', function () {
         var url = 'https://localhost:' + port + '/?foo=bar'
         var error = new Error('test')
 
-        helper.httpsTest(emitter, options, function (done) {
+        helper.test(emitter, function (done) {
           https.get(url, function (res) {
             res.on('error', done.bind(null, null))
             res.emit('error', error)

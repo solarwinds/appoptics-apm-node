@@ -35,9 +35,13 @@ describe('probes/koa-resource-router', function () {
   //
   if ( ! canGenerator) {
     it.skip('should support koa-resource-router controllers', noop)
+    it.skip('should skip when disabled', noop)
   } else {
     it('should support koa-resource-router controllers', function (done) {
       tests.resourceRouter(emitter, done)
+    })
+    it('should skip when disabled', function (done) {
+      tests.resourceRouter_disabled(emitter, done)
     })
   }
 })

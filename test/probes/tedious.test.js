@@ -63,7 +63,7 @@ describe('probes.tedious', function () {
   }
 
   it('should support basic queries', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
         function onComplete (err, count) {
@@ -84,7 +84,7 @@ describe('probes.tedious', function () {
   it('should support parameters', function (done) {
     var request
 
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       query(function () {
         request = new Request("select @num, @msg", onComplete)
         request.addParameter('num', TYPES.Int, '42')
@@ -115,7 +115,7 @@ describe('probes.tedious', function () {
   })
 
   it('should support sanitization', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       tv.tedious.sanitizeSql = true
       query(function () {
         var request = new Request("select 42, @msg", onComplete)

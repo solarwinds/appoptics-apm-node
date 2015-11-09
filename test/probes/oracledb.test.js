@@ -61,7 +61,7 @@ describe('probes.oracledb', function () {
   }
 
   function test_basic (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       function query (err, connection) {
         if (err) return done(err)
         connection.execute('SELECT 1 FROM DUAL', done)
@@ -80,7 +80,7 @@ describe('probes.oracledb', function () {
   }
 
   function test_pool (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       function query (err, connection) {
         if (err) return done(err)
         connection.execute('SELECT 1 FROM DUAL', done)
@@ -102,7 +102,7 @@ describe('probes.oracledb', function () {
   }
 
   function test_commit (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       oracledb.isAutoCommit = false
       oracledb.getConnection(config, function (err, connection) {
         function query (isAutoCommit, done) {

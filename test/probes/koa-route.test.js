@@ -35,9 +35,13 @@ describe('probes/koa-route', function () {
   //
   if ( ! canGenerator) {
     it.skip('should support koa-route controllers', noop)
+    it.skip('should skip when disabled', noop)
   } else {
     it('should support koa-route controllers', function (done) {
       tests.route(emitter, done)
+    })
+    it('should skip when disabled', function (done) {
+      tests.route_disabled(emitter, done)
     })
   }
 })

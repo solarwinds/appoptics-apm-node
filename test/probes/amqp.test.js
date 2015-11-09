@@ -71,7 +71,7 @@ describe('probes.amqp', function () {
   // Define tests
   //
   it('should support confirm exchanges', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       var ex = client.exchange('test', {
         confirm: true
       }, function () {
@@ -95,7 +95,7 @@ describe('probes.amqp', function () {
   })
 
   it('should support no-confirm exchanges', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       var ex = client.exchange('test', {}, function () {
         var task = ex.publish('test', {
           foo: 'bar'
@@ -115,7 +115,7 @@ describe('probes.amqp', function () {
   })
 
   it('should bind event listeners', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       var q = client.queue('node-default-exchange', function() {
         q.bind("#")
 
@@ -150,7 +150,7 @@ describe('probes.amqp', function () {
 
   it('should bind event listeners even for instances constructed outside the request', function (done) {
     var next = helper.after(2, function () {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         q.on('basicConsumeOk', function () {
           var task = ex.publish('test', {
             foo: 'bar'
@@ -195,7 +195,7 @@ describe('probes.amqp', function () {
       client.on('error', done)
 
       client.on('connect', function () {
-        helper.httpTest(emitter, function (done) {
+        helper.test(emitter, function (done) {
           client.call('tasks.add', [1, 1], function(data) {
             client.end()
             done()

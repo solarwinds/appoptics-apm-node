@@ -370,7 +370,7 @@ describe('probes.fs', function () {
         // Before starting test, run any required tasks
         if (call.before) call.before()
 
-        helper.httpTest(emitter, function (done) {
+        helper.test(emitter, function (done) {
           // Make call and pass callback args to after handler, if present
           fs[call.name].apply(fs, args.concat(function () {
             if (call.after) call.after.apply(this, arguments)
@@ -438,7 +438,7 @@ describe('probes.fs', function () {
         // Before starting test, run any required tasks
         if (call.before) call.before()
 
-        helper.httpTest(emitter, function (done) {
+        helper.test(emitter, function (done) {
           // Make call and pass result or error to after handler, if present
           try {
             var res = fs[name].apply(fs, args)
@@ -457,7 +457,7 @@ describe('probes.fs', function () {
   })
 
   it('should fail sync calls gracefully', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       try { fs.openSync('does-not-exist', 'r') }
       catch (e) {}
       process.nextTick(done)
