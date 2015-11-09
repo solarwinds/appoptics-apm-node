@@ -1,3 +1,5 @@
+require 'json'
+
 #
 # This Vagrantfile builds a dev box with all the parts needed for testing
 #
@@ -52,81 +54,7 @@ Vagrant.configure(2) do |config|
     nfs: true, mount_options: ['nolock,vers=3,udp']
 
   config.vm.provision 'docker' do |d|
-    images = [
-      {
-        name: 'mysql',
-        ports: [3306],
-        env: {
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes',
-          MYSQL_ROOT_PASSWORD: ''
-        }
-      },
-      {
-        name: 'mongo_2_4',
-        image: 'mongo',
-        ports: [27017],
-        tag: '2.4'
-      },
-      {
-        name: 'mongo_2_6',
-        image: 'mongo',
-        ports: [[27018,27017]],
-        tag: '2.6'
-      },
-      {
-        name: 'mongo_3',
-        image: 'mongo',
-        ports: [[27019,27017]],
-        tag: '3'
-      },
-      {
-        name: 'mongo_replset',
-        image: 'appnetaqa/mongo',
-        ports: [[27020,27017],[27021,27018],[27022,27019]],
-        tag: 'set',
-        env: {
-          REPLSETMEMBERS: 3
-        }
-      },
-      {
-        name: 'redis',
-        ports: [6379]
-      },
-      {
-        name: 'postgres',
-        ports: [5432],
-        env: {
-          POSTGRES_PASSWORD: ''
-        }
-      },
-      {
-        name: 'cassandra',
-        ports: [9042]
-      },
-      {
-        name: 'rabbitmq',
-        ports: [5672]
-      },
-      {
-        name: 'memcached',
-        ports: [11211]
-      },
-      {
-        name: 'oracle',
-        image: 'sath89/oracle-xe-11g',
-        ports: [8080,1521]
-      },
-      {
-        name: 'mssql',
-        image: 'rsmoorthy/sql2000',
-        ports: [1433]
-      },
-      # {
-      #   name: 'rethinkdb',
-      #   ports: [8080]
-      # },
-    ]
-
+    images = JSON.parse(File.read('docker-containers.json'))
     images.each do |image|
       # Determine name
       name = image[:name]
