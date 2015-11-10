@@ -77,7 +77,7 @@ describe('probes.hapi', function () {
       server.connection({
         port: ++port
       })
-    } else if (semver.satisfies(pkg.version, '>= 8.0.0-rc1')) {
+    } else if (semver.satisfies(pkg.version, '>= 8.0.0')) {
       server = new hapi.Server()
       if (config.views) {
         server.views(config.views)
@@ -279,17 +279,56 @@ describe('probes.hapi', function () {
     })
   }
 
+  function disabledTest (done) {
+    tv.hapi.enabled = false
+    var server = viewServer()
+    tv.rumId = 'foo'
+
+    server.route({
+      method: 'GET',
+      path: '/hello/{name}',
+      handler: function hello (request, reply) {
+        renderer(request, reply)('hello.ejs', {
+          name: request.params.name
+        })
+      }
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.listener.close(done)
+      tv.hapi.enabled = true
+      delete tv.rumId
+    })
+
+    server.start(function () {
+      request({
+        method: 'GET',
+        url: 'http://localhost:' + port + '/hello/world'
+      })
+    })
+  }
+
   var httpMethods = ['get','post','put','delete']
   if (semver.satisfies(process.version.slice(1), '> 0.8')) {
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
+    it('should skip when disabled', disabledTest)
     it('should trace render layer', renderTest)
     it('should include RUM scripts', rumTest)
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
+    it.skip('should skip when disabled', disabledTest)
     it.skip('should trace render layer', renderTest)
     it.skip('should include RUM scripts', rumTest)
   }
