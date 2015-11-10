@@ -114,8 +114,17 @@ describe('probes.mysql', function () {
     }
   })
 
-  if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+  if (semver.satisfies(pkg.version, '>= 2.6.0')) {
     afterEach(function (done) {
+      var fn = helper.after(3, done)
+      cluster.end(fn)
+      pool.end(fn)
+      db.end(fn)
+    })
+  } else if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+    afterEach(function (done) {
+      cluster.end()
+      pool.end()
       db.end(done)
     })
   }
@@ -138,6 +147,8 @@ describe('probes.mysql', function () {
   }
   it('should sanitize a query', test_sanitize)
   it('should report caller errors', test_caller_error)
+  it('should trim long queries', test_long_query)
+  it('should skip when disabled', test_disabled)
 
   function test_basic (done) {
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [
@@ -246,6 +257,35 @@ describe('probes.mysql', function () {
         msg.should.have.property('ErrorMsg', error.message)
       }
     ], done)
+  }
+
+  function test_long_query (done) {
+    helper.test(emitter, function (done) {
+      var query = 'SELECT '
+      for (var i = 0; i < 3000; i++) {
+        query += '1'
+      }
+    	ctx.mysql.query(query, done)
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query')
+        msg.Query.length.should.not.be.above(2048)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], function (err) {
+      done(err)
+    })
+  }
+
+  function test_disabled (done) {
+    tv.mysql.enabled = false
+    helper.test(emitter, helper.run(ctx, 'mysql/basic'), [], function (err) {
+      tv.mysql.enabled = true
+      done(err)
+    })
   }
 
 })

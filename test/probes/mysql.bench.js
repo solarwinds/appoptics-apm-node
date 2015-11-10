@@ -55,8 +55,17 @@ suite('probes/mysql', function () {
     }
   })
 
-  if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+  if (semver.satisfies(pkg.version, '>= 2.6.0')) {
     after(function (done) {
+      var fn = after(3, done)
+      cluster.end(fn)
+      pool.end(fn)
+      db.end(fn)
+    })
+  } else if (semver.satisfies(pkg.version, '>= 2.0.0')) {
+    after(function (done) {
+      cluster.end()
+      pool.end()
       db.end(done)
     })
   }
