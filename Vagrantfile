@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
     nfs: true, mount_options: ['nolock,vers=3,udp']
 
   config.vm.provision 'docker' do |d|
-    images = JSON.parse(File.read('docker-containers.json'))
+    images = JSON.parse(File.read('docker-containers.json'), symbolize_names: true)
     images.each do |image|
       # Determine name
       name = image[:name]
