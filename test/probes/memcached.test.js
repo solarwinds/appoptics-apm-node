@@ -242,4 +242,44 @@ describe('probes.memcached', function () {
     ], done)
   })
 
+  it('should skip when disabled', function (done) {
+    tv.memcached.enabled = false
+    helper.test(emitter, function (done) {
+      mem.get('foo', done)
+    }, [], function (err) {
+      tv.memcached.enabled = true
+      done(err)
+    })
+  })
+
+  it('should work normally when not tracing', function (done) {
+    helper.test(emitter, function (done) {
+      tv.requestStore.set('lastLayer', null)
+      mem.get('foo', done)
+    }, [], function (err) {
+      done(err)
+    })
+  })
+
+  it('should report errors', function (done) {
+    helper.test(emitter, function (done) {
+      mem.get(new Date, function () {
+        done()
+      })
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('KVOp', 'get')
+        msg.should.have.property('KVKey')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.have.property('ErrorClass')
+        msg.should.have.property('ErrorMsg')
+      }
+    ], function (err) {
+      done(err)
+    })
+  })
+
 })

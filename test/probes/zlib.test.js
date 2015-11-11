@@ -221,4 +221,28 @@ describe('probes.zlib', function () {
     })
   })
 
+  it('should support report errors', function (done) {
+    helper.test(emitter, function (done) {
+      function after () {
+        done()
+      }
+
+      var inst = new zlib.Gunzip(options)
+      inst.on('error', after)
+      inst.on('close', after)
+      inst.on('end', after)
+      inst.write('nope')
+      inst.end()
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Operation', 'Gunzip')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.have.property('ErrorMsg')
+      }
+    ], done)
+  })
+
 })
