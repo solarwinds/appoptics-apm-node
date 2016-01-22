@@ -324,6 +324,41 @@ describe('probes.http', function () {
         request('http://localhost:' + port + '/foo?bar=baz')
       })
     })
+
+    //
+    // Validate that server.setTimeout(...) exits correctly
+    //
+    it('should exit when timed out', function (done) {
+      var server = http.createServer(function (req, res) {
+        setTimeout(function () {
+          res.end('done')
+        }, 20)
+      })
+
+      // Set timeout
+      var reached = false
+      server.setTimeout(10)
+      server.on('timeout', function () {
+        reached = true
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        reached.should.equal(true)
+        server.close(done)
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        request('http://localhost:' + port)
+      })
+    })
   })
 
   describe('http-client', function () {
