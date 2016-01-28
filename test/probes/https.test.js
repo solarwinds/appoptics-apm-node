@@ -339,6 +339,47 @@ describe('probes.https', function () {
         request('https://localhost:' + port + '/foo?bar=baz')
       })
     })
+
+    //
+    // Validate that server.setTimeout(...) exits correctly
+    //
+    function test_timeout (done) {
+      var server = https.createServer(options, function (req, res) {
+        setTimeout(function () {
+          res.end('done')
+        }, 20)
+      })
+
+      // Set timeout
+      var reached = false
+      server.setTimeout(10)
+      server.on('timeout', function () {
+        reached = true
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        reached.should.equal(true)
+        server.close(done)
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        request('https://localhost:' + port)
+      })
+    }
+
+    if (typeof https.Server.prototype.setTimeout === 'function') {
+      it('should exit when timed out', test_timeout)
+    } else {
+      it.skip('should exit when timed out', test_timeout)
+    }
   })
 
   describe('https-client', function () {
