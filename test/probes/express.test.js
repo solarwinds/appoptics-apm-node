@@ -151,6 +151,69 @@ describe('probes.express', function () {
     })
   })
 
+  it('should profile middleware specified as array', function (done) {
+    function renamer(req, res, next) {
+      req.name = req.params.name
+      next()
+    }
+
+    function responder(req, res) {
+      res.send(req.name)
+    }
+
+
+    var app = express()
+
+    app.get('/hello/:name', [renamer,responder])
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', '/hello/:name renamer')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', '/hello/:name renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', '/hello/:name responder')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'responder')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', '/hello/:name responder')
+      },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
   function renderTest (done) {
     var app = express()
     var locals
