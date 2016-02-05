@@ -71,7 +71,7 @@ describe('probes.https', function () {
     //
     // Test a simple res.end() call in an http server
     //
-    it('should send traces for http routing and response layers', function (done) {
+    it('should send traces for https routing and response layers', function (done) {
       var port
       var server = https.createServer(options, function (req, res) {
         res.end('done')
@@ -89,6 +89,7 @@ describe('probes.https', function () {
         },
         function (msg) {
           check.server.exit(msg)
+          msg.should.have.property('Status', 200)
         }
       ], function () {
         server.close(done)
@@ -353,7 +354,8 @@ describe('probes.https', function () {
       // Set timeout
       var reached = false
       server.setTimeout(10)
-      server.on('timeout', function () {
+      server.on('timeout', function (res) {
+        res._httpMessage.statusCode = 500
         reached = true
       })
 
@@ -363,6 +365,7 @@ describe('probes.https', function () {
         },
         function (msg) {
           check.server.exit(msg)
+          msg.should.have.property('Status', 500)
         }
       ], function () {
         reached.should.equal(true)

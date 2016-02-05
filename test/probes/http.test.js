@@ -76,6 +76,7 @@ describe('probes.http', function () {
         },
         function (msg) {
           check.server.exit(msg)
+          msg.should.have.property('Status', 200)
         }
       ], function () {
         server.close(done)
@@ -338,7 +339,8 @@ describe('probes.http', function () {
       // Set timeout
       var reached = false
       server.setTimeout(10)
-      server.on('timeout', function () {
+      server.on('timeout', function (res) {
+        res._httpMessage.statusCode = 500
         reached = true
       })
 
@@ -348,6 +350,7 @@ describe('probes.http', function () {
         },
         function (msg) {
           check.server.exit(msg)
+          msg.should.have.property('Status', 500)
         }
       ], function () {
         reached.should.equal(true)
