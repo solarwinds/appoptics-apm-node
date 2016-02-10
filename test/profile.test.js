@@ -58,17 +58,56 @@ describe('profile', function () {
     })
   })
 
-  it('should allow error/info reporting from profile layer', function () {
-    var layer = new Layer('test2', null, {})
+  it('should allow error/info reporting from profile layer', function (done) {
+    var layer = new Layer('test-layer', null, {})
+
+    var checks = [
+      function (msg) {
+        msg.should.have.property('Layer', 'test-layer')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('ProfileName', 'test-profile')
+        msg.should.have.property('Label', 'profile_entry')
+      },
+      function (msg) {
+        msg.should.not.have.property('ProfileName')
+        msg.should.not.have.property('Layer')
+
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', 'test error')
+      },
+      function (msg) {
+        msg.should.not.have.property('ProfileName')
+        msg.should.not.have.property('Layer')
+
+        msg.should.have.property('Label', 'info')
+        msg.should.have.property('Foo', 'bar')
+      },
+      function (msg) {
+        msg.should.have.property('ProfileName', 'test-profile')
+        msg.should.have.property('Label', 'profile_exit')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test-layer')
+        msg.should.have.property('Label', 'exit')
+      },
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
     layer.run(function () {
-      var profile = layer.profile('test2-profile')
+      var profile = layer.profile('test-profile')
 
       profile.should.be.instanceof(Profile)
       profile.should.have.property('events')
       profile.events.should.have.property('internal')
 
-      tv.reportError(new Error('test error'))
-      tv.reportInfo({ Foo: 'bar' })
+      profile.run(function () {
+        tv.reportError(new Error('test error'))
+        tv.reportInfo({ Foo: 'bar' })
+      })
     })
   })
 })
