@@ -57,4 +57,18 @@ describe('profile', function () {
       })
     })
   })
+
+  it('should allow error/info reporting from profile layer', function () {
+    var layer = new Layer('test2', null, {})
+    layer.run(function () {
+      var profile = layer.profile('test2-profile')
+
+      profile.should.be.instanceof(Profile)
+      profile.should.have.property('events')
+      profile.events.should.have.property('internal')
+
+      tv.reportError(new Error('test error'))
+      tv.reportInfo({ Foo: 'bar' })
+    })
+  })
 })
