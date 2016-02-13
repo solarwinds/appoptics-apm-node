@@ -398,4 +398,66 @@ describe('probes.express', function () {
       })
   })
 
+  it('should be able to report errors from error handler', function (done) {
+    var error = new Error('test')
+    var app = express()
+
+    app.get('/', function route (req, res, next) {
+      tv.instrument(function (layer) {
+        return layer.descend('sub')
+      }, setImmediate, function (err, res) {
+        next(error)
+      })
+    })
+
+    app.use(function (error, req, res, next) {
+      tv.reportError(error)
+      res.send('test')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', '/ route')
+        msg.should.have.property('Controller', '/')
+        msg.should.have.property('Action', 'route')
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', '/ route')
+      },
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error.message)
+        msg.should.have.property('Backtrace', error.stack)
+      },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port)
+    })
+  })
+
 })
