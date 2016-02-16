@@ -245,3 +245,85 @@ exports.setUntil = function (obj, prop, value, done) {
     done.apply(this, arguments)
   }
 }
+
+exports.linksTo = linksTo
+function linksTo (a, b) {
+  a.Edge.should.eql(b['X-Trace'].substr(42))
+}
+
+exports.edgeTracker = edgeTracker
+function edgeTracker (parent, fn) {
+  var started = false
+  function tracker (msg) {
+    // Verify link to last message in parent
+    if ( ! started) {
+      if (parent) {
+        linksTo(msg, parent.last)
+      }
+      started = true
+    }
+
+    // Verify link to last message in this branch
+    if (tracker.last) {
+      linksTo(msg, tracker.last)
+    }
+
+    tracker.last = msg
+    if (fn) fn(msg)
+  }
+
+  return tracker
+}
+
+exports.checkEntry = checkEntry
+function checkEntry (name, fn) {
+  return function (msg) {
+    msg.should.have.property('X-Trace')
+    msg.should.have.property('Label', 'entry')
+    msg.should.have.property('Layer', name)
+    if (fn) fn(msg)
+  }
+}
+
+exports.checkExit = checkExit
+function checkExit (name, fn) {
+  return function (msg) {
+    msg.should.have.property('X-Trace')
+    msg.should.have.property('Label', 'exit')
+    msg.should.have.property('Layer', name)
+    if (fn) fn(msg)
+  }
+}
+
+exports.checkInfo = checkInfo
+function checkInfo (data, fn) {
+  var withData = checkData(data)
+  return function (msg) {
+    msg.should.not.have.property('Layer')
+    msg.should.have.property('Label', 'info')
+    withData(msg)
+    if (fn) fn(msg)
+  }
+}
+
+exports.checkError = checkError
+function checkError (error, fn) {
+  return function (msg) {
+    msg.should.not.have.property('Layer')
+    msg.should.have.property('Label', 'error')
+    msg.should.have.property('ErrorClass', 'Error')
+    msg.should.have.property('ErrorMsg', error.message)
+    msg.should.have.property('Backtrace', error.stack)
+    if (fn) fn(msg)
+  }
+}
+
+exports.checkData = checkData
+function checkData (data, fn) {
+  return function (msg) {
+    Object.keys(data).forEach(function (key) {
+      msg.should.have.property(key, data[key])
+    })
+    if (fn) fn(msg)
+  }
+}

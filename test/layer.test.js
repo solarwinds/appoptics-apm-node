@@ -46,21 +46,13 @@ describe('layer', function () {
     var e = layer.events
 
     var checks = [
-      function (msg) {
+      helper.checkEntry(name, helper.checkData(data, function (msg) {
         msg.should.have.property('X-Trace', e.entry.toString())
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', name)
-
-        Object.keys(data).forEach(function (key) {
-          msg.should.have.property(key, data[key])
-        })
-      },
-      function (msg) {
+      })),
+      helper.checkExit(name, function (msg) {
         msg.should.have.property('X-Trace', e.exit.toString())
         msg.should.have.property('Edge', e.entry.opId)
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', name)
-      }
+      })
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -79,22 +71,14 @@ describe('layer', function () {
 
     var checks = [
       // Verify structure of entry event
-      function (msg) {
+      helper.checkEntry(name, helper.checkData(data, function (msg) {
         msg.should.have.property('X-Trace', e.entry.toString())
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', name)
-
-        Object.keys(data).forEach(function (key) {
-          msg.should.have.property(key, data[key])
-        })
-      },
+      })),
       // Verify structure of exit event
-      function (msg) {
+      helper.checkExit(name, function (msg) {
         msg.should.have.property('X-Trace', e.exit.toString())
         msg.should.have.property('Edge', e.entry.opId)
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', name)
-      }
+      })
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -120,37 +104,21 @@ describe('layer', function () {
     var outer, inner
 
     var checks = [
-      function (msg) {
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(outerData).forEach(function (key) {
-          msg.should.have.property(key, outerData[key])
-        })
-      },
-      function (msg) {
+      })),
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.entry.opId.toString())
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(innerData).forEach(function (key) {
-          msg.should.have.property(key, innerData[key])
-        })
-      },
-      function (msg) {
+      })),
+      helper.checkExit('inner', function (msg) {
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId.toString())
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'exit')
-      },
-      function (msg) {
+      }),
+      helper.checkExit('outer', function (msg) {
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', inner.events.exit.opId.toString())
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'exit')
-      }
+      })
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -169,40 +137,24 @@ describe('layer', function () {
 
     var checks = [
       // Outer entry
-      function (msg) {
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(outerData).forEach(function (key) {
-          msg.should.have.property(key, outerData[key])
-        })
-      },
+      })),
       // Inner entry (async)
-      function (msg) {
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(innerData).forEach(function (key) {
-          msg.should.have.property(key, innerData[key])
-        })
-      },
+      })),
       // Outer exit
-      function (msg) {
+      helper.checkExit('outer', function (msg) {
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'exit')
-      },
+      }),
       // Inner exit (async)
-      function (msg) {
+      helper.checkExit('inner', function (msg) {
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId)
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'exit')
-      }
+      })
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -231,40 +183,24 @@ describe('layer', function () {
 
     var checks = [
       // Outer entry (async)
-      function (msg) {
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(outerData).forEach(function (key) {
-          msg.should.have.property(key, outerData[key])
-        })
-      },
+      })),
       // Outer exit (async)
-      function (msg) {
+      helper.checkExit('outer', function (msg) {
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
-        msg.should.have.property('Layer', 'outer')
-        msg.should.have.property('Label', 'exit')
-      },
+      }),
       // Inner entry
-      function (msg) {
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
         msg.should.have.property('X-Trace', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.exit.opId)
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'entry')
-
-        Object.keys(innerData).forEach(function (key) {
-          msg.should.have.property(key, innerData[key])
-        })
-      },
+      })),
       // Inner exit
-      function (msg) {
+      helper.checkExit('inner', function (msg) {
         msg.should.have.property('X-Trace', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId)
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'exit')
-      },
+      })
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -299,15 +235,9 @@ describe('layer', function () {
     }
 
     var checks = [
-      function () {},
-      function (msg) {
-        msg.should.not.have.property('Layer')
-        msg.should.have.property('Label', 'info')
-        Object.keys(data).forEach(function (key) {
-          msg.should.have.property(key, data[key])
-        })
-      },
-      function () {}
+      helper.checkEntry('test'),
+      helper.checkInfo(data),
+      helper.checkExit('test'),
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -338,19 +268,11 @@ describe('layer', function () {
       Foo: 'bar'
     }
 
-    function check (msg) {
-      msg.should.not.have.property('Layer')
-      msg.should.have.property('Label', 'info')
-      Object.keys(data).forEach(function (key) {
-        msg.should.have.property(key, data[key])
-      })
-    }
-
     helper.doChecks(emitter, [
-      function () {},
-      check,
-      check,
-      function () {}
+      helper.checkEntry('test'),
+      helper.checkInfo(data),
+      helper.checkInfo(data),
+      helper.checkExit('test'),
     ], done)
 
     layer.run(function () {
@@ -374,29 +296,16 @@ describe('layer', function () {
   })
 
   it('should chain internal event edges', function (done) {
-    var layer = new Layer('test', null, {})
-
     var n = 10 + Math.floor(Math.random() * 10)
-    var msgs = []
+    var layer = new Layer('test', null, {})
+    var tracker = helper.edgeTracker()
 
-    function push (msg) {
-      msgs.push(msg)
-    }
-
-    var checks = [ push, push ]
+    var checks = [ tracker, tracker ]
     for (var i = 0; i < n; i++) {
-      checks.push(push)
+      checks.push(tracker)
     }
 
-    helper.doChecks(emitter, checks, function (err) {
-      if (err) return done(err)
-      var prev = msgs.shift()
-      msgs.forEach(function (event) {
-        linksTo(event, prev)
-        prev = event
-      })
-      done()
-    })
+    helper.doChecks(emitter, checks, done)
 
     function sendAThing (i) {
       if (Math.random() > 0.5) {
@@ -419,15 +328,15 @@ describe('layer', function () {
     var before = { state: 'before' }
     var after = { state: 'after' }
 
-    var track = edgeTracker()
+    var track = helper.edgeTracker()
 
     var checks = [
-      checkEntry('outer', track),
-        checkInfo(before, track),
-        checkEntry('inner', track),
-        checkExit('inner', track),
-        checkInfo(after, track),
-      checkExit('outer', track)
+      helper.checkEntry('outer', track),
+        helper.checkInfo(before, track),
+        helper.checkEntry('inner', track),
+        helper.checkExit('inner', track),
+        helper.checkInfo(after, track),
+      helper.checkExit('outer', track)
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -447,23 +356,23 @@ describe('layer', function () {
     var before = { state: 'before' }
     var after = { state: 'after' }
 
-    var trackOuter = edgeTracker()
-    var trackInner = edgeTracker()
+    var trackOuter = helper.edgeTracker()
+    var trackInner = helper.edgeTracker()
 
     var checks = [
-      checkEntry('outer', trackOuter),
-        checkInfo(before, trackOuter),
+      helper.checkEntry('outer', trackOuter),
+        helper.checkInfo(before, trackOuter),
 
         // Async call
-        checkEntry('inner', trackInner),
-        checkInfo(before, trackInner),
+        helper.checkEntry('inner', trackInner),
+        helper.checkInfo(before, trackInner),
 
-        checkInfo(after, trackOuter),
-      checkExit('outer', trackOuter),
+        helper.checkInfo(after, trackOuter),
+      helper.checkExit('outer', trackOuter),
 
         // Next tick
-        checkInfo(after, trackInner),
-        checkExit('inner', trackInner)
+        helper.checkInfo(after, trackInner),
+        helper.checkExit('inner', trackInner)
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -483,45 +392,75 @@ describe('layer', function () {
     })
   })
 
-})
+  it('should properly attribute dangling info/error events', function (done) {
+    var layer = new Layer('outer', null, {})
 
-function linksTo (a, b) {
-  a.Edge.should.eql(b['X-Trace'].substr(42))
-}
+    var before = { state: 'before' }
+    var after = { state: 'after' }
+    var error = new Error('wat')
 
-function edgeTracker () {
-  var last = null
-  return function (msg) {
-    if (last) linksTo(msg, last)
-    last = msg
-  }
-}
+    var trackOuter = helper.edgeTracker()
+    var trackInner1 = helper.edgeTracker(trackOuter)
+    var trackInner2 = helper.edgeTracker(trackOuter)
+    var trackInner3 = helper.edgeTracker(trackInner1)
+    var trackInner4 = helper.edgeTracker(trackInner3)
 
-function checkEntry (name, fn) {
-  return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'entry')
-    msg.should.have.property('Layer', name)
-    if (fn) fn(msg)
-  }
-}
+    var checks = [
+      helper.checkEntry('outer', trackOuter),
 
-function checkExit (name, fn) {
-  return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'exit')
-    msg.should.have.property('Layer', name)
-    if (fn) fn(msg)
-  }
-}
+        // Async call
+        helper.checkEntry('inner-1', trackInner1),
+        helper.checkEntry('inner-2', trackInner2),
 
-function checkInfo (data, fn) {
-  return function (msg) {
-    msg.should.not.have.property('Layer')
-    msg.should.have.property('Label', 'info')
-    Object.keys(data).forEach(function (key) {
-      msg.should.have.property(key, data[key])
+        // Next tick
+        helper.checkExit('inner-1', trackInner1),
+          helper.checkInfo(after, trackInner1),
+          helper.checkEntry('inner-3', trackInner3),
+          helper.checkInfo(after, trackInner1),
+        helper.checkExit('inner-2', trackInner2),
+
+      // Faked sync exit
+      helper.checkExit('outer', trackInner2),
+
+          // Delayed until after fake sync exit
+          helper.checkExit('inner-3', trackInner3),
+            helper.checkError(error, trackInner3),
+            helper.checkEntry('inner-4', trackInner4),
+            helper.checkExit('inner-4', trackInner4),
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    tv.requestStore.run(function () {
+      layer.enter()
+      var sub1 = layer.descend('inner-1')
+      sub1.run(function (wrap) {
+        setImmediate(wrap(function () {
+          tv.reportInfo(after)
+
+          var sub2 = layer.descend('inner-3')
+          sub2.run(function (wrap) {
+            setImmediate(wrap(function () {
+              tv.reportError(error)
+
+              var sub2 = layer.descend('inner-4')
+              sub2.run(function (wrap) {
+                setImmediate(wrap(function () {}))
+              })
+            }))
+          })
+
+          tv.reportInfo(after)
+        }))
+      })
+
+      var sub2 = layer.descend('inner-2')
+      sub2.run(function (wrap) {
+        setTimeout(wrap(function () {
+          layer.exit()
+        }), 1)
+      })
     })
-    if (fn) fn(msg)
-  }
-}
+  })
+
+})
