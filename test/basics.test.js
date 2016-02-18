@@ -1,5 +1,6 @@
 var helper = require('./helper')
 var should = require('should')
+var debug = require('debug')
 var http = require('http')
 var tv = require('..')
 var Layer = tv.Layer
@@ -52,6 +53,24 @@ describe('basics', function () {
     tv.through.should.be.false
     tv.traceMode = tv.addon.TRACE_THROUGH
     tv.through.should.be.true
+  })
+
+  it('should get access key', function () {
+    tv.accessKey.should.be.a.String
+  })
+
+  it('should set logging', function () {
+    var called = false
+    var real = debug.enable
+    debug.enable = function () {
+      called = true
+      debug.enable = real
+    }
+    var before = tv.log
+    tv.log = 'layer'
+    tv.log.should.equal('layer')
+    called.should.equal(true)
+    tv.log = before
   })
 
   it('should be able to detect if it is in a trace', function () {

@@ -1,6 +1,7 @@
 var helper = require('../helper')
 var tv = helper.tv
 var addon = tv.addon
+var conf = tv['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(
@@ -100,24 +101,28 @@ describe('probes.cassandra-driver', function () {
     it('should trace an iterator query', test_iterator)
     it('should trace a query stream', test_stream)
     it('should trace a batched query', test_batch)
+    it('should not break when disabled', test_disabled)
+    it('should shorten long queries', test_query_shortening)
 
   //
   // Otherwise, just create blank skipped tests for log visibility
   //
-} else {
+  } else {
     it.skip('should trace a basic query', test_basic)
     it.skip('should trace a prepared query', test_prepare)
     it.skip('should sanitize query string, when not using value list', test_sanitize)
     it.skip('should trace an iterator query', test_iterator)
     it.skip('should trace a query stream', test_stream)
     it.skip('should trace a batched query', test_batch)
+    it.skip('should not break when disabled', test_disabled)
+    it.skip('should shorten long queries', test_query_shortening)
   }
 
   //
   // Define test handlers
   //
   function test_basic (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/basic'), [
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/basic'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
@@ -133,7 +138,7 @@ describe('probes.cassandra-driver', function () {
   }
 
   function test_prepare (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/prepare'), [
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/prepare'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
@@ -149,7 +154,7 @@ describe('probes.cassandra-driver', function () {
   }
 
   function test_sanitize (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/sanitize'), [
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/sanitize'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo where bar=\'?\'')
@@ -164,10 +169,10 @@ describe('probes.cassandra-driver', function () {
   }
 
   function test_iterator (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/iterator'), [
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/iterator'), [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', 'SELECT * from foo')
+        msg.should.have.property('Query', 'SELECT * from foo where bar=?')
       },
       function (msg) {
         checks.info(msg)
@@ -179,7 +184,7 @@ describe('probes.cassandra-driver', function () {
   }
 
   function test_stream (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/stream'), [
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/stream'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo')
@@ -194,7 +199,12 @@ describe('probes.cassandra-driver', function () {
   }
 
   function test_batch (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'cassandra-driver/batch'), [
+    function after (err) {
+      conf.sanitizeSql = false
+      done(err)
+    }
+
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/batch'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'BATCH')
@@ -207,6 +217,89 @@ describe('probes.cassandra-driver', function () {
       function (msg) {
         checks.exit(msg)
       }
-    ], done)
+    ], next)
+
+    function next(err) {
+      if (err) return after(err)
+
+      conf.sanitizeSql = true
+      helper.test(emitter, helper.run(ctx, 'cassandra-driver/batch'), [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Query', 'BATCH')
+          msg.should.have.property('BatchQueries', '["INSERT INTO foo (bar) values (?)","INSERT INTO foo (bar) values (\'?\')"]')
+          msg.should.not.have.property('BatchQueryArgs')
+        },
+        function (msg) {
+          checks.info(msg)
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], after)
+    }
   }
+
+  function test_disabled (done) {
+    conf.enabled = false
+    conf.sanitizeSql = true
+    helper.test(emitter, helper.run(ctx, 'cassandra-driver/batch'), [], next)
+
+    function after (err) {
+      conf.enabled = true
+      conf.sanitizeSql = false
+      done(err)
+    }
+
+    function range (end, start, step) {
+      step = step || 1
+      start = start || 0
+      inc = start > end ? -step : step
+      var items = []
+      for (var i = start; i < end; i += inc) {
+        items.push(i)
+      }
+      return items
+    }
+
+    function next(err) {
+      if (err) return after(err)
+      helper.test(emitter, helper.run(ctx, 'cassandra-driver/batch'), [], after)
+    }
+  }
+
+  function test_query_shortening (done) {
+    helper.test(emitter, function (done) {
+      var query = 'SELECT '
+        + range(300).map(function () { return 'now()' }).join(', ')
+        + ' FROM system.local'
+
+      query.length.should.be.above(2048)
+      ctx.cassandra.execute(query, done)
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Query')
+        msg.Query.length.should.not.be.above(2048)
+      },
+      function (msg) {
+        checks.info(msg)
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], done)
+
+    function range (end, start, step) {
+      step = step || 1
+      start = start || 0
+      inc = start > end ? -step : step
+      var items = []
+      for (var i = start; i < end; i += inc) {
+        items.push(i)
+      }
+      return items
+    }
+  }
+
 })

@@ -20,9 +20,12 @@ var Connection = tedious.Connection
 var Request = tedious.Request
 var TYPES = tedious.TYPES
 
-var addr = helper.Address.from(
-  process.env.TEST_SQLSERVER_EX
-)[0]
+var addr
+if (process.env.TEST_SQLSERVER_EX) {
+  addr = helper.Address.from(
+    process.env.TEST_SQLSERVER_EX
+  )[0]
+}
 var user = process.env.TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
 
@@ -62,8 +65,18 @@ describe('probes.tedious', function () {
     }
   }
 
-  it('should support basic queries', function (done) {
-    helper.httpTest(emitter, function (done) {
+  if (addr) {
+    it('should support basic queries', test_basic)
+    it('should support parameters', test_parameters)
+    it('should support sanitization', test_sanitization)
+  } else {
+    it.skip('should support basic queries', test_basic)
+    it.skip('should support parameters', test_parameters)
+    it.skip('should support sanitization', test_sanitization)
+  }
+
+  function test_basic (done) {
+    helper.test(emitter, function (done) {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
         function onComplete (err, count) {
@@ -79,12 +92,12 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  })
+  }
 
-  it('should support parameters', function (done) {
+  function test_parameters (done) {
     var request
 
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       query(function () {
         request = new Request("select @num, @msg", onComplete)
         request.addParameter('num', TYPES.Int, '42')
@@ -112,10 +125,10 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], done)
-  })
+  }
 
-  it('should support sanitization', function (done) {
-    helper.httpTest(emitter, function (done) {
+  function test_sanitization (done) {
+    helper.test(emitter, function (done) {
       tv.tedious.sanitizeSql = true
       query(function () {
         var request = new Request("select 42, @msg", onComplete)
@@ -140,7 +153,7 @@ describe('probes.tedious', function () {
       tv.tedious.sanitizeSql = false
       done(err)
     })
-  })
+  }
 
   // Query helper
   function query (fn) {

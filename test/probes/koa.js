@@ -95,6 +95,28 @@ exports.basic = function (emitter, done) {
   })
 }
 
+exports.disabled = function (emitter, done) {
+  tv.koa.enabled = false
+  var app = koa()
+
+  app.use(function* () {
+    this.body = 'done'
+  })
+
+  helper.doChecks(emitter, [
+    function (msg) { check['http-entry'](msg) },
+    function (msg) { check['http-exit'](msg) }
+  ], function () {
+    tv.koa.enabled = true
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port)
+  })
+}
+
 exports.route = function (emitter, done) {
   var app = koa()
 
@@ -104,6 +126,30 @@ exports.route = function (emitter, done) {
 
   var validations = controllerValidations('get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port + '/hello/world')
+  })
+}
+
+exports.route_disabled = function (emitter, done) {
+  tv['koa-route'].enabled = false
+  var app = koa()
+
+  app.use(_.get('/hello/:name', function* hello () {
+    this.body = 'done'
+  }))
+
+  helper.doChecks(emitter, [
+    function (msg) { check['http-entry'](msg) },
+    function (msg) { check['koa-entry'](msg) },
+    function (msg) { check['koa-exit'](msg) },
+    function (msg) { check['http-exit'](msg) }
+  ], function () {
+    tv['koa-route'].enabled = true
     server.close(done)
   })
 
@@ -141,6 +187,40 @@ exports.router = function (emitter, done) {
   })
 }
 
+exports.router_disabled = function (emitter, done) {
+  tv['koa-router'].enabled = false
+  var app = koa()
+
+  function* hello () {
+    this.body = 'done'
+  }
+
+  // Mount router
+  var r = router(app)
+  if (typeof r.routes === 'function') {
+    app.use(r.routes())
+    r.get('/hello/:name', hello)
+  } else {
+    app.use(r)
+    app.get('/hello/:name', hello)
+  }
+
+  helper.doChecks(emitter, [
+    function (msg) { check['http-entry'](msg) },
+    function (msg) { check['koa-entry'](msg) },
+    function (msg) { check['koa-exit'](msg) },
+    function (msg) { check['http-exit'](msg) }
+  ], function () {
+    tv['koa-router'].enabled = true
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port + '/hello/world')
+  })
+}
+
 exports.resourceRouter = function (emitter, done) {
   var app = koa()
 
@@ -154,6 +234,34 @@ exports.resourceRouter = function (emitter, done) {
 
   var validations = controllerValidations('hello', 'index')
   helper.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port + '/hello')
+  })
+}
+
+exports.resourceRouter_disabled = function (emitter, done) {
+  tv['koa-resource-router'].enabled = false
+  var app = koa()
+
+  var res = new Resource('hello', {
+    index: function* index () {
+      this.body = 'done'
+    }
+  })
+
+  app.use(res.middleware())
+
+  helper.doChecks(emitter, [
+    function (msg) { check['http-entry'](msg) },
+    function (msg) { check['koa-entry'](msg) },
+    function (msg) { check['koa-exit'](msg) },
+    function (msg) { check['http-exit'](msg) }
+  ], function () {
+    tv['koa-resource-router'].enabled = true
     server.close(done)
   })
 
@@ -196,6 +304,42 @@ exports.render = function (emitter, done) {
   ]
 
   helper.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  var server = app.listen(function () {
+    var port = server.address().port
+    request('http://localhost:' + port)
+  })
+}
+
+exports.render_disabled = function (emitter, done) {
+  tv['co-render'].enabled = false
+  var app = koa()
+
+  app.use(function* () {
+    this.body = yield render('hello', {
+      name: 'world'
+    })
+  })
+
+  var validations = [
+    function (msg) {
+      check['http-entry'](msg)
+    },
+    function (msg) {
+      check['koa-entry'](msg)
+    },
+    function (msg) {
+      check['koa-exit'](msg)
+    },
+    function (msg) {
+      check['http-exit'](msg)
+    }
+  ]
+
+  helper.doChecks(emitter, validations, function () {
+    tv['co-render'].enabled = true
     server.close(done)
   })
 

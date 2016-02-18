@@ -127,8 +127,12 @@ describe('probes.postgres', function () {
         pg.db.query('CREATE TABLE IF NOT EXISTS test (foo TEXT)', done)
       })
 
+      after(function () {
+        db.end()
+      })
+
       it('should trace a basic query', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/basic'), [
+        helper.test(emitter, helper.run(ctx, 'pg/basic'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -141,7 +145,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace through a connection pool', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/pool'), [
+        helper.test(emitter, helper.run(ctx, 'pg/pool'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -154,7 +158,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace prepared statements', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/prepared'), [
+        helper.test(emitter, helper.run(ctx, 'pg/prepared'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'SELECT $1::int AS number')
@@ -175,7 +179,7 @@ describe('probes.postgres', function () {
       })
 
       it('should sanitize query string, when not using value list', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/sanitize'), [
+        helper.test(emitter, helper.run(ctx, 'pg/sanitize'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "test" where "key" = \'?\'')
@@ -187,7 +191,7 @@ describe('probes.postgres', function () {
       })
 
       it('should trace evented style', function (done) {
-        helper.httpTest(emitter, helper.run(ctx, 'pg/evented'), [
+        helper.test(emitter, helper.run(ctx, 'pg/evented'), [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Query', 'select * from "test" where "foo" = \'bar\'')
@@ -196,6 +200,36 @@ describe('probes.postgres', function () {
             checks.exit(msg)
           }
         ], done)
+      })
+
+      it('should trim long queries', function (done) {
+        helper.test(emitter, function (done) {
+          var nums = []
+          for (var i = 0; i < 1000; i++) {
+            nums.push('1::int AS number')
+          }
+          var query = 'SELECT ' + nums.join(', ')
+          db.query(query, function (err) {
+            done(err)
+          })
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Query')
+            msg.Query.length.should.not.be.above(2048)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
+
+      it('should skip when disabled', function (done) {
+        tv.pg.enabled = false
+        helper.test(emitter, helper.run(ctx, 'pg/basic'), [], function (err) {
+          tv.pg.enabled = true
+          done(err)
+        })
       })
     }
   })

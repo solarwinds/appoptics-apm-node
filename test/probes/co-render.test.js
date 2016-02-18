@@ -34,10 +34,14 @@ describe('probes/co-render', function () {
   //
   if ( ! canGenerator) {
     it.skip('should support co-render', noop)
+    it.skip('should skip when disabled', noop)
     it.skip('should include RUM scripts', noop)
   } else {
     it('should support co-render', function (done) {
       tests.render(emitter, done)
+    })
+    it('should skip when disabled', function (done) {
+      tests.render_disabled(emitter, done)
     })
     it('should include RUM scripts', function (done) {
       tests.rum(emitter, done)

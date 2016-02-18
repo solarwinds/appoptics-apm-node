@@ -47,7 +47,7 @@ describe('probes.redis', function () {
   // Test a simple res.end() call in an http server
   //
   it('should support single commands', function (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'redis/set'), [
+    helper.test(emitter, helper.run(ctx, 'redis/set'), [
       function (msg) {
         check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'set')
@@ -97,7 +97,7 @@ describe('probes.redis', function () {
       }
     ]
 
-    helper.httpTest(emitter, helper.run(ctx, 'redis/multi'), steps, done)
+    helper.test(emitter, helper.run(ctx, 'redis/multi'), steps, done)
   })
 
   //

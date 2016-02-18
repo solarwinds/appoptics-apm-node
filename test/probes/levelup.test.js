@@ -42,7 +42,7 @@ describe('probes.levelup', function () {
   }
 
   it('should support put', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       db.put('foo', 'bar', done)
     }, [
       function (msg) {
@@ -57,7 +57,7 @@ describe('probes.levelup', function () {
   })
 
   it('should support get', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       db.get('foo', done)
     }, [
       function (msg) {
@@ -73,7 +73,7 @@ describe('probes.levelup', function () {
   })
 
   it('should support del', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       db.del('foo', done)
     }, [
       function (msg) {
@@ -88,7 +88,7 @@ describe('probes.levelup', function () {
   })
 
   it('should support array batch', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       db.batch([
         { type: 'put', key: 'foo', value: 'bar' },
         { type: 'del', key: 'foo' },
@@ -107,7 +107,7 @@ describe('probes.levelup', function () {
   })
 
   it('should support chained batch', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       db.batch()
         .put('foo', 'bar')
         .del('foo')

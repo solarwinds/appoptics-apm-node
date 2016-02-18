@@ -53,7 +53,7 @@ describe('probes.memcached', function () {
   // Define tests
   //
   it('should add', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.add('foo', 'bar', 10, done)
     }, [
       function (msg) {
@@ -68,7 +68,7 @@ describe('probes.memcached', function () {
   })
 
   function test_touch (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.touch('foo', 10, done)
     }, [
       function (msg) {
@@ -89,7 +89,7 @@ describe('probes.memcached', function () {
   }
 
   it('should get', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.get('foo', done)
     }, [
       function (msg) {
@@ -105,7 +105,7 @@ describe('probes.memcached', function () {
   })
 
   it('should getMulti', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.getMulti(['foo','bar'], done)
     }, [
       function (msg) {
@@ -122,7 +122,7 @@ describe('probes.memcached', function () {
   })
 
   it('should gets', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.gets('bar', done)
     }, [
       function (msg) {
@@ -138,7 +138,7 @@ describe('probes.memcached', function () {
   })
 
   it('should append', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.append('foo', 'baz', done)
     }, [
       function (msg) {
@@ -153,7 +153,7 @@ describe('probes.memcached', function () {
   })
 
   it('should prepend', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.append('foo', 'baz', done)
     }, [
       function (msg) {
@@ -168,7 +168,7 @@ describe('probes.memcached', function () {
   })
 
   it('should set', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.set('foo', 'baz', 10, done)
     }, [
       function (msg) {
@@ -183,7 +183,7 @@ describe('probes.memcached', function () {
   })
 
   it('should replace', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.replace('foo', 1, 10, done)
     }, [
       function (msg) {
@@ -198,7 +198,7 @@ describe('probes.memcached', function () {
   })
 
   it('should incr', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.incr('foo', 1, done)
     }, [
       function (msg) {
@@ -213,7 +213,7 @@ describe('probes.memcached', function () {
   })
 
   it('should decr', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.decr('foo', 1, done)
     }, [
       function (msg) {
@@ -228,7 +228,7 @@ describe('probes.memcached', function () {
   })
 
   it('should del', function (done) {
-    helper.httpTest(emitter, function (done) {
+    helper.test(emitter, function (done) {
       mem.del('foo', done)
     }, [
       function (msg) {
@@ -240,6 +240,46 @@ describe('probes.memcached', function () {
         checks.exit(msg)
       }
     ], done)
+  })
+
+  it('should skip when disabled', function (done) {
+    tv.memcached.enabled = false
+    helper.test(emitter, function (done) {
+      mem.get('foo', done)
+    }, [], function (err) {
+      tv.memcached.enabled = true
+      done(err)
+    })
+  })
+
+  it('should work normally when not tracing', function (done) {
+    helper.test(emitter, function (done) {
+      tv.requestStore.set('lastLayer', null)
+      mem.get('foo', done)
+    }, [], function (err) {
+      done(err)
+    })
+  })
+
+  it('should report errors', function (done) {
+    helper.test(emitter, function (done) {
+      mem.get(new Date, function () {
+        done()
+      })
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('KVOp', 'get')
+        msg.should.have.property('KVKey')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.have.property('ErrorClass')
+        msg.should.have.property('ErrorMsg')
+      }
+    ], function (err) {
+      done(err)
+    })
   })
 
 })

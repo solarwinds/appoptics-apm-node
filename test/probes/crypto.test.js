@@ -39,7 +39,7 @@ describe('probes.crypto', function () {
   //
   if (crypto.pbkdf2) {
     it('should support pbkdf2', function (done) {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         crypto.pbkdf2('secret', 'salt', 4096, 512, function (e) {
           done(e)
         })
@@ -60,7 +60,7 @@ describe('probes.crypto', function () {
 
   if (crypto.pbkdf2Sync) {
     it('should support pbkdf2Sync', function (done) {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         try {
           crypto.pbkdf2Sync('secret', 'salt', 4096, 512)
         } catch (e) {}
@@ -91,7 +91,7 @@ describe('probes.crypto', function () {
     if ( ! crypto[method]) return
 
     it('should support ' + method, function (done) {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         try {
           crypto[method]('secret', new Buffer('foo'))
         } catch (e) {}
@@ -110,7 +110,7 @@ describe('probes.crypto', function () {
 
   if (crypto.createDiffieHellman) {
     it('should support computeSecret for DiffieHellman', function (done) {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         var a = crypto.createDiffieHellman(512)
         a.generateKeys()
         a.computeSecret(a.getPublicKey())
@@ -130,7 +130,7 @@ describe('probes.crypto', function () {
 
   if (crypto.createECDH) {
     it('should support computeSecret for ECDH', function (done) {
-      helper.httpTest(emitter, function (done) {
+      helper.test(emitter, function (done) {
         var a = crypto.createECDH('secp521r1')
         a.generateKeys()
         a.computeSecret(a.getPublicKey())

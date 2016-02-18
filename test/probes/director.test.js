@@ -61,7 +61,6 @@ describe('probes.director', function () {
 
     var server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
-        console.log('dafuq?', err)
         if (err) {
           res.writeHead(404)
           res.end()
@@ -96,6 +95,47 @@ describe('probes.director', function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    server.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should skip when disabled', function (done) {
+    tv.director.enabled = false
+    function hello (name) {
+      this.res.writeHead(200, { 'Content-Type': 'text/plain' })
+      this.res.end('Hello, ' + name + '!')
+    }
+
+    var router = new director.http.Router({
+      '/hello/:name': { get: hello }
+    })
+
+    var server = http.createServer(function (req, res) {
+      router.dispatch(req, res, function (err) {
+        if (err) {
+          res.writeHead(404)
+          res.end()
+        }
+      })
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.not.have.property('Controller')
+        msg.should.not.have.property('Action')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      tv.director.enabled = true
       server.close(done)
     })
 

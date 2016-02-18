@@ -98,7 +98,7 @@ describe('probes.cassandra', function () {
   // Define test handlers
   //
   function test_basic (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/basic'), [
+    helper.test(emitter, helper.run(ctx, 'node-cassandra-cql/basic'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
@@ -114,7 +114,7 @@ describe('probes.cassandra', function () {
   }
 
   function test_prepared (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/prepared'), [
+    helper.test(emitter, helper.run(ctx, 'node-cassandra-cql/prepared'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo where bar=?')
@@ -130,7 +130,7 @@ describe('probes.cassandra', function () {
   }
 
   function test_sanitize (done) {
-    helper.httpTest(emitter, helper.run(ctx, 'node-cassandra-cql/sanitize'), [
+    helper.test(emitter, helper.run(ctx, 'node-cassandra-cql/sanitize'), [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT * from foo where bar=\'?\'')

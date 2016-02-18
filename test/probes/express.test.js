@@ -398,6 +398,38 @@ describe('probes.express', function () {
       })
   })
 
+  it('should skip when disabled', function (done) {
+    tv.express.enabled = false
+    var app = express()
+
+    app.set('views', __dirname)
+    app.set('view engine', 'ejs')
+
+    app.get('/hello/:name', function (req, res) {
+      res.render('hello', Object.create({
+        name: req.params.name
+      }))
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      tv.express.enabled = true
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
   it('should be able to report errors from error handler', function (done) {
     var error = new Error('test')
     var app = express()
@@ -459,5 +491,4 @@ describe('probes.express', function () {
       request('http://localhost:' + port)
     })
   })
-
 })

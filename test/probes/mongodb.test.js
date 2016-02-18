@@ -109,7 +109,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/databases/drop'),
 				steps,
@@ -154,7 +154,7 @@ function makeTests (db_host, host, self) {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/collections/create_collection'),
 				steps,
@@ -188,7 +188,7 @@ function makeTests (db_host, host, self) {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/collections/options'),
 				steps,
@@ -214,7 +214,7 @@ function makeTests (db_host, host, self) {
 					}
 				]
 
-				helper.httpTest(
+				helper.test(
 					emitter,
 					helper.run(ctx, 'mongodb/collections/rename'),
 					steps,
@@ -240,7 +240,7 @@ function makeTests (db_host, host, self) {
 					}
 				]
 
-				helper.httpTest(
+				helper.test(
 					emitter,
 					helper.run(ctx, 'mongodb/collections/drop_collection'),
 					steps,
@@ -276,7 +276,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/insert'),
 				steps,
@@ -301,7 +301,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/find_and_modify'),
 				steps,
@@ -326,7 +326,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/update'),
 				steps,
@@ -351,7 +351,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/distinct'),
 				steps,
@@ -381,7 +381,7 @@ function makeTests (db_host, host, self) {
 
 			steps.push(check['mongo-exit'])
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/count'),
 				steps,
@@ -406,7 +406,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/remove'),
 				steps,
@@ -439,7 +439,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/queries/save'),
 				steps,
@@ -485,7 +485,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/create_index'),
 				steps,
@@ -510,7 +510,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/drop_index'),
 				steps,
@@ -566,7 +566,7 @@ function makeTests (db_host, host, self) {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/ensure_index'),
 				steps,
@@ -597,7 +597,7 @@ function makeTests (db_host, host, self) {
 				check['mongo-exit'](msg)
 			})
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/index_information'),
 				steps,
@@ -621,7 +621,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/reindex'),
 				steps,
@@ -646,7 +646,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/indexes/drop_indexes'),
 				steps,
@@ -679,7 +679,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/aggregation/group'),
 				steps,
@@ -706,7 +706,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/aggregation/map_reduce'),
 				steps,
@@ -733,7 +733,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/aggregation/inline_map_reduce'),
 				steps,
@@ -762,7 +762,7 @@ function makeTests (db_host, host, self) {
 				}
 			]
 
-			helper.httpTest(
+			helper.test(
 				emitter,
 				helper.run(ctx, 'mongodb/cursors/find'),
 				steps,

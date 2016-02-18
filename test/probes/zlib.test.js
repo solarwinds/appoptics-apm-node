@@ -108,7 +108,7 @@ describe('probes.zlib', function () {
       var className = upperFirst(method)
       if (zlib[method]) {
         it('should support ' + method, function (done) {
-          helper.httpTest(emitter, function (done) {
+          helper.test(emitter, function (done) {
             zlib[method](inputs[className], function (err, buf) {
               if (err) return done(err)
               buf.toString().should.equal(outputs[className].toString())
@@ -135,7 +135,7 @@ describe('probes.zlib', function () {
       var syncMethod = method + 'Sync'
       if (zlib[syncMethod]) {
         it('should support ' + syncMethod, function (done) {
-          helper.httpTest(emitter, function (done) {
+          helper.test(emitter, function (done) {
             try {
               var buf = zlib[syncMethod](inputs[className])
               buf.toString().should.equal(outputs[className].toString())
@@ -160,7 +160,7 @@ describe('probes.zlib', function () {
     classes.forEach(function (name) {
       if (zlib[name]) {
         it('should support ' + name, function (done) {
-          helper.httpTest(emitter, function (done) {
+          helper.test(emitter, function (done) {
             var inst = new (zlib[name])(options)
             inst.on('error', done)
             inst.on('close', done)
@@ -193,7 +193,7 @@ describe('probes.zlib', function () {
       var creator = 'create' + name
       if (zlib[creator]) {
         it('should support ' + creator, function (done) {
-          helper.httpTest(emitter, function (done) {
+          helper.test(emitter, function (done) {
             var inst = new zlib[creator](options)
             inst.on('error', done)
             inst.on('close', done)
@@ -219,6 +219,30 @@ describe('probes.zlib', function () {
         })
       }
     })
+  })
+
+  it('should support report errors', function (done) {
+    helper.test(emitter, function (done) {
+      function after () {
+        done()
+      }
+
+      var inst = new zlib.Gunzip(options)
+      inst.on('error', after)
+      inst.on('close', after)
+      inst.on('end', after)
+      inst.write('nope')
+      inst.end()
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Operation', 'Gunzip')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.have.property('ErrorMsg')
+      }
+    ], done)
   })
 
 })
