@@ -247,6 +247,39 @@ describe('layer', function () {
     })
   })
 
+  it('should only send valid properties', function (done) {
+    var layer = new Layer('test', null, {})
+    var e = layer.events.entry
+    var data = {
+      Array: [],
+      Object: { bar: 'baz' },
+      Function: function () {},
+      Date: new Date,
+      String: 'bix'
+    }
+
+    var expected = {
+      String: 'bix'
+    }
+
+    var checks = [
+      helper.checkEntry('test'),
+      helper.checkInfo(expected, function (msg) {
+        msg.should.not.have.property('Object')
+        msg.should.not.have.property('Array')
+        msg.should.not.have.property('Function')
+        msg.should.not.have.property('Date')
+      }),
+      helper.checkExit('test'),
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    layer.run(function () {
+      layer.info(data)
+    })
+  })
+
   it('should not send info events when not in a layer', function () {
     var layer = new Layer('test', null, {})
     var data = { Foo: 'bar' }

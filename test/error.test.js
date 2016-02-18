@@ -134,8 +134,41 @@ describe('error', function () {
     ], done)
   })
 
+  it('should rethrow errors in sync calls', function (done) {
+    handleErrorTest(function (done) {
+      var rethrow = false
+      try {
+        tv.instrument(testLayer, function () {
+          throw error
+        }, conf)
+      } catch (e) {
+        rethrow = e === error
+      }
+      if ( ! rethrow) {
+        throw new Error('did not rethrow')
+      }
+      done()
+    }, done)
+  })
+
   it('should support string errors', function (done) {
     var error = 'test'
+    helper.httpTest(emitter, function (done) {
+      tv.reportError(error)
+      done()
+    }, [
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error)
+        msg.should.have.property('Backtrace')
+      }
+    ], done)
+  })
+
+  it('should support empty string errors', function (done) {
+    var error = ''
     helper.httpTest(emitter, function (done) {
       tv.reportError(error)
       done()
@@ -181,6 +214,19 @@ describe('error', function () {
       tv.reportError(error)
       done()
     }, [ validate, validate ], done)
+  })
+
+  it('should not send error events when not in a layer', function () {
+    var layer = new Layer('test', null, {})
+
+    var send = Event.prototype.send
+    Event.prototype.send = function () {
+      Event.prototype.send = send
+      throw new Error('should not send when not in a layer')
+    }
+
+    layer.error(error)
+    Event.prototype.send = send
   })
 
 })
