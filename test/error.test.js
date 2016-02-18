@@ -1,5 +1,6 @@
 var helper = require('./helper')
 var tv = require('..')
+var Layer = tv.Layer
 var Event = tv.Event
 
 describe('error', function () {
@@ -50,6 +51,18 @@ describe('error', function () {
     event.should.have.property('ErrorClass', 'Error')
     event.should.have.property('ErrorMsg', err.message)
     event.should.have.property('Backtrace', err.stack)
+  })
+
+  it('should set error multiple times (keeping last)', function () {
+    var event = new Event('error-test', 'info')
+    var first = new Error('first')
+    var second = new Error('second')
+    event.error = first
+    event.error = second
+
+    event.should.have.property('ErrorClass', 'Error')
+    event.should.have.property('ErrorMsg', second.message)
+    event.should.have.property('Backtrace', second.stack)
   })
 
   it('should report errors in sync calls', function (done) {
@@ -119,6 +132,101 @@ describe('error', function () {
         msg.Edge.should.equal(last)
       }
     ], done)
+  })
+
+  it('should rethrow errors in sync calls', function (done) {
+    handleErrorTest(function (done) {
+      var rethrow = false
+      try {
+        tv.instrument(testLayer, function () {
+          throw error
+        }, conf)
+      } catch (e) {
+        rethrow = e === error
+      }
+      if ( ! rethrow) {
+        throw new Error('did not rethrow')
+      }
+      done()
+    }, done)
+  })
+
+  it('should support string errors', function (done) {
+    var error = 'test'
+    helper.httpTest(emitter, function (done) {
+      tv.reportError(error)
+      done()
+    }, [
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error)
+        msg.should.have.property('Backtrace')
+      }
+    ], done)
+  })
+
+  it('should support empty string errors', function (done) {
+    var error = ''
+    helper.httpTest(emitter, function (done) {
+      tv.reportError(error)
+      done()
+    }, [
+      function (msg) {
+        msg.should.not.have.property('Layer')
+        msg.should.have.property('Label', 'error')
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorMsg', error)
+        msg.should.have.property('Backtrace')
+      }
+    ], done)
+  })
+
+  it('should fail silently when given non-error, non-string types', function () {
+    var layer = new Layer('test', null, {})
+    layer._internal = function () {
+      throw new Error('should not have triggered an _internal call')
+    }
+    layer.error({ foo: 'bar' })
+    layer.error(undefined)
+    layer.error(new Date)
+    layer.error(/foo/)
+    layer.error(null)
+    layer.error([])
+    layer.error(1)
+  })
+
+  it('should allow sending the same error multiple times', function (done) {
+    var error = new Error('dupe')
+
+    // TODO: validate edge chaining
+    function validate (msg) {
+      msg.should.not.have.property('Layer')
+      msg.should.have.property('Label', 'error')
+      msg.should.have.property('ErrorClass', 'Error')
+      msg.should.have.property('ErrorMsg', error.message)
+      msg.should.have.property('Backtrace', error.stack)
+    }
+
+    helper.httpTest(emitter, function (done) {
+      tv.reportError(error)
+      tv.reportError(error)
+      done()
+    }, [ validate, validate ], done)
+  })
+
+  it('should not send error events when not in a layer', function () {
+    var layer = new Layer('test', null, {})
+
+    var send = Event.prototype.send
+    Event.prototype.send = function () {
+      Event.prototype.send = send
+      throw new Error('should not send when not in a layer')
+    }
+
+    layer.error(error)
+    Event.prototype.send = send
   })
 
 })
