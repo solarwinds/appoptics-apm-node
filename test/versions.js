@@ -1,6 +1,7 @@
 var semver = require('semver')
 var modules = module.exports = []
 
+test('bcrypt',              '>= 0.7.4')
 test('bluebird')
 
 test('cassandra-driver',    '>= 0.2.0')
