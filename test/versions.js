@@ -9,6 +9,8 @@ test('co-render')
 test('director',            '>= 1.1.10')
 test('express',             '>= 3.0.0')
 
+test('generic-pool',        '>= 1.0.3')
+
 // Exclude 8.3.0 and 9.0.0 due to missing dependency bugs
 test('hapi',                '>= 6.0.0 < 8.3.0 || >= 8.3.1 < 9.0.0 || >= 9.0.1')
 test('koa-resource-router')
