@@ -30,8 +30,10 @@ describe('probes.mysql', function () {
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
+    tv.fs.enabled = false
   })
   after(function (done) {
+    tv.fs.enabled = true
     emitter.close(done)
   })
 
@@ -69,7 +71,7 @@ describe('probes.mysql', function () {
   }
 
   // Ensure database/table existence
-  beforeEach(function (done) {
+  before(function (done) {
     var db = makeDb({
       host: addr.host,
       port: addr.port,
@@ -85,7 +87,7 @@ describe('probes.mysql', function () {
   })
 
   // Make connection
-  beforeEach(function (done) {
+  before(function (done) {
     db = ctx.mysql = makeDb({
       host: addr.host,
       port: addr.port,
@@ -115,14 +117,14 @@ describe('probes.mysql', function () {
   })
 
   if (semver.satisfies(pkg.version, '>= 2.6.0')) {
-    afterEach(function (done) {
+    after(function (done) {
       var fn = helper.after(3, done)
       cluster.end(fn)
       pool.end(fn)
       db.end(fn)
     })
   } else if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-    afterEach(function (done) {
+    after(function (done) {
       cluster.end()
       pool.end()
       db.end(done)

@@ -1,7 +1,9 @@
 exports.run = function (ctx, done) {
 	ctx.mysql.cluster.getConnection(function (err, connection) {
 		function complete (err, res) {
-			connection.release()
+			if (typeof connection !== 'undefined') {
+				connection.release()
+			}
 			done(err, res)
 		}
 
