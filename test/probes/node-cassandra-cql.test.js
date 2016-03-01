@@ -55,8 +55,10 @@ describe('probes.cassandra', function () {
       emitter = helper.tracelyzer(done)
       tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
       tv.traceMode = 'always'
+      tv.fs.enabled = false
     })
     after(function (done) {
+      tv.fs.enabled = true
       emitter.close(done)
     })
 

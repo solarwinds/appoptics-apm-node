@@ -45,6 +45,8 @@ if (MONGODB_VERSION === 2) {
 // MongoDB 2.x support is handle via mongodb-core instrumentation
 test('mongodb-core', '>= 1.1.0')
 
+test('mongoose',     '>= 2.2.1 < 4.2 || >= 4.2.2')
+
 test('mysql',               '> 0.9.0')
 test('node-cassandra-cql',  '>= 0.2.0')
 test('oracledb')
