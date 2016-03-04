@@ -16,10 +16,12 @@ describe('probes.raw-body', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
     emitter = helper.tracelyzer(done)
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'always'
+    tv.fs.enabled = false
+    tv.Layer.last = null
+    tv.Event.last = null
   })
   after(function (done) {
     tv.fs.enabled = true
