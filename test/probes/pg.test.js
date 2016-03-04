@@ -13,8 +13,8 @@ var addr = helper.Address.from(process.env.TEST_POSTGRES || 'localhost:5432')[0]
 var auth = {
   host: addr.host,
   port: addr.port,
-  user: process.env.TEST_POSTGRES_USERNAME || 'postgres',
-  password: process.env.TEST_POSTGRES_PASSWORD,
+  user: process.env.TEST_POSTGRES_USERNAME || process.env.DATABASE_POSTGRESQL_USERNAME || 'postgres',
+  password: process.env.TEST_POSTGRES_PASSWORD || process.env.DATABASE_POSTGRESQL_PASSWORD,
   database: 'test'
 }
 
