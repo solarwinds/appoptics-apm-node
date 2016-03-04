@@ -13,6 +13,8 @@ var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 
 var addr = Address.from(process.env.TEST_MYSQL || 'localhost:3306')[0]
+var user = process.env.TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
+var pass = process.env.TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
 var soon = global.setImmediate || process.nextTick
 
 describe('probes.mysql', function () {
@@ -75,8 +77,8 @@ describe('probes.mysql', function () {
     var db = makeDb({
       host: addr.host,
       port: addr.port,
-      user: process.env.TEST_MYSQL_USERNAME || 'root',
-      password: process.env.TEST_MYSQL_PASSWORD
+      user: user,
+      password: pass
     }, function (err) {
       if (err) return done(err)
       db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
@@ -92,8 +94,8 @@ describe('probes.mysql', function () {
       host: addr.host,
       port: addr.port,
       database: 'test',
-      user: process.env.TEST_MYSQL_USERNAME || 'root',
-      password: process.env.TEST_MYSQL_PASSWORD
+      user: user,
+      password: pass
     }, function (err) {
       if (err) return done(err)
       db.query('CREATE TABLE IF NOT EXISTS test (foo varchar(255));', done)
@@ -106,8 +108,8 @@ describe('probes.mysql', function () {
         host: addr.host,
         port: addr.port,
         database: 'test',
-        user: process.env.TEST_MYSQL_USERNAME || 'root',
-        password: process.env.TEST_MYSQL_PASSWORD
+        user: user,
+        password: pass
       }
 
       pool = db.pool = mysql.createPool(poolConfig)
