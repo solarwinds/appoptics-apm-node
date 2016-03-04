@@ -54,4 +54,20 @@ describe('event', function () {
       event2.send()
     })
   })
+
+  it('should support set function', function () {
+    var event = new Event('test', 'entry')
+    event.set({ Foo: 'bar' })
+    event.should.have.property('Foo', 'bar')
+  })
+
+  it('should support data in send function', function () {
+    var event = new Event('test', 'entry')
+    var called = false
+    event.set = function () {
+      called = true
+    }
+    event.send({ Foo: 'bar' })
+    called.should.equal(true)
+  })
 })
