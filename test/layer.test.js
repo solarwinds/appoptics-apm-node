@@ -263,25 +263,22 @@ describe('layer', function () {
     })
   })
 
-  it('should support exiting with an error', function (done) {
-    var layer = new Layer('test', null, {})
+  it('should support setting an exit error', function () {
+    // Proper errors should work
+    var a = new Layer('test', null, {})
+    var aExit = a.events.exit
     var err = new Error('nope')
+    a.setExitError(err)
+    aExit.should.have.property('ErrorClass', 'Error')
+    aExit.should.have.property('ErrorMsg', err.message)
+    aExit.should.have.property('Backtrace', err.stack)
 
-    var checks = [
-      helper.checkEntry('test'),
-      helper.checkExit('test', function (msg) {
-        msg.should.have.property('ErrorClass', 'Error')
-        msg.should.have.property('ErrorMsg', err.message)
-        msg.should.have.property('Backtrace', err.stack)
-      }),
-    ]
-
-    helper.doChecks(emitter, checks, done)
-
-    layer.run(function () {
-      layer.enter()
-      layer.exitWithError(err)
-    })
+    // As should error strings
+    var b = new Layer('test', null, {})
+    var bExit = b.events.exit
+    b.setExitError('nope')
+    bExit.should.have.property('ErrorClass', 'Error')
+    bExit.should.have.property('ErrorMsg', 'nope')
   })
 
   //
