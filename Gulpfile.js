@@ -1,21 +1,32 @@
 var fs = require('fs')
+var path = require('path')
 var gulp = require('gulp')
+var babel = require('gulp-babel')
 var mocha = require('gulp-mocha')
 var matcha = require('gulp-matcha')
 var yuidoc = require('gulp-yuidoc')
 var istanbul = require('gulp-istanbul')
 var spawn = require('child_process').spawn
+var mkdirp = require('mkdirp')
 var pkg = require('./package')
+
+// Ensure existence of dist and probe directories
+gulp.task('dist', function (cb) {
+  mkdirp('dist', cb)
+})
+gulp.task('dist/probes', ['dist'], function (cb) {
+  mkdirp('dist/probes', cb)
+})
 
 // Describe basic tasks and their associated files
 var tasks = {
   unit: {
-    lib: 'lib/*.js',
+    lib: 'dist/*.js',
     test: 'test/*.test.js',
     bench: 'test/*.bench.js',
   },
   probes: {
-    lib: 'lib/probes/*.js',
+    lib: 'dist/probes/*.js',
     test: 'test/probes/*.test.js',
     bench: 'test/probes/*.bench.js',
   }
@@ -26,7 +37,7 @@ var probes = fs.readdirSync('lib/probes')
 probes.forEach(function (probe) {
   var name = probe.replace(/\.js$/, '')
   var task = tasks['probe:' + name] = {
-    lib: 'lib/probes/' + probe
+    lib: 'dist/probes/' + probe
   }
 
   var test = 'test/probes/' + name + '.test.js'
@@ -37,6 +48,16 @@ probes.forEach(function (probe) {
   var bench = 'test/probes/' + name + '.bench.js'
   if (fs.existsSync(bench)) {
     task.bench = bench
+  }
+})
+
+// Create build tasks
+makeBuildTask('build', 'dist/**/*.js')
+makeBuildTask('build:probe', 'dist/probe/*.js')
+Object.keys(tasks).forEach(function (name) {
+  var task = tasks[name]
+  if (task.lib) {
+    makeBuildTask('build:' + name, task.lib)
   }
 })
 
@@ -98,6 +119,8 @@ gulp.task('watch', function () {
     if (name === 'probes') return
     var task = tasks[name]
 
+    var shouldBench = task.bench && ! process.env.SKIP_BENCH
+
     // These spawns tasks in a child processes. This is useful for
     // preventing state persistence between runs in a watcher and
     // for preventing crashes or exits from ending the watcher.
@@ -125,10 +148,14 @@ gulp.task('watch', function () {
       return next()
     }
 
+    gulp.watch([ task.lib.replace(/^dist/, 'lib') ], [
+      'build:' + name
+    ])
+
     gulp.watch([ task.lib ], function () {
       var steps = []
       if (task.test) steps.push(coverage)
-      if (task.bench) steps.push(bench)
+      if (shouldBench) steps.push(bench)
       return sequence(steps)
     })
 
@@ -136,7 +163,7 @@ gulp.task('watch', function () {
       gulp.watch([ task.test ], coverage)
     }
 
-    if (task.bench) {
+    if (shouldBench) {
       gulp.watch([ task.bench ], bench)
     }
   })
@@ -165,6 +192,19 @@ function tester () {
   })
 }
 
+function makeBuildTask (name, files) {
+  var p = files.replace(/^dist/, 'lib')
+  var d = files.slice(0, files.length - path.basename(files).length - 1)
+  if (d === 'dist/**') d = 'dist'
+  gulp.task(name, ['dist/probes'], function () {
+    return gulp.src(p)
+      .pipe(babel({
+        presets: ['es2015-minus-generators']
+      }))
+      .pipe(gulp.dest(d))
+  })
+}
+
 function makeBenchTask (name, files) {
   gulp.task(name, function (done) {
     var helper = require('./test/helper')
@@ -184,7 +224,7 @@ function makeBenchTask (name, files) {
 }
 
 function makeTestTask (name, files) {
-  gulp.task(name, function () {
+  gulp.task(name, ['build'], function () {
     return gulp.src(files, {
       read: false
     })
@@ -194,9 +234,9 @@ function makeTestTask (name, files) {
 }
 
 function makeCoverageTask (name, files, libs) {
-  libs = libs || 'lib/**/*.js'
+  libs = libs || 'dist/**/*.js'
 
-  gulp.task('pre-' + name, function () {
+  gulp.task('pre-' + name, ['build'], function () {
     return gulp.src(libs)
       .pipe(istanbul())
       .pipe(istanbul.hookRequire())
