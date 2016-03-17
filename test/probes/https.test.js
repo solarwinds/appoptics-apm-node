@@ -45,6 +45,9 @@ describe('probes.https', function () {
       info: function (msg) {
         msg.should.have.property('Label', 'info')
       },
+      error: function (msg) {
+        msg.should.have.property('Label', 'error')
+      },
       exit: function (msg) {
         msg.should.have.property('Layer', 'nodejs')
         msg.should.have.property('Label', 'exit')
@@ -57,6 +60,9 @@ describe('probes.https', function () {
       },
       info: function (msg) {
         msg.should.have.property('Label', 'info')
+      },
+      error: function (msg) {
+        msg.should.have.property('Label', 'error')
       },
       exit: function (msg) {
         msg.should.have.property('Layer', 'https-client')
@@ -288,7 +294,7 @@ describe('probes.https', function () {
           check.server.entry(msg)
         },
         function (msg) {
-          check.server.info(msg)
+          check.server.error(msg)
           msg.should.have.property('ErrorClass', 'Error')
           msg.should.have.property('ErrorMsg', error.message)
           msg.should.have.property('Backtrace', error.stack)
@@ -323,7 +329,7 @@ describe('probes.https', function () {
           check.server.entry(msg)
         },
         function (msg) {
-          check.server.info(msg)
+          check.server.error(msg)
           msg.should.have.property('ErrorClass', 'Error')
           msg.should.have.property('ErrorMsg', error.message)
           msg.should.have.property('Backtrace', error.stack)
@@ -538,7 +544,7 @@ describe('probes.https', function () {
             msg.should.have.property('IsService', 'yes')
           },
           function (msg) {
-            check.client.info(msg)
+            check.client.error(msg)
             msg.should.have.property('ErrorClass', 'Error')
             msg.should.have.property('ErrorMsg', error.message)
             msg.should.have.property('Backtrace', error.stack)
@@ -590,7 +596,7 @@ describe('probes.https', function () {
             msg.should.have.property('HTTPStatus', 200)
           },
           function (msg) {
-            check.server.info(msg)
+            check.server.error(msg)
             msg.should.have.property('ErrorClass', 'Error')
             msg.should.have.property('ErrorMsg', error.message)
             msg.should.have.property('Backtrace', error.stack)
