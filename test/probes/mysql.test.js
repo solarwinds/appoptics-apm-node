@@ -47,8 +47,8 @@ describe('probes.mysql', function () {
       msg.should.have.property('Flavor', 'mysql')
       msg.should.have.property('RemoteHost', addr.toString())
     },
-    info: function (msg) {
-      msg.should.have.property('Label', 'info')
+    error: function (msg) {
+      msg.should.have.property('Label', 'error')
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'mysql')
@@ -255,7 +255,7 @@ describe('probes.mysql', function () {
         msg.should.have.property('Query', 'SELECT ?')
       },
       function (msg) {
-        checks.info(msg)
+        checks.error(msg)
         msg.should.have.property('ErrorClass', error.constructor.name)
         msg.should.have.property('Backtrace', error.stack)
         msg.should.have.property('ErrorMsg', error.message)
