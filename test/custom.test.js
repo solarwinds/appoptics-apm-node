@@ -2,6 +2,7 @@ var helper = require('./helper')
 var should = require('should')
 var tv = require('..')
 var Layer = tv.Layer
+var Event = tv.Event
 
 //
 //                 ^     ^
@@ -19,24 +20,42 @@ var Layer = tv.Layer
 //
 var soon = global.setImmediate || process.nextTick
 
+var fakeTaskId = '1234567890123456789012345678901234567890'
+var fakeOpId = '1234567890123456'
+var fakeId = '1B' + fakeTaskId + fakeOpId
+
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
 if ( ! tv.addon) {
-  describe('custom', function () {
-    it('should passthrough sync instrumentation without addon', function () {
+  describe('custom (without native bindings present)', function () {
+    it('should passthrough sync instrument', function () {
       var counter = 0
       tv.instrument('test', function () {
         counter++
       })
       counter.should.equal(1)
     })
-
-    it('should passthrough async instrumentation without addon', function (done) {
+    it('should passthrough async instrument', function (done) {
       tv.instrument('test', soon, 'foo', done)
+    })
+
+    it('should passthrough sync startOrContinueTrace', function () {
+      var counter = 0
+      tv.startOrContinueTrace(null, 'test', function () {
+        counter++
+      })
+      counter.should.equal(1)
+    })
+    it('should passthrough async startOrContinueTrace', function (done) {
+      tv.startOrContinueTrace(null, 'test', soon, done)
     })
 
     it('should support callback shifting', function (done) {
       tv.instrument('test', soon, done)
+    })
+
+    it('should not fail when accessing traceId', function () {
+      tv.traceId
     })
   })
   return
@@ -319,6 +338,176 @@ describe('custom', function () {
         msg.Edge.should.equal(last)
       }
     ], done)
+  })
+
+  // Verify startOrContinueTrace creates a new trace when not already tracing.
+  it('should start a fresh trace', function (done) {
+    var last
+
+    helper.doChecks(emitter, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('SampleSource')
+        msg.should.have.property('SampleRate')
+        msg.should.not.have.property('Edge')
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+
+    var test = 'foo'
+    var res = tv.startOrContinueTrace(null, function (last) {
+      return last.descend('test')
+    }, function () {
+      return test
+    }, conf)
+
+    res.should.equal(test)
+  })
+
+  // Verify startOrContinueTrace continues from provided trace id.
+  it('should continue from previous trace id', function (done) {
+    var last
+
+    helper.doChecks(emitter, [
+      function (msg) {
+        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Label', 'entry')
+        msg.should.not.have.property('Edge')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        msg.should.not.have.property('SampleSource')
+        msg.should.not.have.property('SampleRate')
+        msg.Edge.should.equal(entry.opId)
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+
+    var previous = new Layer('previous')
+    var entry = previous.events.entry
+    previous.async = true
+    previous.enter()
+
+    // Clear context
+    Layer.last = Event.last = null
+
+    tv.startOrContinueTrace(entry.toString(), function (last) {
+      return last.descend('test')
+    }, function (cb) { cb() }, conf, function () {
+      previous.exit()
+    })
+  })
+
+  // Verify startOrContinueTrace continues from existing traces,
+  // when already tracing, whether or not an xtrace if is provided.
+  it('should continue outer traces when already tracing', function (done) {
+    var prev, outer, sub
+
+    helper.doChecks(emitter, [
+      function (msg) {
+        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Label', 'entry')
+        msg.should.not.have.property('Edge')
+        prev = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'entry')
+        // SampleSource and SampleRate should NOT be here due to continuation
+        msg.should.not.have.property('SampleSource')
+        msg.should.not.have.property('SampleRate')
+        msg.should.have.property('Edge', prev)
+        outer = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'entry')
+        // SampleSource and SampleRate should NOT be here due to continuation
+        msg.should.not.have.property('SampleSource')
+        msg.should.not.have.property('SampleRate')
+        msg.should.have.property('Edge', outer)
+        sub = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('Edge', sub)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('Edge', outer)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('Edge', prev)
+      }
+    ], done)
+
+    var previous = new Layer('previous')
+    var entry = previous.events.entry
+
+    previous.run(function (wrap) {
+      // Verify ID-less calls continue
+      tv.startOrContinueTrace(null, 'outer', function (cb) {
+        soon(function () {
+          // Verify ID'd calls continue
+          tv.startOrContinueTrace(entry.toString(), 'inner', function (cb) {
+            cb()
+          }, conf, cb)
+        })
+      }, conf, wrap(function () {}))
+    })
+  })
+
+  // Verify startOrContinueTrace handles a false sample check correctly.
+  it('should sample properly', function (done) {
+    var realSample = tv.sample
+    var called = false
+    tv.sample = function () {
+      called = true
+      return false
+    }
+
+    helper.test(emitter, function (done) {
+      Layer.last = Event.last = null
+      tv.startOrContinueTrace(null, 'test', setImmediate, conf, done)
+    }, [], function (err) {
+      called.should.equal(true)
+      tv.sample = realSample
+      done(err)
+    })
+  })
+
+  // Verify traceId getter works correctly
+  it('should get traceId when tracing and null when not', function () {
+    should.not.exist(tv.traceId)
+    tv.startOrContinueTrace(null, 'test', function (cb) {
+      should.exist(tv.traceId)
+      cb()
+    }, function () {
+      should.exist(tv.traceId)
+    })
+    should.not.exist(tv.traceId)
   })
 
 })

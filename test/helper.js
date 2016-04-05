@@ -13,6 +13,13 @@ var http = require('http')
 
 var BSON = new bson.BSONPure.BSON()
 
+function udpSend (msg, port, host) {
+  var client = dgram.createSocket('udp4')
+  client.send(msg, 0, msg.length, Number(port), host, function () {
+    client.close()
+  })
+}
+
 exports.tracelyzer = function (done) {
   // Create UDP server to mock tracelyzer
   var server = dgram.createSocket('udp4')
@@ -32,7 +39,7 @@ exports.tracelyzer = function (done) {
     emitter.emit('message', parsed)
 
     if (emitter.forward) {
-      server.send(msg, 0, msg.length, Number(realPort), '127.0.0.1', function () {})
+      udpSend(msg, realPort, '127.0.0.1')
     }
   })
 
@@ -66,8 +73,6 @@ exports.tracelyzer = function (done) {
 
 exports.doChecks = function (emitter, checks, done) {
   var add = emitter.server.address()
-  var first = true
-
   emitter.removeAllListeners('message')
 
   function onMessage (msg) {
@@ -82,15 +87,9 @@ exports.doChecks = function (emitter, checks, done) {
       }
     }
 
-    // Always verify that a valid X-Trace ID is present
+    // Always verify that X-Trace and Edge values are valid
     msg.should.have.property('X-Trace').and.match(/^1B[0-9A-F]{56}$/)
-
-    // After the first event, verify valid edges are present
-    if (first) {
-      first = false
-    } else {
-      msg.should.have.property('Edge').and.match(/^[0-9A-F]{16}$/)
-    }
+    if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
 
     debug(checks.length + ' checks left')
     if ( ! checks.length) {
