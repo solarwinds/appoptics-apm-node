@@ -151,7 +151,7 @@ describe('probes.express', function () {
     })
   })
 
-  it('should profile middleware specified as array', function (done) {
+  it('should profile multiple middlewares', function (done) {
     function renamer(req, res, next) {
       req.name = req.params.name
       next()
@@ -161,6 +161,67 @@ describe('probes.express', function () {
       res.send(req.name)
     }
 
+    var app = express()
+
+    app.get('/hello/:name', renamer, responder)
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', '/hello/:name renamer')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', '/hello/:name renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', '/hello/:name responder')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'responder')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', '/hello/:name responder')
+      },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should profile middleware specified as array', function (done) {
+    function renamer(req, res, next) {
+      req.name = req.params.name
+      next()
+    }
+
+    function responder(req, res) {
+      res.send(req.name)
+    }
 
     var app = express()
 
@@ -202,6 +263,46 @@ describe('probes.express', function () {
       },
       function (msg) {
         check['http-exit'](msg)
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should trace through param() calls', function (done) {
+    var app = express()
+
+    app.param('name', function (req, req, next, name) {
+      req.hello = name
+      next()
+    })
+
+    app.get('/hello/:name', function hello (req, res) {
+      res.send('Hello, ' + req.hello + '!')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -491,4 +592,132 @@ describe('probes.express', function () {
       request('http://localhost:' + port)
     })
   })
+
+  it('should nest properly', function (done) {
+    var app = express()
+
+    var app2 = express()
+    app.use(app2)
+
+    app2.get('/hello/:name', function hello (req, res) {
+      res.send('done')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  if (semver.satisfies(pkg.version, '>= 4')) {
+    it('should support express.Router()', expressRouterTest)
+    it('should support app.route(path)', appRouteTest)
+  } else {
+    it.skip('should support express.Router()', expressRouterTest)
+    it.skip('should support app.route(path)', appRouteTest)
+  }
+
+  function expressRouterTest (done) {
+    var app = express()
+
+    var router = express.Router()
+
+    router.get('/:name', function hello (req, res) {
+      res.send('done')
+    })
+
+    app.use('/hello', router)
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  }
+
+  function appRouteTest (done) {
+    var app = express()
+
+    app.route('/hello/:name')
+      .get(function hello (req, res) {
+        res.send('done')
+      })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () {},
+      function () {},
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  }
+
 })

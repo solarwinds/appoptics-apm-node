@@ -127,7 +127,7 @@ exports.test = function (emitter, test, validations, done) {
 
   tv.requestStore.run(function () {
     var layer = new tv.Layer('outer')
-    layer.async = true
+    // layer.async = true
     layer.enter()
 
     debug('test started')
