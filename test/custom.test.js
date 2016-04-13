@@ -571,6 +571,35 @@ describe('custom', function () {
     threw.should.equal(false)
   })
 
+  it('should support instrumentHttp', function (done) {
+    // Fake response object
+    var res = new Emitter
+    res.end = res.emit.bind(res, 'end')
+    var last
+
+    helper.test(emitter, function (done) {
+      tv.instrumentHttp(function (layer) {
+        return layer.descend('test')
+      }, function () {
+        setImmediate(function () {
+          res.end()
+          done()
+        })
+      }, conf, res)
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+  })
+
 })
 
 function after (n, cb) {
