@@ -434,31 +434,44 @@ describe('layer', function () {
 
     var trackOuter = helper.edgeTracker()
     var trackInner1 = helper.edgeTracker(trackOuter)
-    var trackInner2 = helper.edgeTracker(trackOuter)
+    var trackInner2 = helper.edgeTracker(trackInner1)
     var trackInner3 = helper.edgeTracker(trackInner1)
     var trackInner4 = helper.edgeTracker(trackInner3)
 
+    // The weird indentation is to match depth of trigerring code,
+    // it might make it easier to match a layer entry to its exit.
     var checks = [
+      // Start async outer
       helper.checkEntry('outer', trackOuter),
 
-        // Async call
+        // Start sync inner-1
         helper.checkEntry('inner-1', trackInner1),
-        helper.checkEntry('inner-2', trackInner2),
 
-        // Next tick
-        helper.checkExit('inner-1', trackInner1),
-          helper.checkInfo(after, trackInner1),
+          // Start async inner-3, surrounded by info events
+          helper.checkInfo(before, trackInner1),
           helper.checkEntry('inner-3', trackInner3),
           helper.checkInfo(after, trackInner1),
-        helper.checkExit('inner-2', trackInner2),
 
-      // Faked sync exit
-      helper.checkExit('outer', trackInner2),
+        // Finish sync inner-1
+        helper.checkExit('inner-1', trackInner1),
 
-          // Delayed until after fake sync exit
+        // Start async inner-2
+        helper.checkEntry('inner-2', trackInner2),
+
+          // Finish async inner-3
           helper.checkExit('inner-3', trackInner3),
+
+            // Start async inner-4
             helper.checkError(error, trackInner3),
             helper.checkEntry('inner-4', trackInner4),
+
+        // Finish async inner-2
+        helper.checkExit('inner-2', trackInner2),
+
+      // Finish async outer
+      helper.checkExit('outer', trackInner2),
+
+            // Finish async inner-4
             helper.checkExit('inner-4', trackInner4),
     ]
 
@@ -467,24 +480,22 @@ describe('layer', function () {
     tv.requestStore.run(function () {
       layer.enter()
       var sub1 = layer.descend('inner-1')
-      sub1.run(function (wrap) {
-        setImmediate(wrap(function () {
-          tv.reportInfo(after)
+      sub1.run(function () {
+        tv.reportInfo(before)
 
-          var sub2 = layer.descend('inner-3')
-          sub2.run(function (wrap) {
-            setImmediate(wrap(function () {
-              tv.reportError(error)
+        var sub2 = layer.descend('inner-3')
+        sub2.run(function (wrap) {
+          setImmediate(wrap(function () {
+            tv.reportError(error)
 
-              var sub2 = layer.descend('inner-4')
-              sub2.run(function (wrap) {
-                setImmediate(wrap(function () {}))
-              })
-            }))
-          })
+            var sub2 = layer.descend('inner-4')
+            sub2.run(function (wrap) {
+              setImmediate(wrap(function () {}))
+            })
+          }))
+        })
 
-          tv.reportInfo(after)
-        }))
+        tv.reportInfo(after)
       })
 
       var sub2 = layer.descend('inner-2')
