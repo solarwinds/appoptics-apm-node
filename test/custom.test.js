@@ -1,3 +1,4 @@
+var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')
 var tv = require('..')
@@ -508,6 +509,66 @@ describe('custom', function () {
       should.exist(tv.traceId)
     })
     should.not.exist(tv.traceId)
+  })
+
+  it('should bind functions to requestStore', function () {
+    var bind = tv.requestStore.bind
+    var threw = false
+    var called = false
+
+    tv.requestStore.bind = function () {
+      called = true
+    }
+
+    function noop () {}
+
+    try {
+      tv.bind(noop)
+      called.should.equal(false)
+      var layer = new tv.Layer('test', 'entry')
+      layer.run(function () {
+        tv.bind(null)
+        called.should.equal(false)
+        tv.bind(noop)
+        called.should.equal(true)
+      })
+    } catch (e) {
+      threw = true
+    }
+
+    tv.requestStore.bind = bind
+
+    threw.should.equal(false)
+  })
+
+  it('should bind emitters to requestStore', function () {
+    var bindEmitter = tv.requestStore.bindEmitter
+    var threw = false
+    var called = false
+
+    tv.requestStore.bindEmitter = function () {
+      called = true
+    }
+
+    var emitter = new Emitter
+
+    try {
+      tv.bindEmitter(emitter)
+      called.should.equal(false)
+      var layer = new tv.Layer('test', 'entry')
+      layer.run(function () {
+        tv.bindEmitter(null)
+        called.should.equal(false)
+        tv.bindEmitter(emitter)
+        called.should.equal(true)
+      })
+    } catch (e) {
+      threw = true
+    }
+
+    tv.requestStore.bindEmitter = bindEmitter
+
+    threw.should.equal(false)
   })
 
 })
