@@ -1,7 +1,3 @@
-[![travis](http://img.shields.io/travis/appneta/node-traceview.svg)](https://travis-ci.org/appneta/node-traceview)
-[![npm](http://img.shields.io/npm/v/traceview.svg)](https://www.npmjs.org/package/traceview)
-[![waffle](https://badge.waffle.io/appneta/node-traceview.svg?label=ready&title=Ready)](http://waffle.io/appneta/node-traceview)
-
 # TraceView
 
 The `traceview` module provides AppNeta [TraceView](http://www.appneta.com/application-performance-management/) instrumentation for Node.JS.
