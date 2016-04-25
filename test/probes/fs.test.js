@@ -113,7 +113,9 @@ describe('probes.fs', function () {
       name: 'readFile',
       args: ['fs-output/foo.bar'],
       subs: function () {
-        if (semver.satisfies(process.versions.node, '>1.0.0') && mode !== 'sync') {
+        // 6.0.0-rc.* does not satisfy >1.0.0? WAT?
+        var v = process.versions.node.split('-').shift()
+        if (semver.satisfies(v, '>1.0.0', true) && mode !== 'sync') {
           return []
         }
         return [span('open'), span('fstat'), span('read'), span('close')]
@@ -201,9 +203,13 @@ describe('probes.fs', function () {
       args: ['fs-output/foo.bar.link'],
       // realpath walks up every level of the path and does an lstat at each
       subs: function () {
-        return resolved.split('/').slice(1).map(function () {
-          return span('lstat')
-        })
+        // 6.0.0-rc.* does not satisfy >1.0.0? WAT?
+        var v = process.versions.node.split('-').shift()
+        return semver.satisfies(v, '<6', true)
+          ? resolved.split('/').slice(1).map(function () {
+            return span('lstat')
+          })
+          : []
       }
     },
     // fs.lstat
