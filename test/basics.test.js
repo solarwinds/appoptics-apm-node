@@ -99,6 +99,27 @@ describe('basics', function () {
     tv.skipSample = skipSample
   })
 
+  it('should not call sampleRate setter from sample function', function () {
+    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
+    tv.traceMode = 'always'
+    var skipSample = tv.skipSample
+    tv.skipSample = false
+
+    function after (err) {
+      tv.addon.Context.setDefaultSampleRate = old
+      tv.skipSample = skipSample
+    }
+
+    var old = tv.addon.Context.setDefaultSampleRate
+    tv.addon.Context.setDefaultSampleRate = function () {
+      after()
+      throw new Error('Should not have called sampleRate setter')
+    }
+
+    tv.sample('test')
+    after()
+  })
+
   it('should not trace in through without xtrace header', function (done) {
     tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
     tv.traceMode = 'through'
