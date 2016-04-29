@@ -162,7 +162,10 @@ describe('probes.tedious', function () {
       userName: user,
       password: pass,
       server: addr.host,
-      port: addr.port
+      port: addr.port,
+      options: {
+        tdsVersion: '7_1'
+      }
     })
 
     connection.on('connect', function () {
