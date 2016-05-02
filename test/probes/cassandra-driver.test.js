@@ -126,7 +126,7 @@ describe('probes.cassandra-driver', function () {
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
-        msg.should.have.property('ConsistencyLevel', 'one')
+        msg.should.have.property('ConsistencyLevel')
       },
       function (msg) {
         checks.info(msg)
@@ -142,7 +142,7 @@ describe('probes.cassandra-driver', function () {
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT now() FROM system.local')
-        msg.should.have.property('ConsistencyLevel', 'one')
+        msg.should.have.property('ConsistencyLevel')
       },
       function (msg) {
         checks.info(msg)
