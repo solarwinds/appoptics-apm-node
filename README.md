@@ -142,8 +142,8 @@ before attempting to compile the C extension.
 
 ```bash
 >$ dpkg -l | grep liboboe
-ii  liboboe-dev    1.1.1-precise1    Tracelytics common library -- development files
-ii  liboboe0       1.1.1-precise1    Tracelytics common library
+ii  liboboe-dev                              1.2.1-trusty1                       amd64        AppNeta TraceView common library -- development files
+ii  liboboe0                                 1.2.1-trusty1                       amd64        AppNeta Traceview common library
 ```
 
 See [Installing Base Packages on Debian and Ubuntu](https://support.appneta.com/cloud/installing-traceview)
