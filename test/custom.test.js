@@ -341,6 +341,58 @@ describe('custom', function () {
     ], done)
   })
 
+  it('should fail gracefully when invalid arguments are given', function (done) {
+    helper.test(emitter, function (done) {
+      function build (layer) { return layer.descend('test') }
+      function inc () { count++ }
+      function run () {}
+      var count = 0
+
+      // Verify nothing bad happens when run function is missing
+      tv.instrument(build)
+      tv.startOrContinueTrace(null, build)
+
+      // Verify nothing bad happens when build function is missing
+      tv.instrument(null, run)
+      tv.startOrContinueTrace(null, null, run)
+
+      // Verify the runner is still run when builder fails to return a layer
+      tv.instrument(inc, inc)
+      tv.startOrContinueTrace(null, inc, inc)
+      count.should.equal(4)
+
+      done()
+    }, [], done)
+  })
+
+  it('should handle errors correctly between build and run functions', function (done) {
+    helper.test(emitter, function (done) {
+      var err = new Error('nope')
+      function build (layer) { return layer.descend('test') }
+      function nope () { count++; throw err }
+      function inc () { count++ }
+      var count = 0
+
+      // Verify errors thrown in builder do not propagate
+      tv.instrument(nope, inc)
+      tv.startOrContinueTrace(null, nope, inc)
+      count.should.equal(4)
+
+      // Verify that errors thrown in the runner function *do* propagate
+      count = 0
+      function validateError (e) { return e === err }
+      should.throws(function () {
+        tv.instrument(build, nope)
+      }, validateError)
+      should.throws(function () {
+        tv.startOrContinueTrace(null, build, nope)
+      }, validateError)
+      count.should.equal(2)
+
+      done()
+    }, [], done)
+  })
+
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace', function (done) {
     var last
