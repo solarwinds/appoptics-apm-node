@@ -12,12 +12,22 @@ var request = require('request')
 var fs = require('fs')
 
 // Don't even load hapi in 0.8. Bad stuff will happen.
+var nodeVersion = process.version.slice(1)
+var hasES6 = semver.satisfies(nodeVersion, '> 4')
+var pkg = require('hapi/package.json')
 var hapi
-if (semver.satisfies(process.version.slice(1), '> 0.8')) {
-  hapi = require('hapi')
+var vision
+if (semver.satisfies(nodeVersion, '> 0.8')) {
+  if (hasES6 || semver.satisfies(pkg.version, '< 11')) {
+    hapi = require('hapi')
+  }
+
+  var visionPkg = require('vision/package.json')
+  if (hasES6 || semver.satisfies(visionPkg.version, '< 4')) {
+    vision = require('vision')
+  }
 }
 
-var pkg = require('hapi/package.json')
 
 describe('probes.hapi', function () {
   var emitter
@@ -69,7 +79,7 @@ describe('probes.hapi', function () {
 
     if (semver.satisfies(pkg.version, '>= 9.0.0')) {
       server = new hapi.Server()
-      server.register(require('vision'), function () {
+      server.register(vision, function () {
         if (config.views) {
           server.views(config.views)
         }
@@ -317,7 +327,7 @@ describe('probes.hapi', function () {
   }
 
   var httpMethods = ['get','post','put','delete']
-  if (semver.satisfies(process.version.slice(1), '> 0.8')) {
+  if (hapi && vision) {
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })

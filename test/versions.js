@@ -12,7 +12,10 @@ test('express',             '>= 3.0.0')
 test('generic-pool',        '>= 1.0.3')
 
 // Exclude 8.3.0 and 9.0.0 due to missing dependency bugs
-test('hapi',                '>= 6.0.0 < 8.3.0 || >= 8.3.1 < 9.0.0 || >= 9.0.1')
+test('hapi',                [
+  '>= 6 < 8.3 || >= 8.3.1 < 9 || >= 9.0.1',
+  version('>= 4.0.0') ? '>= 9.0.1' : '>= 9.0.1 < 11'
+])
 test('koa-resource-router')
 test('koa-route',           '>= 1.0.1')
 test('koa-router',          '>= 1.6.0')
