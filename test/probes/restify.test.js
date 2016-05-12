@@ -4,7 +4,7 @@ var addon = tv.addon
 
 var should = require('should')
 var semver = require('semver')
-var rum = require('../../lib/rum')
+var rum = require('../../dist/rum')
 
 var request = require('request')
 var fs = require('fs')

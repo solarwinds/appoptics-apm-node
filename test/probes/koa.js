@@ -6,7 +6,7 @@ var koa = require('koa')
 var helper = require('../helper')
 var request = require('request')
 
-var rum = require('../../lib/rum')
+var rum = require('../../dist/rum')
 var tv = require('../..')
 
 var views = require('co-views')

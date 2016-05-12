@@ -162,6 +162,7 @@ describe('probes.zlib', function () {
         it('should support ' + name, function (done) {
           helper.test(emitter, function (done) {
             var inst = new (zlib[name])(options)
+            inst.should.be.an.instanceOf(zlib[name])
             inst.on('error', done)
             inst.on('close', done)
             inst.on('end', done)
@@ -195,6 +196,7 @@ describe('probes.zlib', function () {
         it('should support ' + creator, function (done) {
           helper.test(emitter, function (done) {
             var inst = new zlib[creator](options)
+            inst.should.be.an.instanceOf(zlib[name])
             inst.on('error', done)
             inst.on('close', done)
             inst.on('end', done)

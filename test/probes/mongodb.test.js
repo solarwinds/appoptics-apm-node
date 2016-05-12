@@ -9,7 +9,7 @@ var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
 
-var requirePatch = require('../../lib/require-patch')
+var requirePatch = require('../../dist/require-patch')
 requirePatch.disable()
 var pkg = require('mongodb/package.json')
 requirePatch.enable()

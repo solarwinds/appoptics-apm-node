@@ -254,7 +254,7 @@ describe('probes.memcached', function () {
 
   it('should work normally when not tracing', function (done) {
     helper.test(emitter, function (done) {
-      tv.requestStore.set('lastLayer', null)
+      tv.Layer.last = tv.Event.last = null
       mem.get('foo', done)
     }, [], function (err) {
       done(err)

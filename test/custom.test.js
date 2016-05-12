@@ -1,3 +1,4 @@
+var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')
 var tv = require('..')
@@ -340,6 +341,58 @@ describe('custom', function () {
     ], done)
   })
 
+  it('should fail gracefully when invalid arguments are given', function (done) {
+    helper.test(emitter, function (done) {
+      function build (layer) { return layer.descend('test') }
+      function inc () { count++ }
+      function run () {}
+      var count = 0
+
+      // Verify nothing bad happens when run function is missing
+      tv.instrument(build)
+      tv.startOrContinueTrace(null, build)
+
+      // Verify nothing bad happens when build function is missing
+      tv.instrument(null, run)
+      tv.startOrContinueTrace(null, null, run)
+
+      // Verify the runner is still run when builder fails to return a layer
+      tv.instrument(inc, inc)
+      tv.startOrContinueTrace(null, inc, inc)
+      count.should.equal(4)
+
+      done()
+    }, [], done)
+  })
+
+  it('should handle errors correctly between build and run functions', function (done) {
+    helper.test(emitter, function (done) {
+      var err = new Error('nope')
+      function build (layer) { return layer.descend('test') }
+      function nope () { count++; throw err }
+      function inc () { count++ }
+      var count = 0
+
+      // Verify errors thrown in builder do not propagate
+      tv.instrument(nope, inc)
+      tv.startOrContinueTrace(null, nope, inc)
+      count.should.equal(4)
+
+      // Verify that errors thrown in the runner function *do* propagate
+      count = 0
+      function validateError (e) { return e === err }
+      should.throws(function () {
+        tv.instrument(build, nope)
+      }, validateError)
+      should.throws(function () {
+        tv.startOrContinueTrace(null, build, nope)
+      }, validateError)
+      count.should.equal(2)
+
+      done()
+    }, [], done)
+  })
+
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace', function (done) {
     var last
@@ -508,6 +561,95 @@ describe('custom', function () {
       should.exist(tv.traceId)
     })
     should.not.exist(tv.traceId)
+  })
+
+  it('should bind functions to requestStore', function () {
+    var bind = tv.requestStore.bind
+    var threw = false
+    var called = false
+
+    tv.requestStore.bind = function () {
+      called = true
+    }
+
+    function noop () {}
+
+    try {
+      tv.bind(noop)
+      called.should.equal(false)
+      var layer = new tv.Layer('test', 'entry')
+      layer.run(function () {
+        tv.bind(null)
+        called.should.equal(false)
+        tv.bind(noop)
+        called.should.equal(true)
+      })
+    } catch (e) {
+      threw = true
+    }
+
+    tv.requestStore.bind = bind
+
+    threw.should.equal(false)
+  })
+
+  it('should bind emitters to requestStore', function () {
+    var bindEmitter = tv.requestStore.bindEmitter
+    var threw = false
+    var called = false
+
+    tv.requestStore.bindEmitter = function () {
+      called = true
+    }
+
+    var emitter = new Emitter
+
+    try {
+      tv.bindEmitter(emitter)
+      called.should.equal(false)
+      var layer = new tv.Layer('test', 'entry')
+      layer.run(function () {
+        tv.bindEmitter(null)
+        called.should.equal(false)
+        tv.bindEmitter(emitter)
+        called.should.equal(true)
+      })
+    } catch (e) {
+      threw = true
+    }
+
+    tv.requestStore.bindEmitter = bindEmitter
+
+    threw.should.equal(false)
+  })
+
+  it('should support instrumentHttp', function (done) {
+    // Fake response object
+    var res = new Emitter
+    res.end = res.emit.bind(res, 'end')
+    var last
+
+    helper.test(emitter, function (done) {
+      tv.instrumentHttp(function (layer) {
+        return layer.descend('test')
+      }, function () {
+        setImmediate(function () {
+          res.end()
+          done()
+        })
+      }, conf, res)
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        last = msg['X-Trace'].substr(42)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
   })
 
 })

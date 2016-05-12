@@ -57,7 +57,7 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
+    layer.runSync(function () {
 
     })
   })
@@ -83,7 +83,7 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function (wrap) {
+    layer.runAsync(function (wrap) {
       var cb = wrap(function (err, res) {
         should.not.exist(err)
         res.should.equal('foo')
@@ -225,11 +225,10 @@ describe('layer', function () {
   })
 
   //
-  // Miscellaneous
+  // Special events
   //
   it('should send info events', function (done) {
     var layer = new Layer('test', null, {})
-    var e = layer.events.entry
     var data = {
       Foo: 'bar'
     }
@@ -247,6 +246,44 @@ describe('layer', function () {
     })
   })
 
+  it('should send error events', function (done) {
+    var layer = new Layer('test', null, {})
+    var err = new Error('nope')
+
+    var checks = [
+      helper.checkEntry('test'),
+      helper.checkError(err),
+      helper.checkExit('test'),
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    layer.run(function () {
+      layer.error(err)
+    })
+  })
+
+  it('should support setting an exit error', function () {
+    // Proper errors should work
+    var a = new Layer('test', null, {})
+    var aExit = a.events.exit
+    var err = new Error('nope')
+    a.setExitError(err)
+    aExit.should.have.property('ErrorClass', 'Error')
+    aExit.should.have.property('ErrorMsg', err.message)
+    aExit.should.have.property('Backtrace', err.stack)
+
+    // As should error strings
+    var b = new Layer('test', null, {})
+    var bExit = b.events.exit
+    b.setExitError('nope')
+    bExit.should.have.property('ErrorClass', 'Error')
+    bExit.should.have.property('ErrorMsg', 'nope')
+  })
+
+  //
+  // Safety and correctness
+  //
   it('should only send valid properties', function (done) {
     var layer = new Layer('test', null, {})
     var e = layer.events.entry
@@ -328,6 +365,9 @@ describe('layer', function () {
     layer.info(1)
   })
 
+  //
+  // Structural integrity
+  //
   it('should chain internal event edges', function (done) {
     var n = 10 + Math.floor(Math.random() * 10)
     var layer = new Layer('test', null, {})
