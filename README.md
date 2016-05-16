@@ -1,5 +1,11 @@
 # TraceView
 
+[![Travis branch](https://img.shields.io/travis/appneta/node-traceview/master.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/appneta/node-traceview/)
+[![David](https://img.shields.io/david/appneta/node-traceview.svg?maxAge=2592000&style=flat-square)](https://david-dm.org/appneta/node-traceview)
+[![Code Climate](https://img.shields.io/codeclimate/github/kabisaict/flow.svg?maxAge=2592000&style=flat-square)](https://codeclimate.com/github/appneta/node-traceview/)
+[![npm](https://img.shields.io/npm/dm/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
+[![npm](https://img.shields.io/npm/v/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
+
 The `traceview` module provides AppNeta [TraceView](http://www.appneta.com/application-performance-management/) instrumentation for Node.JS.
 
 It has the ability to report performance metrics on an array of libraries,
