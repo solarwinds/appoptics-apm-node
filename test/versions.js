@@ -68,6 +68,8 @@ test('tedious',             '>= 0.1.5')
 test('amqp',                '>= 0.1.8')
 test('director',            '>= 1.2.0')
 
+test('amqplib',             '>= 0.2.0')
+
 //
 // Helpers
 //
