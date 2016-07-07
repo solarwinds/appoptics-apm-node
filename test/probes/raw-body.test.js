@@ -8,6 +8,9 @@ var semver = require('semver')
 var request = require('request')
 var express = require('express')
 var body = require('body-parser')
+var rawBody = require('raw-body')
+var version = require('raw-body/package.json').version
+var ReadableStream = require('stream').Readable
 
 describe('probes.raw-body', function () {
   var emitter
@@ -97,5 +100,59 @@ describe('probes.raw-body', function () {
       })
     })
   })
+
+  if (semver.satisfies(version, '< 2')) {
+    it.skip('should support promises', test_promises)
+    it('should support thunks', test_thunks)
+  } else {
+    it('should support promises', test_promises)
+    it.skip('should support thunks', test_thunks)
+  }
+
+  function makeStream () {
+    return new ReadableStream({
+      read: function () {
+        this.push('hi')
+        this.push(null)
+        return false
+      }
+    })
+  }
+
+  function testStyle (done, runner) {
+    var validations = [
+      function (msg) {
+        msg.should.have.property('Layer', 'body-parser')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'body-parser')
+        msg.should.have.property('Label', 'exit')
+      }
+    ]
+
+    helper.test(emitter, runner, validations, done)
+  }
+
+  function test_promises (done) {
+    testStyle(done, function (done) {
+      rawBody(makeStream(), {
+        length: 2,
+        limit: '1mb'
+      }).then(
+        done.bind(null, null),
+        done
+      )
+    })
+  }
+
+  function test_thunks (done) {
+    testStyle(done, function (done) {
+      rawBody(makeStream(), {
+        length: 2,
+        limit: '1mb'
+      })(done)
+    })
+  }
 
 })
