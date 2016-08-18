@@ -150,7 +150,6 @@ describe('probes.mysql', function () {
     it.skip('should trace a cluster pooled query', test_clustered_pool)
   }
   it('should sanitize a query', test_sanitize)
-  it('should report caller errors', test_caller_error)
   it('should trim long queries', test_long_query)
   it('should skip when disabled', test_disabled)
 
@@ -236,29 +235,6 @@ describe('probes.mysql', function () {
       },
       function (msg) {
         checks.exit(msg)
-      }
-    ], done)
-  }
-
-  function test_caller_error (done) {
-    var error
-    helper.test(emitter, function (done) {
-      try {
-        ctx.mysql.query('SELECT ?', [function () {}], function () {})
-      } catch (err) {
-        error = err
-        done()
-      }
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Query', 'SELECT ?')
-      },
-      function (msg) {
-        checks.error(msg)
-        msg.should.have.property('ErrorClass', error.constructor.name)
-        msg.should.have.property('Backtrace', error.stack)
-        msg.should.have.property('ErrorMsg', error.message)
       }
     ], done)
   }
