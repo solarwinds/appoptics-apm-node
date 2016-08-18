@@ -203,9 +203,9 @@ describe('probes.fs', function () {
       args: ['fs-output/foo.bar.link'],
       // realpath walks up every level of the path and does an lstat at each
       subs: function () {
-        // 6.0.0-rc.* does not satisfy >1.0.0? WAT?
+        // Node 6.0 broke realpath. 6.3 fixed it.
         var v = process.versions.node.split('-').shift()
-        return semver.satisfies(v, '<6', true)
+        return semver.satisfies(v, '<6 || >6.3', true)
           ? resolved.split('/').slice(1).map(function () {
             return span('lstat')
           })
