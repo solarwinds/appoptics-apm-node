@@ -215,7 +215,7 @@ exports.after = function (n, done) {
 }
 
 exports.traceLink = function (id) {
-  return 'https://stephenappneta.tv.appneta.com/traces/view/' + id.substr(2, 40)
+  return 'https://stephenappneta.tv.solarwinds.com/traces/view/' + id.substr(2, 40)
 }
 
 function Address (host, port) {
