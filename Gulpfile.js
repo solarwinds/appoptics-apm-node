@@ -107,7 +107,7 @@ gulp.task('docs', function () {
         name: pkg.name,
         description: pkg.description,
         version: pkg.version,
-        url: 'http://appneta.com'
+        url: 'https://traceview.solarwinds.com/'
       }
     }))
     .pipe(gulp.dest('./docs'))

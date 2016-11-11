@@ -2,11 +2,11 @@
 
 ## Dev environment
 
-The dev environments for [traceview](https://github.com/appneta/node-traceview)
-and [traceview-bindings](https://github.com/appneta/node-traceview-bindings)
+The dev environments for [traceview](https://github.com/tracelytics/node-traceview)
+and [traceview-bindings](https://github.com/tracelytics/node-traceview-bindings)
 consist of a [vagrant](https://www.vagrantup.com/) virtual machine with
 liboboe/tracelyzer and latest stable version of node installed. It reports
-to the [stephenappneta](http://stephenappneta.tv.appneta.com) organization.
+to the [stephenappneta](http://stephenappneta.tv.solarwinds.com) organization.
 
 ### Setup
 

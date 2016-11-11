@@ -9,8 +9,8 @@ sudo apt-get -y install software-properties-common python-software-properties \
   build-essential curl git wget unzip libpq-dev libkrb5-dev
 
 # tracelyzer
-wget https://files.appneta.com/install_appneta.sh
-sudo sh ./install_appneta.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+wget https://files.tv.solarwinds.com/install_traceview.sh
+sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
 
 # node/nvm
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
