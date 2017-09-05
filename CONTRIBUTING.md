@@ -2,8 +2,8 @@
 
 ## Dev environment
 
-The dev environments for [traceview](https://github.com/librato/node-appoptics)
-and [traceview-bindings](https://github.com/librato/node-appoptics-bindings)
+The dev environments for [appoptics](https://github.com/librato/node-appoptics)
+and [appoptics-bindings](https://github.com/librato/node-appoptics-bindings)
 consist of a [vagrant](https://www.vagrantup.com/) virtual machine with
 liboboe/tracelyzer and latest stable version of node installed. It reports
 to the [stephenappneta](http://stephenappneta.tv.solarwinds.com) organization.
