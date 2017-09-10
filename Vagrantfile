@@ -4,20 +4,30 @@ require 'json'
 # This Vagrantfile builds a dev box with all the parts needed for testing
 #
 $script = <<-BASH
+
+#
+# gcc 4.8.4 failed GLIBCXX_3.4.21 not found
+#
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get -y update
+
+sudo apt-get -y install gcc-4.9 g++-4.9
 sudo apt-get -y install software-properties-common python-software-properties \
   build-essential curl git wget unzip libpq-dev libkrb5-dev
 
-# tracelyzer
-wget https://files.tv.solarwinds.com/install_traceview.sh
-sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+# tracelyzer and liboboe
+#[ao]wget https://files.tv.solarwinds.com/install_traceview.sh
+#[ao]sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+sudo sh /appoptics/install-appoptics-daemon.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+# the code requires an environment variable now.
+export APPOPTICS_ACCESS_KEY=f08da708-7f1c-4935-ae2e-122caf1ebe31
 
 # node/nvm
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 echo 'if [[ ":$PATH:" != *":node_modules/.bin:"* ]]; then PATH=${PATH}:node_modules/.bin; fi' >> $HOME/.bashrc
 source $HOME/.nvm/nvm.sh
-nvm install stable
-nvm alias default stable
+nvm install 4.7
+nvm alias default 4.7
 BASH
 
 $exports = <<-BASH
@@ -51,6 +61,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.network 'private_network', type: 'dhcp'
   config.vm.synced_folder '.', '/vagrant', id: 'core', nfs: true
+  config.vm.synced_folder '../artifacts', '/appoptics', nfs: true
+  config.vm.synced_folder '../ao-bindings', '/ao-bindings', nfs: true
 
   config.vm.provision 'docker' do |d|
     images = JSON.parse(File.read('docker-containers.json'), symbolize_names: true)
@@ -90,7 +102,7 @@ Vagrant.configure(2) do |config|
     provider.customize [
       'modifyvm', :id,
       '--memory', 4096,
-      '--cpuexecutioncap', 75
+      '--cpuexecutioncap', 100
     ]
 
     # Enable symlink support
