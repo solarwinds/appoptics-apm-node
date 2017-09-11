@@ -18,12 +18,12 @@ var pkg = require('hapi/package.json')
 var hapi
 var vision
 if (semver.satisfies(nodeVersion, '> 0.8')) {
-  if (hasES6 || semver.satisfies(pkg.version, '< 11')) {
+  if (hasES6 || semver.satisfies(pkg.version, '< 13.6')) {
     hapi = require('hapi')
   }
 
   var visionPkg = require('vision/package.json')
-  if (hasES6 || semver.satisfies(visionPkg.version, '< 4')) {
+  if (hasES6 || semver.satisfies(visionPkg.version, '<= 4.1.1')) {
     vision = require('vision')
   }
 }
