@@ -26,10 +26,13 @@ suite('probes/tedious', function () {
 
   before(function (done) {
     client = new Connection({
-      database: 'test',
-      userName: user,
-      password: pass,
-      server: host
+        userName: user,
+        password: pass,
+        server: host,
+        options: {
+          database: 'test',
+          tdsVersion: '7_1'
+        }
     })
     client.on('connect', done)
   })
