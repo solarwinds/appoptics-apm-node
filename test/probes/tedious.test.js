@@ -158,12 +158,12 @@ describe('probes.tedious', function () {
   // Query helper
   function query (fn) {
     var connection = new Connection({
-      database: 'test',
       userName: user,
       password: pass,
       server: addr.host,
       port: addr.port,
       options: {
+        database: 'test',
         tdsVersion: '7_1'
       }
     })
