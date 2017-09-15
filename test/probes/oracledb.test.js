@@ -55,9 +55,16 @@ describe('probes.oracledb', function () {
     it('should trace execute calls in pool', test_pool)
     it('should include correct isAutoCommit value', test_commit)
   } else {
-    it.skip('should trace execute calls', test_basic)
-    it.skip('should trace execute calls in pool', test_pool)
-    it.skip('should include correct isAutoCommit value', test_commit)
+    let missing = {oracledb, host, database, user: config.user, password: config.password}
+    for (let k in missing) {
+        if (missing[k]) delete missing[k]
+    }
+    missing = Object.keys(missing)
+    describe('skipping probes due to missing: ' + missing.join(', '), function() {
+      it.skip('should trace execute calls', test_basic)
+      it.skip('should trace execute calls in pool', test_pool)
+      it.skip('should include correct isAutoCommit value', test_commit)
+    })
   }
 
   function test_basic (done) {
