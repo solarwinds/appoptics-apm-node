@@ -28,6 +28,10 @@ echo 'if [[ ":$PATH:" != *":node_modules/.bin:"* ]]; then PATH=${PATH}:node_modu
 source $HOME/.nvm/nvm.sh
 nvm install 4.7
 nvm alias default 4.7
+
+# needs oracle's libclntsh.so package
+# https://github.com/oracle/node-oracledb/blob/master/INSTALL.md#instzip
+# and LD_LIBRARY_PATH set to include destination (/opt/oracle/instantclient)
 BASH
 
 $exports = <<-BASH
