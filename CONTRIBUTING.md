@@ -36,6 +36,16 @@ the probe integration tests with `gulp test:probes`. If you want to run the
 tests for a specific module, you can do that too by running
 `gulp test:probe:${module}`.
 
+While developing a branch for the move from Traceview to AppOptics the repo
+is not public. In order to fetch from a private repo it is necessary to
+provide credentials of some sort. So `install-appoptics-bindings.js` is a
+`preinstall` script. If the environment variable `TEST_GITAUTH` is present
+then it is used as a Personal Access Token [tokens] to fetch the repo. If
+`TEST_GITUSER` and `TEST_GITPASS` are present then they are used. Otherwise
+it is assumed that it is fetching a public repository and uses no auth.
+
+[tokens]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+
 ### Running the support matrix test suite
 
 The support matrix test suite runs the tests for a given module against every

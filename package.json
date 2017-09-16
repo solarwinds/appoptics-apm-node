@@ -7,6 +7,7 @@
     "node-tv": "./bin/node-tv"
   },
   "scripts": {
+    "preinstall": "node install-appoptics-bindings.js",
     "test": "gulp test",
     "docs": "gulp docs",
     "install-deps": "./deps.sh",
@@ -57,8 +58,8 @@
     "semver": "^5.0.1",
     "shimmer": "^1.1.0",
     "sliced": "^1.0.1"
-  },
-  "devDependencies": {
+},
+"devDependencies": {
     "alltheversions": "^2.0.0",
     "amqp": "~0.2.4",
     "amqplib": "^0.4.1",
@@ -106,9 +107,11 @@
     "supertest": "^1.1.0",
     "tedious": "^1.12.2",
     "vision": "^4.1.0"
-  },
-  "optionalDependencies": {
-    "appoptics-bindings-vagrant": "/appoptics/appoptics-bindings-1.2.1.tgz",
-    "appoptics-bindings-native": "../ao-bindings/appoptics-bindings-1.2.1.tgz"
+},
+"optionalDependencies": {
+},
+"unused": {
+    "appoptics-bindings-private": "git+https://52eb381ad0f519d4af21bf396175268c135591d0:x-oauth-basic@github.com/librato/node-appoptics-bindings.git#single-step-install",
+    "dev-dependency-oracledb": "^1.13.1"
   }
 }
