@@ -4,7 +4,7 @@
   "description": "Agent for AppOptics",
   "main": "dist/index.js",
   "bin": {
-    "node-tv": "./bin/node-tv"
+    "node-ao": "./bin/node-ao"
   },
   "scripts": {
     "preinstall": "node install-appoptics-bindings.js",
@@ -45,7 +45,6 @@
   "bugs": {
     "url": "https://github.com/appoptics/node-appoptics/issues"
   },
-  "gypfile": true,
   "dependencies": {
     "array-flatten": "^2.1.0",
     "continuation-local-storage": "~3.1.0",
@@ -111,7 +110,7 @@
 "optionalDependencies": {
 },
 "unused": {
-    "appoptics-bindings-private": "git+https://52eb381ad0f519d4af21bf396175268c135591d0:x-oauth-basic@github.com/librato/node-appoptics-bindings.git#single-step-install",
+    "appoptics-bindings-private": "git+https://<secret-token>:x-oauth-basic@github.com/librato/node-appoptics-bindings.git#single-step-install",
     "dev-dependency-oracledb": "^1.13.1"
   }
 }
