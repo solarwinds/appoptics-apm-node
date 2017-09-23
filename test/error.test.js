@@ -1,7 +1,7 @@
 var helper = require('./helper')
-var tv = require('..')
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = require('..')
+var Layer = ao.Layer
+var Event = ao.Event
 
 describe('error', function () {
   var conf = { enabled: true }
@@ -33,8 +33,8 @@ describe('error', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -68,7 +68,7 @@ describe('error', function () {
   it('should report errors in sync calls', function (done) {
     handleErrorTest(function (done) {
       try {
-        tv.instrument(testLayer, function () {
+        ao.instrument(testLayer, function () {
           throw error
         }, conf)
       } catch (e) {}
@@ -78,7 +78,7 @@ describe('error', function () {
 
   it('should report errors in error-first callbacks', function (done) {
     handleErrorTest(function (done) {
-      tv.instrument(testLayer, function (callback) {
+      ao.instrument(testLayer, function (callback) {
         callback(error)
       }, conf, function () {
         done()
@@ -89,7 +89,7 @@ describe('error', function () {
   it('should report custom errors', function (done) {
     var error = new Error('test')
     helper.test(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -107,8 +107,8 @@ describe('error', function () {
     var last
 
     helper.test(emitter, function (done) {
-      tv.instrument(testLayer, function (callback) {
-        tv.reportError(error)
+      ao.instrument(testLayer, function (callback) {
+        ao.reportError(error)
         callback()
       }, conf, done)
     }, [
@@ -138,7 +138,7 @@ describe('error', function () {
     handleErrorTest(function (done) {
       var rethrow = false
       try {
-        tv.instrument(testLayer, function () {
+        ao.instrument(testLayer, function () {
           throw error
         }, conf)
       } catch (e) {
@@ -154,7 +154,7 @@ describe('error', function () {
   it('should support string errors', function (done) {
     var error = 'test'
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -170,7 +170,7 @@ describe('error', function () {
   it('should support empty string errors', function (done) {
     var error = ''
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -210,8 +210,8 @@ describe('error', function () {
     }
 
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
-      tv.reportError(error)
+      ao.reportError(error)
+      ao.reportError(error)
       done()
     }, [ validate, validate ], done)
   })

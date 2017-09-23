@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -16,8 +16,8 @@ describe('probes.http', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -59,7 +59,7 @@ describe('probes.http', function () {
   }
 
   describe('http-server', function () {
-    var conf = tv.http
+    var conf = ao.http
 
     //
     // Test a simple res.end() call in an http server
@@ -102,7 +102,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      var origin = new tv.Event()
+      var origin = new ao.Event()
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -371,7 +371,7 @@ describe('probes.http', function () {
   })
 
   describe('http-client', function () {
-    var conf = tv['http-client']
+    var conf = ao['http-client']
 
     it('should trace http request', function (done) {
       var server = http.createServer(function (req, res) {

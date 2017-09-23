@@ -7,7 +7,7 @@ var cql = require('node-cassandra-cql')
 var postgres = require('pg')
 var https = require('https')
 var http = require('http')
-var tv = require('..')
+var ao = require('..')
 
 //
 // Load task file
@@ -33,7 +33,7 @@ exports.getContext = function (context, done) {
       context.redis = redis
       context.https = https
       context.http = http
-      context.tv = tv
+      context.ao = ao
       done()
     },
 

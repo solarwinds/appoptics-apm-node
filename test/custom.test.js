@@ -1,9 +1,9 @@
 var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = require('..')
+var Layer = ao.Layer
+var Event = ao.Event
 
 //
 //                 ^     ^
@@ -27,36 +27,36 @@ var fakeId = '1B' + fakeTaskId + fakeOpId
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if ( ! tv.addon) {
+if ( ! ao.addon) {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
       var counter = 0
-      tv.instrument('test', function () {
+      ao.instrument('test', function () {
         counter++
       })
       counter.should.equal(1)
     })
     it('should passthrough async instrument', function (done) {
-      tv.instrument('test', soon, 'foo', done)
+      ao.instrument('test', soon, 'foo', done)
     })
 
     it('should passthrough sync startOrContinueTrace', function () {
       var counter = 0
-      tv.startOrContinueTrace(null, 'test', function () {
+      ao.startOrContinueTrace(null, 'test', function () {
         counter++
       })
       counter.should.equal(1)
     })
     it('should passthrough async startOrContinueTrace', function (done) {
-      tv.startOrContinueTrace(null, 'test', soon, done)
+      ao.startOrContinueTrace(null, 'test', soon, done)
     })
 
     it('should support callback shifting', function (done) {
-      tv.instrument('test', soon, done)
+      ao.instrument('test', soon, done)
     })
 
     it('should not fail when accessing traceId', function () {
-      tv.traceId
+      ao.traceId
     })
   })
   return
@@ -71,8 +71,8 @@ describe('custom', function () {
   //
   beforeEach(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   afterEach(function (done) {
     emitter.close(done)
@@ -80,7 +80,7 @@ describe('custom', function () {
 
   it('should custom instrument sync code', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument('test', function () {})
+      ao.instrument('test', function () {})
       done()
     }, [
       function (msg) {
@@ -96,7 +96,7 @@ describe('custom', function () {
 
   it('should custom instrument async code', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument('test', soon, done)
+      ao.instrument('test', soon, done)
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -111,7 +111,7 @@ describe('custom', function () {
 
   it('should support builder function', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument(function (last) {
+      ao.instrument(function (last) {
         return last.descend('test', {
           Foo: 'bar'
         })
@@ -131,7 +131,7 @@ describe('custom', function () {
 
   it('should allow optional callback with async code', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument('test', function (doneInner) {
+      ao.instrument('test', function (doneInner) {
         soon(function () {
           doneInner()
           done()
@@ -151,7 +151,7 @@ describe('custom', function () {
 
   it('should include backtrace, when collectBacktraces is on', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument('test', soon, {
+      ao.instrument('test', soon, {
         collectBacktraces: true,
         enabled: true
       }, done)
@@ -170,7 +170,7 @@ describe('custom', function () {
 
   it('should skip when not enabled', function (done) {
     helper.test(emitter, function (done) {
-      tv.instrument('test', soon, {
+      ao.instrument('test', soon, {
         enabled: false
       }, done)
     }, [], done)
@@ -181,10 +181,10 @@ describe('custom', function () {
     var last
 
     helper.test(emitter, function (done) {
-      tv.instrument(function (layer) {
+      ao.instrument(function (layer) {
         return layer.descend('test')
       }, function (callback) {
-        tv.reportInfo(data)
+        ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
@@ -285,7 +285,7 @@ describe('custom', function () {
         inner.push(layer)
         layer.run(function (wrap) {
           var delayed = wrap(done)
-          tv.reportInfo(data)
+          ao.reportInfo(data)
           process.nextTick(function () {
             delayed()
           })
@@ -298,7 +298,7 @@ describe('custom', function () {
         makeInner({
           Index: 0
         }, cb)
-        tv.reportInfo({
+        ao.reportInfo({
           Index: 1
         })
         makeInner({
@@ -313,10 +313,10 @@ describe('custom', function () {
     var last
 
     helper.test(emitter, function (done) {
-      tv.instrument(function (layer) {
+      ao.instrument(function (layer) {
         return layer.descend('test')
       }, function (callback) {
-        tv.reportInfo(data)
+        ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
@@ -349,16 +349,16 @@ describe('custom', function () {
       var count = 0
 
       // Verify nothing bad happens when run function is missing
-      tv.instrument(build)
-      tv.startOrContinueTrace(null, build)
+      ao.instrument(build)
+      ao.startOrContinueTrace(null, build)
 
       // Verify nothing bad happens when build function is missing
-      tv.instrument(null, run)
-      tv.startOrContinueTrace(null, null, run)
+      ao.instrument(null, run)
+      ao.startOrContinueTrace(null, null, run)
 
       // Verify the runner is still run when builder fails to return a layer
-      tv.instrument(inc, inc)
-      tv.startOrContinueTrace(null, inc, inc)
+      ao.instrument(inc, inc)
+      ao.startOrContinueTrace(null, inc, inc)
       count.should.equal(4)
 
       done()
@@ -374,18 +374,18 @@ describe('custom', function () {
       var count = 0
 
       // Verify errors thrown in builder do not propagate
-      tv.instrument(nope, inc)
-      tv.startOrContinueTrace(null, nope, inc)
+      ao.instrument(nope, inc)
+      ao.startOrContinueTrace(null, nope, inc)
       count.should.equal(4)
 
       // Verify that errors thrown in the runner function *do* propagate
       count = 0
       function validateError (e) { return e === err }
       should.throws(function () {
-        tv.instrument(build, nope)
+        ao.instrument(build, nope)
       }, validateError)
       should.throws(function () {
-        tv.startOrContinueTrace(null, build, nope)
+        ao.startOrContinueTrace(null, build, nope)
       }, validateError)
       count.should.equal(2)
 
@@ -414,7 +414,7 @@ describe('custom', function () {
     ], done)
 
     var test = 'foo'
-    var res = tv.startOrContinueTrace(null, function (last) {
+    var res = ao.startOrContinueTrace(null, function (last) {
       return last.descend('test')
     }, function () {
       return test
@@ -462,7 +462,7 @@ describe('custom', function () {
     // Clear context
     Layer.last = Event.last = null
 
-    tv.startOrContinueTrace(entry.toString(), function (last) {
+    ao.startOrContinueTrace(entry.toString(), function (last) {
       return last.descend('test')
     }, function (cb) { cb() }, conf, function () {
       previous.exit()
@@ -521,10 +521,10 @@ describe('custom', function () {
 
     previous.run(function (wrap) {
       // Verify ID-less calls continue
-      tv.startOrContinueTrace(null, 'outer', function (cb) {
+      ao.startOrContinueTrace(null, 'outer', function (cb) {
         soon(function () {
           // Verify ID'd calls continue
-          tv.startOrContinueTrace(entry.toString(), 'inner', function (cb) {
+          ao.startOrContinueTrace(entry.toString(), 'inner', function (cb) {
             cb()
           }, conf, cb)
         })
@@ -534,33 +534,33 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function (done) {
-    var realSample = tv.sample
+    var realSample = ao.sample
     var called = false
-    tv.sample = function () {
+    ao.sample = function () {
       called = true
       return false
     }
 
     helper.test(emitter, function (done) {
       Layer.last = Event.last = null
-      tv.startOrContinueTrace(null, 'test', setImmediate, conf, done)
+      ao.startOrContinueTrace(null, 'test', setImmediate, conf, done)
     }, [], function (err) {
       called.should.equal(true)
-      tv.sample = realSample
+      ao.sample = realSample
       done(err)
     })
   })
 
   // Verify traceId getter works correctly
   it('should get traceId when tracing and null when not', function () {
-    should.not.exist(tv.traceId)
-    tv.startOrContinueTrace(null, 'test', function (cb) {
-      should.exist(tv.traceId)
+    should.not.exist(ao.traceId)
+    ao.startOrContinueTrace(null, 'test', function (cb) {
+      should.exist(ao.traceId)
       cb()
     }, function () {
-      should.exist(tv.traceId)
+      should.exist(ao.traceId)
     })
-    should.not.exist(tv.traceId)
+    should.not.exist(ao.traceId)
   })
 
   // Verify start with meta works
@@ -570,9 +570,9 @@ describe('custom', function () {
     var last
 
     var called = false
-    var sample = tv.sample
-    tv.sample = function (a, b, meta) {
-      tv.sample = sample
+    var sample = ao.sample
+    ao.sample = function (a, b, meta) {
+      ao.sample = sample
       meta.should.equal(entry.toString())
       called = true
       return sample.call(this, a, b, meta)
@@ -599,7 +599,7 @@ describe('custom', function () {
     // Clear context
     Layer.last = Event.last = null
 
-    tv.startOrContinueTrace(
+    ao.startOrContinueTrace(
       { meta: entry.toString() },
       'test',
       function (cb) { cb() },
@@ -609,61 +609,61 @@ describe('custom', function () {
   })
 
   it('should bind functions to requestStore', function () {
-    var bind = tv.requestStore.bind
+    var bind = ao.requestStore.bind
     var threw = false
     var called = false
 
-    tv.requestStore.bind = function () {
+    ao.requestStore.bind = function () {
       called = true
     }
 
     function noop () {}
 
     try {
-      tv.bind(noop)
+      ao.bind(noop)
       called.should.equal(false)
-      var layer = new tv.Layer('test', 'entry')
+      var layer = new ao.Layer('test', 'entry')
       layer.run(function () {
-        tv.bind(null)
+        ao.bind(null)
         called.should.equal(false)
-        tv.bind(noop)
+        ao.bind(noop)
         called.should.equal(true)
       })
     } catch (e) {
       threw = true
     }
 
-    tv.requestStore.bind = bind
+    ao.requestStore.bind = bind
 
     threw.should.equal(false)
   })
 
   it('should bind emitters to requestStore', function () {
-    var bindEmitter = tv.requestStore.bindEmitter
+    var bindEmitter = ao.requestStore.bindEmitter
     var threw = false
     var called = false
 
-    tv.requestStore.bindEmitter = function () {
+    ao.requestStore.bindEmitter = function () {
       called = true
     }
 
     var emitter = new Emitter
 
     try {
-      tv.bindEmitter(emitter)
+      ao.bindEmitter(emitter)
       called.should.equal(false)
-      var layer = new tv.Layer('test', 'entry')
+      var layer = new ao.Layer('test', 'entry')
       layer.run(function () {
-        tv.bindEmitter(null)
+        ao.bindEmitter(null)
         called.should.equal(false)
-        tv.bindEmitter(emitter)
+        ao.bindEmitter(emitter)
         called.should.equal(true)
       })
     } catch (e) {
       threw = true
     }
 
-    tv.requestStore.bindEmitter = bindEmitter
+    ao.requestStore.bindEmitter = bindEmitter
 
     threw.should.equal(false)
   })
@@ -675,7 +675,7 @@ describe('custom', function () {
     var last
 
     helper.test(emitter, function (done) {
-      tv.instrumentHttp(function (layer) {
+      ao.instrumentHttp(function (layer) {
         return layer.descend('test')
       }, function () {
         setImmediate(function () {

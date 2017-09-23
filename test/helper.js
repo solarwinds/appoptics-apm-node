@@ -1,6 +1,6 @@
-var tv = exports.tv = require('..')
-var realPort = tv.port
-tv.skipSample = true
+var ao = exports.ao = require('..')
+var realPort = ao.port
+ao.skipSample = true
 
 var debug = require('debug')('traceview:test:helper')
 var log = require('debug')('traceview:test:helper:tracelyzer-message')
@@ -20,8 +20,8 @@ function udpSend (msg, port, host) {
   })
 }
 
-exports.tracelyzer = function (done) {
-  // Create UDP server to mock tracelyzer
+exports.appoptics = function (done) {
+  // Create UDP server to mock appoptics
   var server = dgram.createSocket('udp4')
 
   // Create emitter to forward messages
@@ -35,7 +35,7 @@ exports.tracelyzer = function (done) {
     if (emitter.log) {
       console.log(parsed)
     }
-    log('mock tracelyzer (port ' + port + ') received', parsed)
+    log('mock appoptics (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
 
     if (emitter.forward) {
@@ -46,9 +46,9 @@ exports.tracelyzer = function (done) {
   // Wait for the server to become available
   server.on('listening', function () {
     var port = server.address().port
-    tv.port = port.toString()
+    ao.port = port.toString()
     emitter.port = port
-    debug('mock tracelyzer (port ' + port + ') listening')
+    debug('mock appoptics (port ' + port + ') listening')
     process.nextTick(done)
   })
 
@@ -62,7 +62,7 @@ exports.tracelyzer = function (done) {
   emitter.close = function (done) {
     var port = server.address().port
     server.on('close', function () {
-      debug('mock tracelyzer (port ' + port + ') closed')
+      debug('mock appoptics (port ' + port + ') closed')
       process.nextTick(done)
     })
     server.close()
@@ -71,12 +71,14 @@ exports.tracelyzer = function (done) {
   return emitter
 }
 
+exports.tracelyzer = exports.appoptics
+
 exports.doChecks = function (emitter, checks, done) {
   var add = emitter.server.address()
   emitter.removeAllListeners('message')
 
   function onMessage (msg) {
-    log('mock tracelyzer (port ' + add.port + ') received message', msg)
+    log('mock appoptics (port ' + add.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
@@ -125,8 +127,8 @@ exports.test = function (emitter, test, validations, done) {
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
 
-  tv.requestStore.run(function () {
-    var layer = new tv.Layer('outer')
+  ao.requestStore.run(function () {
+    var layer = new ao.Layer('outer')
     // layer.async = true
     layer.enter()
 
@@ -201,7 +203,7 @@ exports.run = function (context, path) {
     extend(context.data, data)
   }
 
-  context.tv = tv
+  context.ao = ao
 
   return function (done) {
     return mod.run(context, done)
@@ -215,7 +217,7 @@ exports.after = function (n, done) {
 }
 
 exports.traceLink = function (id) {
-  return 'https://stephenappneta.tv.solarwinds.com/traces/view/' + id.substr(2, 40)
+  return 'https://stephenappneta.ao.solarwinds.com/traces/view/' + id.substr(2, 40)
 }
 
 function Address (host, port) {

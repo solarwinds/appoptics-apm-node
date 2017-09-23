@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var semver = require('semver')
 
@@ -15,12 +15,12 @@ suite('probes/memcached', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
     layer.exit()
   })
 

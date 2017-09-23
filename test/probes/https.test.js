@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -27,8 +27,8 @@ describe('probes.https', function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
@@ -72,7 +72,7 @@ describe('probes.https', function () {
   }
 
   describe('https-server', function () {
-    var conf = tv.https
+    var conf = ao.https
 
     //
     // Test a simple res.end() call in an http server
@@ -115,7 +115,7 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      var origin = new tv.Event()
+      var origin = new ao.Event()
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -392,7 +392,7 @@ describe('probes.https', function () {
   })
 
   describe('https-client', function () {
-    var conf = tv['https-client']
+    var conf = ao['https-client']
 
     it('should trace https request', function (done) {
       var server = https.createServer(options, function (req, res) {

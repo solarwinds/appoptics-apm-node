@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -20,13 +20,13 @@ describe('probes.express', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 
@@ -382,7 +382,7 @@ describe('probes.express', function () {
   }
 
   function rumTest (done) {
-    tv.rumId = 'foo'
+    ao.rumId = 'foo'
     var app = express()
     var locals
     var exit
@@ -437,7 +437,7 @@ describe('probes.express', function () {
     // Delay completion until both test paths end
     var complete = helper.after(2, function () {
       server.close(done)
-      delete tv.rumId
+      delete ao.rumId
     })
 
     // Run tracelyzer checks
@@ -448,8 +448,8 @@ describe('probes.express', function () {
       var port = server.address().port
       request('http://localhost:' + port, function (a, b, body) {
         // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(tv.rumId, exit.toString()))
-        body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+        body.should.containEql(rum.header(ao.rumId, exit.toString()))
+        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
         complete()
       })
     })
@@ -500,7 +500,7 @@ describe('probes.express', function () {
   })
 
   it('should skip when disabled', function (done) {
-    tv.express.enabled = false
+    ao.express.enabled = false
     var app = express()
 
     app.set('views', __dirname)
@@ -521,7 +521,7 @@ describe('probes.express', function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      tv.express.enabled = true
+      ao.express.enabled = true
       server.close(done)
     })
 
@@ -536,7 +536,7 @@ describe('probes.express', function () {
     var app = express()
 
     app.get('/', function route (req, res, next) {
-      tv.instrument(function (layer) {
+      ao.instrument(function (layer) {
         return layer.descend('sub')
       }, setImmediate, function (err, res) {
         next(error)
@@ -544,7 +544,7 @@ describe('probes.express', function () {
     })
 
     app.use(function (error, req, res, next) {
-      tv.reportError(error)
+      ao.reportError(error)
       res.send('test')
     })
 

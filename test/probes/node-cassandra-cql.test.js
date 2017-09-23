@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var hosts = helper.Address.from(
@@ -53,12 +53,12 @@ describe('probes.cassandra', function () {
     //
     before(function (done) {
       emitter = helper.tracelyzer(done)
-      tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-      tv.traceMode = 'always'
-      tv.fs.enabled = false
+      ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+      ao.traceMode = 'always'
+      ao.fs.enabled = false
     })
     after(function (done) {
-      tv.fs.enabled = true
+      ao.fs.enabled = true
       emitter.close(done)
     })
 

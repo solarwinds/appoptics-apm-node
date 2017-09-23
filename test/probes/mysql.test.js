@@ -1,7 +1,7 @@
 var helper = require('../helper')
 var Address = helper.Address
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -30,12 +30,12 @@ describe('probes.mysql', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
-    tv.fs.enabled = false
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
+    ao.fs.enabled = false
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 
@@ -261,9 +261,9 @@ describe('probes.mysql', function () {
   }
 
   function test_disabled (done) {
-    tv.mysql.enabled = false
+    ao.mysql.enabled = false
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [], function (err) {
-      tv.mysql.enabled = true
+      ao.mysql.enabled = true
       done(err)
     })
   }

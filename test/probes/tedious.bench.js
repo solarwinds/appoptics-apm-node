@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var pkg = require('tedious/package.json')
 var tedious = require('tedious')
@@ -38,13 +38,13 @@ suite('probes/tedious', function () {
   })
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
     layer.exit()
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('query', function (done) {

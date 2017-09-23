@@ -13,7 +13,7 @@ var file = argv._[0]
 
 // Print usage info, where necessary
 if ( ! file || argv.help) {
-  console.warn('Usage:  node-tv [file] [arg]...')
+  console.warn('Usage:  node-ao [file] [arg]...')
   process.exit()
 }
 
@@ -35,8 +35,6 @@ global.tv = require('..')
 // Set trace mode, if available
 if (argv.always) {
   tv.traceMode = 'always'
-} else if (argv.through) {
-  tv.traceMode = 'through'
 } else if (argv.never) {
   tv.traceMode = 'never'
 }

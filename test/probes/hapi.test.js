@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -37,13 +37,13 @@ describe('probes.hapi', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 
@@ -231,7 +231,7 @@ describe('probes.hapi', function () {
 
   function rumTest (done) {
     var server = viewServer()
-    tv.rumId = 'foo'
+    ao.rumId = 'foo'
     var exit
 
     server.route({
@@ -273,7 +273,7 @@ describe('probes.hapi', function () {
     // Delay completion until both test paths end
     var complete = helper.after(2, function () {
       server.listener.close(done)
-      delete tv.rumId
+      delete ao.rumId
     })
 
     // Run tracelyzer checks
@@ -282,17 +282,17 @@ describe('probes.hapi', function () {
     server.start(function () {
       request('http://localhost:' + port, function (a, b, body) {
         // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(tv.rumId, exit.toString()))
-        body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+        body.should.containEql(rum.header(ao.rumId, exit.toString()))
+        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
         complete()
       })
     })
   }
 
   function disabledTest (done) {
-    tv.hapi.enabled = false
+    ao.hapi.enabled = false
     var server = viewServer()
-    tv.rumId = 'foo'
+    ao.rumId = 'foo'
 
     server.route({
       method: 'GET',
@@ -314,8 +314,8 @@ describe('probes.hapi', function () {
     ]
     helper.doChecks(emitter, validations, function () {
       server.listener.close(done)
-      tv.hapi.enabled = true
-      delete tv.rumId
+      ao.hapi.enabled = true
+      delete ao.rumId
     })
 
     server.start(function () {

@@ -1,5 +1,5 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 var concat = require('concat-stream')
 var zlib = require('zlib')
@@ -33,8 +33,8 @@ describe('probes.zlib', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var amqp = require('amqp')
 var db_host = process.env.RABBITMQ_PORT_5672_TCP_ADDR || 'localhost'
@@ -30,12 +30,12 @@ suite('probes/amqp', function () {
   })
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
     layer.exit()
   })
 

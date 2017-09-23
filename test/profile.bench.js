@@ -1,7 +1,7 @@
 var helper = require('./helper')
-var tv = helper.tv
-var Profile = tv.Profile
-var Layer = tv.Layer
+var ao = helper.ao
+var Profile = ao.Profile
+var Layer = ao.Layer
 
 var layer = new Layer('test', null, {})
 

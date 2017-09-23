@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var oracledb
 try { oracledb = require('oracledb') }
@@ -35,13 +35,13 @@ suite('probes/oracledb', function () {
   })
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
     layer.exit()
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('query', function (done) {

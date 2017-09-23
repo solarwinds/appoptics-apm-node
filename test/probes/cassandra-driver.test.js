@@ -1,7 +1,7 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
-var conf = tv['cassandra-driver']
+var ao = helper.ao
+var addon = ao.addon
+var conf = ao['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(
@@ -55,8 +55,8 @@ describe('probes.cassandra-driver', function () {
     //
     before(function (done) {
       emitter = helper.tracelyzer(done)
-      tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-      tv.traceMode = 'always'
+      ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+      ao.traceMode = 'always'
     })
     after(function (done) {
       emitter.close(done)

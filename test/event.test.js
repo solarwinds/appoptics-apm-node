@@ -1,8 +1,8 @@
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var addon = tv.addon
-var Event = tv.Event
+var ao = require('..')
+var addon = ao.addon
+var Event = ao.Event
 
 describe('event', function () {
   var emitter
@@ -13,8 +13,8 @@ describe('event', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -50,7 +50,7 @@ describe('event', function () {
     })
 
     // NOTE: events must be sent within a request store context
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       event2.send()
     })
   })

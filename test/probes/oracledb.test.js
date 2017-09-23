@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -29,8 +29,8 @@ describe('probes.oracledb', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -55,8 +55,8 @@ describe('probes.oracledb', function () {
     it('should trace execute calls in pool', test_pool)
     it('should include correct isAutoCommit value', test_commit)
   } else {
-    let missing = {oracledb, host, database, user: config.user, password: config.password}
-    for (let k in missing) {
+    var missing = {oracledb, host, database, user: config.user, password: config.password}
+    for (var k in missing) {
         if (missing[k]) delete missing[k]
     }
     missing = Object.keys(missing)

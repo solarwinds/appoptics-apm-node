@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var db_host = process.env.CASSANDRA_PORT_9160_TCP_ADDR || '127.0.0.1'
 var remote_host = db_host + ':9042'
@@ -56,13 +56,13 @@ suite('probes/cassandra-driver', function () {
   })
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
     layer.exit()
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('execute', function (done) {

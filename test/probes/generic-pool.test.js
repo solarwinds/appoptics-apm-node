@@ -1,5 +1,5 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 var Pool = require('generic-pool').Pool
 
@@ -27,13 +27,13 @@ describe('probes/generic-pool', function () {
       }, 10)
     })
 
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       // Hack to look like there's a previous layer
-      tv.requestStore.set('lastEvent', true)
+      ao.requestStore.set('lastEvent', true)
 
-      tv.requestStore.set('foo', 'bar')
+      ao.requestStore.set('foo', 'bar')
       pool.acquire(function (err) {
-        tv.requestStore.get('foo').should.equal('bar')
+        ao.requestStore.get('foo').should.equal('bar')
         done()
       })
     })

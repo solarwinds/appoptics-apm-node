@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var postgres = require('pg')
 var db_host = process.env.POSTGRES_PORT_5432_TCP_ADDR || 'localhost'
@@ -86,13 +86,13 @@ Object.keys(drivers).forEach(function (type) {
     })
 
     before(function () {
-      tv.requestStore.enter(context)
+      ao.requestStore.enter(context)
       layer = new Layer('test', null, {})
       layer.enter()
     })
     after(function () {
       layer.exit()
-      tv.requestStore.exit(context)
+      ao.requestStore.exit(context)
     })
 
     bench('query', function (done) {

@@ -1,9 +1,9 @@
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var addon = tv.addon
-var Profile = tv.Profile
-var Layer = tv.Layer
+var ao = require('..')
+var addon = ao.addon
+var Profile = ao.Profile
+var Layer = ao.Layer
 
 describe('profile', function () {
   var emitter
@@ -13,8 +13,8 @@ describe('profile', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -105,8 +105,8 @@ describe('profile', function () {
       profile.events.should.have.property('internal')
 
       profile.run(function () {
-        tv.reportError(new Error('test error'))
-        tv.reportInfo({ Foo: 'bar' })
+        ao.reportError(new Error('test error'))
+        ao.reportInfo({ Foo: 'bar' })
       })
     })
   })

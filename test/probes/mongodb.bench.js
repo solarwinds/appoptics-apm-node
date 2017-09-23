@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var MongoDB = require('mongodb').MongoClient
 var pkg = require('mongodb/package.json')
@@ -31,13 +31,13 @@ suite('probes/mongodb', function () {
   // Enter tracing layer
   //
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
     layer.exit()
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   //

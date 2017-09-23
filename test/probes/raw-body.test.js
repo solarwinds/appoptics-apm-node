@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -20,14 +20,14 @@ describe('probes.raw-body', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
-    tv.fs.enabled = false
-    tv.Layer.last = null
-    tv.Event.last = null
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
+    ao.fs.enabled = false
+    ao.Layer.last = null
+    ao.Event.last = null
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 

@@ -1,7 +1,7 @@
 // TODO: This benchmark is kind of terrible...figure out a better way to do it
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var director = require('director')
 var http = require('http')

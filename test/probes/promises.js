@@ -1,5 +1,5 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 var domain = require('domain')
 
@@ -32,13 +32,13 @@ module.exports = function (Promise) {
 
   it('should support promises', function (done) {
     var t = indirectDone(done)
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       // Hack to look like there's a previous layer
-      tv.requestStore.set('lastLayer', true)
+      ao.requestStore.set('lastLayer', true)
 
-      tv.requestStore.set('foo', 'bar')
+      ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
-        tv.requestStore.get('foo').should.equal('bar')
+        ao.requestStore.get('foo').should.equal('bar')
         t.done()
       }, done)
     })
@@ -46,13 +46,13 @@ module.exports = function (Promise) {
 
   it('should support promises', function (done) {
     var t = indirectDone(done)
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       // Hack to look like there's a previous layer
-      tv.requestStore.set('lastLayer', true)
+      ao.requestStore.set('lastLayer', true)
 
-      tv.requestStore.set('foo', 'bar')
+      ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
-        tv.requestStore.get('foo').should.equal('bar')
+        ao.requestStore.get('foo').should.equal('bar')
         t.done()
       }, done)
     })
@@ -63,13 +63,13 @@ module.exports = function (Promise) {
     var d = domain.create()
     d.on('error', done)
     d.run(function () {
-      tv.requestStore.run(function () {
+      ao.requestStore.run(function () {
         // Hack to look like there's a previous layer
-        tv.requestStore.set('lastLayer', true)
+        ao.requestStore.set('lastLayer', true)
 
-        tv.requestStore.set('foo', 'bar')
+        ao.requestStore.set('foo', 'bar')
         delay(100).then(function () {
-          tv.requestStore.get('foo').should.equal('bar')
+          ao.requestStore.get('foo').should.equal('bar')
           t.done()
         }, done)
       })
@@ -85,11 +85,11 @@ module.exports = function (Promise) {
 
   it('should support progress callbacks', function (done) {
     var t = indirectDone(done)
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       // Hack to look like there's a previous layer
-      tv.requestStore.set('lastLayer', true)
+      ao.requestStore.set('lastLayer', true)
 
-      tv.requestStore.set('foo', 'bar')
+      ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
         t.done()
       }, done, function () {})

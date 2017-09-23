@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var redis = require('redis')
 var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
@@ -12,12 +12,12 @@ suite('probes/redis', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
     layer.exit()
   })
 

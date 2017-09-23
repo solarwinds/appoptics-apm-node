@@ -1,5 +1,5 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 // Check for generator support
 var canGenerator = false
@@ -19,13 +19,13 @@ describe('probes/co-render', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 

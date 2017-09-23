@@ -9,8 +9,8 @@ if ( ! process.env.TEST_SQLSERVER_EX) {
 }
 
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -41,13 +41,13 @@ describe('probes.tedious', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 
@@ -129,7 +129,7 @@ describe('probes.tedious', function () {
 
   function test_sanitization (done) {
     helper.test(emitter, function (done) {
-      tv.tedious.sanitizeSql = true
+      ao.tedious.sanitizeSql = true
       query(function () {
         var request = new Request("select 42, @msg", onComplete)
         request.addParameter('msg', TYPES.VarChar, 'hello world')
@@ -150,7 +150,7 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], function (err) {
-      tv.tedious.sanitizeSql = false
+      ao.tedious.sanitizeSql = false
       done(err)
     })
   }

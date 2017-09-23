@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -20,8 +20,8 @@ describe('probes.memcached', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -243,18 +243,18 @@ describe('probes.memcached', function () {
   })
 
   it('should skip when disabled', function (done) {
-    tv.memcached.enabled = false
+    ao.memcached.enabled = false
     helper.test(emitter, function (done) {
       mem.get('foo', done)
     }, [], function (err) {
-      tv.memcached.enabled = true
+      ao.memcached.enabled = true
       done(err)
     })
   })
 
   it('should work normally when not tracing', function (done) {
     helper.test(emitter, function (done) {
-      tv.Layer.last = tv.Event.last = null
+      ao.Layer.last = ao.Event.last = null
       mem.get('foo', done)
     }, [], function (err) {
       done(err)

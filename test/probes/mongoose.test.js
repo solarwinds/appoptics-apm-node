@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
@@ -27,13 +27,13 @@ describe('probes/mongoose', function () {
       }
 
       var password = 'this is a test'
-      tv.requestStore.set('name', data.name)
+      ao.requestStore.set('name', data.name)
 
       var kitty = new Cat(data)
       kitty.save(function (err) {
-        tv.requestStore.get('name').should.equal(data.name)
+        ao.requestStore.get('name').should.equal(data.name)
         Cat.findOne(data, function () {
-          tv.requestStore.get('name').should.equal(data.name)
+          ao.requestStore.get('name').should.equal(data.name)
           done()
         })
       })

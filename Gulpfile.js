@@ -209,9 +209,9 @@ function makeBenchTask (name, files) {
   gulp.task(name, function (done) {
     var helper = require('./test/helper')
 
-    var tv = helper.tv
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    var ao = helper.ao
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
 
     global.tracelyzer = helper.tracelyzer(function () {
       gulp.src(files, {

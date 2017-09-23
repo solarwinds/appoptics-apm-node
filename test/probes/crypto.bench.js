@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Layer = ao.Layer
 
 var crypto = require('crypto')
 
@@ -8,15 +8,15 @@ tracelyzer.setMaxListeners(Infinity)
 
 suite('probes/crypto', function () {
   var context = {}
-  
+
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
     layer = new Layer('test', null, {})
     layer.enter()
   })
   after(function () {
     layer.exit()
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   if (crypto.pbkdf2) {

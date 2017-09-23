@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -17,13 +17,13 @@ describe('probes.director', function () {
   // Intercept tracelyzer messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 
@@ -105,7 +105,7 @@ describe('probes.director', function () {
   })
 
   it('should skip when disabled', function (done) {
-    tv.director.enabled = false
+    ao.director.enabled = false
     function hello (name) {
       this.res.writeHead(200, { 'Content-Type': 'text/plain' })
       this.res.end('Hello, ' + name + '!')
@@ -135,7 +135,7 @@ describe('probes.director', function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      tv.director.enabled = true
+      ao.director.enabled = true
       server.close(done)
     })
 

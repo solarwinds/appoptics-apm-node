@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -47,13 +47,13 @@ function makeTests (db_host, host, isReplicaSet) {
   // Intercept tracelyzer messages for analysis
   //
   beforeEach(function (done) {
-    tv.fs.enabled = false
+    ao.fs.enabled = false
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   afterEach(function (done) {
-    tv.fs.enabled = true
+    ao.fs.enabled = true
     emitter.close(done)
   })
 

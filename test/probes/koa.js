@@ -7,7 +7,7 @@ var helper = require('../helper')
 var request = require('request')
 
 var rum = require('../../dist/rum')
-var tv = require('../..')
+var ao = require('../..')
 
 var views = require('co-views')
 
@@ -96,7 +96,7 @@ exports.basic = function (emitter, done) {
 }
 
 exports.disabled = function (emitter, done) {
-  tv.koa.enabled = false
+  ao.koa.enabled = false
   var app = koa()
 
   app.use(function* () {
@@ -107,7 +107,7 @@ exports.disabled = function (emitter, done) {
     function (msg) { check['http-entry'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    tv.koa.enabled = true
+    ao.koa.enabled = true
     server.close(done)
   })
 
@@ -136,7 +136,7 @@ exports.route = function (emitter, done) {
 }
 
 exports.route_disabled = function (emitter, done) {
-  tv['koa-route'].enabled = false
+  ao['koa-route'].enabled = false
   var app = koa()
 
   app.use(_.get('/hello/:name', function* hello () {
@@ -149,7 +149,7 @@ exports.route_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    tv['koa-route'].enabled = true
+    ao['koa-route'].enabled = true
     server.close(done)
   })
 
@@ -188,7 +188,7 @@ exports.router = function (emitter, done) {
 }
 
 exports.router_disabled = function (emitter, done) {
-  tv['koa-router'].enabled = false
+  ao['koa-router'].enabled = false
   var app = koa()
 
   function* hello () {
@@ -211,7 +211,7 @@ exports.router_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    tv['koa-router'].enabled = true
+    ao['koa-router'].enabled = true
     server.close(done)
   })
 
@@ -244,7 +244,7 @@ exports.resourceRouter = function (emitter, done) {
 }
 
 exports.resourceRouter_disabled = function (emitter, done) {
-  tv['koa-resource-router'].enabled = false
+  ao['koa-resource-router'].enabled = false
   var app = koa()
 
   var res = new Resource('hello', {
@@ -261,7 +261,7 @@ exports.resourceRouter_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    tv['koa-resource-router'].enabled = true
+    ao['koa-resource-router'].enabled = true
     server.close(done)
   })
 
@@ -314,7 +314,7 @@ exports.render = function (emitter, done) {
 }
 
 exports.render_disabled = function (emitter, done) {
-  tv['co-render'].enabled = false
+  ao['co-render'].enabled = false
   var app = koa()
 
   app.use(function* () {
@@ -339,7 +339,7 @@ exports.render_disabled = function (emitter, done) {
   ]
 
   helper.doChecks(emitter, validations, function () {
-    tv['co-render'].enabled = true
+    ao['co-render'].enabled = true
     server.close(done)
   })
 
@@ -350,7 +350,7 @@ exports.render_disabled = function (emitter, done) {
 }
 
 exports.rum = function (emitter, done) {
-  tv.rumId = 'foo'
+  ao.rumId = 'foo'
   var app = koa()
 
   var exit
@@ -386,7 +386,7 @@ exports.rum = function (emitter, done) {
   // Delay completion until both test paths end
   var complete = helper.after(2, function () {
     server.close(done)
-    delete tv.rumId
+    delete ao.rumId
   })
 
   helper.doChecks(emitter, validations, complete)
@@ -395,8 +395,8 @@ exports.rum = function (emitter, done) {
     var port = server.address().port
     request('http://localhost:' + port, function (a, b, body) {
       // Verify that the rum scripts are included in the body
-      body.should.containEql(rum.header(tv.rumId, exit.toString()))
-      body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+      body.should.containEql(rum.header(ao.rumId, exit.toString()))
+      body.should.containEql(rum.footer(ao.rumId, exit.toString()))
       complete()
     })
   })

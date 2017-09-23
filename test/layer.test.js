@@ -1,9 +1,9 @@
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var addon = tv.addon
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = require('..')
+var addon = ao.addon
+var Layer = ao.Layer
+var Event = ao.Event
 
 describe('layer', function () {
   var emitter
@@ -13,8 +13,8 @@ describe('layer', function () {
   //
   before(function (done) {
     emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -456,10 +456,10 @@ describe('layer', function () {
       sub.run(function (wrap) {
         var cb = wrap(function () {})
         setImmediate(function () {
-          tv.reportInfo(after)
+          ao.reportInfo(after)
           cb()
         })
-        tv.reportInfo(before)
+        ao.reportInfo(before)
       })
       layer.info(after)
     })
@@ -517,16 +517,16 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    tv.requestStore.run(function () {
+    ao.requestStore.run(function () {
       layer.enter()
       var sub1 = layer.descend('inner-1')
       sub1.run(function () {
-        tv.reportInfo(before)
+        ao.reportInfo(before)
 
         var sub2 = layer.descend('inner-3')
         sub2.run(function (wrap) {
           setImmediate(wrap(function () {
-            tv.reportError(error)
+            ao.reportError(error)
 
             var sub2 = layer.descend('inner-4')
             sub2.run(function (wrap) {
@@ -535,7 +535,7 @@ describe('layer', function () {
           }))
         })
 
-        tv.reportInfo(after)
+        ao.reportInfo(after)
       })
 
       var sub2 = layer.descend('inner-2')
