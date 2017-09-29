@@ -1,0 +1,22 @@
+# supporting backends for node-appoptics testing
+version: '2.1'
+
+services:
+  main:
+    build:
+      context: .
+    image: ao-test-main
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    command: ["/usr/bin/tracelyzer", "-L 0.0.0.0", "-r"]
+  redis:
+    image: "redis"
+    build:
+      context: test/docker/
+      dockerfile: redis.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m

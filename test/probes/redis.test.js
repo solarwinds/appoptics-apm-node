@@ -9,7 +9,7 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
-var parts = (process.env.TEST_REDIS_3_0 || 'localhost:6379').split(':')
+var parts = (process.env.TEST_REDIS_3_0 || 'redis:6379').split(':')
 var host = parts.shift()
 var port = parts.shift()
 var addr = new Address(host, port)

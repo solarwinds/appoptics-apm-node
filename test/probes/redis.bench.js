@@ -3,7 +3,7 @@ var ao = helper.ao
 var Layer = ao.Layer
 
 var redis = require('redis')
-var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
+var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'redis'
 var client = redis.createClient(6379, db_host, {})
 
 tracelyzer.setMaxListeners(Infinity)

@@ -5,7 +5,7 @@ var Layer = ao.Layer
 // NOTE: requiring leveldown is necessary as the one that works with
 // node 0.11 does not match the one in the devDependencies of levelup.
 var level = require('levelup')
-var db = level('/home/vagrant/test-db', {
+var db = level('../../test-db', {
   db: require('leveldown')
 })
 
