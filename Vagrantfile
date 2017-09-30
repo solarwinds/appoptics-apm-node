@@ -20,7 +20,7 @@ sudo apt-get -y install software-properties-common python-software-properties \
 #[ao]sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
 sudo sh /appoptics/install-appoptics-daemon.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
 # the code requires an environment variable now.
-export APPOPTICS_ACCESS_KEY=f08da708-7f1c-4935-ae2e-122caf1ebe31
+export APPOPTICS_SERVICE_KEY=f08da708-7f1c-4935-ae2e-122caf1ebe31
 
 # node/nvm
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash

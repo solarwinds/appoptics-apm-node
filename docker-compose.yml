@@ -5,6 +5,13 @@ services:
   main:
     build:
       context: .
+      args:
+        # expect librato/node-appoptics-bindings#new-liboboe while private
+        - AO_TEST_PACKAGE
+        # expect a git auth token (or extend Dockerfile with user and password)
+        - AO_TEST_GITAUTH
+        # - AO_TEST_GITUSER
+        # - AO_TEST_GITPASS
     image: ao-test-main
     logging:
       options:
