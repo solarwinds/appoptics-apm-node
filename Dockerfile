@@ -2,6 +2,8 @@ FROM node:4
 
 ARG AO_TEST_PACKAGE
 ARG AO_TEST_GITAUTH
+ARG AO_TEST_COLLECTOR
+ARG AO_TEST_COLLECTOR_CERT
 
 # add-apt-repository doesn't exist until
 # these have been added
@@ -28,7 +30,7 @@ RUN apt-get update && apt-get -y install gcc-4.9 g++-4.9 \
   supervisor \
 && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 7831
+#EXPOSE 7831
 
 RUN echo "[supervisord]\nnodaemon=true\n[program:tracelyzer]\ncommand=/etc/init.d/tracelyzer start -DFOREGROUND\n" >> /etc/supervisord.conf
 
@@ -46,9 +48,12 @@ ENV APPOPTICS_SERVICE_KEY f08da708-7f1c-4935-ae2e-122caf1ebe31
 ENV AO_TEST_PACKAGE $AO_TEST_PACKAGE
 ENV AO_TEST_GITAUTH $AO_TEST_GITAUTH
 
+# for testing connect to the local collector.
+ENV APPOPTICS_COLLECTOR ${AO_TEST_COLLECTOR}
+ENV APPOPTICS_TRUSTEDPATH /appoptics/${AO_TEST_COLLECTOR_CERT}
+
 # need to set up for user other than root so npm won't depriv
 #USER node
-
 
 #CMD ["/bin/sh", "-c", "/usr/bin/tracelyzer", "-L 0.0.0.0", "-r"]
 CMD ["/usr/bin/supervisord"]
