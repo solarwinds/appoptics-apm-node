@@ -9,7 +9,7 @@ var Request = tedious.Request
 var TYPES = tedious.TYPES
 
 // Found some free host.
-var host = 'traceview-test.mssql.somee.com'
+var host = 'appoptics-test.mssql.somee.com'
 var user = 'sbelanger_SQLLogin_1'
 var pass = 'a8glrk5vss'
 

@@ -2,8 +2,8 @@ var ao = exports.ao = require('..')
 var realPort = ao.port
 ao.skipSample = true
 
-var debug = require('debug')('traceview:test:helper')
-var log = require('debug')('traceview:test:helper:tracelyzer-message')
+var debug = require('debug')('appoptics:test:helper')
+var log = require('debug')('appoptics:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
 var extend = require('util')._extend
 var bson = require('bson')
@@ -70,8 +70,6 @@ exports.appoptics = function (done) {
 
   return emitter
 }
-
-exports.tracelyzer = exports.appoptics
 
 exports.doChecks = function (emitter, checks, done) {
   var add = emitter.server.address()
