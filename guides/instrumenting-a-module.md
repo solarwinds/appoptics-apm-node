@@ -45,7 +45,7 @@ arguments and wrap that too, so you can inject the second part.
 
 ```js
 shimmer.wrap(abc, 'xyz', xyz => {
-  return (n, trueCb) {
+  return function w(n, trueCb) {
     const before = Date.now()
     function cb () {
       const after = Date.now()
@@ -92,7 +92,7 @@ you wish the instrument. For a sync call, it should have zero arguments. For an
 async call, it should have one argument: a replacement callback.
 
 ```js
-function asyncRunner () {
+function syncRunner () {
   return functionToInstrument(some, args, go, here)
 }
 ```
@@ -150,8 +150,8 @@ callback. It will trigger the exits in reverse chronological order when the
 ```js
 http.createServer((req, res) => {
   const builder = current => current.descend('http-layer')
-  const runner = () => res,send('done')
-  tv.instrumentHttp(builder, runner, res)
+  const runner = () => res.end('done')
+  tv.instrumentHttp(builder, runner, options, res)
 })
 ```
 
