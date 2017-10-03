@@ -14,7 +14,7 @@ To start the dev environment, ensure vagrant and virtualbox are installed, then
 you can simply run `vagrant up` to start the environment and `vagrant ssh` to
 connect to it.
 
-The traceview `Vagrantfile` also includes a collection of docker containers,
+The appoptics `Vagrantfile` also includes a collection of docker containers,
 defined in the `docker-containers.json` file. Note that, while this is intended
 to be run using the vagrant docker configuration, I've also included a file
 named `docker.rb` which allows the container list to be set up directly on any
@@ -89,7 +89,7 @@ The lower-level `Layer`, `Profile` and `Event` types are described in
 
 The patching mechanism works by intercepting `require(...)` calls in
 `lib/require-patch.js`. The require patch interface includes a `register(...)`
-function, which could be useful for testing patches outside of the traceview
+function, which could be useful for testing patches outside of the appoptics
 module before merging into the core project.
 
 RUM injection code lives in `lib/rum.js`, while the templates for it live in
