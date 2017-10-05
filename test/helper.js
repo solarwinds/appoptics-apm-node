@@ -3,7 +3,7 @@ var realPort = ao.port
 ao.skipSample = true
 
 var debug = require('debug')('appoptics:test:helper')
-var log = require('debug')('appoptics:test:helper:tracelyzer-message')
+var log = require('debug')('appoptics:test:helper:appoptics-message')
 var Emitter = require('events').EventEmitter
 var extend = require('util')._extend
 var bson = require('bson')
