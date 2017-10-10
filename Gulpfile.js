@@ -213,7 +213,7 @@ function makeBenchTask (name, files) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
 
-    global.tracelyzer = helper.tracelyzer(function () {
+    global.appoptics = helper.appoptics(function () {
       gulp.src(files, {
         read: false
       })

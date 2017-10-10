@@ -21,9 +21,9 @@ var Event = ao.Event
 //
 var soon = global.setImmediate || process.nextTick
 
-var fakeTaskId = '1234567890123456789012345678901234567890'
+var fakeTaskId = 'DummyTaskId0123456789ForAppOpticsCustom2'
 var fakeOpId = '1234567890123456'
-var fakeId = '1B' + fakeTaskId + fakeOpId
+var fakeId = '2B' + fakeTaskId + fakeOpId + '\u0001'
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
@@ -67,10 +67,10 @@ describe('custom', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })
