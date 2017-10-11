@@ -29,10 +29,10 @@ describe('probes.zlib', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })

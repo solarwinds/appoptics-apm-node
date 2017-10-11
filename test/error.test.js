@@ -29,10 +29,10 @@ describe('error', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })
@@ -115,7 +115,7 @@ describe('error', function () {
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -124,7 +124,7 @@ describe('error', function () {
         msg.should.have.property('ErrorMsg', error.message)
         msg.should.have.property('Backtrace', error.stack)
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')

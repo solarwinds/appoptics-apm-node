@@ -34,11 +34,11 @@ describe('probes.hapi', function () {
   var port = 3000
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
     ao.fs.enabled = false
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })
@@ -276,7 +276,7 @@ describe('probes.hapi', function () {
       delete ao.rumId
     })
 
-    // Run tracelyzer checks
+    // Run appoptics checks
     helper.doChecks(emitter, validations, complete)
 
     server.start(function () {

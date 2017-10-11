@@ -41,11 +41,11 @@ function makeTests (db_host, host, self) {
 	var db
 
 	//
-	// Intercept tracelyzer messages for analysis
+	// Intercept appoptics messages for analysis
 	//
 	before(function (done) {
     ao.fs.enabled = false
-		emitter = helper.tracelyzer(done)
+		emitter = helper.appoptics(done)
 		ao.sampleRate = addon.MAX_SAMPLE_RATE
 		ao.traceMode = 'always'
 	})

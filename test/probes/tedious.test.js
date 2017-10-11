@@ -38,11 +38,11 @@ describe('probes.tedious', function () {
   var db
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
     ao.fs.enabled = false
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })

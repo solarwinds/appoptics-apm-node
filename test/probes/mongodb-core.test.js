@@ -44,11 +44,11 @@ function makeTests (db_host, host, isReplicaSet) {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
     ao.fs.enabled = false
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })

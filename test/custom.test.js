@@ -191,14 +191,14 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
         msg.should.have.property('Foo', 'bar')
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -323,7 +323,7 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -331,7 +331,7 @@ describe('custom', function () {
         msg.should.have.property('Foo', 'bar')
         msg.should.have.property('Partition', 'bar')
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -404,7 +404,7 @@ describe('custom', function () {
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
         msg.should.not.have.property('Edge')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -439,13 +439,13 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.Edge.should.equal(entry.opId)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'previous')
@@ -479,7 +479,7 @@ describe('custom', function () {
         msg.should.have.property('Layer', 'previous')
         msg.should.have.property('Label', 'entry')
         msg.should.not.have.property('Edge')
-        prev = msg['X-Trace'].substr(42)
+        prev = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'outer')
@@ -488,7 +488,7 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.should.have.property('Edge', prev)
-        outer = msg['X-Trace'].substr(42)
+        outer = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'inner')
@@ -497,7 +497,7 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.should.have.property('Edge', outer)
-        sub = msg['X-Trace'].substr(42)
+        sub = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'inner')
@@ -584,7 +584,7 @@ describe('custom', function () {
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -687,7 +687,7 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')

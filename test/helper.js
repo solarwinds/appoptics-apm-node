@@ -252,7 +252,7 @@ exports.setUntil = function (obj, prop, value, done) {
 
 exports.linksTo = linksTo
 function linksTo (a, b) {
-  a.Edge.should.eql(b['X-Trace'].substr(42))
+  a.Edge.should.eql(b['X-Trace'].substr(42, 16))
 }
 
 exports.edgeTracker = edgeTracker

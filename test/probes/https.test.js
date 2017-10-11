@@ -19,14 +19,14 @@ describe('probes.https', function () {
   var originalFlag
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
     // Awful hack
     originalFlag = process.env.NODE_TLS_REJECT_UNAUTHORIZED
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })

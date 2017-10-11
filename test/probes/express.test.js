@@ -17,11 +17,11 @@ describe('probes.express', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
     ao.fs.enabled = false
-    emitter = helper.tracelyzer(done)
+    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })
@@ -398,7 +398,7 @@ describe('probes.express', function () {
       res.render('rum')
     })
 
-    // Define tracelyzer message validations
+    // Define appoptics message validations
     var validations = [
       function (msg) {
         check['http-entry'](msg)
@@ -440,7 +440,7 @@ describe('probes.express', function () {
       delete ao.rumId
     })
 
-    // Run tracelyzer checks
+    // Run appoptics checks
     helper.doChecks(emitter, validations, complete)
 
     // Start server and make a request
