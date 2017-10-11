@@ -29,7 +29,7 @@ describe('event', function () {
   })
 
   it('should convert an event to a string', function () {
-    event.toString().should.match(/^1B[0-9A-F]{56}$/)
+    event.toString().should.match(/^2B[0-9A-F]{58}$/)
   })
 
   it('should enter the event context', function () {
