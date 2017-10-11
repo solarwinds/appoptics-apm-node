@@ -1,5 +1,6 @@
 var ao = exports.ao = require('..')
 var realPort = ao.port
+var realReporter = ao.reporter
 ao.skipSample = true
 
 var debug = require('debug')('appoptics:test:helper')
@@ -12,6 +13,8 @@ var https = require('https')
 var http = require('http')
 
 var BSON = new bson.BSONPure.BSON()
+
+debug('helper found real port = ' + realPort)
 
 function udpSend (msg, port, host) {
   var client = dgram.createSocket('udp4')
@@ -32,10 +35,10 @@ exports.appoptics = function (done) {
   server.on('message', function (msg) {
     var port = server.address().port
     var parsed = BSON.deserialize(msg)
+    log('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)
     }
-    log('mock appoptics (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
 
     if (emitter.forward) {
@@ -53,7 +56,7 @@ exports.appoptics = function (done) {
   })
 
   // Start mock tracelyzer
-  server.bind()
+  server.bind(7832, 'localhost')
 
   // Expose some things through the emitter
   emitter.server = server
@@ -72,11 +75,13 @@ exports.appoptics = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done) {
-  var add = emitter.server.address()
+  var addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
+  debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
+
   function onMessage (msg) {
-    log('mock appoptics (port ' + add.port + ') received message', msg)
+    log('mock appoptics (port ' + addr.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
@@ -88,7 +93,7 @@ exports.doChecks = function (emitter, checks, done) {
     }
 
     // Always verify that X-Trace and Edge values are valid
-    msg.should.have.property('X-Trace').and.match(/^1B[0-9A-F]{56}$/)
+    msg.should.have.property('X-Trace').and.match(/^2B[0-9A-F]{58}$/)
     if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
 
     debug(checks.length + ' checks left')
@@ -132,7 +137,7 @@ exports.test = function (emitter, test, validations, done) {
 
     debug('test started')
     test(function (err, data) {
-      debug('test ended')
+      debug('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)
       layer.exit()
     })

@@ -16,7 +16,7 @@ module.exports = function (abc) {
 ## Wrapping functions
 
 To collect the performance data of a given function, we'll need to wrap it
-in another, which collects are reports the relevant data. You can simply
+in another function that collects and reports the relevant data. You can simply
 store the old function reference in a new variable, overwrite the function
 at the original location, and call the stored function within the new one.
 However, there are handy tools to make this process easier. We use shimmer.
@@ -66,9 +66,14 @@ degrees of control.
 
 Wherever possible, it is preferred that `tv.instrument(...)` is used, however
 there are some alternatives, which we'll explore later. The `tv.instrument(...)`
-function takes a layer name or builder function to produce a layer describing
-the lifetime of the call and providing a mechanism of reporting metadata about
+function takes four arguments:
+
+- a layer name or builder function that returns a layer describing
+the lifetime of the call and provides a mechanism to report metadata about
 it.
+- a runner function that will run the real function you wish to instrument.
+- [optional] config
+- [async only] callback
 
 #### Builder functions
 
@@ -117,8 +122,8 @@ When instrumenting an async function, a callback should be provided for the
 runner to call when it completes. It can be in the fourth argument position,
 if optional configs are included or the third position if configs are omitted.
 
-The signature of the callback is unconstrained. It should match the usage of
-the callback usage in the runner function. The only assumption made is that
+The signature of the callback is unconstrained. It should match the signatur of
+the callback in the runner function. The only assumption made is that
 the callback may have an error to report in the first argument position, but
 this is not required. If it is something other than an error object, it will
 simply be passed through as expected, without trying to report it.

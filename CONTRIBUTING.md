@@ -39,10 +39,22 @@ tests for a specific module, you can do that too by running
 While developing a branch for the move from Traceview to AppOptics the repo
 is not public. In order to fetch from a private repo it is necessary to
 provide credentials of some sort. So `install-appoptics-bindings.js` is a
-`preinstall` script. If the environment variable `TEST_GITAUTH` is present
-then it is used as a Personal Access Token [tokens] to fetch the repo. If
-`TEST_GITUSER` and `TEST_GITPASS` are present then they are used. Otherwise
-it is assumed that it is fetching a public repository and uses no auth.
+`preinstall` script. The environment variable `AO_TEST_PACKAGE` specifies
+the source of the `node-appoptics-bindings` package because `npm` will, by
+default, fetch the head of the master branch. In order to authorize for the
+private repository use either the environment variable `AO_TEST_GITAUTH` (a
+git Personal Access Token [tokens]) or use both `AO_TEST_GITUSER` and
+`AO_TEST_GITPASS`. Otherwise it is assumed that it is fetching a public
+repository and uses no auth.
+
+The tests are done using a mock UDP server that receives the messages from
+`liboboe`. It is hardwired, in `test/helper.js`, to use port 7832. for this
+to work these environment variables must be set:
+- APPOPTICS_REPORTER=udp
+- APPOPTICS\_REPORTER_UDP=localhost:7832
+
+NOTE: The testing environment has been moved to Docker using `docker-compose`
+and `docker-compose.yml`. Vagrant has not been updated but neither has this doc.
 
 [tokens]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 
