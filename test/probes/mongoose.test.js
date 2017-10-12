@@ -5,7 +5,7 @@ var Layer = ao.Layer
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
-var host = process.env.TEST_MONGODB_2_4 || 'localhost:27017'
+var host = process.env.TEST_MONGODB_2_4 || 'mongo_2_4:27017'
 
 describe('probes/mongoose', function () {
   var Cat = mongoose.model('test', new Schema({

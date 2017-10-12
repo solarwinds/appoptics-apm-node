@@ -5,7 +5,7 @@ var conf = ao['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(
-  process.env.TEST_CASSANDRA_2_2 || '127.0.0.1:9042'
+  process.env.TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
 //

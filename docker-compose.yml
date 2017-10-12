@@ -19,6 +19,11 @@ services:
         - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_SCRIBE_CERT:-test/certs/scribe-collector.crt}
         # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_JAVA_CERT:-test/certs/java-collector.crt}
         - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
+        # the next two set liboboe to send to the mock collector
+        # for testing. the assumption is that the docker envionment
+        # is used for testing.
+        - AO_TEST_REPORTER=udp
+        - AO_TEST_REPORTER_UDP=localhost:7832
     image: ao-test-main
 #    volumes:
 #      - type: volume
@@ -28,15 +33,71 @@ services:
         max-size: 50m
 
     command: ["/usr/bin/tracelyzer", "-L 0.0.0.0", "-r"]
-  redis:
-    image: "redis"
+
+  #
+  # Containers required for testing various probes. Each
+  # must have a dockerfile in test/docker/ that specifies
+  # the correct image.
+  #
+  cassandra:
+    image: "cassandra"
     build:
       context: test/docker/
-      dockerfile: redis.yml
+      dockerfile: cassandra.yml
     logging:
       options:
         max-file: "1"
         max-size: 50m
+
+  memcached:
+    image: "memcached"
+    build:
+      context: test/docker/
+      dockerfile: memcached.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
+
+  mongo_2_4:
+    image: "mongo_2_4"
+    build:
+      context: test/docker/
+      dockerfile: mongo_2_4.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+  mongo_2_6:
+    image: "mongo_2_6"
+    build:
+      context: test/docker/
+      dockerfile: mongo_2_6.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+  mongo_2_4:
+    image: "mongo_3"
+    build:
+      context: test/docker/
+      dockerfile: mongo_3.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
+  mongo_replset:
+    image: "traceqa/mongo"
+    build:
+      context: test/docker/
+      dockerfile: mongo_replset.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
   mysql:
     image: "mysql"
     build:
@@ -46,6 +107,50 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+
+  oracle:
+    image: "oracle"
+    build:
+      context: test/docker/
+      dockerfile: oracle.yml
+    build:
+      context: test/docker/
+      dockerfile: oracle.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
+  postgres:
+    image: "postgres"
+    build:
+      context: test/docker/
+      dockerfile: postgres.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
+  rabbitmq:
+    image: "rabbitmq"
+    build:
+      context: test/docker/
+      dockerfile: rabbitmq.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
+  redis:
+    image: "redis"
+    build:
+      context: test/docker/
+      dockerfile: redis.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+
   #
   # extend the collector services into this composition.
   # NOTE: extend goes away in version 3.0 of docker-compose.yml

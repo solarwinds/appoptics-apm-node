@@ -9,7 +9,7 @@ try {
   oracledb = require('oracledb')
 } catch (e) {}
 
-var host = process.env.TEST_ORACLE
+var host = process.env.TEST_ORACLE || 'oracle'
 var database = process.env.TEST_ORACLE_DBNAME
 var config = {
   connectString: host + '/' + database,

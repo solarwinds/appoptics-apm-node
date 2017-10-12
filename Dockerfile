@@ -4,6 +4,9 @@ ARG AO_TEST_PACKAGE
 ARG AO_TEST_GITAUTH
 ARG AO_TEST_COLLECTOR
 ARG AO_TEST_COLLECTOR_CERT
+# and the env vars to redirect liboboe's output
+ARG AO_TEST_REPORTER
+ARG AO_TEST_REPORTER_UDP
 
 # add-apt-repository doesn't exist until
 # these have been added
@@ -51,6 +54,9 @@ ENV AO_TEST_GITAUTH $AO_TEST_GITAUTH
 # for testing connect to the local collector.
 ENV APPOPTICS_COLLECTOR ${AO_TEST_COLLECTOR}
 ENV APPOPTICS_TRUSTEDPATH /appoptics/${AO_TEST_COLLECTOR_CERT}
+
+ENV APPOPTICS_REPORTER ${AO_TEST_REPORTER}
+ENV APPOPTICS_REPORTER_UDP ${AO_TEST_REPORTER_UDP}
 
 # need to set up for user other than root so npm won't depriv
 #USER node

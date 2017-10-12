@@ -4,7 +4,7 @@ var addon = ao.addon
 
 var Promise = require('bluebird')
 var should = require('should')
-var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost:5672'
+var db_host = process.env.TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 describe('probes.amqplib', function () {
   var emitter

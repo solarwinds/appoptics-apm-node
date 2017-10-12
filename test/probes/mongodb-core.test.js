@@ -15,9 +15,9 @@ var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
 var hosts = {
-  '2.4': process.env.TEST_MONGODB_2_4 || 'localhost:27017',
-  '2.6': process.env.TEST_MONGODB_2_6,
-  '3.0': process.env.TEST_MONGODB_3_0,
+  '2.4': process.env.TEST_MONGODB_2_4 || 'mongo_2_4:27017',
+  '2.6': process.env.TEST_MONGODB_2_6 || 'mongo_2_6:27017',
+  '3.0': process.env.TEST_MONGODB_3_0 || 'mongo_3:27017',
   'replica set': process.env.TEST_MONGODB_SET
 }
 

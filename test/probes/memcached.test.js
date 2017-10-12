@@ -7,7 +7,7 @@ var semver = require('semver')
 
 var Memcached = require('memcached')
 var pkg = require('memcached/package.json')
-var db_host = process.env.TEST_MEMCACHED_1_4 || '127.0.0.1:11211'
+var db_host = process.env.TEST_MEMCACHED_1_4 || 'memcached:11211'
 
 describe('probes.memcached', function () {
   this.timeout(10000)

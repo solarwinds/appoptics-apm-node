@@ -25,6 +25,8 @@ if (process.env.TEST_SQLSERVER_EX) {
   addr = helper.Address.from(
     process.env.TEST_SQLSERVER_EX
   )[0]
+} else {
+  addr = 'mssql'
 }
 var user = process.env.TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
