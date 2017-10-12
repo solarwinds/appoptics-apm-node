@@ -20,6 +20,8 @@ services:
         # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_JAVA_CERT:-test/certs/java-collector.crt}
         - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
     image: ao-test-main
+#    volumes:
+#      - type: volume
     logging:
       options:
         max-file: "1"
@@ -31,6 +33,15 @@ services:
     build:
       context: test/docker/
       dockerfile: redis.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+  mysql:
+    image: "mysql"
+    build:
+      context: test/docker/
+      dockerfile: mysql.yml
     logging:
       options:
         max-file: "1"

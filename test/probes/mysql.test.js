@@ -12,7 +12,7 @@ var http = require('http')
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 
-var addr = Address.from(process.env.TEST_MYSQL || 'localhost:3306')[0]
+var addr = Address.from(process.env.TEST_MYSQL || 'mysql:3306')[0]
 var user = process.env.TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
 var pass = process.env.TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
 var soon = global.setImmediate || process.nextTick
