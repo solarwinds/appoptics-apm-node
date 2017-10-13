@@ -5,7 +5,6 @@ var addon = ao.addon
 
 var should = require('should')
 
-var request = require('request')
 var http = require('http')
 
 var postgres = require('pg')
