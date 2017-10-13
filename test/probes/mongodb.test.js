@@ -5,7 +5,6 @@ var addon = ao.addon
 var should = require('should')
 
 var semver = require('semver')
-//var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
 
