@@ -9,7 +9,7 @@ var request = require('request')
 var http = require('http')
 
 var postgres = require('pg')
-var addr = helper.Address.from(process.env.TEST_POSTGRES || 'localhost:5432')[0]
+var addr = helper.Address.from(process.env.TEST_POSTGRES || 'postgres:5432')[0]
 var auth = {
   host: addr.host,
   port: addr.port,

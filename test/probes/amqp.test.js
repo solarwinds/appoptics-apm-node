@@ -449,7 +449,7 @@ describe('probes.amqp', function () {
 
     it('should work with celery', function (done) {
       var client = celery.createClient({
-        CELERY_BROKER_URL: 'amqp://guest:guest@localhost:5672//',
+        CELERY_BROKER_URL: 'amqp://guest:guest@rabbitmq:5672//',
         CELERY_RESULT_BACKEND: 'amqp',
         CELERY_TASK_SERIALIZER: 'json',
         CELERY_RESULT_SERIALIZER: 'json'
@@ -466,7 +466,7 @@ describe('probes.amqp', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('RemoteHost', 'localhost:5672')
+            msg.should.have.property('RemoteHost', 'rabbitmq:5672')
             msg.should.have.property('ExchangeName', 'test')
             console.log(msg)
           },

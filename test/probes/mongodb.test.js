@@ -5,7 +5,7 @@ var addon = ao.addon
 var should = require('should')
 
 var semver = require('semver')
-var request = require('request')
+//var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
 
@@ -16,7 +16,7 @@ requirePatch.enable()
 
 var hosts = {
 	"2.4": process.env.TEST_MONGODB_2_4 || 'mongo_2_4:27017',
-	"2.6": process.env.TEST_MONGODB_2_6 || 'mongo_2_6:27018'
+	"2.6": process.env.TEST_MONGODB_2_6 || 'mongo_2_6:27017'
 }
 
 // Seriously mongo? Adding 3.x in a patch release?
