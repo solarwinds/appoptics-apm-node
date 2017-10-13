@@ -10,11 +10,11 @@ try {
 } catch (e) {}
 
 var host = process.env.TEST_ORACLE || 'oracle'
-var database = process.env.TEST_ORACLE_DBNAME
+var database = process.env.TEST_ORACLE_DBNAME || 'xe'
 var config = {
   connectString: host + '/' + database,
-  password: process.env.TEST_ORACLE_PASSWORD,
-  user: process.env.TEST_ORACLE_USERNAME
+  password: process.env.TEST_ORACLE_PASSWORD || 'oracle',
+  user: process.env.TEST_ORACLE_USERNAME || 'system'
 }
 
 describe('probes.oracledb', function () {
