@@ -30,8 +30,39 @@ rebuild the container.
 
 ### Running the basic test suite
 
-The full test suite can be run inside `/vagrant` on the virtual machine using
-`gulp test`. You can also run the API unit tests with `gulp test:unit` or run
+The full test suite can be run inside the `main` container (see `docker-compose.yml`).
+The main container name will be prefixed the name of the directory it is
+located in. While the github directory is `node-appoptics`, the directory name that
+was used for development is `ao` so the `main` container will be `ao_main_1`. The
+`docker-compose.yml` file requires the `librato/oboe-test` files are located in the
+relative `../oboe-test/`. This is not strictly necessary for testing alone and will
+be changed. So to get the test environment running:
+
+1. in the node-appoptics root directory `docker-compose build`
+   - needs to use intermediate image to avoid multiple apt-get steps.
+   - needs to remove tracelyzer install.
+2. when done `docker exec -it ao_main_1 /bin/bash` (if node-appoptics dir is named ao)
+3. (at ao_main_1 bash prompt) cd appoptics
+4. npm install (should this be saved as part of the image?)
+5. npm run preinstall (this fetches and builds node-appoptics-bindings)
+   - needs to be changed to npm script that will be run automatically
+6. to run tests `./node_modules/gulp/bin/gulp.js test` (or targets as show below)
+   - should gulp be installed globally?
+
+
+For testing, a mock reporter that listens on UDP port 7832 is used.
+The following environment variables should be set up so that liboboe
+will connect to it (the service key needs to be defined but is not
+checked):
+
+```
+APPOPTICS_REPORTER_UDP=localhost:7832
+APPOPTICS_SERVICE_KEY=f08da708-7f1c-4935-ae2e-122caf1ebe31
+APPOPTICS_REPORTER=udp
+```
+
+
+You can run the API unit tests with `gulp test:unit` or run
 the probe integration tests with `gulp test:probes`. If you want to run the
 tests for a specific module, you can do that too by running
 `gulp test:probe:${module}`.
@@ -54,7 +85,7 @@ to work these environment variables must be set:
 - APPOPTICS\_REPORTER_UDP=localhost:7832
 
 NOTE: The testing environment has been moved to Docker using `docker-compose`
-and `docker-compose.yml`. Vagrant has not been updated but neither has this doc.
+and `docker-compose.yml`. The Vagrant environment has not been updated.
 
 [tokens]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 
