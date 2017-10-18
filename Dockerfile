@@ -40,9 +40,11 @@ RUN echo "[supervisord]\nnodaemon=true\n[program:tracelyzer]\ncommand=/etc/init.
 # hopefully fix errors
 RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 
-COPY . appoptics/
+# Now the docker-compose file is bind-mounting this directory as appoptics/
+COPY ./install-appoptics-daemon.sh ao-tmp/
+# COPY . appoptics/
 RUN echo 'LISTEN_HOST=0.0.0.0' >> /etc/default/tracelyzer
-RUN sh appoptics/install-appoptics-daemon.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
+RUN sh /ao-tmp/install-appoptics-daemon.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
 
 # the agent requires the service key now
 ENV APPOPTICS_SERVICE_KEY f08da708-7f1c-4935-ae2e-122caf1ebe31

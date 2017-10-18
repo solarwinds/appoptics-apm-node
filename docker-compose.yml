@@ -29,6 +29,8 @@ services:
         # - AO_TEST_REPORTER=udp
         # - AO_TEST_REPORTER_UDP=localhost:7832
     image: ao-test-main
+    volumes:
+      - "${PWD}:/appoptics/"
 #    volumes:
 #      - type: volume
     logging:
