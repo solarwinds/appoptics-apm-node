@@ -64,8 +64,8 @@ degrees of control.
 
 ### Basic instrumentaiton
 
-Wherever possible, it is preferred that `tv.instrument(...)` is used, however
-there are some alternatives, which we'll explore later. The `tv.instrument(...)`
+Wherever possible, it is preferred that `ao.instrument(...)` is used, however
+there are some alternatives, which we'll explore later. The `ao.instrument(...)`
 function takes four arguments:
 
 - a layer name or builder function that returns a layer describing
@@ -130,7 +130,7 @@ simply be passed through as expected, without trying to report it.
 
 #### Putting all that together
 
-So if we wanted to use `tv.instrument(...)` to patch an async `abc.xyz` call,
+So if we wanted to use `ao.instrument(...)` to patch an async `abc.xyz` call,
 it'd look something like this:
 
 ```js
@@ -138,7 +138,7 @@ shimmer.wrap(abc, 'xyz', xyz => {
   return function (n, cb) {
     const builder = current => current.descend('xyz', { n: n })
     const runner = done => xyz.call(this, n, done)
-    return tv.instrument(builder, runner, { enabled: true }, cb)
+    return ao.instrument(builder, runner, { enabled: true }, cb)
   }
 })
 ```
@@ -147,8 +147,8 @@ shimmer.wrap(abc, 'xyz', xyz => {
 
 Sometimes you want to instrument something that is constrained to the lifetime
 of a request rather than a discrete call and callback pairing. For these times
-there is `tv.instrumentHttp(...)`. It shares most of the signature of the
-`tv.instrument(...)` function, but with a response object in place of the
+there is `ao.instrumentHttp(...)`. It shares most of the signature of the
+`ao.instrument(...)` function, but with a response object in place of the
 callback. It will trigger the exits in reverse chronological order when the
 `end` event of the request is fired.
 
@@ -156,17 +156,17 @@ callback. It will trigger the exits in reverse chronological order when the
 http.createServer((req, res) => {
   const builder = current => current.descend('http-layer')
   const runner = () => res.end('done')
-  tv.instrumentHttp(builder, runner, options, res)
+  ao.instrumentHttp(builder, runner, options, res)
 })
 ```
 
 ### Advanced API usage
 
-Sometimes `tv.instrument(...)` or `tv.instrumentHttp(...)` don't quite fit
+Sometimes `ao.instrument(...)` or `ao.instrumentHttp(...)` don't quite fit
 what is needed for a given patch. For these situations, you can drop down to
 the lower-level API. Those other functions are really just sugar over the
 `Layer`	class. The current layer reference you'd expect to get from the builder
-function can be acquired at `tv.Layer.last` and, as usual, you can call the
+function can be acquired at `ao.Layer.last` and, as usual, you can call the
 `current.descend(...)` function on that. The runner part is encapsulated in
 `layer.runSync(fn)` and `layer.runAsync(fn)`, with a function length based
 sugar wrapper around both of those at `layer.run(fn)`. When using the `Layer`
@@ -174,7 +174,7 @@ class, you will need to call both the run callback and the callback for the
 instrumented function itself separately.
 
 ```js
-const last = tv.Layer.last
+const last = ao.Layer.last
 const layer = last.descend('abc', {
   foo: 'bar'
 })
@@ -188,13 +188,13 @@ layer.runSync(() => {
 The API methods demonstrated so far have all been geared toward use when a
 trace is already in progress. When you aren't in a trace already, you might
 need to start a fresh one. For this purpose, there is the
-`tv.startOrContinueTrace(...)` function. The signature is almost identical
-to `tv.instrument(...)` with the exception that it has an additional
+`ao.startOrContinueTrace(...)` function. The signature is almost identical
+to `ao.instrument(...)` with the exception that it has an additional
 optional xtrace argument at the beginning to provide the id of a trace to
 continue from.
 
 ```js
-tv.startOrContinueTrace(headers['X-Trace'], 'abc', done => {
+ao.startOrContinueTrace(headers['X-Trace'], 'abc', done => {
   return setImmediate(done, a, b, c)
 }, (a, b, c) => {
   console.log('called from setImmediate with:', a, b, c)
@@ -202,17 +202,17 @@ tv.startOrContinueTrace(headers['X-Trace'], 'abc', done => {
 ```
 
 To get the current xtrace id to pass along through a header or some other
-method, you can use the `tv.xtraceId` getter.
+method, you can use the `ao.xtraceId` getter.
 
 ### Info and error events
 
 Info and error events are simply insert into the current layer and can be
-created with the `tv.reportInfo(...)` and `tv.reportError(...)` functions.
+created with the `ao.reportInfo(...)` and `ao.reportError(...)` functions.
 
 ```js
-tv.reportInfo({ foo: 'bar' })
-tv.reportError(new Error('some error'))
-tv.reportError('a string error')
+ao.reportInfo({ foo: 'bar' })
+ao.reportError(new Error('some error'))
+ao.reportError('a string error')
 ```
 
 ## Context management
@@ -224,31 +224,31 @@ tracking past events to connect edges to.
 ### Accessing the context
 
 The context is available as an object with `get(key)` and `set(key, value)`
-methods at `tv.requestStore`. You can store whatever data you need in the store,
+methods at `ao.requestStore`. You can store whatever data you need in the store,
 but it is *only* available within the specific branch of the continuation in
 which the data was set. The continuation tracking begins when a call is made to
-`tv.requestStore.run(functionToRunInContext)`.
+`ao.requestStore.run(functionToRunInContext)`.
 
 ```js
-tv.requestStore.run(function () {
-  tv.requestStore.set('foo', 'bar')
+ao.requestStore.run(function () {
+  ao.requestStore.set('foo', 'bar')
   var called = false
 
   setImmediate(function () {
-    assert('bar', tv.requestStore.get('foo'))
-    tv.requestStore.set('baz', 'buz')
+    assert('bar', ao.requestStore.get('foo'))
+    ao.requestStore.set('baz', 'buz')
     called = true
 
     setImmediate(after)
   })
 
   function after () {
-    assert('buz', tv.requestStore.get('baz'))
+    assert('buz', ao.requestStore.get('baz'))
   }
 
   setTimeout(function () {
-    assert('bar', tv.requestStore.get('foo'))
-    assert(null, tv.requestStore.get('baz'))
+    assert('bar', ao.requestStore.get('foo'))
+    assert(null, ao.requestStore.get('baz'))
     assert(called, true)
   })
 })
@@ -262,19 +262,19 @@ the code continuation of a given request call graph. Much of this is handled
 automatically by the `async-listener` module, which is a dependency of
 `continuation-local-storage`. However, there are sometimes instances of
 user-mode queueing, like connection pools, which interfere with context
-continuation. For this reason, it is sometimes necessary to use `tv.bind(...)`
-and `tv.bindEmitter(...)` to bind callbacks and event emitters to the
+continuation. For this reason, it is sometimes necessary to use `ao.bind(...)`
+and `ao.bindEmitter(...)` to bind callbacks and event emitters to the
 context at the point which they are wrapped with.
 
 ```js
-tv.bindEmitter(request)
-tv.bindEmitter(response)
+ao.bindEmitter(request)
+ao.bindEmitter(response)
 
-tv.requestStore.set('it works', true)
+ao.requestStore.set('it works', true)
 
-someAsyncThing(tv.bind(function () {
+someAsyncThing(ao.bind(function () {
   res.on('end', function () {
-    assert(true, tv.requestStore.get('it works'))
+    assert(true, ao.requestStore.get('it works'))
   })
 }))
 ```

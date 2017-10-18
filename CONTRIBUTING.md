@@ -10,6 +10,15 @@ to the [stephenappneta](http://stephenappneta.tv.solarwinds.com) organization.
 
 ### Setup
 
+The primary environment for testing is Docker. There is a complete environment
+for testing defined in `docker-compose.yml`. It depends on `collectors` that are
+defined in a directory parallel to to this directory. For example, if this (the
+node-appoptics directory) is `/solarwinds/ao` then the oboe-test repository must
+be cloned into `/solarwinds/oboe-test/` because `docker-compose.yml` references
+those docker files via `../oboe-test/`
+
+
+
 To start the dev environment, ensure vagrant and virtualbox are installed, then
 you can simply run `vagrant up` to start the environment and `vagrant ssh` to
 connect to it.
@@ -181,3 +190,15 @@ you can skip that step if you use it.
 
 After all commits and tags have been pushed to git, it's simply a matter of
 running `npm publish` to send the latest version to the npm registry.
+
+### Legacy Setup
+
+To start the dev environment, ensure vagrant and virtualbox are installed, then
+you can simply run `vagrant up` to start the environment and `vagrant ssh` to
+connect to it.
+
+The appoptics `Vagrantfile` also includes a collection of docker containers,
+defined in the `docker-containers.json` file. Note that, while this is intended
+to be run using the vagrant docker configuration, I've also included a file
+named `docker.rb` which allows the container list to be set up directly on any
+system with docker already installed.
