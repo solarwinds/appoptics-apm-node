@@ -51,7 +51,7 @@ describe('event', function () {
 
     // NOTE: events must be sent within a request store context
     ao.requestStore.run(function () {
-      event2.send()
+      event2.sendReport()
     })
   })
 
@@ -67,7 +67,7 @@ describe('event', function () {
     event.set = function () {
       called = true
     }
-    event.send({ Foo: 'bar' })
+    event.sendReport({ Foo: 'bar' })
     called.should.equal(true)
   })
 })
