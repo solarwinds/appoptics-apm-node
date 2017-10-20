@@ -79,6 +79,8 @@ describe('custom', function () {
   })
 
   it('should custom instrument sync code', function (done) {
+    // TODO consider whether all xyzzy references should be removed.
+    // (Must grep for xyzzy across files)
     // set one-time flag (cleared by helper)
     helper.test.xyzzy = false
     helper.test(emitter, function (done) {
