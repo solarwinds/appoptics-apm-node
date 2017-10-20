@@ -1,6 +1,5 @@
 var ao = exports.ao = require('..')
 var realPort = ao.port
-var realReporter = ao.reporter
 ao.skipSample = true
 
 var debug = require('debug')('appoptics:test:helper')
@@ -81,7 +80,10 @@ exports.doChecks = function (emitter, checks, done) {
   debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
 
   function onMessage (msg) {
-    log('mock appoptics (port ' + addr.port + ') received message', msg)
+    if (exports.test.xyzzy) {
+      console.log('xyzzy mock (' + addr.port + ') received message', msg)
+    }
+    log('mock (' + addr.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
@@ -125,7 +127,14 @@ var check = {
 }
 
 exports.test = function (emitter, test, validations, done) {
+  var xyzzy
+  // temporary debugging aid
+  if (exports.test.xyzzy) {
+    xyzzy = true
+  }
   function noop () {}
+  // BAM I think the noops are to skip testing the 'outer'
+  // layer.
   validations.unshift(noop)
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
@@ -133,6 +142,10 @@ exports.test = function (emitter, test, validations, done) {
   ao.requestStore.run(function () {
     var layer = new ao.Layer('outer')
     // layer.async = true
+    if (xyzzy) {
+      layer.xyzzy = true
+      xyzzy = false
+    }
     layer.enter()
 
     debug('test started')

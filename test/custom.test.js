@@ -79,6 +79,8 @@ describe('custom', function () {
   })
 
   it('should custom instrument sync code', function (done) {
+    // set one-time flag (cleared by helper)
+    helper.test.xyzzy = false
     helper.test(emitter, function (done) {
       ao.instrument('test', function () {})
       done()
@@ -95,6 +97,7 @@ describe('custom', function () {
   })
 
   it('should custom instrument async code', function (done) {
+    helper.test.xyzzy = false
     helper.test(emitter, function (done) {
       ao.instrument('test', soon, done)
     }, [
