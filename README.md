@@ -1,4 +1,4 @@
-# TraceView
+# AppOptics
 
 [![Travis branch](https://img.shields.io/travis/tracelytics/node-traceview/master.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/tracelytics/node-traceview/)
 [![David](https://img.shields.io/david/tracelytics/node-traceview.svg?maxAge=2592000&style=flat-square)](https://david-dm.org/tracelytics/node-traceview)
@@ -6,20 +6,18 @@
 [![npm](https://img.shields.io/npm/dm/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
 [![npm](https://img.shields.io/npm/v/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
 
-The `traceview` module provides [TraceView](https://traceview.solarwinds.com/) instrumentation for Node.JS.
+The `appoptics` module provides [AppOptics](https://traceview.solarwinds.com/) instrumentation for Node.JS.
 
 It has the ability to report performance metrics on an array of libraries,
 databases and frameworks.
 
-It requires a [TraceView](https://traceview.solarwinds.com/) account to
+It requires an [AppOptics](https://traceview.solarwinds.com/) account to
 view metrics.  Get yours; [it's free](https://traceview.solarwinds.com/TraceView/Signup).
 
 ## Dependencies
 
 - Linux
 - node.js v0.8+
-- liboboe installed at standard lib path
-    - (installed as part of TraceView signup; node-traceview is a noop without it)
 
 ## Release Notes
 
@@ -27,28 +25,28 @@ Here you can see the [history of what we've released](http://docs.traceview.sola
 
 ## Installation
 
-The `traceview` module is [available on npm](http://npmjs.org/package/traceview) and can be installed by navigating to your app root and running:
+The `appoptics` module is [available on npm](http://npmjs.org/package/traceview) and can be installed by navigating to your app root and running:
 
 ```
-npm install --save traceview
+npm install --save appoptics
 ```
 
 Then, at the top of your main js file for your app, add this:
 
 ```
-require('traceview')
+require('appoptics')
 ```
 
 ## Configuration
 
-See our documentation on [configuring traceview for node](http://docs.traceview.solarwinds.com/Instrumentation/nodejs.html#configuring-instrumentation).
+See our documentation on [configuring appoptics for node](http://docs.traceview.solarwinds.com/Instrumentation/nodejs.html#configuring-instrumentation).
 
 ## Upgrading
 
 To upgrade an existing installation, navigate to your app root and run:
 
 ```
-npm install --save traceview@latest
+npm install --save appoptics@latest
 ```
 
 ## Adding Your Own Layers
@@ -107,10 +105,10 @@ make changes after the fact.
 ## Developer Resources
 
 We have made a large effort to expose as much technical information
-as possible to assist developers wishing to contribute to the traceview module.
+as possible to assist developers wishing to contribute to the appoptics module.
 Below is a good source of information and help for developers:
 
-* The [TraceView Knowledge Base](http://docs.traceview.solarwinds.com/) has
+* The [AppOptics Knowledge Base](http://docs.traceview.solarwinds.com/) has
 a large collection of technical articles or, if needed, you can submit a
 support request directly to the team.
 
@@ -129,25 +127,15 @@ test        # Mocha test suite
 
 ## Compiling the C extension
 
-This module utilizes a C++ extension to interface with the system `liboboe.so`
-library.  This system library is installed with the TraceView host packages
-(tracelyzer, liboboe0, liboboe-dev) and is used to report host and performance
-metrics from multiple sources (nodejs, nginx, python etc.) back to TraceView
-servers.
+This module utilizes a C++ node extension to interface with the `liboboe.so`
+library.  `liboboe` is installed as part of the `appoptics-bindings` package
+which is a dependency of this package.  It is used to report host and
+performance metrics to AppOptics servers.
 
-Note: Make sure you have the development package `liboboe0-dev` installed
-before attempting to compile the C extension.
-
-```bash
->$ dpkg -l | grep liboboe
-ii  liboboe-dev                              1.2.1-trusty1                       amd64        TraceView common library -- development files
-ii  liboboe0                                 1.2.1-trusty1                       amd64        Traceview common library
-```
-
-See [Installing Base Packages on Debian and Ubuntu](http://docs.traceview.solarwinds.com/TraceView/install-instrumentation.html#debian-and-ubuntu)
-in the Knowledge Base for details.
-
-To see the code related to the C++ extension, take a look in `src`.
+If you would like to work with the C++ extension you should clone the github
+`node-appoptics-bindings` repository and work with that. It's possible to
+direct this package, `appoptics`, to use a non-standard source of `node-appoptics-bindings`
+by setting the environment variable `AO\_TEST_PACKAGE`. See the file `install-appoptics-bindings.js` for further details.
 
 ## License
 
