@@ -34,9 +34,9 @@ global.tv = require('..')
 
 // Set trace mode, if available
 if (argv.always) {
-  tv.traceMode = 'always'
+  tv.sampleMode = 'always'
 } else if (argv.never) {
-  tv.traceMode = 'never'
+  tv.sampleMode = 'never'
 }
 
 // Set sample rate, if available
@@ -47,7 +47,7 @@ if (argv.sample_rate) {
 // Define list of flags to pass through
 var passthroughs = [
   'sampleRate',
-  'traceMode',
+  'sampleMode',
   'host',
   'port'
 ]

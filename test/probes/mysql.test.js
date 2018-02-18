@@ -31,7 +31,7 @@ describe('probes.mysql', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
     ao.fs.enabled = false
   })
   after(function (done) {

@@ -34,7 +34,7 @@ describe('probes.zlib', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

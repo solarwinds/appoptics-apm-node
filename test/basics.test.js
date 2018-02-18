@@ -7,19 +7,19 @@ var Layer = ao.Layer
 
 describe('basics', function () {
   it('should set trace mode', function () {
-    ao.traceMode = ao.addon.TRACE_ALWAYS
+    ao.sampleMode = ao.addon.TRACE_ALWAYS
   })
 
   it('should get trace mode', function () {
-    ao.traceMode.should.equal(ao.addon.TRACE_ALWAYS)
+    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
   })
 
   it('should set trace mode as string', function () {
-    ao.traceMode = 'never'
-    ao.traceMode.should.equal(ao.addon.TRACE_NEVER)
+    ao.sampleMode = 'never'
+    ao.sampleMode.should.equal(ao.addon.TRACE_NEVER)
 
-    ao.traceMode = 'always'
-    ao.traceMode.should.equal(ao.addon.TRACE_ALWAYS)
+    ao.sampleMode = 'always'
+    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
   })
 
   it('should set and get sample rate', function () {
@@ -37,14 +37,14 @@ describe('basics', function () {
 
   it('should have sugary trace mode detectors', function () {
     // Reset first
-    ao.traceMode = ao.addon.TRACE_NEVER
+    ao.sampleMode = ao.addon.TRACE_NEVER
 
     ao.always.should.be.false
-    ao.traceMode = ao.addon.TRACE_ALWAYS
+    ao.sampleMode = ao.addon.TRACE_ALWAYS
     ao.always.should.be.true
 
     ao.never.should.be.false
-    ao.traceMode = ao.addon.TRACE_NEVER
+    ao.sampleMode = ao.addon.TRACE_NEVER
     ao.never.should.be.true
   })
 
@@ -77,7 +77,7 @@ describe('basics', function () {
   it('should support sampling', function () {
     var skipSample = ao.skipSample
     ao.skipSample = false
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     var s = ao.sample('test')
     s.should.not.be.false
@@ -94,7 +94,7 @@ describe('basics', function () {
 
   it('should not call sampleRate setter from sample function', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
     var skipSample = ao.skipSample
     ao.skipSample = false
 
@@ -116,7 +116,7 @@ describe('basics', function () {
   // TODO consider removing this old test for "through" mode
   it('should not trace when mode "never"', function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'never'
+    ao.sampleMode = 'never'
 
     var sendReport = ao.reporter.sendReport
     ao.reporter.sendReport = function (event) {

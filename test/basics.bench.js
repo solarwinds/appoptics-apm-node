@@ -4,11 +4,11 @@ var Layer = ao.Layer
 
 suite('basics', function () {
   bench('set trace mode', function () {
-    ao.traceMode = ao.addon.TRACE_ALWAYS
+    ao.sampleMode = ao.addon.TRACE_ALWAYS
   })
 
   bench('set trace mode as string', function () {
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
   })
 
   bench('set sample rate', function () {

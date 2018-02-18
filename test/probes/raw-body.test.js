@@ -21,7 +21,7 @@ describe('probes.raw-body', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
     ao.fs.enabled = false
     ao.Layer.last = null
     ao.Event.last = null

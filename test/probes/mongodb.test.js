@@ -46,7 +46,7 @@ function makeTests (db_host, host, self) {
     ao.fs.enabled = false
 		emitter = helper.appoptics(done)
 		ao.sampleRate = addon.MAX_SAMPLE_RATE
-		ao.traceMode = 'always'
+		ao.sampleMode = 'always'
 	})
 	after(function (done) {
     ao.fs.enabled = true

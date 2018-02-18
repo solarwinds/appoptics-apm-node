@@ -40,7 +40,7 @@ describe('probes.hapi', function () {
     ao.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     ao.fs.enabled = true

@@ -28,7 +28,7 @@ describe('probes.https', function () {
 
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
