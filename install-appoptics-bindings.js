@@ -5,12 +5,18 @@
 // to enable access to private repositories or alternate branches.
 //
 
-var spawn = require('child_process').spawn
+var spawn = require('child_process').spawnSync
+
+var env = process.env
+
+// development setting to prevent reinstalls when local changes have been made
+if (env.AO_TEST_BINDINGS_ARE_PREBUILT) {
+  process.exit(0)
+}
 
 // default to an npm package name (doesn't start with "node-").
 var suffix = 'appoptics-bindings'
 var prefix = ''
-var env = process.env
 
 // if either git auth mechanism is specified then default to a
 // github package name (starts with "node-"). so if accessing an
@@ -29,13 +35,21 @@ if (env.AO_TEST_GITAUTH) {
 
 // if the package is specified override the default. this allows specifying a
 // branch other than master or a specific version. it also allows accessing a
-// public github repository by setting the name via AO_TEST_PACKAGE but not
-// setting any of the AO_TEST_GIT* authentication environment variables.
+// public github repository by setting the name via AO_TEST_PACKAGE. if the
+// repository is public then none of the AO_TEST_GIT* environment variables
+// are needd.
 if (env.AO_TEST_PACKAGE) {
-  // use the specified package
   suffix = env.AO_TEST_PACKAGE
 }
 
-var status = spawn('npm', ['install', prefix + suffix], { stdio: 'inherit' })
+// only show output if desired, unless an error occurs
+var opts = env.AO_TEST_BINDINGS_OUTPUT ? {stdio: 'inherit'} : undefined
 
-process.exit(status)
+var results = spawn('npm', ['install', prefix + suffix], opts)
+
+if (results.status || results.error) {
+  console.error('Error building appoptics-bindings')
+  console.error((results.stderr ? results.stderr : results.status).toString())
+}
+
+process.exit(results.status)
