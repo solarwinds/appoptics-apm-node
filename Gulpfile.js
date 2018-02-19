@@ -32,6 +32,19 @@ var tasks = {
   }
 }
 
+// Make individual unit test tasks
+var unitTests = fs.readdirSync('test/')
+unitTests.forEach(function(file) {
+  if (!/.+\.test\.js$/.test(file)) return
+
+  var name = file.replace(/^(.+)\.[^\.]+\.js/, '$1')
+  var task = tasks['unit:' + name] = {
+    lib: 'dist/*.js',
+    test: 'test/' + file,
+    bench: 'test/' + name + '.bench.js'
+  }
+})
+
 // Describe probe tasks automatically
 var probes = fs.readdirSync('lib/probes')
 probes.forEach(function (probe) {
