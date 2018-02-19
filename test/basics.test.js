@@ -114,6 +114,7 @@ describe('basics', function () {
   })
 
   // TODO consider removing this old test for "through" mode
+  /*
   it('should not trace when mode "never"', function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'never'
@@ -139,4 +140,5 @@ describe('basics', function () {
       })
     })
   })
+  // */
 })
