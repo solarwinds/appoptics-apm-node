@@ -116,7 +116,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      var origin = new ao.Event()
+      var origin = new ao.Event('layer-name', 'label-name', '')
 
       helper.doChecks(emitter, [
         function (msg) {
