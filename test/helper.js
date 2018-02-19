@@ -13,6 +13,13 @@ var http = require('http')
 
 var BSON = new bson.BSONPure.BSON()
 
+var udpPort = 7832
+
+if (process.env.APPOPTICS_REPORTER_UDP) {
+  var parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
+  if (parts.length == 2) udpPort = parts[1]
+}
+
 debug('helper found real port = ' + realPort)
 
 function udpSend (msg, port, host) {
@@ -55,7 +62,7 @@ exports.appoptics = function (done) {
   })
 
   // Start mock tracelyzer
-  server.bind(7832, 'localhost')
+  server.bind(udpPort, 'localhost')
 
   // Expose some things through the emitter
   emitter.server = server

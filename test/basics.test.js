@@ -59,11 +59,11 @@ describe('basics', function () {
       called = true
       debug.enable = real
     }
-    var before = ao.log
-    ao.log = 'layer'
-    ao.log.should.equal('layer')
+    var before = ao.logLevel
+    ao.logLevel = 'layer'
+    ao.logLevel.should.equal('layer')
     called.should.equal(true)
-    ao.log = before
+    ao.logLevel = before
   })
 
   it('should be able to detect if it is in a trace', function () {
