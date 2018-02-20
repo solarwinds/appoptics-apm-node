@@ -557,7 +557,7 @@ describe('custom', function () {
     var called = false
     ao.sample = function () {
       called = true
-      return false
+      return {sample: true, source: 0, rate: 0}
     }
 
     helper.test(emitter, function (done) {
