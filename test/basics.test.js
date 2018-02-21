@@ -48,8 +48,8 @@ describe('basics', function () {
     ao.never.should.be.true
   })
 
-  it('should get access key', function () {
-    ao.accessKey.should.be.a.String
+  it('should get the service key', function () {
+    ao.serviceKey.should.be.a.String
   })
 
   it('should set logging', function () {
