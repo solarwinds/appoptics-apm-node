@@ -72,7 +72,7 @@ describe('probes.https', function () {
   }
 
   describe('https-server', function () {
-    var conf = ao.https
+    var conf = ao.probes.https
 
     //
     // Test a simple res.end() call in an http server
@@ -392,7 +392,7 @@ describe('probes.https', function () {
   })
 
   describe('https-client', function () {
-    var conf = ao['https-client']
+    var conf = ao.probes['https-client']
 
     it('should trace https request', function (done) {
       var server = https.createServer(options, function (req, res) {

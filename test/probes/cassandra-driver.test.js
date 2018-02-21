@@ -1,7 +1,7 @@
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
-var conf = ao['cassandra-driver']
+var conf = ao.probes['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(

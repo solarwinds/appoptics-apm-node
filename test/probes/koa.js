@@ -136,7 +136,7 @@ exports.route = function (emitter, done) {
 }
 
 exports.route_disabled = function (emitter, done) {
-  ao['koa-route'].enabled = false
+  ao.probes['koa-route'].enabled = false
   var app = koa()
 
   app.use(_.get('/hello/:name', function* hello () {
@@ -149,7 +149,7 @@ exports.route_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    ao['koa-route'].enabled = true
+    ao.probes['koa-route'].enabled = true
     server.close(done)
   })
 
@@ -188,7 +188,7 @@ exports.router = function (emitter, done) {
 }
 
 exports.router_disabled = function (emitter, done) {
-  ao['koa-router'].enabled = false
+  ao.probes['koa-router'].enabled = false
   var app = koa()
 
   function* hello () {
@@ -211,7 +211,7 @@ exports.router_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    ao['koa-router'].enabled = true
+    ao.probes['koa-router'].enabled = true
     server.close(done)
   })
 
@@ -244,7 +244,7 @@ exports.resourceRouter = function (emitter, done) {
 }
 
 exports.resourceRouter_disabled = function (emitter, done) {
-  ao['koa-resource-router'].enabled = false
+  ao.probes['koa-resource-router'].enabled = false
   var app = koa()
 
   var res = new Resource('hello', {
@@ -261,7 +261,7 @@ exports.resourceRouter_disabled = function (emitter, done) {
     function (msg) { check['koa-exit'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    ao['koa-resource-router'].enabled = true
+    ao.probes['koa-resource-router'].enabled = true
     server.close(done)
   })
 
@@ -314,7 +314,7 @@ exports.render = function (emitter, done) {
 }
 
 exports.render_disabled = function (emitter, done) {
-  ao['co-render'].enabled = false
+  ao.probes['co-render'].enabled = false
   var app = koa()
 
   app.use(function* () {
@@ -339,7 +339,7 @@ exports.render_disabled = function (emitter, done) {
   ]
 
   helper.doChecks(emitter, validations, function () {
-    ao['co-render'].enabled = true
+    ao.probes['co-render'].enabled = true
     server.close(done)
   })
 

@@ -59,7 +59,7 @@ describe('probes.http', function () {
   }
 
   describe('http-server', function () {
-    var conf = ao.http
+    var conf = ao.probes.http
 
     // this test exists only to fix a problem with oboe not reporting a UDP
     // send failure.
@@ -387,7 +387,7 @@ describe('probes.http', function () {
   })
 
   describe('http-client', function () {
-    var conf = ao['http-client']
+    var conf = ao.probes['http-client']
 
     it('should trace http request', function (done) {
       var server = http.createServer(function (req, res) {
