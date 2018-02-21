@@ -71,6 +71,22 @@ describe('probes.https', function () {
     }
   }
 
+  describe('UDP', function () {
+    // this test exists only to fix a problem with oboe not reporting a UDP
+    // send failure.
+    it('might lose a message (until the UDP problem is fixed)', function (done) {
+      helper.test(emitter, function (done) {
+        ao.instrument('fake', function () { })
+        done()
+      }, [
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+              msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
+    })
+  })
+
   describe('https-server', function () {
     var conf = ao.probes.https
 
@@ -143,7 +159,7 @@ describe('probes.https', function () {
     //
     // Verify always trace mode forwards X-TV-Meta header and sampling data
     //
-    it('should forward X-TV-Meta header and sampling data in always trace mode', function (done) {
+    it('should forward sampling data in always trace mode', function (done) {
       var server = https.createServer(options, function (req, res) {
         res.end('done')
       })
@@ -151,7 +167,7 @@ describe('probes.https', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('X-TV-Meta', 'foo')
+          //msg.should.have.property('X-TV-Meta', 'foo')
           msg.should.have.property('SampleSource')
           msg.should.have.property('SampleRate')
         },
