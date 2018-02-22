@@ -96,7 +96,7 @@ exports.basic = function (emitter, done) {
 }
 
 exports.disabled = function (emitter, done) {
-  ao.koa.enabled = false
+  ao.probes.koa.enabled = false
   var app = koa()
 
   app.use(function* () {
@@ -107,7 +107,7 @@ exports.disabled = function (emitter, done) {
     function (msg) { check['http-entry'](msg) },
     function (msg) { check['http-exit'](msg) }
   ], function () {
-    ao.koa.enabled = true
+    ao.probes.koa.enabled = true
     server.close(done)
   })
 

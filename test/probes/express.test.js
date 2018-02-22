@@ -20,13 +20,13 @@ describe('probes.express', function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    ao.fs.enabled = false
+    ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
   })
   after(function (done) {
-    ao.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -52,6 +52,20 @@ describe('probes.express', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   //
   // Tests
@@ -500,7 +514,7 @@ describe('probes.express', function () {
   })
 
   it('should skip when disabled', function (done) {
-    ao.express.enabled = false
+    ao.probes.express.enabled = false
     var app = express()
 
     app.set('views', __dirname)
@@ -521,7 +535,7 @@ describe('probes.express', function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      ao.express.enabled = true
+      ao.probes.express.enabled = true
       server.close(done)
     })
 

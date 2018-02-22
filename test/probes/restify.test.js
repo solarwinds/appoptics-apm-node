@@ -49,6 +49,20 @@ describe('probes.restify', function () {
     }
   }
 
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
   //
   // Tests
   //

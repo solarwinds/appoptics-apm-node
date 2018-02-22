@@ -19,14 +19,28 @@ describe('probes/co-render', function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    ao.fs.enabled = false
+    ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
   })
   after(function (done) {
-    ao.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   //

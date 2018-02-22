@@ -5,7 +5,7 @@ var conf = ao.probes['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(
-  process.env.TEST_CASSANDRA_2_2 || 'cassandra:9042'
+  process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
 //
@@ -18,6 +18,36 @@ var hasReadableStream = typeof stream.Readable !== 'undefined'
 if (hasReadableStream) {
   cassandra = require('cassandra-driver')
 }
+
+describe('probes.cassandra-driver UDP', function () {
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  after(function (done) {
+    emitter.close(done)
+  })
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
+
 
 describe('probes.cassandra-driver', function () {
   this.timeout(10000)
