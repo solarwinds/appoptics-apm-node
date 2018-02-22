@@ -22,6 +22,22 @@ elif [[ "$ARG" = "bash" ]]; then
     export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
     export APPOPTICS_REPORTER=udp
+elif [[ "$ARG" = "bash-testing" ]]; then
+    # presume docker containers are running - their ports are addressable
+    # as localhost.
+    export AO_TEST_CASSANDRA_2_2=localhost:9042
+    export AO_TEST_REDIS_3_0=localhost:6379
+    export AO_TEST_MYSQL_USERNAME=admin
+    # default should be fine.
+    #export AO_TEST_POSTGRES_PASSWORD=
+    export AO_TEST_MEMCACHED_1_4=localhost:11211
+    export AO_TEST_MYSQL=localhost:3306
+    export AO_TEST_MONGODB_2_4=localhost:27016
+    export AO_TEST_MONGODB_2_6=localhost:27017
+    export AO_TEST_MONGODB_3_0=localhost:27018
+    export AO_TEST_MYSQL_PASSWORD=pwwadmin
+    export AO_TEST_POSTGRES=localhost:5432
+    export AO_TEST_CASSANDRA_2_2=localhost:9042
 elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_DEBUG_LEVEL=6
     # see src/debug-loggers.js for all the options
