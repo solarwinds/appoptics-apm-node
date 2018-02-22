@@ -7,7 +7,7 @@ var semver = require('semver')
 
 var Memcached = require('memcached')
 var pkg = require('memcached/package.json')
-var db_host = process.env.TEST_MEMCACHED_1_4 || 'memcached:11211'
+var db_host = process.env.AO_TEST_MEMCACHED_1_4 || 'memcached:11211'
 
 describe('probes.memcached', function () {
   this.timeout(10000)
@@ -49,6 +49,20 @@ describe('probes.memcached', function () {
     }
   }
 
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
   //
   // Define tests
   //
@@ -87,6 +101,20 @@ describe('probes.memcached', function () {
   } else {
     it.skip('should touch', test_touch)
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   it('should get', function (done) {
     helper.test(emitter, function (done) {
@@ -243,22 +271,18 @@ describe('probes.memcached', function () {
   })
 
   it('should skip when disabled', function (done) {
-    ao.memcached.enabled = false
+    ao.probes.memcached.enabled = false
     helper.test(emitter, function (done) {
       mem.get('foo', done)
     }, [], function (err) {
-      ao.memcached.enabled = true
+      ao.probes.memcached.enabled = true
       done(err)
     })
   })
 
   it('should work normally when not tracing', function (done) {
-    helper.test(emitter, function (done) {
-      ao.Layer.last = ao.Event.last = null
-      mem.get('foo', done)
-    }, [], function (err) {
-      done(err)
-    })
+    // execute a code path with no state set up.
+    mem.get('foo', done)
   })
 
   it('should report errors', function (done) {

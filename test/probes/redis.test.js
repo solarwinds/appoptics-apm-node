@@ -9,7 +9,7 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
-var parts = (process.env.TEST_REDIS_3_0 || 'redis:6379').split(':')
+var parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
 var host = parts.shift()
 var port = parts.shift()
 var addr = new Address(host, port)
@@ -42,6 +42,18 @@ describe('probes.redis', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   //
   // Test a simple res.end() call in an http server

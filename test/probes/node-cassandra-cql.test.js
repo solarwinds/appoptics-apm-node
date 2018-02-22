@@ -4,7 +4,7 @@ var addon = ao.addon
 
 var should = require('should')
 var hosts = helper.Address.from(
-  process.env.TEST_CASSANDRA_2_2 || 'cassandra:9042'
+  process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
 //
@@ -55,10 +55,10 @@ describe('probes.cassandra', function () {
       emitter = helper.appoptics(done)
       ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
       ao.sampleMode = 'always'
-      ao.fs.enabled = false
+      ao.probes.fs.enabled = false
     })
     after(function (done) {
-      ao.fs.enabled = true
+      ao.probes.fs.enabled = true
       emitter.close(done)
     })
 
@@ -81,6 +81,18 @@ describe('probes.cassandra', function () {
       client.execute('CREATE COLUMNFAMILY IF NOT EXISTS "foo" (bar varchar, PRIMARY KEY (bar));', function () {
         done()
       })
+    })
+
+    it('UDP might lose a message', function (done) {
+      helper.test(emitter, function (done) {
+        ao.instrument('fake', ao.noop)
+        done()
+      }, [
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+              msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
     })
 
     it('should trace a basic query', test_basic)

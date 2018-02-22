@@ -12,9 +12,9 @@ var http = require('http')
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 
-var addr = Address.from(process.env.TEST_MYSQL || 'mysql:3306')[0]
-var user = process.env.TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
-var pass = process.env.TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
+var addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
+var user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
+var pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
 var soon = global.setImmediate || process.nextTick
 
 describe('probes.mysql', function () {
@@ -32,10 +32,10 @@ describe('probes.mysql', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
-    ao.fs.enabled = false
+    ao.probes.fs.enabled = false
   })
   after(function (done) {
-    ao.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -132,6 +132,19 @@ describe('probes.mysql', function () {
       db.end(done)
     })
   }
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
 
   it('should trace a basic query', test_basic)
   it('should trace a query with a value list', test_values)
@@ -261,9 +274,9 @@ describe('probes.mysql', function () {
   }
 
   function test_disabled (done) {
-    ao.mysql.enabled = false
+    ao.probes.mysql.enabled = false
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [], function (err) {
-      ao.mysql.enabled = true
+      ao.probes.mysql.enabled = true
       done(err)
     })
   }
