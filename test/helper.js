@@ -2,14 +2,15 @@ var ao = exports.ao = require('..')
 var realPort = ao.port
 ao.skipSample = true
 
-var debug = require('debug')('appoptics:test:helper')
-var log = require('debug')('appoptics:test:helper:appoptics-message')
 var Emitter = require('events').EventEmitter
+var debug = require('debug')('appoptics:test:helper')
 var extend = require('util')._extend
 var bson = require('bson')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
+
+var log = ao.loggers
 
 var BSON = new bson.BSONPure.BSON()
 
@@ -41,7 +42,7 @@ exports.appoptics = function (done) {
   server.on('message', function (msg) {
     var port = server.address().port
     var parsed = BSON.deserialize(msg)
-    log('mock appoptics (port ' + port + ') received', parsed)
+    log.test.message('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)
     }
@@ -87,10 +88,7 @@ exports.doChecks = function (emitter, checks, done) {
   debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
 
   function onMessage (msg) {
-    if (exports.test.xyzzy) {
-      console.log('xyzzy mock (' + addr.port + ') received message', msg)
-    }
-    log('mock (' + addr.port + ') received message', msg)
+    //log.test.message('mock (' + addr.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
@@ -134,14 +132,8 @@ var check = {
 }
 
 exports.test = function (emitter, test, validations, done) {
-  var xyzzy
-  // temporary debugging aid
-  if (exports.test.xyzzy) {
-    xyzzy = true
-  }
   function noop () {}
-  // BAM I think the noops are to skip testing the 'outer'
-  // layer.
+  // noops skip testing the 'outer' layer.
   validations.unshift(noop)
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
@@ -149,15 +141,11 @@ exports.test = function (emitter, test, validations, done) {
   ao.requestStore.run(function () {
     var layer = new ao.Layer('outer')
     // layer.async = true
-    if (xyzzy) {
-      layer.xyzzy = true
-      xyzzy = false
-    }
     layer.enter()
 
-    debug('test started')
+    log.test.info('test started')
     test(function (err, data) {
-      debug('test ended: ' + (err ? 'failed' : 'passed'))
+      log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)
       layer.exit()
     })
