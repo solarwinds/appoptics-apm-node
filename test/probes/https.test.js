@@ -74,7 +74,7 @@ describe('probes.https', function () {
   describe('UDP', function () {
     // this test exists only to fix a problem with oboe not reporting a UDP
     // send failure.
-    it('might lose a message (until the UDP problem is fixed)', function (done) {
+    it('UDP might lose a message', function (done) {
       helper.test(emitter, function (done) {
         ao.instrument('fake', function () { })
         done()

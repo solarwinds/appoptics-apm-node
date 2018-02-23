@@ -4,7 +4,7 @@ var addon = ao.addon
 
 var should = require('should')
 var amqp = require('amqp')
-var db_host = process.env.TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
+var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 describe('probes.amqp', function () {
   var emitter
@@ -79,6 +79,18 @@ describe('probes.amqp', function () {
     } else {
       done()
     }
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   //

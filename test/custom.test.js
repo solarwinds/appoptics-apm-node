@@ -80,7 +80,7 @@ describe('custom', function () {
 
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
-  it('might lose a message (until the UDP problem is fixed)', function (done) {
+  it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
       ao.instrument('fake', function () { })
       done()
@@ -93,10 +93,6 @@ describe('custom', function () {
   })
 
   it('should custom instrument sync code', function (done) {
-    // TODO consider whether all xyzzy references should be removed.
-    // (Must grep for xyzzy across files)
-    // set one-time flag (cleared by helper)
-    helper.test.xyzzy = false
     helper.test(emitter, function (done) {
       ao.instrument('test', function () {})
       done()
@@ -113,7 +109,6 @@ describe('custom', function () {
   })
 
   it('should custom instrument async code', function (done) {
-    helper.test.xyzzy = false
     helper.test(emitter, function (done) {
       ao.instrument('test', soon, done)
     }, [

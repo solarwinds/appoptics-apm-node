@@ -26,18 +26,25 @@ elif [[ "$ARG" = "bash-testing" ]]; then
     # presume docker containers are running - their ports are addressable
     # as localhost.
     export AO_TEST_CASSANDRA_2_2=localhost:9042
-    export AO_TEST_REDIS_3_0=localhost:6379
-    export AO_TEST_MYSQL_USERNAME=admin
-    # default should be fine.
-    #export AO_TEST_POSTGRES_PASSWORD=
     export AO_TEST_MEMCACHED_1_4=localhost:11211
-    export AO_TEST_MYSQL=localhost:3306
     export AO_TEST_MONGODB_2_4=localhost:27016
     export AO_TEST_MONGODB_2_6=localhost:27017
     export AO_TEST_MONGODB_3_0=localhost:27018
+    export AO_TEST_MYSQL=localhost:3306
+    export AO_TEST_MYSQL_USERNAME=admin
     export AO_TEST_MYSQL_PASSWORD=pwwadmin
+    # this requires an entry in /etc/hosts because this
+    # isn't run in a container it can't use docker names.
+    # use the IP address from "docker inspect ao_oracle_1"
+    export AO_TEST_ORACLE=oracledb.com
+    export AO_TEST_ORACLE_USERNAME=system
+    export AO_TEST_ORACLE_PASSWORD=oracle
+    # defaults should be fine.
+    #export AO_TEST_POSTGRES_USER=postgres
+    #export AO_TEST_POSTGRES_PASSWORD=
     export AO_TEST_POSTGRES=localhost:5432
-    export AO_TEST_CASSANDRA_2_2=localhost:9042
+    export AO_TEST_RABBITMQ_3_5=localhost:5672
+    export AO_TEST_REDIS_3_0=localhost:6379
 elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_DEBUG_LEVEL=6
     # see src/debug-loggers.js for all the options
