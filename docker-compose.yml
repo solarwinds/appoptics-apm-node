@@ -7,8 +7,11 @@ version: '2.1'
 
 services:
   main:
+    image: main
     build:
-      context: .
+      context: test/docker
+      dockerfile: test-main.yml
+      #dockerfile: main.yml
       args:
         # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
         # bindings installation will attempt to download the HEAD of the
@@ -26,10 +29,10 @@ services:
         - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
         # the next two set liboboe to send to the mock collector
         # for testing. these should be set to run the test suite.
-        # - AO_TEST_REPORTER=udp
-        # - AO_TEST_REPORTER_UDP=localhost:7832
-    image: ao-test-main
+        - AO_TEST_REPORTER=udp
+        - AO_TEST_REPORTER_UDP=localhost:7832
     volumes:
+      # map the directory this file is in to the /appoptics/ directory
       - "${PWD}:/appoptics/"
 #    volumes:
 #      - type: volume
@@ -37,14 +40,9 @@ services:
       options:
         max-file: "1"
         max-size: 50m
-
-    command: ["/usr/bin/tracelyzer", "-L 0.0.0.0", "-r"]
-
   #
   # extend the collector services into this composition.
   # NOTE: extend goes away in version 3.0 of docker-compose.yml
-  #
-  # currently this doesn't extend the java collector
   #
   scribe-collector:
     extends:
@@ -54,10 +52,13 @@ services:
     extends:
       file: "../oboe-test/collectors/docker-compose.yml"
       service: "java-collector"
-  tracelyzer:
-    extends:
-      file: "../oboe-test/collectors/docker-compose.yml"
-      service: "tracelyzer"
+  #
+  # Not used with appoptics.
+  #
+  #tracelyzer:
+  #  extends:
+  #    file: "../oboe-test/collectors/docker-compose.yml"
+  #    service: "tracelyzer"
 
 
   #
@@ -74,6 +75,9 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      # host:container
+      - "9042:9042"
 
   memcached:
     image: "memcached"
@@ -84,6 +88,8 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "11211:11211"
 
 
   mongo_2_4:
@@ -95,6 +101,10 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      # host:container
+      - "27016:27017"
+
   mongo_2_6:
     image: "mongo_2_6"
     build:
@@ -104,6 +114,9 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "27017:27017"
+
   mongo_3:
     image: "mongo_3"
     build:
@@ -113,9 +126,11 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "27018:27017"
 
   mongo_replset:
-    image: "traceqa/mongo"
+    image: "traceqa/mongo:set"
     build:
       context: test/docker/
       dockerfile: mongo_replset.yml
@@ -123,6 +138,12 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "27020:27016"
+      - "27021:27017"
+      - "27022:27018"
+    environment:
+      - "REPLSETMEMBERS=3"
 
   mysql:
     image: "mysql"
@@ -133,6 +154,23 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_ROOT_PASSWORD=""
+
+  mssql:
+    image: "mssql"
+    build:
+      context: test/docker/
+      dockerfile: mssql.yml
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "1433:1433"
 
   oracle:
     image: "oracle"
@@ -146,6 +184,8 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "1521:1521"
 
   postgres:
     image: "postgres"
@@ -156,6 +196,11 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "5432:5432"
+    environment:
+      # sets password to this so make pg.test.js agree
+      - POSTGRES_PASSWORD=xyzzy
 
   rabbitmq:
     image: "rabbitmq"
@@ -166,6 +211,8 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "5672:5672"
 
   redis:
     image: "redis"
@@ -176,4 +223,6 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    ports:
+      - "6379:6379"
 

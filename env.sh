@@ -21,6 +21,7 @@ elif [[ "$ARG" = "bash" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
+    # set this to ssl in order to use APPOPTICS_COLLECTOR
     export APPOPTICS_REPORTER=udp
 elif [[ "$ARG" = "bash-testing" ]]; then
     # presume docker containers are running - their ports are addressable
@@ -45,6 +46,8 @@ elif [[ "$ARG" = "bash-testing" ]]; then
     export AO_TEST_POSTGRES=localhost:5432
     export AO_TEST_RABBITMQ_3_5=localhost:5672
     export AO_TEST_REDIS_3_0=localhost:6379
+    # the tedious probe tests SQL Server.
+    export AO_TEST_SQLSERVER_EX=localhost:1433
 elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_DEBUG_LEVEL=6
     # see src/debug-loggers.js for all the options

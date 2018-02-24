@@ -1,4 +1,4 @@
-if ( ! process.env.TEST_SQLSERVER_EX) {
+if ( ! process.env.AO_TEST_SQLSERVER_EX) {
   describe('probes.tedious', function () {
     function noop () {}
     it.skip('should support basic queries', noop)
@@ -21,15 +21,15 @@ var Request = tedious.Request
 var TYPES = tedious.TYPES
 
 var addr
-if (process.env.TEST_SQLSERVER_EX) {
+if (process.env.AO_TEST_SQLSERVER_EX) {
   addr = helper.Address.from(
-    process.env.TEST_SQLSERVER_EX
+    process.env.AO_TEST_SQLSERVER_EX
   )[0]
 } else {
   addr = 'mssql'
 }
-var user = process.env.TEST_SQLSERVER_EX_USERNAME
-var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
+var user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
+var pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
 
 describe('probes.tedious', function () {
   this.timeout(10000)
@@ -43,14 +43,26 @@ describe('probes.tedious', function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    ao.fs.enabled = false
+    ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
   })
   after(function (done) {
-    ao.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   var checks = {
@@ -131,7 +143,7 @@ describe('probes.tedious', function () {
 
   function test_sanitization (done) {
     helper.test(emitter, function (done) {
-      ao.tedious.sanitizeSql = true
+      ao.probes.tedious.sanitizeSql = true
       query(function () {
         var request = new Request("select 42, @msg", onComplete)
         request.addParameter('msg', TYPES.VarChar, 'hello world')
@@ -152,7 +164,7 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], function (err) {
-      ao.tedious.sanitizeSql = false
+      ao.probes.tedious.sanitizeSql = false
       done(err)
     })
   }
