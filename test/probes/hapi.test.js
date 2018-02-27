@@ -5,7 +5,9 @@ var addon = ao.addon
 var should = require('should')
 var semver = require('semver')
 
+/* TODO BAM remove
 var rum = require('../../dist/rum')
+// */
 var path = require('path')
 
 var request = require('request')
@@ -229,6 +231,7 @@ describe('probes.hapi', function () {
     })
   }
 
+  /* TODO BAM remove
   function rumTest (done) {
     var server = viewServer()
     ao.rumId = 'foo'
@@ -288,11 +291,14 @@ describe('probes.hapi', function () {
       })
     })
   }
+  // */
 
   function disabledTest (done) {
     ao.probes.hapi.enabled = false
     var server = viewServer()
+    /* TODO BAM remove
     ao.rumId = 'foo'
+    // */
 
     server.route({
       method: 'GET',
@@ -315,7 +321,9 @@ describe('probes.hapi', function () {
     helper.doChecks(emitter, validations, function () {
       server.listener.close(done)
       ao.probes.hapi.enabled = true
+      /* TODO BAM remove
       delete ao.rumId
+      // */
     })
 
     server.start(function () {
@@ -348,13 +356,17 @@ describe('probes.hapi', function () {
     })
     it('should skip when disabled', disabledTest)
     it('should trace render layer', renderTest)
+    /* TODO BAM remove
     it('should include RUM scripts', rumTest)
+    // */
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should skip when disabled', disabledTest)
     it.skip('should trace render layer', renderTest)
+    /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
+    // */
   }
 })

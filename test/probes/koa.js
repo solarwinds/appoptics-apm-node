@@ -6,7 +6,9 @@ var koa = require('koa')
 var helper = require('../helper')
 var request = require('request')
 
+/* TODO BAM remove
 var rum = require('../../dist/rum')
+// */
 var ao = require('../..')
 
 var views = require('co-views')
@@ -349,6 +351,7 @@ exports.render_disabled = function (emitter, done) {
   })
 }
 
+/* TODO BAM remove
 exports.rum = function (emitter, done) {
   ao.rumId = 'foo'
   var app = koa()
@@ -401,3 +404,4 @@ exports.rum = function (emitter, done) {
     })
   })
 }
+// */

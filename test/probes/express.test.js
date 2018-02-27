@@ -5,7 +5,9 @@ var addon = ao.addon
 var should = require('should')
 var semver = require('semver')
 
+/* TODO BAM remove
 var rum = require('../../dist/rum')
+// */
 
 var request = require('request')
 var express = require('express')
@@ -395,6 +397,7 @@ describe('probes.express', function () {
     })
   }
 
+  /* TODO BAM remove
   function rumTest (done) {
     ao.rumId = 'foo'
     var app = express()
@@ -468,13 +471,18 @@ describe('probes.express', function () {
       })
     })
   }
+  // */
 
   if (semver.satisfies(pkg.version, '< 3.2.0')) {
     it.skip('should trace render layer', renderTest)
+    /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
+    // */
   } else {
     it('should trace render layer', renderTest)
+    /* TODO BAM remove
     it('should include RUM scripts', rumTest)
+    // */
   }
 
   it('should work with supertest', function (done) {

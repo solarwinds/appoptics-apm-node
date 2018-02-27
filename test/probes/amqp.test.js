@@ -11,6 +11,7 @@ describe('probes.amqp', function () {
   var ctx = {}
   var client
   var db
+  var realSampleTrace
 
   //
   // Define some general message checks
@@ -48,8 +49,13 @@ describe('probes.amqp', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 

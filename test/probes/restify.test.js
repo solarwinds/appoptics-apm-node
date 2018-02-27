@@ -4,7 +4,6 @@ var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
-var rum = require('../../dist/rum')
 
 var request = require('request')
 var fs = require('fs')

@@ -7,6 +7,7 @@ var Event = ao.Event
 
 describe('layer', function () {
   var emitter
+  var realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -15,8 +16,13 @@ describe('layer', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 

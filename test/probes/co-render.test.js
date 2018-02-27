@@ -57,8 +57,10 @@ describe('probes/co-render', function () {
     it('should skip when disabled', function (done) {
       tests.render_disabled(emitter, done)
     })
+    /* TODO BAM remove
     it('should include RUM scripts', function (done) {
       tests.rum(emitter, done)
     })
+    // */
   }
 })
