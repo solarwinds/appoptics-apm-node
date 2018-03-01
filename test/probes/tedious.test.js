@@ -39,6 +39,12 @@ describe('probes.tedious', function () {
   var pool
   var db
 
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 250)
+  })
+
   //
   // Intercept appoptics messages for analysis
   //

@@ -40,6 +40,12 @@ describe('probes.fs', function () {
   var mode
   var realSampleTrace
 
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   //
   // Define some general message checks
   //

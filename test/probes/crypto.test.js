@@ -8,6 +8,12 @@ var fs = require('fs')
 describe('probes.crypto', function () {
   var emitter
 
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   //
   // Define some general message checks
   //
