@@ -6,18 +6,18 @@
 [![npm](https://img.shields.io/npm/dm/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
 [![npm](https://img.shields.io/npm/v/traceview.svg?maxAge=2592000&style=flat-square)](https://www.npmjs.com/package/traceview)
 
-The `appoptics` module provides [AppOptics](https://traceview.solarwinds.com/) instrumentation for Node.JS.
+The `appoptics` module provides [AppOptics](https://www.appoptics.com/) instrumentation for Node.js.
 
 It has the ability to report performance metrics on an array of libraries,
 databases and frameworks.
 
-It requires an [AppOptics](https://traceview.solarwinds.com/) account to
-view metrics.  Get yours; [it's free](https://traceview.solarwinds.com/TraceView/Signup).
+It requires an [AppOptics](https://www.appoptics.com/) account to
+view metrics.  Get yours; [it's free](https://https//my.appoptics.com/sign_up).
 
 ## Dependencies
 
 - Linux
-- node.js v0.8+
+- Node.js v4+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
 
 ## Release Notes
 
@@ -25,7 +25,7 @@ Here you can see the [history of what we've released](http://docs.traceview.sola
 
 ## Installation
 
-The `appoptics` module is [available on npm](http://npmjs.org/package/traceview) and can be installed by navigating to your app root and running:
+The `appoptics` module is [available on npm](http://npmjs.org/package/appoptics-apm) and can be installed by navigating to your app root and running:
 
 ```
 npm install --save appoptics
@@ -51,7 +51,7 @@ npm install --save appoptics@latest
 
 ## Adding Your Own Layers
 
-In addition to the default layers captured automatically, you can optionally add your own. To learn on how to modify your code to report custom layers, [read here](http://docs.traceview.solarwinds.com/Instrumentation/nodejs.html#customizing-instrumentation).
+In addition to the default layers captured automatically, you can add your own. To learn on how to modify your code to report custom layers, [read here](http://docs.traceview.solarwinds.com/Instrumentation/nodejs.html#customizing-instrumentation).
 
 ## Testing
 
@@ -132,13 +132,13 @@ library.  `liboboe` is installed as part of the `appoptics-bindings` package
 which is a dependency of this package.  It is used to report host and
 performance metrics to AppOptics servers.
 
-If you would like to work with the C++ extension you should clone the github
+If you would like to work with the C++ extension, clone the github
 `node-appoptics-bindings` repository and work with that. It's possible to
 direct this package, `appoptics`, to use a non-standard source of `node-appoptics-bindings`
 by setting the environment variable `AO\_TEST_PACKAGE`. See the file `install-appoptics-bindings.js` for further details.
 
 ## License
 
-Copyright (c) 2016 SolarWinds, LLC
+Copyright (c) 2016, 2017, 2018 SolarWinds, LLC
 
 Released under the [Librato Open License](http://docs.traceview.solarwinds.com/Instrumentation/librato-open-license.html)
