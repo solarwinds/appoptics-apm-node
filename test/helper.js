@@ -12,6 +12,11 @@ var http = require('http')
 
 var log = ao.loggers
 
+log.addGroup({
+  groupName: 'test',
+  subNames: ['info', 'mock-port', 'message']
+})
+
 var BSON = new bson.BSONPure.BSON()
 
 var udpPort = 7832
