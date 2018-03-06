@@ -2,15 +2,9 @@
 
 //
 // this file exists so that authorization can be added to the package specifier
-// to enable access to private repositories or alternate branches.
+// to enable access to private repositories or alternate branches. it is expected
+// that this will only be used in development and testing.
 //
-try {
-  // if appoptics-bindings can be loaded then this doesn't need to be run.
-  aob = require('appoptics-bindings')
-  process.exit(0)
-} catch (e) {
-
-}
 
 var spawn = require('child_process').spawnSync
 
@@ -18,6 +12,13 @@ var env = process.env
 
 // development setting to prevent reinstalls when local changes have been made
 if (env.AO_TEST_BINDINGS_ARE_PREBUILT) {
+  process.exit(0)
+}
+
+// if neither form of git authorization is set then bindings should be fetchable
+// from a standard npm-like repository, so the default npm install should have worked
+// making this script unnecessary.
+if (!env.AO_TEST_GITAUTH && !(env.AO_TEST_GITUSER && env.AO_TEST_GITPASS)) {
   process.exit(0)
 }
 
