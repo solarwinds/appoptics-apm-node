@@ -50,7 +50,7 @@ if (env.AO_TEST_PACKAGE) {
 }
 
 // only show output if desired, unless an error occurs
-var opts = env.AO_TEST_BINDINGS_OUTPUT ? {stdio: 'inherit'} : undefined
+var opts = env.APPOPTICS_SHOW_BINDINGS_BUILD ? {stdio: 'inherit'} : undefined
 
 var results = spawn('npm', ['install', prefix + suffix], opts)
 
