@@ -1,9 +1,16 @@
 'use strict'
 
 //
-// this file exists so that authorization can be add to the package specifier
+// this file exists so that authorization can be added to the package specifier
 // to enable access to private repositories or alternate branches.
 //
+try {
+  // if appoptics-bindings can be loaded then this doesn't need to be run.
+  aob = require('appoptics-bindings')
+  process.exit(0)
+} catch (e) {
+
+}
 
 var spawn = require('child_process').spawnSync
 
