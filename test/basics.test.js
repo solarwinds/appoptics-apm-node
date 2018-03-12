@@ -23,8 +23,23 @@ describe('basics', function () {
   })
 
   it('should set and get sample rate', function () {
+    ao.sampleRate = 0
+    ao.sampleRate.should.equal(0, 'when setting to 0')
+    ao.sampleRate = 1000000
+    ao.sampleRate.should.equal(1000000, 'when setting to 1000000')
     ao.sampleRate = 100
-    ao.sampleRate.should.equal(100)
+    ao.sampleRate.should.equal(100, 'when setting to 100')
+  })
+
+  it('should handle invalid sample rates correctly', function () {
+    ao.sampleRate = NaN
+    ao.sampleRate.should.equal(100, 'when trying to set to NaN')
+    ao.sampleRate = 2000000
+    ao.sampleRate.should.equal(1000000, 'when trying to set to 2000000')
+    ao.sampleRate = -10
+    ao.sampleRate.should.equal(0, 'when trying to set to a negative number')
+    ao.sampleRate = 100
+    ao.sampleRate.should.equal(100, 'setting back to the original')
   })
 
   it('should set sample source', function () {
