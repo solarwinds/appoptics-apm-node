@@ -1,4 +1,5 @@
 ARG=$1
+PARAM=$2
 
 if [[ -z "$AO_TOKEN_STG" ]]; then
     echo "AO_TOKEN_STG must be defined and contain a valid token"
@@ -16,6 +17,14 @@ elif [[ "$ARG" = "docker" ]]; then
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
     export APPOPTICS_COLLECTOR=java-collector:12222
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    # need to change next line to ssl to use java-collector
+    export APPOPTICS_REPORTER=udp
+elif [[ "$ARG" = "docker-scribe" ]]; then
+    export APPOPTICS_REPORTER_UDP=localhost:7832
+    export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/scribe-collector.crt
+    export APPOPTICS_COLLECTOR=scribe-collector:4444
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    # need to change next line to ssl to use scribe collector
     export APPOPTICS_REPORTER=udp
 elif [[ "$ARG" = "bash" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
@@ -66,7 +75,7 @@ elif [[ "$ARG" = "bindings" ]]; then
     export AO_TEST_PACKAGE=librato/node-appoptics-bindings#per-request-v2
     # this requires that one's git access token is already defined.
     export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
-elif [[ "$ARG" = "tcpdump" ]]; then
+elif [[ "$ARG" = "help" ]]; then
     echo "try"
     echo "    $ sudo tcpdump -i lo -n udp port 7832"
     echo "to watch the UDP traffic"
