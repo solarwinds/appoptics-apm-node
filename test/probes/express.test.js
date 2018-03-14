@@ -1,6 +1,8 @@
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
+var log = ao.loggers
+var conf = ao.probes.express
 
 var should = require('should')
 var semver = require('semver')
@@ -93,12 +95,57 @@ describe('probes.express', function () {
       },
       function (msg) {
         check['http-exit'](msg)
+        msg.should.have.property('TransactionName', 'express.GET/hello/:name')
         msg.should.have.property('Controller', '/hello/:name')
         msg.should.have.property('Action', 'hello')
       }
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should allow a custom TransactionName', function (done) {
+    var app = express()
+
+    conf.makeMetricsName = function (req, res) {
+      return {
+        Controller: 'new-name',
+        Action: req.method + req.route.path
+      }
+    }
+
+    app.get('/hello/:name', function hello(req, res) {
+      res.send('done')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () { },
+      function () { },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('TransactionName', 'new-name.GET/hello/:name')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+      delete conf.makeMetricsName
     })
 
     var server = app.listen(function () {
@@ -658,6 +705,8 @@ describe('probes.express', function () {
       request('http://localhost:' + port + '/hello/world')
     })
   })
+
+
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)
