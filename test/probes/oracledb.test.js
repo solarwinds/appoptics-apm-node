@@ -2,20 +2,26 @@ var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
 
+var log = ao.loggers
+
 var should = require('should')
 
 var oracledb
 try {
   oracledb = require('oracledb')
-} catch (e) {}
-
-var host = process.env.TEST_ORACLE || 'oracle'
-var database = process.env.TEST_ORACLE_DBNAME || 'xe'
-var config = {
-  connectString: host + '/' + database,
-  password: process.env.TEST_ORACLE_PASSWORD || 'oracle',
-  user: process.env.TEST_ORACLE_USERNAME || 'system'
+} catch (e) {
+  log.debug('cannot load oracledb', e)
 }
+
+var host = process.env.AO_TEST_ORACLE || 'oracle'
+var database = process.env.AO_TEST_ORACLE_DBNAME || 'xe'
+var config = {
+  user: process.env.AO_TEST_ORACLE_USERNAME || 'system',
+  password: process.env.AO_TEST_ORACLE_PASSWORD || 'oracle',
+  connectString: host + '/' + database,
+}
+
+ao.debugLogging(true)
 
 describe('probes.oracledb', function () {
   var emitter
@@ -23,6 +29,7 @@ describe('probes.oracledb', function () {
   var cluster
   var pool
   var db
+  var realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -31,9 +38,26 @@ describe('probes.oracledb', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   var checks = {
@@ -57,7 +81,7 @@ describe('probes.oracledb', function () {
   } else {
     var missing = {oracledb, host, database, user: config.user, password: config.password}
     for (var k in missing) {
-        if (missing[k]) delete missing[k]
+      if (missing[k]) delete missing[k]
     }
     missing = Object.keys(missing)
     describe('skipping probes due to missing: ' + missing.join(', '), function() {
@@ -68,13 +92,16 @@ describe('probes.oracledb', function () {
   }
 
   function test_basic (done) {
+    log.debug('asking helper to execute test_basic')
     helper.test(emitter, function (done) {
       function query (err, connection) {
+        log.debug('test_basic query callback invoked')
         if (err) return done(err)
         connection.execute('SELECT 1 FROM DUAL', done)
       }
-
+      log.debug('test_basic being executed')
       oracledb.getConnection(config, query)
+      log.debug('done with test_basic oracledb.getConnection')
     }, [
       function (msg) {
         checks['oracle-entry'](msg)
