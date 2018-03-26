@@ -148,41 +148,6 @@ describe('probes.http', function () {
     })
 
     //
-    // Verify always trace mode forwards X-TV-Meta header and sampling data
-    //
-    /* TODO BAM change this be meaningful - we can't make always decision.
-    it('should forward X-TV-Meta header and sampling data in always trace mode', function (done) {
-      var server = http.createServer(function (req, res) {
-        res.end('done')
-      })
-
-      helper.doChecks(emitter, [
-        function (msg) {
-          check.server.entry(msg)
-          msg.should.have.property('X-TV-Meta', 'foo')
-          msg.should.have.property('SampleSource')
-          msg.should.have.property('SampleRate')
-        },
-        function (msg) {
-          check.server.exit(msg)
-        }
-      ], function () {
-        server.close(done)
-      })
-
-      server.listen(function () {
-        var port = server.address().port
-        request({
-          url: 'http://localhost:' + port,
-          headers: {
-            'X-TV-Meta': 'foo'
-          }
-        })
-      })
-    })
-    // */
-
-    //
     // Verify behaviour of asyncrony within a request
     //
     it('should trace correctly within asyncrony', function (done) {

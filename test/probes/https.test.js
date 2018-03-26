@@ -163,7 +163,7 @@ describe('probes.https', function () {
     })
 
     //
-    // Verify always trace mode forwards X-TV-Meta header and sampling data
+    // Verify always trace mode forwards sampling data
     //
     it('should forward sampling data in always trace mode', function (done) {
       var server = https.createServer(options, function (req, res) {
@@ -173,7 +173,6 @@ describe('probes.https', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          //msg.should.have.property('X-TV-Meta', 'foo')
           msg.should.have.property('SampleSource')
           msg.should.have.property('SampleRate')
         },
@@ -187,10 +186,7 @@ describe('probes.https', function () {
       server.listen(function () {
         var port = server.address().port
         request({
-          url: 'https://localhost:' + port,
-          headers: {
-            'X-TV-Meta': 'foo'
-          }
+          url: 'https://localhost:' + port
         })
       })
     })
