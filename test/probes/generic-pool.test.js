@@ -28,7 +28,7 @@ describe('probes/generic-pool', function () {
     })
 
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous layer
+      // Hack to look like there's a previous span
       ao.requestStore.set('lastEvent', true)
 
       ao.requestStore.set('foo', 'bar')

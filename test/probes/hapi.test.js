@@ -241,7 +241,7 @@ describe('probes.hapi', function () {
       method: 'GET',
       path: '/',
       handler: function hello (request, reply) {
-        exit = request.raw.res._http_layer.events.exit
+        exit = request.raw.res._http_span.events.exit
         renderer(request, reply)('rum.ejs')
       }
     })
@@ -355,7 +355,7 @@ describe('probes.hapi', function () {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
-    it('should trace render layer', renderTest)
+    it('should trace render span', renderTest)
     /* TODO BAM remove
     it('should include RUM scripts', rumTest)
     // */
@@ -364,7 +364,7 @@ describe('probes.hapi', function () {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should skip when disabled', disabledTest)
-    it.skip('should trace render layer', renderTest)
+    it.skip('should trace render span', renderTest)
     /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
     // */

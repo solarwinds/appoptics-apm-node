@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var db_host = process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost'
 
@@ -72,11 +72,11 @@ suite('probes/mysql', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
+    span.exit()
     ao.requestStore.exit(context)
   })
 

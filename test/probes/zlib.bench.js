@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var concat = require('concat-stream')
 var zlib = require('zlib')
@@ -78,12 +78,12 @@ suite('probes/zlib', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
     ao.requestStore.exit(context)
-    layer.exit()
+    span.exit()
   })
 
   methods.forEach(function (method) {

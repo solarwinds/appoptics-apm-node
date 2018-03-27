@@ -2,10 +2,10 @@ var helper = require('./helper')
 var should = require('should')
 var ao = require('..')
 var addon = ao.addon
-var Layer = ao.Layer
+var Span = ao.Span
 var Event = ao.Event
 
-describe('layer', function () {
+describe('span', function () {
   var emitter
   var realSampleTrace
 
@@ -45,27 +45,27 @@ describe('layer', function () {
   //
   // Verify basic structural integrity
   //
-  it('should construct valid layer', function () {
-    var layer = new Layer('test', null, {})
+  it('should construct valid span', function () {
+    var span = new Span('test', null, {})
 
-    layer.should.have.property('events')
+    span.should.have.property('events')
     var events = ['entry','exit']
     events.forEach(function (event) {
-      layer.events.should.have.property(event)
-      layer.events[event].taskId.should.not.match(/^0*$/)
-      layer.events[event].opId.should.not.match(/^0*$/)
+      span.events.should.have.property(event)
+      span.events[event].taskId.should.not.match(/^0*$/)
+      span.events[event].opId.should.not.match(/^0*$/)
     })
   })
 
   //
-  // Verify base layer reporting
+  // Verify base span reporting
   //
   it('should report sync boundaries', function (done) {
     var name = 'test'
     var data = { Foo: 'bar' }
-    var layer = new Layer(name, null, data)
+    var span = new Span(name, null, data)
 
-    var e = layer.events
+    var e = span.events
 
     var checks = [
       helper.checkEntry(name, helper.checkData(data, function (msg) {
@@ -79,7 +79,7 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.runSync(function () {
+    span.runSync(function () {
 
     })
   })
@@ -87,9 +87,9 @@ describe('layer', function () {
   it('should report async boundaries', function (done) {
     var name = 'test'
     var data = { Foo: 'bar' }
-    var layer = new Layer(name, null, data)
+    var span = new Span(name, null, data)
 
-    var e = layer.events
+    var e = span.events
 
     var checks = [
       // Verify structure of entry event
@@ -105,7 +105,7 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.runAsync(function (wrap) {
+    span.runAsync(function (wrap) {
       var cb = wrap(function (err, res) {
         should.not.exist(err)
         res.should.equal('foo')
@@ -118,7 +118,7 @@ describe('layer', function () {
   })
 
   //
-  // Verify behaviour when reporting nested layers
+  // Verify behaviour when reporting nested spans
   //
   it('should report nested sync boundaries', function (done) {
     var outerData = { Foo: 'bar' }
@@ -145,9 +145,9 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Layer('outer', null, outerData)
+    outer = new Span('outer', null, outerData)
     outer.run(function () {
-      inner = Layer.last.descend('inner', innerData)
+      inner = Span.last.descend('inner', innerData)
       inner.run(function () {})
     })
   })
@@ -181,9 +181,9 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Layer('outer', null, outerData)
+    outer = new Span('outer', null, outerData)
     outer.run(function () {
-      inner = Layer.last.descend('inner', innerData)
+      inner = Span.last.descend('inner', innerData)
       inner.run(function (wrap) {
         var delayed = wrap(function (err, res) {
           should.not.exist(err)
@@ -227,14 +227,14 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Layer('outer', null, outerData)
+    outer = new Span('outer', null, outerData)
     outer.run(function (wrap) {
       var delayed = wrap(function (err, res) {
         should.not.exist(err)
         should.exist(res)
         res.should.equal('foo')
 
-        inner = Layer.last.descend('inner', innerData)
+        inner = Span.last.descend('inner', innerData)
         inner.run(function () {
 
         })
@@ -250,7 +250,7 @@ describe('layer', function () {
   // Special events
   //
   it('should send info events', function (done) {
-    var layer = new Layer('test', null, {})
+    var span = new Span('test', null, {})
     var data = {
       Foo: 'bar'
     }
@@ -263,13 +263,13 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      layer.info(data)
+    span.run(function () {
+      span.info(data)
     })
   })
 
   it('should send error events', function (done) {
-    var layer = new Layer('test', null, {})
+    var span = new Span('test', null, {})
     var err = new Error('nope')
 
     var checks = [
@@ -280,14 +280,14 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      layer.error(err)
+    span.run(function () {
+      span.error(err)
     })
   })
 
   it('should support setting an exit error', function () {
     // Proper errors should work
-    var a = new Layer('test', null, {})
+    var a = new Span('test', null, {})
     var aExit = a.events.exit
     var err = new Error('nope')
     a.setExitError(err)
@@ -296,7 +296,7 @@ describe('layer', function () {
     aExit.should.have.property('Backtrace', err.stack)
 
     // As should error strings
-    var b = new Layer('test', null, {})
+    var b = new Span('test', null, {})
     var bExit = b.events.exit
     b.setExitError('nope')
     bExit.should.have.property('ErrorClass', 'Error')
@@ -307,8 +307,8 @@ describe('layer', function () {
   // Safety and correctness
   //
   it('should only send valid properties', function (done) {
-    var layer = new Layer('test', null, {})
-    var e = layer.events.entry
+    var span = new Span('test', null, {})
+    var e = span.events.entry
     var data = {
       Array: [],
       Object: { bar: 'baz' },
@@ -334,28 +334,28 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      layer.info(data)
+    span.run(function () {
+      span.info(data)
     })
   })
 
-  it('should not send info events when not in a layer', function () {
-    var layer = new Layer('test', null, {})
+  it('should not send info events when not in a span', function () {
+    var span = new Span('test', null, {})
     var data = { Foo: 'bar' }
 
     var send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
-      throw new Error('should not send when not in a layer')
+      throw new Error('should not send when not in a span')
     }
 
-    layer.info(data)
+    span.info(data)
     Event.prototype.send = send
   })
 
   it('should allow sending the same info data multiple times', function (done) {
-    var layer = new Layer('test', null, {})
-    var e = layer.events.entry
+    var span = new Span('test', null, {})
+    var e = span.events.entry
     var data = {
       Foo: 'bar'
     }
@@ -367,24 +367,24 @@ describe('layer', function () {
       helper.checkExit('test'),
     ], done)
 
-    layer.run(function () {
-      layer.info(data)
-      layer.info(data)
+    span.run(function () {
+      span.info(data)
+      span.info(data)
     })
   })
 
   it('should fail silently when sending non-object-literal info', function () {
-    var layer = new Layer('test', null, {})
-    layer._internal = function () {
+    var span = new Span('test', null, {})
+    span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
-    layer.info(undefined)
-    layer.info(new Date)
-    layer.info(/foo/)
-    layer.info('wat')
-    layer.info(null)
-    layer.info([])
-    layer.info(1)
+    span.info(undefined)
+    span.info(new Date)
+    span.info(/foo/)
+    span.info('wat')
+    span.info(null)
+    span.info([])
+    span.info(1)
   })
 
   //
@@ -392,7 +392,7 @@ describe('layer', function () {
   //
   it('should chain internal event edges', function (done) {
     var n = 10 + Math.floor(Math.random() * 10)
-    var layer = new Layer('test', null, {})
+    var span = new Span('test', null, {})
     var tracker = helper.edgeTracker()
 
     var checks = [ tracker, tracker ]
@@ -404,21 +404,21 @@ describe('layer', function () {
 
     function sendAThing (i) {
       if (Math.random() > 0.5) {
-        layer.error(new Error('error ' + i))
+        span.error(new Error('error ' + i))
       } else {
-        layer.info({ index: i })
+        span.info({ index: i })
       }
     }
 
-    layer.run(function () {
+    span.run(function () {
       for (var i = 0; i < n; i++) {
         sendAThing(i)
       }
     })
   })
 
-  it('should chain internal events around sync sub layer', function (done) {
-    var layer = new Layer('outer', null, {})
+  it('should chain internal events around sync sub span', function (done) {
+    var span = new Span('outer', null, {})
 
     var before = { state: 'before' }
     var after = { state: 'after' }
@@ -436,17 +436,17 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      layer.info(before)
-      layer.descend('inner').run(function () {
+    span.run(function () {
+      span.info(before)
+      span.descend('inner').run(function () {
         // Do nothing
       })
-      layer.info(after)
+      span.info(after)
     })
   })
 
-  it('should chain internal events around async sub layer', function (done) {
-    var layer = new Layer('outer', null, {})
+  it('should chain internal events around async sub span', function (done) {
+    var span = new Span('outer', null, {})
 
     var before = { state: 'before' }
     var after = { state: 'after' }
@@ -472,9 +472,9 @@ describe('layer', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      layer.info(before)
-      var sub = layer.descend('inner')
+    span.run(function () {
+      span.info(before)
+      var sub = span.descend('inner')
       sub.run(function (wrap) {
         var cb = wrap(function () {})
         setImmediate(function () {
@@ -483,12 +483,12 @@ describe('layer', function () {
         })
         ao.reportInfo(before)
       })
-      layer.info(after)
+      span.info(after)
     })
   })
 
   it('should properly attribute dangling info/error events', function (done) {
-    var layer = new Layer('outer', null, {})
+    var span = new Span('outer', null, {})
 
     var before = { state: 'before' }
     var after = { state: 'after' }
@@ -501,7 +501,7 @@ describe('layer', function () {
     var trackInner4 = helper.edgeTracker(trackInner3)
 
     // The weird indentation is to match depth of trigerring code,
-    // it might make it easier to match a layer entry to its exit.
+    // it might make it easier to match a span entry to its exit.
     var checks = [
       // Start async outer
       helper.checkEntry('outer', trackOuter),
@@ -540,17 +540,17 @@ describe('layer', function () {
     helper.doChecks(emitter, checks, done)
 
     ao.requestStore.run(function () {
-      layer.enter()
-      var sub1 = layer.descend('inner-1')
+      span.enter()
+      var sub1 = span.descend('inner-1')
       sub1.run(function () {
         ao.reportInfo(before)
 
-        var sub2 = layer.descend('inner-3')
+        var sub2 = span.descend('inner-3')
         sub2.run(function (wrap) {
           setImmediate(wrap(function () {
             ao.reportError(error)
 
-            var sub2 = layer.descend('inner-4')
+            var sub2 = span.descend('inner-4')
             sub2.run(function (wrap) {
               setImmediate(wrap(function () {}))
             })
@@ -560,10 +560,10 @@ describe('layer', function () {
         ao.reportInfo(after)
       })
 
-      var sub2 = layer.descend('inner-2')
+      var sub2 = span.descend('inner-2')
       sub2.run(function (wrap) {
         setTimeout(wrap(function () {
-          layer.exit()
+          span.exit()
         }), 1)
       })
     })

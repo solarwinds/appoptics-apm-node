@@ -9,7 +9,7 @@ describe('probes/bcrypt', function () {
     var password = 'this is a test'
 
     ao.requestStore.run(function () {
-      // kludge to look like previous layer
+      // kludge to look like previous span
       ao.requestStore.set('lastEvent', true)
 
       var res = ao.startOrContinueTrace(

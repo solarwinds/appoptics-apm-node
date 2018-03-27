@@ -1,6 +1,6 @@
 var helper = require('./helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 suite('basics', function () {
   bench('set trace mode', function () {

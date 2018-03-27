@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var redis = require('redis')
 var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'redis'
@@ -13,12 +13,12 @@ suite('probes/redis', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
     ao.requestStore.exit(context)
-    layer.exit()
+    span.exit()
   })
 
   bench('set', function (done) {

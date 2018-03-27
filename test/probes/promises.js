@@ -33,8 +33,8 @@ module.exports = function (Promise) {
   it('should support promises', function (done) {
     var t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous layer
-      ao.requestStore.set('lastLayer', true)
+      // Hack to look like there's a previous span
+      ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
@@ -47,8 +47,8 @@ module.exports = function (Promise) {
   it('should support promises', function (done) {
     var t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous layer
-      ao.requestStore.set('lastLayer', true)
+      // Hack to look like there's a previous span
+      ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
@@ -64,8 +64,8 @@ module.exports = function (Promise) {
     d.on('error', done)
     d.run(function () {
       ao.requestStore.run(function () {
-        // Hack to look like there's a previous layer
-        ao.requestStore.set('lastLayer', true)
+        // Hack to look like there's a previous span
+        ao.requestStore.set('lastSpan', true)
 
         ao.requestStore.set('foo', 'bar')
         delay(100).then(function () {
@@ -86,8 +86,8 @@ module.exports = function (Promise) {
   it('should support progress callbacks', function (done) {
     var t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous layer
-      ao.requestStore.set('lastLayer', true)
+      // Hack to look like there's a previous span
+      ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {

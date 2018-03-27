@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
@@ -20,8 +20,8 @@ describe('probes/mongoose', function () {
   })
 
   it('should trace through mongoose', function (done) {
-    var layer = new Layer('outer', {})
-    layer.run(function () {
+    var span = new Span('outer', {})
+    span.run(function () {
       var data = {
         name: 'Sargeant Cuddlesby'
       }

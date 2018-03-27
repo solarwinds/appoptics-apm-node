@@ -138,21 +138,21 @@ var check = {
 
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
-  // noops skip testing the 'outer' layer.
+  // noops skip testing the 'outer' span.
   validations.unshift(noop)
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
 
   ao.requestStore.run(function () {
-    var layer = new ao.Layer('outer')
-    // layer.async = true
-    layer.enter()
+    var span = new ao.Span('outer')
+    // span.async = true
+    span.enter()
 
     log.test.info('test started')
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)
-      layer.exit()
+      span.exit()
     })
   })
 }

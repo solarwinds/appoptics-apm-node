@@ -23,7 +23,7 @@ describe('probes.raw-body', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     ao.probes.fs.enabled = false
-    ao.Layer.last = null
+    ao.Span.last = null
     ao.Event.last = null
   })
   after(function (done) {
@@ -67,7 +67,7 @@ describe('probes.raw-body', function () {
   //
   // Tests
   //
-  it('should support body-parser layer', function (done) {
+  it('should support body-parser span', function (done) {
     var app = express()
 
     // Attach body parsers

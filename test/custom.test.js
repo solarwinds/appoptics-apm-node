@@ -2,7 +2,7 @@ var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')
 var ao = require('..')
-var Layer = ao.Layer
+var Span = ao.Span
 var Event = ao.Event
 
 //
@@ -190,13 +190,13 @@ describe('custom', function () {
     }, [], done)
   })
 
-  it('should report custom info events within a layer', function (done) {
+  it('should report custom info events within a span', function (done) {
     var data = { Foo: 'bar' }
     var last
 
     helper.test(emitter, function (done) {
-      ao.instrument(function (layer) {
-        return layer.descend('test')
+      ao.instrument(function (span) {
+        return span.descend('test')
       }, function (callback) {
         ao.reportInfo(data)
         callback()
@@ -295,9 +295,9 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       function makeInner (data, done) {
-        var layer = Layer.last.descend('inner')
-        inner.push(layer)
-        layer.run(function (wrap) {
+        var span = Span.last.descend('inner')
+        inner.push(span)
+        span.run(function (wrap) {
           var delayed = wrap(done)
           ao.reportInfo(data)
           process.nextTick(function () {
@@ -306,7 +306,7 @@ describe('custom', function () {
         })
       }
 
-      outer = Layer.last.descend('outer')
+      outer = Span.last.descend('outer')
       outer.run(function () {
         var cb = after(2, done)
         makeInner({
@@ -322,13 +322,13 @@ describe('custom', function () {
     }, checks, done)
   })
 
-  it('should report partitioned layers', function (done) {
+  it('should report partitioned spans', function (done) {
     var data = { Foo: 'bar', Partition: 'bar' }
     var last
 
     helper.test(emitter, function (done) {
-      ao.instrument(function (layer) {
-        return layer.descend('test')
+      ao.instrument(function (span) {
+        return span.descend('test')
       }, function (callback) {
         ao.reportInfo(data)
         callback()
@@ -357,7 +357,7 @@ describe('custom', function () {
 
   it('should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
-      function build (layer) { return layer.descend('test') }
+      function build (span) { return span.descend('test') }
       function inc () { count++ }
       function run () {}
       var count = 0
@@ -370,7 +370,7 @@ describe('custom', function () {
       ao.instrument(null, run)
       ao.startOrContinueTrace(null, null, run)
 
-      // Verify the runner is still run when builder fails to return a layer
+      // Verify the runner is still run when builder fails to return a span
       ao.instrument(inc, inc)
       ao.startOrContinueTrace(null, inc, inc)
       count.should.equal(4)
@@ -382,7 +382,7 @@ describe('custom', function () {
   it('should handle errors correctly between build and run functions', function (done) {
     helper.test(emitter, function (done) {
       var err = new Error('nope')
-      function build (layer) { return layer.descend('test') }
+      function build (span) { return span.descend('test') }
       function nope () { count++; throw err }
       function inc () { count++ }
       var count = 0
@@ -468,13 +468,13 @@ describe('custom', function () {
       }
     ], done)
 
-    var previous = new Layer('previous')
+    var previous = new Span('previous')
     var entry = previous.events.entry
     previous.async = true
     previous.enter()
 
     // Clear context
-    Layer.last = Event.last = null
+    Span.last = Event.last = null
 
     ao.startOrContinueTrace(entry.toString(), function (last) {
       return last.descend('test')
@@ -530,7 +530,7 @@ describe('custom', function () {
       }
     ], done)
 
-    var previous = new Layer('previous')
+    var previous = new Span('previous')
     var entry = previous.events.entry
 
     previous.run(function (wrap) {
@@ -556,7 +556,7 @@ describe('custom', function () {
     }
 
     helper.test(emitter, function (done) {
-      Layer.last = Event.last = null
+      Span.last = Event.last = null
       ao.startOrContinueTrace(null, 'test', setImmediate, conf, done)
     }, [], function (err) {
       called.should.equal(true)
@@ -579,7 +579,7 @@ describe('custom', function () {
 
   // Verify start with meta works
   it('should start with meta', function (done) {
-    var previous = new Layer('previous')
+    var previous = new Span('previous')
     var entry = previous.events.entry
     var last
 
@@ -611,7 +611,7 @@ describe('custom', function () {
     })
 
     // Clear context
-    Layer.last = Event.last = null
+    Span.last = Event.last = null
 
     ao.startOrContinueTrace(
       { meta: entry.toString() },
@@ -636,8 +636,8 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      var layer = new ao.Layer('test', 'entry')
-      layer.run(function () {
+      var span = new Span('test', 'entry')
+      span.run(function () {
         ao.bind(null)
         called.should.equal(false)
         ao.bind(noop)
@@ -666,8 +666,8 @@ describe('custom', function () {
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      var layer = new ao.Layer('test', 'entry')
-      layer.run(function () {
+      var span = new Span('test', 'entry')
+      span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
         ao.bindEmitter(emitter)
@@ -689,8 +689,8 @@ describe('custom', function () {
     var last
 
     helper.test(emitter, function (done) {
-      ao.instrumentHttp(function (layer) {
-        return layer.descend('test')
+      ao.instrumentHttp(function (span) {
+        return span.descend('test')
       }, function () {
         setImmediate(function () {
           res.end()

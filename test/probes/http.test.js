@@ -84,7 +84,7 @@ describe('probes.http', function () {
     //
     // Test a simple res.end() call in an http server
     //
-    it('should send traces for http routing and response layers', function (done) {
+    it('should send traces for http routing and response spans', function (done) {
       var port
       var server = http.createServer(function (req, res) {
         res.end('done')
@@ -122,7 +122,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      var origin = new ao.Event('layer-name', 'label-name', '')
+      var origin = new ao.Event('span-name', 'label-name', '')
 
       helper.doChecks(emitter, [
         function (msg) {

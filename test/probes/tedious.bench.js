@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var pkg = require('tedious/package.json')
 var tedious = require('tedious')
@@ -39,11 +39,11 @@ suite('probes/tedious', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
+    span.exit()
     ao.requestStore.exit(context)
   })
 

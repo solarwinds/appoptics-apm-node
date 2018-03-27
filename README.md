@@ -49,7 +49,7 @@ To upgrade an existing installation, navigate to your app root and run:
 npm install --save appoptics@latest
 ```
 
-## Adding Your Own Layers
+## Adding Your Own Spans
 
 In addition to the default layers captured automatically, you can add your own. To learn on how to modify your code to report custom layers, [read here](http://docs.traceview.solarwinds.com/Instrumentation/nodejs.html#customizing-instrumentation).
 
@@ -120,7 +120,7 @@ The oboe module uses a standard layout.  Here are the notable directories.
 
 ```
 lib/probes  # Auto loaded instrumentation
-lib         # Layer and Event constructors
+lib         # Span and Event constructors
 src         # Bindings to liboboe
 test        # Mocha test suite
 ```

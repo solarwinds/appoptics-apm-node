@@ -1,6 +1,6 @@
 var helper = require('./helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 suite('custom', function () {
   var context = {}
@@ -28,8 +28,8 @@ suite('custom', function () {
   })
 })
 
-function builder (layer) {
-  return layer.descend('test')
+function builder (span) {
+  return span.descend('test')
 }
 
 function noop () {}

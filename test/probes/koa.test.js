@@ -49,10 +49,10 @@ describe('probes/koa', function () {
   // Tests
   //
   if ( ! canGenerator) {
-    it.skip('should support koa outer layer', noop)
+    it.skip('should support koa outer span', noop)
     it.skip('should skip when disabled', noop)
   } else {
-    it('should support koa outer layer', function (done) {
+    it('should support koa outer span', function (done) {
       tests.basic(emitter, done)
     })
     it('should skip when disabled', function (done) {

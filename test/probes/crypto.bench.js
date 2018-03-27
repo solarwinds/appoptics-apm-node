@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var crypto = require('crypto')
 
@@ -11,11 +11,11 @@ suite('probes/crypto', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
+    span.exit()
     ao.requestStore.exit(context)
   })
 

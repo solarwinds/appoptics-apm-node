@@ -393,7 +393,7 @@ describe('probes.fs', function () {
           }
         ]
 
-        // Include checks for all expected sub-layers
+        // Include checks for all expected sub-spans
         function add (step) {
           steps.push(step)
         }
@@ -461,7 +461,7 @@ describe('probes.fs', function () {
           }
         ]
 
-        // Include checks for all expected sub-layers
+        // Include checks for all expected sub-spans
         function add (step) {
           steps.push(step)
         }

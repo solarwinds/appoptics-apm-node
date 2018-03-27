@@ -273,7 +273,7 @@ describe('probes.amqp', function () {
     ], done)
   })
 
-  it('should create entry layers for jobs', function (done) {
+  it('should create entry spans for jobs', function (done) {
     var ex = client.exchange('exchange', { type: 'fanout' })
     client.queue('queue', function (q) {
       q.bind(ex, '')

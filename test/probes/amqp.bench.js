@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var amqp = require('amqp')
 var db_host = process.env.RABBITMQ_PORT_5672_TCP_ADDR || 'localhost'
@@ -10,7 +10,7 @@ tracelyzer.setMaxListeners(Infinity)
 suite('probes/amqp', function () {
   var context = {}
   var client
-  var layer
+  var span
   var ex
 
   before(function (done) {
@@ -31,12 +31,12 @@ suite('probes/amqp', function () {
 
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
     ao.requestStore.exit(context)
-    layer.exit()
+    span.exit()
   })
 
   bench('confirmed publish', function (done) {

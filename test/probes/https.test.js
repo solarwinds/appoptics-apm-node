@@ -99,7 +99,7 @@ describe('probes.https', function () {
     //
     // Test a simple res.end() call in an http server
     //
-    it('should send traces for https routing and response layers', function (done) {
+    it('should send traces for https routing and response spans', function (done) {
       var port
       var server = https.createServer(options, function (req, res) {
         res.end('done')

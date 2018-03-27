@@ -458,7 +458,7 @@ describe('probes.express', function () {
     // Define route to render template that should inject rum scripts
     app.get('/', function (req, res) {
       // Store exit event for use in response tests
-      exit = res._http_layer.events.exit
+      exit = res._http_span.events.exit
       res.render('rum')
     })
 
@@ -521,12 +521,12 @@ describe('probes.express', function () {
   // */
 
   if (semver.satisfies(pkg.version, '< 3.2.0')) {
-    it.skip('should trace render layer', renderTest)
+    it.skip('should trace render span', renderTest)
     /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
     // */
   } else {
-    it('should trace render layer', renderTest)
+    it('should trace render span', renderTest)
     /* TODO BAM remove
     it('should include RUM scripts', rumTest)
     // */
@@ -605,8 +605,8 @@ describe('probes.express', function () {
     var app = express()
 
     app.get('/', function route (req, res, next) {
-      ao.instrument(function (layer) {
-        return layer.descend('sub')
+      ao.instrument(function (span) {
+        return span.descend('sub')
       }, setImmediate, function (err, res) {
         next(error)
       })

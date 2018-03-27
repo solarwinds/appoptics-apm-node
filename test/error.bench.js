@@ -1,6 +1,6 @@
 var helper = require('./helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 var Event = ao.Event
 
 var err = new Error('test')
@@ -34,8 +34,8 @@ suite('error', function () {
   })
 })
 
-function builder (layer) {
-  return layer.descend('test')
+function builder (span) {
+  return span.descend('test')
 }
 
 function error (done) {

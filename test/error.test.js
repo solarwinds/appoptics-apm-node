@@ -1,6 +1,6 @@
 var helper = require('./helper')
 var ao = require('..')
-var Layer = ao.Layer
+var Span = ao.Span
 var Event = ao.Event
 
 describe('error', function () {
@@ -9,8 +9,8 @@ describe('error', function () {
   var emitter
   var realSampleTrace
 
-  function testLayer (layer) {
-    return layer.descend('test')
+  function testSpan (span) {
+    return span.descend('test')
   }
 
   function handleErrorTest (task, done) {
@@ -90,7 +90,7 @@ describe('error', function () {
   it('should report errors in sync calls', function (done) {
     handleErrorTest(function (done) {
       try {
-        ao.instrument(testLayer, function () {
+        ao.instrument(testSpan, function () {
           throw error
         }, conf)
       } catch (e) {}
@@ -100,7 +100,7 @@ describe('error', function () {
 
   it('should report errors in error-first callbacks', function (done) {
     handleErrorTest(function (done) {
-      ao.instrument(testLayer, function (callback) {
+      ao.instrument(testSpan, function (callback) {
         callback(error)
       }, conf, function () {
         done()
@@ -124,12 +124,12 @@ describe('error', function () {
     ], done)
   })
 
-  it('should report custom errors within a layer', function (done) {
+  it('should report custom errors within a span', function (done) {
     var error = new Error('test')
     var last
 
     helper.test(emitter, function (done) {
-      ao.instrument(testLayer, function (callback) {
+      ao.instrument(testSpan, function (callback) {
         ao.reportError(error)
         callback()
       }, conf, done)
@@ -160,7 +160,7 @@ describe('error', function () {
     handleErrorTest(function (done) {
       var rethrow = false
       try {
-        ao.instrument(testLayer, function () {
+        ao.instrument(testSpan, function () {
           throw error
         }, conf)
       } catch (e) {
@@ -206,17 +206,17 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    var layer = new Layer('test', null, {})
-    layer._internal = function () {
+    var span = new Span('test', null, {})
+    span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
-    layer.error({ foo: 'bar' })
-    layer.error(undefined)
-    layer.error(new Date)
-    layer.error(/foo/)
-    layer.error(null)
-    layer.error([])
-    layer.error(1)
+    span.error({ foo: 'bar' })
+    span.error(undefined)
+    span.error(new Date)
+    span.error(/foo/)
+    span.error(null)
+    span.error([])
+    span.error(1)
   })
 
   it('should allow sending the same error multiple times', function (done) {
@@ -238,16 +238,16 @@ describe('error', function () {
     }, [ validate, validate ], done)
   })
 
-  it('should not send error events when not in a layer', function () {
-    var layer = new Layer('test', null, {})
+  it('should not send error events when not in a span', function () {
+    var span = new Span('test', null, {})
 
     var send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
-      throw new Error('should not send when not in a layer')
+      throw new Error('should not send when not in a span')
     }
 
-    layer.error(error)
+    span.error(error)
     Event.prototype.send = send
   })
 

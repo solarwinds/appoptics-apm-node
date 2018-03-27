@@ -6,9 +6,6 @@ var koa = require('koa')
 var helper = require('../helper')
 var request = require('request')
 
-/* TODO BAM remove
-var rum = require('../../dist/rum')
-// */
 var ao = require('../..')
 
 var views = require('co-views')
@@ -359,7 +356,7 @@ exports.rum = function (emitter, done) {
   var exit
 
   app.use(function* () {
-    exit = this.res._http_layer.events.exit
+    exit = this.res._http_span.events.exit
     this.body = yield render('rum')
   })
 

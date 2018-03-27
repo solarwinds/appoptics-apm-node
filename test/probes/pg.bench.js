@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var postgres = require('pg')
 var db_host = process.env.POSTGRES_PORT_5432_TCP_ADDR || 'localhost'
@@ -87,11 +87,11 @@ Object.keys(drivers).forEach(function (type) {
 
     before(function () {
       ao.requestStore.enter(context)
-      layer = new Layer('test', null, {})
-      layer.enter()
+      span = new Span('test', null, {})
+      span.enter()
     })
     after(function () {
-      layer.exit()
+      span.exit()
       ao.requestStore.exit(context)
     })
 

@@ -3,7 +3,7 @@ var should = require('should')
 var debug = require('debug')
 var http = require('http')
 var ao = require('..')
-var Layer = ao.Layer
+var Span = ao.Span
 
 describe('basics', function () {
   it('should set trace mode', function () {
@@ -75,16 +75,16 @@ describe('basics', function () {
       debug.enable = real
     }
     var before = ao.logLevel
-    ao.logLevel = 'layer'
-    ao.logLevel.should.equal('layer')
+    ao.logLevel = 'span'
+    ao.logLevel.should.equal('span')
     called.should.equal(true)
     ao.logLevel = before
   })
 
   it('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
-    var layer = new Layer('test')
-    layer.run(function () {
+    var span = new Span('test')
+    span.run(function () {
       ao.tracing.should.be.true
     })
   })

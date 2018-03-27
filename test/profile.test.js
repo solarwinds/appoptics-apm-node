@@ -3,7 +3,7 @@ var should = require('should')
 var ao = require('..')
 var addon = ao.addon
 var Profile = ao.Profile
-var Layer = ao.Layer
+var Span = ao.Span
 
 describe('profile', function () {
   var emitter
@@ -42,10 +42,10 @@ describe('profile', function () {
     profile.events.exit.should.have.property('Label', 'profile_exit')
   })
 
-  it('should descend profile from a layer', function () {
-    var layer = new Layer('test', null, {})
-    layer.run(function () {
-      var profile = layer.profile('test-profile')
+  it('should descend profile from a span', function () {
+    var span = new Span('test', null, {})
+    span.run(function () {
+      var profile = span.profile('test-profile')
 
       profile.should.be.instanceof(Profile)
       profile.should.have.property('events')
@@ -58,12 +58,12 @@ describe('profile', function () {
     })
   })
 
-  it('should allow error/info reporting from profile layer', function (done) {
-    var layer = new Layer('test-layer', null, {})
+  it('should allow error/info reporting from profile span', function (done) {
+    var span = new Span('test-span', null, {})
 
     var checks = [
       function (msg) {
-        msg.should.have.property('Layer', 'test-layer')
+        msg.should.have.property('Layer', 'test-span')
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
@@ -90,15 +90,15 @@ describe('profile', function () {
         msg.should.have.property('Label', 'profile_exit')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test-layer')
+        msg.should.have.property('Layer', 'test-span')
         msg.should.have.property('Label', 'exit')
       },
     ]
 
     helper.doChecks(emitter, checks, done)
 
-    layer.run(function () {
-      var profile = layer.profile('test-profile')
+    span.run(function () {
+      var profile = span.profile('test-profile')
 
       profile.should.be.instanceof(Profile)
       profile.should.have.property('events')

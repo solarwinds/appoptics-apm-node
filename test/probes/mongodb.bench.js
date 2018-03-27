@@ -1,6 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
-var Layer = ao.Layer
+var Span = ao.Span
 
 var MongoDB = require('mongodb').MongoClient
 var pkg = require('mongodb/package.json')
@@ -28,15 +28,15 @@ suite('probes/mongodb', function () {
   })
 
   //
-  // Enter tracing layer
+  // Enter tracing span
   //
   before(function () {
     ao.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
+    span.exit()
     ao.requestStore.exit(context)
   })
 

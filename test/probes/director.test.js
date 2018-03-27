@@ -63,7 +63,7 @@ describe('probes.director', function () {
   //
   // Tests
   //
-  it('should include director layer and profiles', function (done) {
+  it('should include director span and profiles', function (done) {
     function hello (name) {
       this.res.writeHead(200, { 'Content-Type': 'text/plain' })
       this.res.end('Hello, ' + name + '!')
