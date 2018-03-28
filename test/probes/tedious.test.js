@@ -11,6 +11,7 @@ if ( ! process.env.AO_TEST_SQLSERVER_EX) {
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
+var conf = ao.probes.tedious
 
 var should = require('should')
 
@@ -69,6 +70,12 @@ describe('probes.tedious', function () {
             msg.should.have.property('Layer', 'fake')
         }
       ], done)
+  })
+
+
+  it('should sanitize SQL by default', function () {
+    conf.should.have.property('sanitizeSql', true)
+    conf.sanitizeSql = false
   })
 
   var checks = {

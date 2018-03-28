@@ -125,6 +125,10 @@ describe('probes.cassandra-driver', function () {
       client.execute('TRUNCATE "foo";', done)
     })
 
+    it('should sanitize SQL by default', function () {
+      conf.should.have.property('sanitizeSql', true)
+      conf.sanitizeSql = false
+    })
     it('should trace a basic query', test_basic)
     it('should trace a prepared query', test_prepare)
     it('should sanitize query string, when not using value list', test_sanitize)

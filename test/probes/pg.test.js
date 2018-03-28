@@ -2,6 +2,7 @@ var extend = require('util')._extend
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
+var conf = ao.probes.pg
 
 var should = require('should')
 
@@ -38,6 +39,12 @@ if (canNative) {
 describe('probes.postgres', function () {
   var emitter
   var realSampleTrace
+
+  it('should sanitize SQL by default', function () {
+    conf.should.have.property('sanitizeSql', true)
+    conf.sanitizeSql = false
+  })
+
   //
   // Intercept appoptics messages for analysis
   //

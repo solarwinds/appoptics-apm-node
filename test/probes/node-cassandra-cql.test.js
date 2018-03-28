@@ -1,6 +1,7 @@
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
+var conf = ao.probes['node-cassandra-cql']
 
 var should = require('should')
 var hosts = helper.Address.from(
@@ -23,6 +24,12 @@ describe('probes.cassandra', function () {
   var ctx = {}
   var client
   var db
+
+
+  it('should sanitize SQL by default', function () {
+    conf.should.have.property('sanitizeSql', true)
+    conf.sanitizeSql = false
+  })
 
   //
   // Define some general message checks

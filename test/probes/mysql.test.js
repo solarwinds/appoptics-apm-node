@@ -145,8 +145,15 @@ describe('probes.mysql', function () {
       ], done)
   })
 
+  it('should sanitize SQL by default', function () {
+    ao.probes.mysql.should.have.property('sanitizeSql', true)
+    // turn off for testing
+    ao.probes.mysql.sanitizeSql = false
+  })
+
 
   it('should trace a basic query', test_basic)
+
   it('should trace a query with a value list', test_values)
   if (semver.satisfies(pkg.version, '>= 1.0.0')) {
     it('should trace a query with a value object', test_object)
@@ -166,6 +173,9 @@ describe('probes.mysql', function () {
   it('should trim long queries', test_long_query)
   it('should skip when disabled', test_disabled)
 
+  //
+  // tests
+  //
   function test_basic (done) {
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [
       function (msg) {
