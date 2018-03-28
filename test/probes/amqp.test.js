@@ -327,6 +327,7 @@ describe('probes.amqp', function () {
           checks.pushq(msg)
           msg.should.have.property('ExchangeName', 'exchange')
           msg.should.have.property('RoutingKey', 'message')
+          msg.should.have.property('X-Trace')
           id = msg['X-Trace']
         },
         function (msg) {
