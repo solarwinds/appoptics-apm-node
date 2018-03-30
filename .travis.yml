@@ -33,7 +33,7 @@ install:
   - nvm use $TRAVIS_NODE_VERSION
   - npm install .
   - npm run install-deps || true
-  - node travis-dbg.js
+  - node travis-dbg.js > travis-dbg.log
 
 script: "npm test"
 
@@ -53,3 +53,6 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+
+after_failure:
+    - cat travis-dbg.log
