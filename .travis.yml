@@ -29,7 +29,7 @@ install:
   - curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | force_npm=1 bash
   - nvm use $TRAVIS_NODE_VERSION
   - npm install .
-  - npm run install-deps || true
+  #- npm run install-deps || true
   - node travis-dbg.js > travis-dbg.log
 
 script: "npm test"
@@ -52,4 +52,4 @@ addons:
     - g++-4.8
 
 after_failure:
-    - cat travis-dbg.log
+    - cat /home/travis/build/librato/node-appoptics/travis-dbg.log
