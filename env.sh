@@ -4,7 +4,9 @@ PARAM=$2
 if [[ -z "$AO_TOKEN_STG" ]]; then
     echo "AO_TOKEN_STG must be defined and contain a valid token"
     echo "for accessing collector-stg.appoptics.com"
-elif [[ -z "$ARG" ]]; then
+fi
+
+if [[ -z "$ARG" ]]; then
     echo "source this script with an argument of docker or bash"
     echo "docker defines variables for the docker environemnt testing"
     echo "bash defines variables to run at a native command prompt"
@@ -67,11 +69,10 @@ elif [[ "$ARG" = "debug" ]]; then
     #export AO_TEST_REQUESTSTORE_PROXY=1
 elif [[ "$ARG" = "bindings" ]]; then
     # use these to provide authentication and specify an alternate branch/tag
-    # for the install-appoptics-bindings.js script.
-    # N.B. if fetching from packagecloud setting the next two are a good
-    # alternative as packagecloud's proxy doesn't have authorization issues
-    # when they are installed in a project .npmrc file, not the user .npmrc
-    # file.
+    # for use by install-appoptics-bindings.js. the example below, given a git
+    # auth token in the variable AO_TEST_GITAUTH, will cause "npm run postinstall"
+    # to fetch appoptics-bindings directly from github. documentation is the code
+    # in install-appoptics-bindings.js
     export AO_TEST_PACKAGE=librato/node-appoptics-bindings#per-request-v2
     # this requires that one's git access token is already defined.
     export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
