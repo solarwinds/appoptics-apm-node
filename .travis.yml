@@ -1,5 +1,10 @@
 language: node_js
 
+env:
+    global:
+    - APPOPTICS_REPORTER=udp
+    - APPOPTICS_REPORTER_UDP=localhost:7832
+
 branches:
   only:
     - per-request-bis
