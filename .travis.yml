@@ -24,12 +24,11 @@ node_js:
 
 install:
   - sudo apt-get autoremove -fy
-  #- wget https://files.tv.solarwinds.com/install_traceview.sh
-  #- sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
   - sudo apt-get install libkrb5-dev
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
 #  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
+  - curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | bash
   - npm install
   - npm run install-deps || true
 
