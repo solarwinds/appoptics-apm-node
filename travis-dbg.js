@@ -15,3 +15,5 @@ console.error('got appoptics, addon=', ao.addon)
 console.error('trying to require bindings')
 var aob = require('appoptics-bindings')
 
+console.error('got bindings', aob)
+
