@@ -30,9 +30,11 @@ install:
   - nvm use $TRAVIS_NODE_VERSION
   - npm install .
   #- npm run install-deps || true
-  - node travis-dbg.js > travis-dbg.log
+  - node travis-dbg.js
 
-script: "npm test"
+script:
+  - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
+  - "npm test"
 
 services:
 #  - cassandra
@@ -41,9 +43,12 @@ services:
   - memcached
   - rabbitmq
 
-# Support io.js 3.x and node 4.x+
+# Support node 4.x+
 env:
   - CXX=g++-4.8
+  - APPOPTICS_REPORTER=udp
+  - APPOPTICS_REPORTER_UDP=localhost:7832
+  - APPOPTICS_SERVICE_KEY=8f7994d481d87a29872aca3152492ed287d4b88896addb50ee88d75a49be9e950:ao-travis-test
 addons:
   apt:
     sources:
