@@ -13,6 +13,9 @@ describe('probes.amqp', function () {
   var db
   var realSampleTrace
 
+  // increase timeout for travis-ci.
+  this.timeout(10000)
+
   //
   // Define some general message checks
   //
