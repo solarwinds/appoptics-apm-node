@@ -32,6 +32,7 @@ install:
   - nvm use $TRAVIS_NODE_VERSION
   - npm install
   - npm run install-deps || true
+  - node travis-dbg.js
 
 script: "npm test"
 
