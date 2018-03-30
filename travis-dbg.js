@@ -8,7 +8,7 @@ console.error()
 console.error(process.cwd())
 
 console.error('trying to require appoptics')
-var ao = require('appoptics-apm')
+var ao = require('.')
 
 console.error('got appoptics, addon=', ao.addon)
 
