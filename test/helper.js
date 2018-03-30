@@ -9,6 +9,7 @@ var bson = require('bson')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
+var path = require('path')
 
 var log = ao.loggers
 
@@ -16,6 +17,20 @@ log.addGroup({
   groupName: 'test',
   subNames: ['info', 'mock-port', 'message']
 })
+
+exports.skipTest = function () {
+  if (!process.env.AO_SKIP_TEST) {
+    return false
+  }
+
+  var skips = process.env.AO_SKIP_TEST.split(',')
+  var test = path.basename(module.parent.id, '.test.js')
+  if (!~skips.indexOf(test)) {
+    return false
+  }
+
+  return true
+}
 
 var BSON = new bson.BSONPure.BSON()
 
