@@ -5,6 +5,7 @@ env:
     - APPOPTICS_REPORTER=udp
     - APPOPTICS_REPORTER_UDP=localhost:7832
     - APPOPTICS_SERVICE_KEY=8f7994d481d87a29872aca3152492ed287d4b88896addb50ee88d75a49be9e950:ao-travis-test
+    - CXX=g++-4.8
 
 branches:
   only:
@@ -33,6 +34,8 @@ install:
   - node travis-dbg.js
 
 script:
+  - export APPOPTICS_REPORTER=$APPOPTICS_REPORTER
+  - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - "npm test"
 
@@ -44,11 +47,8 @@ services:
   - rabbitmq
 
 # Support node 4.x+
-env:
-  - CXX=g++-4.8
-  - APPOPTICS_REPORTER=udp
-  - APPOPTICS_REPORTER_UDP=localhost:7832
-  - APPOPTICS_SERVICE_KEY=8f7994d481d87a29872aca3152492ed287d4b88896addb50ee88d75a49be9e950:ao-travis-test
+#env:
+#  - CXX=g++-4.8
 addons:
   apt:
     sources:
