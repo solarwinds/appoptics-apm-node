@@ -31,10 +31,10 @@ install:
   - nvm use $TRAVIS_NODE_VERSION
   - npm install .
   #- npm run install-deps || true
-  - node travis-dbg.js
 
 script:
   - source ./env.sh bash-testing
+  - node travis-dbg.js
   - export APPOPTICS_REPORTER=$APPOPTICS_REPORTER
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
