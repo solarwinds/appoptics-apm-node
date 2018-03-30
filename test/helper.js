@@ -29,6 +29,7 @@ exports.skipTest = function () {
     return false
   }
 
+  ao.loggers.warn('skipping test', test)
   return true
 }
 

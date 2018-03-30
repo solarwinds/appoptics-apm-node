@@ -6,8 +6,8 @@ var should = require('should')
 var amqp = require('amqp')
 var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
+
 if (helper.skipTest()) {
-  log.warn('skipping test', test)
   return
 }
 
