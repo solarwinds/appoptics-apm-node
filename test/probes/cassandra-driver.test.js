@@ -8,6 +8,10 @@ var hosts = helper.Address.from(
   process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
+if (helper.skipTest(module.filename)) {
+  return
+}
+
 //
 // Do not load unless stream.Readable exists.
 // It will fail silently, stalling the tests.
