@@ -7,7 +7,7 @@ var amqp = require('amqp')
 var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 
-if (helper.skipTest()) {
+if (helper.skipTest(module.filename)) {
   return
 }
 

@@ -18,13 +18,14 @@ log.addGroup({
   subNames: ['info', 'mock-port', 'message']
 })
 
-exports.skipTest = function () {
+exports.skipTest = function (filename) {
   if (!process.env.AO_SKIP_TEST) {
     return false
   }
 
   var skips = process.env.AO_SKIP_TEST.split(',')
-  var test = path.basename(module.parent.id, '.test.js')
+  var test = path.basename(filename, '.test.js')
+
   if (!~skips.indexOf(test)) {
     return false
   }
