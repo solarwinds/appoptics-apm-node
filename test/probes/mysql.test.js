@@ -34,6 +34,13 @@ describe('probes.mysql', function () {
   var db
 
   //
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
+  //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
