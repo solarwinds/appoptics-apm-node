@@ -38,7 +38,7 @@ script:
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
-  - npm ls --depth=0
+  - npm ls
   - "./node_modules/gulp/bin/gulp.js test:probe:mysql"
 
 services:
