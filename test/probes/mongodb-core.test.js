@@ -21,6 +21,15 @@ var hosts = {
   'replica set': process.env.AO_TEST_MONGODB_SET
 }
 
+// if travis reset for now.
+// TODO BAM handle via env vars.
+if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
+  hosts = {
+    '3+': process.env.AO_TEST_MONGODB_3 || 'localhost:27017',
+    'replica set': process.env.AO_TEST_MONGODB_SET
+  }
+}
+
 describe('probes.mongodb-core UDP', function () {
   var emitter
 
