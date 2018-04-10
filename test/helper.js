@@ -18,6 +18,8 @@ log.addGroup({
   subNames: ['info', 'mock-port', 'message']
 })
 
+// each module must implement. this only provides a
+// common framework to check the environment variable.
 exports.skipTest = function (filename) {
   if (!process.env.AO_SKIP_TEST) {
     return false
@@ -32,6 +34,15 @@ exports.skipTest = function (filename) {
 
   ao.loggers.warn('skipping test', test)
   return true
+}
+
+// if not specifically turning on error and warning debugging, turn it off
+if (!process.env.AO_TEST_DEBUG_LOGLEVEL) {
+  var logs = (process.env.DEBUG || '').split(',')
+  logs = logs.filter(function (item) {return !item.startsWith('appoptics:')}).join(',')
+  process.env.DEBUG = logs
+  // pseudo-log-level that has no logger.
+  ao.logLevel = 'none'
 }
 
 var BSON = new bson.BSONPure.BSON()
