@@ -487,6 +487,8 @@ describe('span', function () {
     })
   })
 
+  // TODO BAM fix this brittle test. 'inner-2' sometimes shows up instead
+  // of 'inner-3'
   it('should properly attribute dangling info/error events', function (done) {
     var span = new Span('outer', null, {})
 
