@@ -7,11 +7,11 @@ version: '2.1'
 
 services:
   main:
+    container_name: main
     image: main
     build:
       context: test/docker
-      dockerfile: test-main.yml
-      #dockerfile: main.yml
+      dockerfile: main.yml
       args:
         # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
         # bindings installation will attempt to download the HEAD of the
@@ -40,6 +40,15 @@ services:
       options:
         max-file: "1"
         max-size: 50m
+    #
+    # wait for the dependencies. (this container doesn't really do anything unless
+    # running the tests in this context. in that case it is easy enough to invoke
+    # env.sh manually as that is the way the tests are run.)
+    #
+    depends_on:
+      - wait
+    links:
+      - wait
   #
   # extend the collector services into this composition.
   # NOTE: extend goes away in version 3.0 of docker-compose.yml
@@ -52,6 +61,7 @@ services:
     extends:
       file: "../oboe-test/collectors/docker-compose.yml"
       service: "java-collector"
+
   #
   # Not used with appoptics.
   #
@@ -119,7 +129,7 @@ services:
         max-file: "1"
         max-size: 50m
     ports:
-      - "27017:27017"
+      - "${AO_TEST_MONGO_2_6_HOST_PORT:-27017}:27017"
 
   mongo_3:
     image: "mongo_3"
@@ -144,25 +154,18 @@ services:
         max-size: 50m
     ports:
       - "27020:27016"
-      - "27021:27017"
+      - "27021:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}"
       - "27022:27018"
     environment:
       - "REPLSETMEMBERS=3"
 
   mysql:
-    image: "mysql"
-    build:
-      context: test/docker/
-      dockerfile: mysql.yml
-    logging:
-      options:
-        max-file: "1"
-        max-size: 50m
+    container_name: mysql
+    image: "mysql:5.7.13"
     ports:
-      - "3306:3306"
+      - "${AO_TEST_MYSQL_HOST_PORT:-3306}:3306"
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_ROOT_PASSWORD=""
+      - MYSQL_ROOT_PASSWORD=admin
 
   mssql:
     image: "mssql"
@@ -229,4 +232,32 @@ services:
         max-size: 50m
     ports:
       - "6379:6379"
+
+  wait:
+    container_name: wait
+    image: waisbrot/wait
+    depends_on:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+    links:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+    environment:
+      - TARGETS=cassandra:9042;memcached:11211;mongo:27017;mssql:1433;mysql:3306;postgres:5432;rabbitmq:5672;redis:6379
 

@@ -14,7 +14,7 @@ var mysql = require('mysql')
 
 var addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
 var user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
-var pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
+var pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || 'admin'
 
 // hardcode travis settings.
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {

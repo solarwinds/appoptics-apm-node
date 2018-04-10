@@ -7,9 +7,16 @@ if [[ -z "$AO_TOKEN_STG" ]]; then
 fi
 
 if [[ -z "$ARG" ]]; then
-    echo "source this script with an argument of docker or bash"
-    echo "docker defines variables for the docker environemnt testing"
-    echo "bash defines variables to run at a native command prompt"
+    echo "source this script with an argument of docker, docker-scribe, bash,"
+    echo "bash-testing, or travis\n"
+    echo "docker defines variables for running tests in the docker environment."
+    echo "docker-scribe does the same but with the scribe collector instead of java"
+    echo "  collector."
+    echo "bash defines variables to run at a native command prompt. N.B. databases"
+    echo "  will not necessarily be defined."
+    echo "bash-testing defines the variables to test from the bash prompt but with docker"
+    echo "  containers present."
+    echo "travis - defines the variables for use in a travis environment."
     echo
     echo "you may also use the argument debug to define additional"
     echo "debugging variables, bindings to define alternate ao-bindings"
@@ -29,22 +36,25 @@ elif [[ "$ARG" = "docker-scribe" ]]; then
     # need to change next line to ssl to use scribe collector
     export APPOPTICS_REPORTER=udp
 elif [[ "$ARG" = "bash" ]]; then
+    # this is used primarily for manual interactive testing.
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
     # set this to ssl in order to use APPOPTICS_COLLECTOR
     export APPOPTICS_REPORTER=udp
 elif [[ "$ARG" = "bash-testing" ]]; then
-    # presume docker containers are running - their ports are addressable
-    # as localhost.
+    # this is used primarily to run the full appoptics-apm test suite.
+    # presumes docker containers are running and their ports are addressable
+    # as localhost. the port overrides (e.g., AO_TEST_MYSQL_HOST_PORT) allow
+    # local copies of the database to be running on the standard port numbers.
     export AO_TEST_CASSANDRA_2_2=localhost:9042
     export AO_TEST_MEMCACHED_1_4=localhost:11211
     export AO_TEST_MONGODB_2_4=localhost:27016
-    export AO_TEST_MONGODB_2_6=localhost:27017
-    export AO_TEST_MONGODB_3_0=localhost:27018
-    export AO_TEST_MYSQL=localhost:3306
-    export AO_TEST_MYSQL_USERNAME=admin
-    export AO_TEST_MYSQL_PASSWORD=pwwadmin
+    export AO_TEST_MONGODB_2_6=localhost:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}
+    export AO_TEST_MONGODB_3=localhost:27018
+    export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
+    export AO_TEST_MYSQL_USERNAME=root
+    export AO_TEST_MYSQL_PASSWORD=admin
     # this requires an entry in /etc/hosts because this
     # isn't run in a container it can't use docker names.
     # use the IP address from "docker inspect ao_oracle_1"
@@ -59,9 +69,35 @@ elif [[ "$ARG" = "bash-testing" ]]; then
     export AO_TEST_REDIS_3_0=localhost:6379
     # the tedious probe tests SQL Server.
     export AO_TEST_SQLSERVER_EX=localhost:1433
+elif [[ "$ARG" = "travis" ]]; then
+    # presume a travis-ci environment. servers should be running
+    # as localhost on standard ports.
+    export AO_TEST_CASSANDRA_2_2=localhost:9042
+    export AO_TEST_MEMCACHED_1_4=localhost:11211
+    # only one mongodb is tested per travis run.
+    export AO_TEST_MONGODB_3=localhost:27017
+    # mysql/travis doesn't like 127.0.0.1 - must be localhost
+    export AO_TEST_MYSQL=localhost:3306
+    export AO_TEST_MYSQL_USERNAME=root
+    export AO_TEST_MYSQL_PASSWORD=admin
+    # this requires an entry in /etc/hosts because this
+    # isn't run in a container it can't use docker names.
+    # use the IP address from "docker inspect ao_oracle_1"
+    export AO_TEST_ORACLE=oracledb.com
+    export AO_TEST_ORACLE_USERNAME=system
+    export AO_TEST_ORACLE_PASSWORD=oracle
+    # defaults should be fine.
+    #export AO_TEST_POSTGRES_USER=postgres
+    #export AO_TEST_POSTGRES_PASSWORD=
+    export AO_TEST_POSTGRES=localhost:5432
+    export AO_TEST_RABBITMQ_3_5=localhost:5672
+    export AO_TEST_REDIS_3_0=localhost:6379
+    # the tedious probe tests SQL Server.
+    export AO_TEST_SQLSERVER_EX=mssql:1433
+    export AO_TEST_SQLSERVER_EX_USERNAME=sa
 elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_DEBUG_LEVEL=6
-    # see src/debug-loggers.js for all the options
+    # see src/loggers.js for all the options
     export DDEBUG=appoptics:flow,appoptics:metadata,appoptics:test:message
 
     # Turn on the requestStore debug logging proxy (should work with fs now

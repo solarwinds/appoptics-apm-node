@@ -33,24 +33,20 @@ install:
   #- npm run install-deps || true
 
 script:
-  - source ./env.sh bash-testing
+  - source ./env.sh travis
   - export APPOPTICS_REPORTER=$APPOPTICS_REPORTER
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
-  - export AO_SKIP_TEST=amqp,cassandra-driver
-  - npm ls
-  - "./node_modules/gulp/bin/gulp.js test:probe:mysql"
+  - export AO_SKIP_TEST=amqp
+  - npm test
 
 services:
-#  - cassandra
+  - cassandra
   - mongodb
   - redis
   - memcached
   - rabbitmq
 
-# Support node 4.x+
-#env:
-#  - CXX=g++-4.8
 addons:
   apt:
     sources:
