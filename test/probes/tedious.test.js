@@ -27,7 +27,7 @@ if (process.env.AO_TEST_SQLSERVER_EX) {
     process.env.AO_TEST_SQLSERVER_EX
   )[0]
 } else {
-  addr = 'mssql'
+  addr = 'mssql:1433'
 }
 var user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
