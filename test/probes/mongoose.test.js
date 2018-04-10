@@ -5,6 +5,9 @@ var Span = ao.Span
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
+// use built-in Promise, replaceing mongoose's own implementation (deprecated)
+mongoose.Promise = Promise
+
 var host = process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017'
 
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
