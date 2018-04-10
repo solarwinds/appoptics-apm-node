@@ -61,7 +61,7 @@ describe('probes.mysql', function () {
       msg.should.have.property('Database', 'test')
       msg.should.have.property('Flavor', 'mysql')
       msg.should.have.property('RemoteHost')
-      msg.RemoteHost.should.be.oneOf(addr.toString(), '127.0.0.1', 'localhost')
+      msg.RemoteHost.should.be.oneOf(addr.toString(), '127.0.0.1:3306', 'localhost:3306')
     },
     error: function (msg) {
       msg.should.have.property('Label', 'error')
