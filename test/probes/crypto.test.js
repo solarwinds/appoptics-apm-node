@@ -60,7 +60,7 @@ describe('probes.crypto', function () {
   if (crypto.pbkdf2) {
     it('should support pbkdf2', function (done) {
       helper.test(emitter, function (done) {
-        crypto.pbkdf2('secret', 'salt', 4096, 512, function (e) {
+        crypto.pbkdf2('secret', 'salt', 4096, 512, 'sha1', function (e) {
           done(e)
         })
       }, [
