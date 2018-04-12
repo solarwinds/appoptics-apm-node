@@ -8,7 +8,7 @@ var Schema = mongoose.Schema
 // use built-in Promise, replaceing mongoose's own implementation (deprecated)
 mongoose.Promise = Promise
 
-var host = process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017'
+var host = process.env.AO_TEST_MONGODB_2_4 || 'localhost:27017'
 
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   host = process.env.AO_TEST_MONGODB_3 || 'localhost:27017'
@@ -18,9 +18,10 @@ describe('probes/mongoose', function () {
   var Cat = mongoose.model('test', new Schema({
     name: String
   }))
+  var mOpts = {useMongoClient: true}
 
   before(function (done) {
-    mongoose.connect('mongodb://' + host + '/test', done)
+    mongoose.connect('mongodb://' + host + '/test', mOpts, done)
   })
   after(function() {
     mongoose.disconnect()
