@@ -1,4 +1,4 @@
-var helper = require('../helper')
+var helper = require('../../helper')
 var ao = helper.ao
 
 var domain = require('domain')
