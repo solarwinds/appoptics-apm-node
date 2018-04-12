@@ -1,70 +1,70 @@
 var helper = require('./helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
-var layer = new Layer('test', null, {})
+var span = new Span('test', null, {})
 
 tracelyzer.setMaxListeners(Infinity)
 
-suite('layer', function () {
+suite('span', function () {
   bench('construction', function () {
-    new Layer('test', null, {})
+    new Span('test', null, {})
   })
 
   bench('enter', function (done) {
     tracelyzer.once('message', function () { done() })
-    var layer = new Layer('test', null, {})
-    layer.enter()
+    var span = new Span('test', null, {})
+    span.enter()
   })
 
   bench('info', function (done) {
     tracelyzer.once('message', function () { done() })
-    var layer = new Layer('test', null, {})
-    layer.info()
+    var span = new Span('test', null, {})
+    span.info()
   })
 
   bench('exit', function (done) {
     tracelyzer.once('message', function () { done() })
-    var layer = new Layer('test', null, {})
-    layer.exit()
+    var span = new Span('test', null, {})
+    span.exit()
   })
 
   bench('run sync', function (done) {
     multi_on(tracelyzer, 2, 'message', after(2, done))
-    var layer = new Layer('test', null, {})
-    layer.run(noop)
+    var span = new Span('test', null, {})
+    span.run(noop)
   })
 
   bench('manual sync', function (done) {
     multi_on(tracelyzer, 2, 'message', after(2, done))
-    var layer = new Layer('test', null, {})
-    layer.enter()
-    layer.exit()
+    var span = new Span('test', null, {})
+    span.enter()
+    span.exit()
   })
 
   bench('run async', function (done) {
     multi_on(tracelyzer, 2, 'message', after(2, done))
-    var layer = new Layer('test', null, {})
-    layer.run(async)
+    var span = new Span('test', null, {})
+    span.run(async)
   })
 
   bench('manual async', function (done) {
     multi_on(tracelyzer, 2, 'message', after(2, done))
-    var layer = new Layer('test', null, {})
-    layer.enter()
+    var span = new Span('test', null, {})
+    span.enter()
     setImmediate(function () {
-      layer.exit()
+      span.exit()
     })
   })
 
-  bench('descend from layer', function () {
-    var layer = new Layer('test', null, {})
-    layer.run(descend)
+  bench('descend from span', function () {
+    var span = new Span('test', null, {})
+    span.run(descend)
   })
 })
 
 function descend () {
-  layer.descend('test')
+  span.descend('test')
 }
 
 function async (wrap) {

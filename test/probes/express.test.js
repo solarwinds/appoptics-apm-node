@@ -1,11 +1,15 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
+var log = ao.loggers
+var conf = ao.probes.express
 
 var should = require('should')
 var semver = require('semver')
 
+/* TODO BAM remove
 var rum = require('../../dist/rum')
+// */
 
 var request = require('request')
 var express = require('express')
@@ -17,16 +21,16 @@ describe('probes.express', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.probes.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -53,6 +57,20 @@ describe('probes.express', function () {
     }
   }
 
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
   //
   // Tests
   //
@@ -77,12 +95,57 @@ describe('probes.express', function () {
       },
       function (msg) {
         check['http-exit'](msg)
+        msg.should.have.property('TransactionName', 'express.GET/hello/:name')
         msg.should.have.property('Controller', '/hello/:name')
         msg.should.have.property('Action', 'hello')
       }
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      request('http://localhost:' + port + '/hello/world')
+    })
+  })
+
+  it('should allow a custom TransactionName', function (done) {
+    var app = express()
+
+    conf.makeMetricsName = function (req, res) {
+      return {
+        Controller: 'new-name',
+        Action: req.method + req.route.path
+      }
+    }
+
+    app.get('/hello/:name', function hello(req, res) {
+      res.send('done')
+    })
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      function () { },
+      function () { },
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('TransactionName', 'new-name.GET/hello/:name')
+        msg.should.have.property('Controller', '/hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
+    ]
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+      delete conf.makeMetricsName
     })
 
     var server = app.listen(function () {
@@ -381,8 +444,9 @@ describe('probes.express', function () {
     })
   }
 
+  /* TODO BAM remove
   function rumTest (done) {
-    tv.rumId = 'foo'
+    ao.rumId = 'foo'
     var app = express()
     var locals
     var exit
@@ -394,11 +458,11 @@ describe('probes.express', function () {
     // Define route to render template that should inject rum scripts
     app.get('/', function (req, res) {
       // Store exit event for use in response tests
-      exit = res._http_layer.events.exit
+      exit = res._http_span.events.exit
       res.render('rum')
     })
 
-    // Define tracelyzer message validations
+    // Define appoptics message validations
     var validations = [
       function (msg) {
         check['http-entry'](msg)
@@ -437,10 +501,10 @@ describe('probes.express', function () {
     // Delay completion until both test paths end
     var complete = helper.after(2, function () {
       server.close(done)
-      delete tv.rumId
+      delete ao.rumId
     })
 
-    // Run tracelyzer checks
+    // Run appoptics checks
     helper.doChecks(emitter, validations, complete)
 
     // Start server and make a request
@@ -448,19 +512,24 @@ describe('probes.express', function () {
       var port = server.address().port
       request('http://localhost:' + port, function (a, b, body) {
         // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(tv.rumId, exit.toString()))
-        body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+        body.should.containEql(rum.header(ao.rumId, exit.toString()))
+        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
         complete()
       })
     })
   }
+  // */
 
   if (semver.satisfies(pkg.version, '< 3.2.0')) {
-    it.skip('should trace render layer', renderTest)
+    it.skip('should trace render span', renderTest)
+    /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
+    // */
   } else {
-    it('should trace render layer', renderTest)
+    it('should trace render span', renderTest)
+    /* TODO BAM remove
     it('should include RUM scripts', rumTest)
+    // */
   }
 
   it('should work with supertest', function (done) {
@@ -500,7 +569,7 @@ describe('probes.express', function () {
   })
 
   it('should skip when disabled', function (done) {
-    tv.express.enabled = false
+    ao.probes.express.enabled = false
     var app = express()
 
     app.set('views', __dirname)
@@ -521,7 +590,7 @@ describe('probes.express', function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      tv.express.enabled = true
+      ao.probes.express.enabled = true
       server.close(done)
     })
 
@@ -536,15 +605,15 @@ describe('probes.express', function () {
     var app = express()
 
     app.get('/', function route (req, res, next) {
-      tv.instrument(function (layer) {
-        return layer.descend('sub')
+      ao.instrument(function (span) {
+        return span.descend('sub')
       }, setImmediate, function (err, res) {
         next(error)
       })
     })
 
     app.use(function (error, req, res, next) {
-      tv.reportError(error)
+      ao.reportError(error)
       res.send('test')
     })
 
@@ -636,6 +705,8 @@ describe('probes.express', function () {
       request('http://localhost:' + port + '/hello/world')
     })
   })
+
+
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)

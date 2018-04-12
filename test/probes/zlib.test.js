@@ -1,5 +1,5 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 var concat = require('concat-stream')
 var zlib = require('zlib')
@@ -24,19 +24,54 @@ var methods = [
   'unzip'
 ]
 
+describe('probes.zlib once', function () {
+  var emitter
+
+	//
+	// Intercept appoptics messages for analysis
+	//
+	before(function (done) {
+		emitter = helper.appoptics(done)
+		ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+	})
+	after(function (done) {
+    emitter.close(done)
+	})
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done ()
+    }, [
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
+  })
+})
+
 describe('probes.zlib', function () {
   var options = { chunkSize: 1024 }
   var emitter
+  var realSampleTrace = ao.addon.Context.sampleTrace
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return {sample: true, source: 6, rate: ao.sampleRate}
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 

@@ -1,7 +1,7 @@
 // TODO: This benchmark is kind of terrible...figure out a better way to do it
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
 var http = require('http')
 
@@ -31,7 +31,7 @@ suite('probes/http - server', function () {
 
 suite('probes/http - client', function () {
   var context = {}
-  var layer
+  var span
   var url
 
   var server = http.createServer(function (req, res) {
@@ -50,13 +50,13 @@ suite('probes/http - client', function () {
 
   before(function (done) {
     tracelyzer.once('message', done.bind(null, null))
-    tv.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    ao.requestStore.enter(context)
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
-    tv.requestStore.exit(context)
+    span.exit()
+    ao.requestStore.exit(context)
   })
 
   bench('connection', function (done) {

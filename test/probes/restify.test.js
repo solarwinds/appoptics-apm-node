@@ -1,10 +1,9 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
-var rum = require('../../dist/rum')
 
 var request = require('request')
 var fs = require('fs')
@@ -19,12 +18,12 @@ describe('probes.restify', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -48,6 +47,20 @@ describe('probes.restify', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   //
   // Tests

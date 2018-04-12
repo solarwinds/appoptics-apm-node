@@ -1,29 +1,35 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
 
 var Memcached = require('memcached')
 var pkg = require('memcached/package.json')
-var db_host = process.env.TEST_MEMCACHED_1_4 || '127.0.0.1:11211'
+var db_host = process.env.AO_TEST_MEMCACHED_1_4 || 'memcached:11211'
 
 describe('probes.memcached', function () {
   this.timeout(10000)
   var emitter
   var ctx = {}
   var mem
+  var realSampleTrace
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 
@@ -48,6 +54,20 @@ describe('probes.memcached', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   //
   // Define tests
@@ -87,6 +107,20 @@ describe('probes.memcached', function () {
   } else {
     it.skip('should touch', test_touch)
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   it('should get', function (done) {
     helper.test(emitter, function (done) {
@@ -243,22 +277,18 @@ describe('probes.memcached', function () {
   })
 
   it('should skip when disabled', function (done) {
-    tv.memcached.enabled = false
+    ao.probes.memcached.enabled = false
     helper.test(emitter, function (done) {
       mem.get('foo', done)
     }, [], function (err) {
-      tv.memcached.enabled = true
+      ao.probes.memcached.enabled = true
       done(err)
     })
   })
 
   it('should work normally when not tracing', function (done) {
-    helper.test(emitter, function (done) {
-      tv.Layer.last = tv.Event.last = null
-      mem.get('foo', done)
-    }, [], function (err) {
-      done(err)
-    })
+    // execute a code path with no state set up.
+    mem.get('foo', done)
   })
 
   it('should report errors', function (done) {

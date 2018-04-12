@@ -1,22 +1,29 @@
 var extend = require('util')._extend
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
+var conf = ao.probes.pg
 
 var should = require('should')
 
-var request = require('request')
 var http = require('http')
-
 var postgres = require('pg')
-var addr = helper.Address.from(process.env.TEST_POSTGRES || 'localhost:5432')[0]
+
+var env = process.env
+var addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
+// using a null password is valid.
+var password = 'AO_TEST_POSTGRES_PASSWORD' in env
+  ? env.AO_TEST_POSTGRES_PASSWORD
+  : (env.DATABASE_POSTGRESQL_PASSWORD || 'xyzzy')
 var auth = {
   host: addr.host,
   port: addr.port,
-  user: process.env.TEST_POSTGRES_USERNAME || process.env.DATABASE_POSTGRESQL_USERNAME || 'postgres',
-  password: process.env.TEST_POSTGRES_PASSWORD || process.env.DATABASE_POSTGRESQL_PASSWORD,
+  user: env.AO_TEST_POSTGRES_USER || env.DATABASE_POSTGRESQL_USERNAME || 'postgres',
+  password: password,
   database: 'test'
 }
+
+console.log(`using password "${password}" for user "${auth.user}"`)
 
 var stream = require('stream')
 var canNative = typeof stream.Duplex !== 'undefined'
@@ -31,17 +38,29 @@ if (canNative) {
 
 describe('probes.postgres', function () {
   var emitter
+  var realSampleTrace
+
+  it('should sanitize SQL by default', function () {
+    conf.should.have.property('sanitizeSql', true)
+    conf.sanitizeSql = false
+  })
+
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
-    tv.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    ao.probes.fs.enabled = false
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.addon.Context.sampleTrace = realSampleTrace
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -131,6 +150,19 @@ describe('probes.postgres', function () {
 
       after(function () {
         db.end()
+      })
+
+      // fake test to work around UDP dropped message issue
+      it('UDP might lose a message', function (done) {
+        helper.test(emitter, function (done) {
+          ao.instrument('fake', ao.noop)
+          done()
+        }, [
+            function (msg) {
+              msg.should.have.property('Label').oneOf('entry', 'exit'),
+                msg.should.have.property('Layer', 'fake')
+            }
+          ], done)
       })
 
       it('should trace a basic query', function (done) {
@@ -227,9 +259,9 @@ describe('probes.postgres', function () {
       })
 
       it('should skip when disabled', function (done) {
-        tv.pg.enabled = false
+        ao.probes.pg.enabled = false
         helper.test(emitter, helper.run(ctx, 'pg/basic'), [], function (err) {
-          tv.pg.enabled = true
+          ao.probes.pg.enabled = true
           done(err)
         })
       })

@@ -2,19 +2,28 @@
 
 ## Dev environment
 
-The dev environments for [traceview](https://github.com/tracelytics/node-traceview)
-and [traceview-bindings](https://github.com/tracelytics/node-traceview-bindings)
+The dev environments for [appoptics](https://github.com/librato/node-appoptics)
+and [appoptics-bindings](https://github.com/librato/node-appoptics-bindings)
 consist of a [vagrant](https://www.vagrantup.com/) virtual machine with
 liboboe/tracelyzer and latest stable version of node installed. It reports
 to the [stephenappneta](http://stephenappneta.tv.solarwinds.com) organization.
 
 ### Setup
 
+The primary environment for testing is Docker. There is a complete environment
+for testing defined in `docker-compose.yml`. It depends on `collectors` that are
+defined in a directory parallel to to this directory. For example, if this (the
+node-appoptics directory) is `/solarwinds/ao` then the oboe-test repository must
+be cloned into `/solarwinds/oboe-test/` because `docker-compose.yml` references
+those docker files via `../oboe-test/`
+
+
+
 To start the dev environment, ensure vagrant and virtualbox are installed, then
 you can simply run `vagrant up` to start the environment and `vagrant ssh` to
 connect to it.
 
-The traceview `Vagrantfile` also includes a collection of docker containers,
+The appoptics `Vagrantfile` also includes a collection of docker containers,
 defined in the `docker-containers.json` file. Note that, while this is intended
 to be run using the vagrant docker configuration, I've also included a file
 named `docker.rb` which allows the container list to be set up directly on any
@@ -30,11 +39,64 @@ rebuild the container.
 
 ### Running the basic test suite
 
-The full test suite can be run inside `/vagrant` on the virtual machine using
-`gulp test`. You can also run the API unit tests with `gulp test:unit` or run
+The full test suite can be run inside the `main` container (see `docker-compose.yml`).
+The main container name will be prefixed the name of the directory it is
+located in. While the github directory is `node-appoptics`, the directory name that
+was used for development is `ao` so the `main` container will be `ao_main_1`. The
+`docker-compose.yml` file requires the `librato/oboe-test` files are located in the
+relative `../oboe-test/`. This is not strictly necessary for testing alone and will
+be changed. So to get the test environment running:
+
+1. in the node-appoptics root directory `docker-compose build`
+   - needs to use intermediate image to avoid multiple apt-get steps.
+   - needs to remove tracelyzer install.
+2. when done `docker exec -it ao_main_1 /bin/bash` (if node-appoptics dir is named ao)
+3. (at ao_main_1 bash prompt) cd appoptics
+4. npm install (should this be saved as part of the image?)
+5. npm run preinstall (this fetches and builds node-appoptics-bindings)
+   - needs to be changed to npm script that will be run automatically
+6. to run tests `./node_modules/gulp/bin/gulp.js test` (or targets as show below)
+   - should gulp be installed globally?
+
+
+For testing, a mock reporter that listens on UDP port 7832 is used.
+The following environment variables should be set up so that liboboe
+will connect to it (the service key needs to be defined but is not
+checked):
+
+```
+APPOPTICS_REPORTER_UDP=localhost:7832
+APPOPTICS_SERVICE_KEY=f08da708-7f1c-4935-ae2e-122caf1ebe31
+APPOPTICS_REPORTER=udp
+```
+
+
+You can run the API unit tests with `gulp test:unit` or run
 the probe integration tests with `gulp test:probes`. If you want to run the
 tests for a specific module, you can do that too by running
 `gulp test:probe:${module}`.
+
+While developing a branch for the move from Traceview to AppOptics the repo
+is not public. In order to fetch from a private repo it is necessary to
+provide credentials of some sort. So `install-appoptics-bindings.js` is a
+`preinstall` script. The environment variable `AO_TEST_PACKAGE` specifies
+the source of the `node-appoptics-bindings` package because `npm` will, by
+default, fetch the head of the master branch. In order to authorize for the
+private repository use either the environment variable `AO_TEST_GITAUTH` (a
+git Personal Access Token [tokens]) or use both `AO_TEST_GITUSER` and
+`AO_TEST_GITPASS`. Otherwise it is assumed that it is fetching a public
+repository and uses no auth.
+
+The tests are done using a mock UDP server that receives the messages from
+`liboboe`. It is hardwired, in `test/helper.js`, to use port 7832. for this
+to work these environment variables must be set:
+- APPOPTICS_REPORTER=udp
+- APPOPTICS\_REPORTER_UDP=localhost:7832
+
+NOTE: The testing environment has been moved to Docker using `docker-compose`
+and `docker-compose.yml`. The Vagrant environment has not been updated.
+
+[tokens]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 
 ### Running the support matrix test suite
 
@@ -79,7 +141,7 @@ The lower-level `Layer`, `Profile` and `Event` types are described in
 
 The patching mechanism works by intercepting `require(...)` calls in
 `lib/require-patch.js`. The require patch interface includes a `register(...)`
-function, which could be useful for testing patches outside of the traceview
+function, which could be useful for testing patches outside of the appoptics
 module before merging into the core project.
 
 RUM injection code lives in `lib/rum.js`, while the templates for it live in
@@ -128,3 +190,15 @@ you can skip that step if you use it.
 
 After all commits and tags have been pushed to git, it's simply a matter of
 running `npm publish` to send the latest version to the npm registry.
+
+### Legacy Setup
+
+To start the dev environment, ensure vagrant and virtualbox are installed, then
+you can simply run `vagrant up` to start the environment and `vagrant ssh` to
+connect to it.
+
+The appoptics `Vagrantfile` also includes a collection of docker containers,
+defined in the `docker-containers.json` file. Note that, while this is intended
+to be run using the vagrant docker configuration, I've also included a file
+named `docker.rb` which allows the container list to be set up directly on any
+system with docker already installed.

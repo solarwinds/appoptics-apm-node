@@ -32,6 +32,19 @@ var tasks = {
   }
 }
 
+// Make individual unit test tasks
+var unitTests = fs.readdirSync('test/')
+unitTests.forEach(function(file) {
+  if (!/.+\.test\.js$/.test(file)) return
+
+  var name = file.replace(/^(.+)\.[^\.]+\.js/, '$1')
+  var task = tasks['unit:' + name] = {
+    lib: 'dist/*.js',
+    test: 'test/' + file,
+    bench: 'test/' + name + '.bench.js'
+  }
+})
+
 // Describe probe tasks automatically
 var probes = fs.readdirSync('lib/probes')
 probes.forEach(function (probe) {
@@ -209,11 +222,11 @@ function makeBenchTask (name, files) {
   gulp.task(name, function (done) {
     var helper = require('./test/helper')
 
-    var tv = helper.tv
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    var ao = helper.ao
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
 
-    global.tracelyzer = helper.tracelyzer(function () {
+    global.appoptics = helper.appoptics(function () {
       gulp.src(files, {
         read: false
       })

@@ -1,14 +1,50 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var semver = require('semver')
 var path = require('path')
 var fs = require('fs')
 
+describe('probes.fs once', function () {
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  after(function (done) {
+    emitter.close(done)
+  })
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
+
 describe('probes.fs', function () {
   var emitter
   var mode
+  var realSampleTrace
+
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
 
   //
   // Define some general message checks
@@ -53,15 +89,20 @@ describe('probes.fs', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
     emitter.close(done)
+    ao.addon.Context.sampleTrace = realSampleTrace
   })
 
   var resolved = path.resolve('fs-output/foo.bar.link')
@@ -118,7 +159,13 @@ describe('probes.fs', function () {
         if (semver.satisfies(v, '>1.0.0', true) && mode !== 'sync') {
           return []
         }
-        return [span('open'), span('fstat'), span('read'), span('close')]
+        // node changed readFile so there is no call to fstat
+        // between versions 6 and 8.
+        var expected = [span('open')]
+        if (semver.satisfies(v, '<8.0.0')) {
+          expected.push(span('fstat'))
+      }
+        return expected.concat([span('read'), span('close')])
       }
     },
     // fs.truncate
@@ -171,7 +218,7 @@ describe('probes.fs', function () {
       type: 'link',
       name: 'symlink',
       args: function () {
-        // Wait...what?
+        // reversed arguments for sync vs. async
         if (mode === 'sync') {
           return ['fs-output/foo.bar', 'fs-output/foo.bar.symlink']
         }
@@ -183,7 +230,7 @@ describe('probes.fs', function () {
       type: 'link',
       name: 'link',
       args: function () {
-        // Wait...what?
+        // reversed arguments for sync vs. async
         if (mode === 'sync') {
           return ['fs-output/foo.bar', 'fs-output/foo.bar.link']
         }
@@ -201,15 +248,19 @@ describe('probes.fs', function () {
       type: 'path',
       name: 'realpath',
       args: ['fs-output/foo.bar.link'],
-      // realpath walks up every level of the path and does an lstat at each
+      log: false,
+      // realpath does an lstat at each for every element of the path prior to
+      // version 6 and after 6.3, except between 6.3.x and 8 the sync version does
+      // not call lstat at all (https://github.com/nodejs/node/commit/71097744b2)
       subs: function () {
-        // Node 6.0 broke realpath. 6.3 fixed it.
         var v = process.versions.node.split('-').shift()
-        return semver.satisfies(v, '<6 || >6.3', true)
-          ? resolved.split('/').slice(1).map(function () {
-            return span('lstat')
-          })
-          : []
+        if (semver.satisfies(v, '>=8') && mode === 'sync') {
+          return []
+        }
+        if (semver.satisfies(v, '<6') || semver.satisfies(v, '>6.3')) {
+          return resolved.split('/').slice(1).map(function () {return span('lstat')})
+        }
+        return []
       }
     },
     // fs.lstat
@@ -352,7 +403,7 @@ describe('probes.fs', function () {
           }
         ]
 
-        // Include checks for all expected sub-layers
+        // Include checks for all expected sub-spans
         function add (step) {
           steps.push(step)
         }
@@ -420,7 +471,7 @@ describe('probes.fs', function () {
           }
         ]
 
-        // Include checks for all expected sub-layers
+        // Include checks for all expected sub-spans
         function add (step) {
           steps.push(step)
         }
@@ -445,6 +496,11 @@ describe('probes.fs', function () {
         if (call.before) call.before()
 
         helper.test(emitter, function (done) {
+          /*
+          if (name === 'realpathSync') {
+            emitter.log = true
+          }
+          // */
           // Make call and pass result or error to after handler, if present
           try {
             var res = fs[name].apply(fs, args)

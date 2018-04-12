@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
 var pkg = require('tedious/package.json')
 var tedious = require('tedious')
@@ -9,7 +9,7 @@ var Request = tedious.Request
 var TYPES = tedious.TYPES
 
 // Found some free host.
-var host = 'traceview-test.mssql.somee.com'
+var host = 'appoptics-test.mssql.somee.com'
 var user = 'sbelanger_SQLLogin_1'
 var pass = 'a8glrk5vss'
 
@@ -26,22 +26,25 @@ suite('probes/tedious', function () {
 
   before(function (done) {
     client = new Connection({
-      database: 'test',
-      userName: user,
-      password: pass,
-      server: host
+        userName: user,
+        password: pass,
+        server: host,
+        options: {
+          database: 'test',
+          tdsVersion: '7_1'
+        }
     })
     client.on('connect', done)
   })
 
   before(function () {
-    tv.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    ao.requestStore.enter(context)
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
-    tv.requestStore.exit(context)
+    span.exit()
+    ao.requestStore.exit(context)
   })
 
   bench('query', function (done) {

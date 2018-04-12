@@ -1,0 +1,28 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file for this project - no defaults other than this
+root = true
+
+# Unix-style newlines with a newline ending every file
+# default to indent with spaces
+# default to utf8
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+charset = utf-8
+
+[*.{js,json}]
+indent_size = 2
+
+[*.{c,cc}]
+indent_size = 4
+
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+# Matches the exact files either package.json or .travis.yml
+[docker.rb]
+indent_style = tab
+indent_size = 4

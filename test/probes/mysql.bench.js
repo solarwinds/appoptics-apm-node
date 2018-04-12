@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
 var db_host = process.env.MYSQL_PORT_3306_TCP_ADDR || 'localhost'
 
@@ -71,13 +71,13 @@ suite('probes/mysql', function () {
   }
 
   before(function () {
-    tv.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    ao.requestStore.enter(context)
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    layer.exit()
-    tv.requestStore.exit(context)
+    span.exit()
+    ao.requestStore.exit(context)
   })
 
   bench('query', function (done) {

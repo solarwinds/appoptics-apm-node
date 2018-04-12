@@ -1,7 +1,7 @@
 var helper = require('./helper')
-var tv = helper.tv
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = helper.ao
+var Span = ao.Span
+var Event = ao.Event
 
 var err = new Error('test')
 var event = new Event('error-test', 'info')
@@ -10,11 +10,11 @@ suite('error', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
   })
 
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('assigning error', function () {
@@ -23,19 +23,19 @@ suite('error', function () {
 
   bench('record sync error', function () {
     try {
-      tv.instrument(builder, function () {
+      ao.instrument(builder, function () {
         throw error
       })
     } catch (e) {}
   })
 
   bench('record async error', function (done) {
-    tv.instrument(builder, error, done)
+    ao.instrument(builder, error, done)
   })
 })
 
-function builder (layer) {
-  return layer.descend('test')
+function builder (span) {
+  return span.descend('test')
 }
 
 function error (done) {

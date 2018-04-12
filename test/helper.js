@@ -1,17 +1,60 @@
-var tv = exports.tv = require('..')
-var realPort = tv.port
-tv.skipSample = true
+var ao = exports.ao = require('..')
+var realPort = ao.port
+ao.skipSample = true
 
-var debug = require('debug')('traceview:test:helper')
-var log = require('debug')('traceview:test:helper:tracelyzer-message')
 var Emitter = require('events').EventEmitter
+var debug = require('debug')('appoptics:test:helper')
 var extend = require('util')._extend
 var bson = require('bson')
 var dgram = require('dgram')
 var https = require('https')
 var http = require('http')
+var path = require('path')
+
+var log = ao.loggers
+
+log.addGroup({
+  groupName: 'test',
+  subNames: ['info', 'mock-port', 'message']
+})
+
+// each module must implement. this only provides a
+// common framework to check the environment variable.
+exports.skipTest = function (filename) {
+  if (!process.env.AO_SKIP_TEST) {
+    return false
+  }
+
+  var skips = process.env.AO_SKIP_TEST.split(',')
+  var test = path.basename(filename, '.test.js')
+
+  if (!~skips.indexOf(test)) {
+    return false
+  }
+
+  ao.loggers.warn('skipping test', test)
+  return true
+}
+
+// if not specifically turning on error and warning debugging, turn it off
+if (!process.env.AO_TEST_DEBUG_LOGLEVEL) {
+  var logs = (process.env.DEBUG || '').split(',')
+  logs = logs.filter(function (item) {return !item.startsWith('appoptics:')}).join(',')
+  process.env.DEBUG = logs
+  // pseudo-log-level that has no logger.
+  ao.logLevel = 'none'
+}
 
 var BSON = new bson.BSONPure.BSON()
+
+var udpPort = 7832
+
+if (process.env.APPOPTICS_REPORTER_UDP) {
+  var parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
+  if (parts.length == 2) udpPort = parts[1]
+}
+
+debug('helper found real port = ' + realPort)
 
 function udpSend (msg, port, host) {
   var client = dgram.createSocket('udp4')
@@ -20,8 +63,8 @@ function udpSend (msg, port, host) {
   })
 }
 
-exports.tracelyzer = function (done) {
-  // Create UDP server to mock tracelyzer
+exports.appoptics = function (done) {
+  // Create UDP server to mock appoptics
   var server = dgram.createSocket('udp4')
 
   // Create emitter to forward messages
@@ -32,10 +75,10 @@ exports.tracelyzer = function (done) {
   server.on('message', function (msg) {
     var port = server.address().port
     var parsed = BSON.deserialize(msg)
+    log.test.message('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)
     }
-    log('mock tracelyzer (port ' + port + ') received', parsed)
     emitter.emit('message', parsed)
 
     if (emitter.forward) {
@@ -46,14 +89,14 @@ exports.tracelyzer = function (done) {
   // Wait for the server to become available
   server.on('listening', function () {
     var port = server.address().port
-    tv.port = port.toString()
+    ao.port = port.toString()
     emitter.port = port
-    debug('mock tracelyzer (port ' + port + ') listening')
+    debug('mock appoptics (port ' + port + ') listening')
     process.nextTick(done)
   })
 
   // Start mock tracelyzer
-  server.bind()
+  server.bind(udpPort, 'localhost')
 
   // Expose some things through the emitter
   emitter.server = server
@@ -62,7 +105,7 @@ exports.tracelyzer = function (done) {
   emitter.close = function (done) {
     var port = server.address().port
     server.on('close', function () {
-      debug('mock tracelyzer (port ' + port + ') closed')
+      debug('mock appoptics (port ' + port + ') closed')
       process.nextTick(done)
     })
     server.close()
@@ -72,11 +115,13 @@ exports.tracelyzer = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done) {
-  var add = emitter.server.address()
+  var addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
+  debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
+
   function onMessage (msg) {
-    log('mock tracelyzer (port ' + add.port + ') received message', msg)
+    //log.test.message('mock (' + addr.port + ') received message', msg)
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
@@ -88,7 +133,7 @@ exports.doChecks = function (emitter, checks, done) {
     }
 
     // Always verify that X-Trace and Edge values are valid
-    msg.should.have.property('X-Trace').and.match(/^1B[0-9A-F]{56}$/)
+    msg.should.have.property('X-Trace').and.match(/^2B[0-9A-F]{58}$/)
     if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
 
     debug(checks.length + ' checks left')
@@ -121,20 +166,21 @@ var check = {
 
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
+  // noops skip testing the 'outer' span.
   validations.unshift(noop)
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
 
-  tv.requestStore.run(function () {
-    var layer = new tv.Layer('outer')
-    // layer.async = true
-    layer.enter()
+  ao.requestStore.run(function () {
+    var span = new ao.Span('outer')
+    // span.async = true
+    span.enter()
 
-    debug('test started')
+    log.test.info('test started')
     test(function (err, data) {
-      debug('test ended')
+      log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)
-      layer.exit()
+      span.exit()
     })
   })
 }
@@ -201,7 +247,7 @@ exports.run = function (context, path) {
     extend(context.data, data)
   }
 
-  context.tv = tv
+  context.ao = ao
 
   return function (done) {
     return mod.run(context, done)
@@ -215,7 +261,7 @@ exports.after = function (n, done) {
 }
 
 exports.traceLink = function (id) {
-  return 'https://stephenappneta.tv.solarwinds.com/traces/view/' + id.substr(2, 40)
+  return 'https://stephenappneta.ao.solarwinds.com/traces/view/' + id.substr(2, 40)
 }
 
 function Address (host, port) {
@@ -247,7 +293,7 @@ exports.setUntil = function (obj, prop, value, done) {
 
 exports.linksTo = linksTo
 function linksTo (a, b) {
-  a.Edge.should.eql(b['X-Trace'].substr(42))
+  a.Edge.should.eql(b['X-Trace'].substr(42, 16))
 }
 
 exports.edgeTracker = edgeTracker

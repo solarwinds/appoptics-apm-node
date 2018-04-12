@@ -1,0 +1,128 @@
+ARG=$1
+PARAM=$2
+
+if [[ -z "$AO_TOKEN_STG" ]]; then
+    echo "AO_TOKEN_STG must be defined and contain a valid token"
+    echo "for accessing collector-stg.appoptics.com"
+fi
+
+if [[ -z "$ARG" ]]; then
+    echo "source this script with an argument of docker, docker-scribe, bash,"
+    echo "bash-testing, or travis\n"
+    echo "docker defines variables for running tests in the docker environment."
+    echo "docker-scribe does the same but with the scribe collector instead of java"
+    echo "  collector."
+    echo "bash defines variables to run at a native command prompt. N.B. databases"
+    echo "  will not necessarily be defined."
+    echo "bash-testing defines the variables to test from the bash prompt but with docker"
+    echo "  containers present."
+    echo "travis - defines the variables for use in a travis environment."
+    echo
+    echo "you may also use the argument debug to define additional"
+    echo "debugging variables, bindings to define alternate ao-bindings"
+    echo "authentication and package, or tcpdump to get help on tcpdump"
+elif [[ "$ARG" = "docker" ]]; then
+    export APPOPTICS_REPORTER_UDP=localhost:7832
+    export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
+    export APPOPTICS_COLLECTOR=java-collector:12222
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    # need to change next line to ssl to use java-collector
+    export APPOPTICS_REPORTER=udp
+elif [[ "$ARG" = "docker-scribe" ]]; then
+    export APPOPTICS_REPORTER_UDP=localhost:7832
+    export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/scribe-collector.crt
+    export APPOPTICS_COLLECTOR=scribe-collector:4444
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    # need to change next line to ssl to use scribe collector
+    export APPOPTICS_REPORTER=udp
+elif [[ "$ARG" = "bash" ]]; then
+    # this is used primarily for manual interactive testing.
+    export APPOPTICS_REPORTER_UDP=localhost:7832
+    export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
+    # set this to ssl in order to use APPOPTICS_COLLECTOR
+    export APPOPTICS_REPORTER=udp
+elif [[ "$ARG" = "bash-testing" ]]; then
+    # this is used primarily to run the full appoptics-apm test suite.
+    # presumes docker containers are running and their ports are addressable
+    # as localhost. the port overrides (e.g., AO_TEST_MYSQL_HOST_PORT) allow
+    # local copies of the database to be running on the standard port numbers.
+    export AO_TEST_CASSANDRA_2_2=localhost:9042
+    export AO_TEST_MEMCACHED_1_4=localhost:11211
+    export AO_TEST_MONGODB_2_4=localhost:27016
+    export AO_TEST_MONGODB_2_6=localhost:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}
+    export AO_TEST_MONGODB_3=localhost:27018
+    export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
+    export AO_TEST_MYSQL_USERNAME=root
+    export AO_TEST_MYSQL_PASSWORD=admin
+    # this requires an entry in /etc/hosts because this
+    # isn't run in a container it can't use docker names.
+    # use the IP address from "docker inspect ao_oracle_1"
+    export AO_TEST_ORACLE=oracledb.com
+    export AO_TEST_ORACLE_USERNAME=system
+    export AO_TEST_ORACLE_PASSWORD=oracle
+    # defaults should be fine.
+    #export AO_TEST_POSTGRES_USER=postgres
+    #export AO_TEST_POSTGRES_PASSWORD=
+    export AO_TEST_POSTGRES=localhost:5432
+    export AO_TEST_RABBITMQ_3_5=localhost:5672
+    export AO_TEST_REDIS_3_0=localhost:6379
+    # the tedious probe tests SQL Server.
+    export AO_TEST_SQLSERVER_EX=localhost:1433
+elif [[ "$ARG" = "travis" ]]; then
+    # presume a travis-ci environment. servers should be running
+    # as localhost on standard ports.
+    export AO_TEST_CASSANDRA_2_2=localhost:9042
+    export AO_TEST_MEMCACHED_1_4=localhost:11211
+    # only one mongodb is tested per travis run.
+    export AO_TEST_MONGODB_3=localhost:27017
+    # mysql/travis doesn't like 127.0.0.1 - must be localhost
+    export AO_TEST_MYSQL=localhost:3306
+    export AO_TEST_MYSQL_USERNAME=root
+    export AO_TEST_MYSQL_PASSWORD=admin
+    # this requires an entry in /etc/hosts because this
+    # isn't run in a container it can't use docker names.
+    # use the IP address from "docker inspect ao_oracle_1"
+    export AO_TEST_ORACLE=oracledb.com
+    export AO_TEST_ORACLE_USERNAME=system
+    export AO_TEST_ORACLE_PASSWORD=oracle
+    # defaults should be fine.
+    #export AO_TEST_POSTGRES_USER=postgres
+    #export AO_TEST_POSTGRES_PASSWORD=
+    export AO_TEST_POSTGRES=localhost:5432
+    export AO_TEST_RABBITMQ_3_5=localhost:5672
+    export AO_TEST_REDIS_3_0=localhost:6379
+    # the tedious probe tests SQL Server.
+    export AO_TEST_SQLSERVER_EX=mssql:1433
+    export AO_TEST_SQLSERVER_EX_USERNAME=sa
+elif [[ "$ARG" = "debug" ]]; then
+    export APPOPTICS_DEBUG_LEVEL=6
+    # see src/loggers.js for all the options
+    export DDEBUG=appoptics:flow,appoptics:metadata,appoptics:test:message
+
+    # Turn on the requestStore debug logging proxy (should work with fs now
+    # that logging uses in memory logger if stdout or stderr are not a TTY.
+    #export AO_TEST_REQUESTSTORE_PROXY=1
+elif [[ "$ARG" = "bindings" ]]; then
+    # use these to provide authentication and specify an alternate branch/tag
+    # for use by install-appoptics-bindings.js. the example below, given a git
+    # auth token in the variable AO_TEST_GITAUTH, will cause "npm run postinstall"
+    # to fetch appoptics-bindings directly from github. documentation is the code
+    # in install-appoptics-bindings.js
+    export AO_TEST_PACKAGE=librato/node-appoptics-bindings#per-request-v2
+    # this requires that one's git access token is already defined.
+    export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
+elif [[ "$ARG" = "help" ]]; then
+    echo "try"
+    echo "    $ sudo tcpdump -i lo -n udp port 7832"
+    echo "to watch the UDP traffic"
+    #sudo tcpdump -i lo -n udp port 7832
+else
+    echo "ERROR $ARG invalid"
+fi
+
+return
+
+
+
+

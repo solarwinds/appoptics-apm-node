@@ -4,9 +4,9 @@ if (module.parent) return
 //
 // Install the traceview agent
 //
-var tv = require('..')
-tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-tv.traceMode = 'always'
+var ao = require('..')
+ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+ao.sampleMode = 'always'
 
 //
 // Load our various dependencies

@@ -1,11 +1,13 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
 
+/* TODO BAM remove
 var rum = require('../../dist/rum')
+// */
 var path = require('path')
 
 var request = require('request')
@@ -18,12 +20,12 @@ var pkg = require('hapi/package.json')
 var hapi
 var vision
 if (semver.satisfies(nodeVersion, '> 0.8')) {
-  if (hasES6 || semver.satisfies(pkg.version, '< 11')) {
+  if (hasES6 || semver.satisfies(pkg.version, '< 13.6')) {
     hapi = require('hapi')
   }
 
   var visionPkg = require('vision/package.json')
-  if (hasES6 || semver.satisfies(visionPkg.version, '< 4')) {
+  if (hasES6 || semver.satisfies(visionPkg.version, '<= 4.1.1')) {
     vision = require('vision')
   }
 }
@@ -34,16 +36,16 @@ describe('probes.hapi', function () {
   var port = 3000
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.probes.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -229,16 +231,17 @@ describe('probes.hapi', function () {
     })
   }
 
+  /* TODO BAM remove
   function rumTest (done) {
     var server = viewServer()
-    tv.rumId = 'foo'
+    ao.rumId = 'foo'
     var exit
 
     server.route({
       method: 'GET',
       path: '/',
       handler: function hello (request, reply) {
-        exit = request.raw.res._http_layer.events.exit
+        exit = request.raw.res._http_span.events.exit
         renderer(request, reply)('rum.ejs')
       }
     })
@@ -273,26 +276,29 @@ describe('probes.hapi', function () {
     // Delay completion until both test paths end
     var complete = helper.after(2, function () {
       server.listener.close(done)
-      delete tv.rumId
+      delete ao.rumId
     })
 
-    // Run tracelyzer checks
+    // Run appoptics checks
     helper.doChecks(emitter, validations, complete)
 
     server.start(function () {
       request('http://localhost:' + port, function (a, b, body) {
         // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(tv.rumId, exit.toString()))
-        body.should.containEql(rum.footer(tv.rumId, exit.toString()))
+        body.should.containEql(rum.header(ao.rumId, exit.toString()))
+        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
         complete()
       })
     })
   }
+  // */
 
   function disabledTest (done) {
-    tv.hapi.enabled = false
+    ao.probes.hapi.enabled = false
     var server = viewServer()
-    tv.rumId = 'foo'
+    /* TODO BAM remove
+    ao.rumId = 'foo'
+    // */
 
     server.route({
       method: 'GET',
@@ -314,8 +320,10 @@ describe('probes.hapi', function () {
     ]
     helper.doChecks(emitter, validations, function () {
       server.listener.close(done)
-      tv.hapi.enabled = true
-      delete tv.rumId
+      ao.probes.hapi.enabled = true
+      /* TODO BAM remove
+      delete ao.rumId
+      // */
     })
 
     server.start(function () {
@@ -326,20 +334,39 @@ describe('probes.hapi', function () {
     })
   }
 
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
   var httpMethods = ['get','post','put','delete']
   if (hapi && vision) {
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
-    it('should trace render layer', renderTest)
+    it('should trace render span', renderTest)
+    /* TODO BAM remove
     it('should include RUM scripts', rumTest)
+    // */
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should skip when disabled', disabledTest)
-    it.skip('should trace render layer', renderTest)
+    it.skip('should trace render span', renderTest)
+    /* TODO BAM remove
     it.skip('should include RUM scripts', rumTest)
+    // */
   }
 })

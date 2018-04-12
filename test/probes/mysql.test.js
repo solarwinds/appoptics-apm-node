@@ -1,7 +1,7 @@
 var helper = require('../helper')
 var Address = helper.Address
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var semver = require('semver')
@@ -12,9 +12,17 @@ var http = require('http')
 var pkg = require('mysql/package.json')
 var mysql = require('mysql')
 
-var addr = Address.from(process.env.TEST_MYSQL || 'localhost:3306')[0]
-var user = process.env.TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
-var pass = process.env.TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || ''
+var addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
+var user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
+var pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || 'admin'
+
+// hardcode travis settings.
+if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
+  addr = '127.0.0.1:3306'
+  user = 'root'
+  pass = ''
+}
+
 var soon = global.setImmediate || process.nextTick
 
 describe('probes.mysql', function () {
@@ -26,16 +34,23 @@ describe('probes.mysql', function () {
   var db
 
   //
-  // Intercept tracelyzer messages for analysis
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
+  //
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
-    tv.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    ao.probes.fs.enabled = false
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -45,7 +60,8 @@ describe('probes.mysql', function () {
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Database', 'test')
       msg.should.have.property('Flavor', 'mysql')
-      msg.should.have.property('RemoteHost', addr.toString())
+      msg.should.have.property('RemoteHost')
+      msg.RemoteHost.should.be.oneOf(addr.toString(), '127.0.0.1:3306', 'localhost:3306')
     },
     error: function (msg) {
       msg.should.have.property('Label', 'error')
@@ -133,7 +149,27 @@ describe('probes.mysql', function () {
     })
   }
 
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
+  it('should sanitize SQL by default', function () {
+    ao.probes.mysql.should.have.property('sanitizeSql', true)
+    // turn off for testing
+    ao.probes.mysql.sanitizeSql = false
+  })
+
+
   it('should trace a basic query', test_basic)
+
   it('should trace a query with a value list', test_values)
   if (semver.satisfies(pkg.version, '>= 1.0.0')) {
     it('should trace a query with a value object', test_object)
@@ -153,6 +189,9 @@ describe('probes.mysql', function () {
   it('should trim long queries', test_long_query)
   it('should skip when disabled', test_disabled)
 
+  //
+  // tests
+  //
   function test_basic (done) {
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [
       function (msg) {
@@ -261,9 +300,9 @@ describe('probes.mysql', function () {
   }
 
   function test_disabled (done) {
-    tv.mysql.enabled = false
+    ao.probes.mysql.enabled = false
     helper.test(emitter, helper.run(ctx, 'mysql/basic'), [], function (err) {
-      tv.mysql.enabled = true
+      ao.probes.mysql.enabled = true
       done(err)
     })
   }

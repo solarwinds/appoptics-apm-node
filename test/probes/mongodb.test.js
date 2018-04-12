@@ -1,11 +1,10 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
 var semver = require('semver')
-var request = require('request')
 var MongoDB = require('mongodb').MongoClient
 var http = require('http')
 
@@ -15,15 +14,49 @@ var pkg = require('mongodb/package.json')
 requirePatch.enable()
 
 var hosts = {
-	"2.4": process.env.TEST_MONGODB_2_4 || 'localhost:27017',
-	"2.6": process.env.TEST_MONGODB_2_6
+	"2.4": process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27016',
+	"2.6": process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017'
+}
+
+// travis only runs 3+
+if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
+  hosts = {}
 }
 
 // Seriously mongo? Adding 3.x in a patch release?
 if (semver.satisfies(pkg.version, '>= 1.4.24')) {
-	hosts['3.0'] = process.env.TEST_MONGODB_3_0
-	hosts['replica set'] = process.env.TEST_MONGODB_SET
+	hosts['3+'] = process.env.AO_TEST_MONGODB_3 || 'localhost:27017'
+	hosts['replica set'] = process.env.AO_TEST_MONGODB_SET
 }
+
+describe('probes.mongodb-core UDP', function () {
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  after(function (done) {
+    emitter.close(done)
+  })
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
 
 describe('probes.mongodb', function () {
 	Object.keys(hosts).forEach(function (host) {
@@ -38,19 +71,26 @@ describe('probes.mongodb', function () {
 function makeTests (db_host, host, self) {
 	var ctx = {}
 	var emitter
-	var db
+  var db
+  var realSampleTrace
 
 	//
-	// Intercept tracelyzer messages for analysis
+	// Intercept appoptics messages for analysis
 	//
 	before(function (done) {
-    tv.fs.enabled = false
-		emitter = helper.tracelyzer(done)
-		tv.sampleRate = addon.MAX_SAMPLE_RATE
-		tv.traceMode = 'always'
+    ao.probes.fs.enabled = false
+		emitter = helper.appoptics(done)
+		ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
+
 	})
 	after(function (done) {
-    tv.fs.enabled = true
+    ao.addon.Context.sampleTrace = realSampleTrace
+    ao.probes.fs.enabled = true
 		emitter.close(done)
 	})
 

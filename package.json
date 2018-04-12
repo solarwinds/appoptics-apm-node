@@ -1,24 +1,29 @@
 {
-  "name": "traceview",
-  "version": "2.7.3",
-  "description": "Agent for TraceView",
+  "name": "appoptics-apm",
+  "version": "4.0.5-beta",
+  "description": "Agent for AppOptics APM",
   "main": "dist/index.js",
   "bin": {
-    "node-tv": "./bin/node-tv"
+    "node-ao": "./bin/node-ao"
   },
   "scripts": {
+    "postinstall": "node install-appoptics-bindings.js",
     "test": "gulp test",
     "docs": "gulp docs",
     "install-deps": "./deps.sh",
     "coverage": "gulp coverage",
     "support-matrix": "gulp support-matrix",
     "watch": "gulp watch",
-    "prepublish": "gulp build"
+    "prepublish": "gulp build",
+    "prepack": "gulp build"
   },
   "author": {
     "name": "Stephen Belanger",
     "email": "sbelanger@appneta.com"
   },
+  "contributors": [
+    "Bruce A. MacNaughton <bruce@solarwinds.cloud>"
+  ],
   "keywords": [
     "tracing",
     "instrumentation",
@@ -36,16 +41,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tracelytics/node-traceview"
+    "url": "https://github.com/appoptics/node-appoptics"
   },
   "bugs": {
-    "url": "https://github.com/tracelytics/node-traceview/issues"
+    "url": "https://github.com/appoptics/node-appoptics/issues"
   },
-  "gypfile": true,
   "dependencies": {
     "array-flatten": "^2.1.0",
-    "continuation-local-storage": "~3.1.0",
-    "debug": "~2.2.0",
+    "continuation-local-storage": "^3.2.1",
+    "debug": "^3.1.0",
     "es6-weak-map": "^2.0.1",
     "event-unshift": "^1.0.0",
     "glob": "^7.0.3",
@@ -57,14 +61,14 @@
   },
   "devDependencies": {
     "alltheversions": "^2.0.0",
-    "amqp": "~0.2.4",
+    "amqp": "~0.2.6",
     "amqplib": "^0.4.1",
     "babel-preset-es2015-minus-generators": "^6.6.0",
-    "bcrypt": "^0.8.5",
+    "bcrypt": "^0.8.7",
     "bluebird": "^3.3.5",
     "body-parser": "^1.13.3",
     "bson": "^0.4.11",
-    "cassandra-driver": "^2.2.0",
+    "cassandra-driver": ">3.0.0",
     "co-views": "^2.1.0",
     "concat-stream": "^1.5.0",
     "director": "^1.2.8",
@@ -90,7 +94,6 @@
     "mongodb-core": "^1.2.19",
     "mongoose": "^4.4.5",
     "mysql": "^2.9.0",
-    "node-cassandra-cql": "~0.4.4",
     "node-celery": "^0.2.3",
     "pg": "^4.4.1",
     "pg-native": "^1.10.0",
@@ -99,12 +102,16 @@
     "redis": "~2.5.3",
     "request": "^2.61.0",
     "restify": "~4.0.0",
+    "segfault-handler": "^1.0.0",
     "should": "^8.3.1",
     "supertest": "^1.1.0",
     "tedious": "^1.12.2",
     "vision": "^4.1.0"
   },
   "optionalDependencies": {
-    "traceview-bindings": "~1.0.9"
+    "appoptics-bindings": ">=4.0.0"
+  },
+  "unused": {
+    "dev-dependency-oracledb": "^1.13.1"
   }
 }

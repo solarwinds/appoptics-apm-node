@@ -1,20 +1,20 @@
 var helper = require('./helper')
 var should = require('should')
-var tv = require('..')
-var addon = tv.addon
-var Event = tv.Event
+var ao = require('..')
+var addon = ao.addon
+var Event = ao.Event
 
 describe('event', function () {
   var emitter
   var event
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -29,7 +29,7 @@ describe('event', function () {
   })
 
   it('should convert an event to a string', function () {
-    event.toString().should.match(/^1B[0-9A-F]{56}$/)
+    event.toString().should.match(/^2B[0-9A-F]{58}$/)
   })
 
   it('should enter the event context', function () {
@@ -50,8 +50,8 @@ describe('event', function () {
     })
 
     // NOTE: events must be sent within a request store context
-    tv.requestStore.run(function () {
-      event2.send()
+    ao.requestStore.run(function () {
+      event2.sendReport()
     })
   })
 
@@ -67,7 +67,7 @@ describe('event', function () {
     event.set = function () {
       called = true
     }
-    event.send({ Foo: 'bar' })
+    event.sendReport({ Foo: 'bar' })
     called.should.equal(true)
   })
 })

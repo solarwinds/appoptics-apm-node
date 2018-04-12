@@ -1,35 +1,35 @@
 var helper = require('./helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
 suite('custom', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
   })
 
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('custom instrumentation with name', function () {
-    tv.instrument('test', noop)
+    ao.instrument('test', noop)
   })
 
   bench('custom instrumentation with builder function', function () {
-    tv.instrument(builder, noop)
+    ao.instrument(builder, noop)
   })
 
   bench('custom instrumentation with callback', function (done) {
-    tv.instrument('test', callIt, function () {
+    ao.instrument('test', callIt, function () {
       setImmediate(done)
     })
   })
 })
 
-function builder (layer) {
-  return layer.descend('test')
+function builder (span) {
+  return span.descend('test')
 }
 
 function noop () {}

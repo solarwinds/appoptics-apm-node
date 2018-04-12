@@ -2,61 +2,69 @@ var helper = require('./helper')
 var should = require('should')
 var debug = require('debug')
 var http = require('http')
-var tv = require('..')
-var Layer = tv.Layer
+var ao = require('..')
+var Span = ao.Span
 
 describe('basics', function () {
   it('should set trace mode', function () {
-    tv.traceMode = tv.addon.TRACE_ALWAYS
+    ao.sampleMode = ao.addon.TRACE_ALWAYS
   })
 
   it('should get trace mode', function () {
-    tv.traceMode.should.equal(tv.addon.TRACE_ALWAYS)
+    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
   })
 
   it('should set trace mode as string', function () {
-    tv.traceMode = 'never'
-    tv.traceMode.should.equal(tv.addon.TRACE_NEVER)
+    ao.sampleMode = 'never'
+    ao.sampleMode.should.equal(ao.addon.TRACE_NEVER)
 
-    tv.traceMode = 'always'
-    tv.traceMode.should.equal(tv.addon.TRACE_ALWAYS)
-
-    tv.traceMode = 'through'
-    tv.traceMode.should.equal(tv.addon.TRACE_THROUGH)
+    ao.sampleMode = 'always'
+    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
   })
 
   it('should set and get sample rate', function () {
-    tv.sampleRate = 100
-    tv.sampleRate.should.equal(100)
+    ao.sampleRate = 0
+    ao.sampleRate.should.equal(0, 'when setting to 0')
+    ao.sampleRate = 1000000
+    ao.sampleRate.should.equal(1000000, 'when setting to 1000000')
+    ao.sampleRate = 100
+    ao.sampleRate.should.equal(100, 'when setting to 100')
+  })
+
+  it('should handle invalid sample rates correctly', function () {
+    ao.sampleRate = NaN
+    ao.sampleRate.should.equal(100, 'when trying to set to NaN')
+    ao.sampleRate = 2000000
+    ao.sampleRate.should.equal(1000000, 'when trying to set to 2000000')
+    ao.sampleRate = -10
+    ao.sampleRate.should.equal(0, 'when trying to set to a negative number')
+    ao.sampleRate = 100
+    ao.sampleRate.should.equal(100, 'setting back to the original')
   })
 
   it('should set sample source', function () {
-    tv.sampleSource = 100
+    ao.sampleSource = 100
   })
 
   it('should get sample source', function () {
-    tv.sampleSource.should.equal(100)
+    ao.sampleSource.should.equal(100)
   })
 
   it('should have sugary trace mode detectors', function () {
     // Reset first
-    tv.traceMode = tv.addon.TRACE_THROUGH
+    ao.sampleMode = ao.addon.TRACE_NEVER
 
-    tv.always.should.be.false
-    tv.traceMode = tv.addon.TRACE_ALWAYS
-    tv.always.should.be.true
+    ao.always.should.be.false
+    ao.sampleMode = ao.addon.TRACE_ALWAYS
+    ao.always.should.be.true
 
-    tv.never.should.be.false
-    tv.traceMode = tv.addon.TRACE_NEVER
-    tv.never.should.be.true
-
-    tv.through.should.be.false
-    tv.traceMode = tv.addon.TRACE_THROUGH
-    tv.through.should.be.true
+    ao.never.should.be.false
+    ao.sampleMode = ao.addon.TRACE_NEVER
+    ao.never.should.be.true
   })
 
-  it('should get access key', function () {
-    tv.accessKey.should.be.a.String
+  it('should get the service key', function () {
+    ao.serviceKey.should.be.a.String
   })
 
   it('should set logging', function () {
@@ -66,67 +74,69 @@ describe('basics', function () {
       called = true
       debug.enable = real
     }
-    var before = tv.log
-    tv.log = 'layer'
-    tv.log.should.equal('layer')
+    var before = ao.logLevel
+    ao.logLevel = 'span'
+    ao.logLevel.should.equal('span')
     called.should.equal(true)
-    tv.log = before
+    ao.logLevel = before
   })
 
   it('should be able to detect if it is in a trace', function () {
-    tv.tracing.should.be.false
-    var layer = new Layer('test')
-    layer.run(function () {
-      tv.tracing.should.be.true
+    ao.tracing.should.be.false
+    var span = new Span('test')
+    span.run(function () {
+      ao.tracing.should.be.true
     })
   })
 
   it('should support sampling', function () {
-    var skipSample = tv.skipSample
-    tv.skipSample = false
-    tv.traceMode = 'always'
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    var s = tv.sample('test')
+    var skipSample = ao.skipSample
+    ao.skipSample = false
+    ao.sampleMode = 'always'
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    var s = ao.sample('test')
     s.should.not.be.false
 
-    tv.sampleRate = 1
+    ao.sampleRate = 1
     var samples = []
     for (var i = 0; i < 1000; i++) {
-      s = tv.sample('test')
+      s = ao.sample('test')
       samples.push(!!s[0])
     }
     samples.should.containEql(false)
-    tv.skipSample = skipSample
+    ao.skipSample = skipSample
   })
 
   it('should not call sampleRate setter from sample function', function () {
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
-    var skipSample = tv.skipSample
-    tv.skipSample = false
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    var skipSample = ao.skipSample
+    ao.skipSample = false
 
     function after (err) {
-      tv.addon.Context.setDefaultSampleRate = old
-      tv.skipSample = skipSample
+      ao.addon.Context.setDefaultSampleRate = old
+      ao.skipSample = skipSample
     }
 
-    var old = tv.addon.Context.setDefaultSampleRate
-    tv.addon.Context.setDefaultSampleRate = function () {
+    var old = ao.addon.Context.setDefaultSampleRate
+    ao.addon.Context.setDefaultSampleRate = function () {
       after()
       throw new Error('Should not have called sampleRate setter')
     }
 
-    tv.sample('test')
+    ao.sample('test')
     after()
   })
 
-  it('should not trace in through without xtrace header', function (done) {
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'through'
+  // TODO consider removing this old test for "through" mode
+  /*
+  it('should not trace when mode "never"', function (done) {
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'never'
 
-    var sendReport = tv.reporter.sendReport
-    tv.reporter.sendReport = function (event) {
-      tv.reporter.sendReport = sendReport
+    var sendReport = ao.reporter.sendReport
+    ao.reporter.sendReport = function (event) {
+      ao.reporter.sendReport = sendReport
       done(new Error('Tried to send an event'))
     }
 
@@ -138,11 +148,12 @@ describe('basics', function () {
       var port = server.address().port
       http.get('http://localhost:' + port, function (res) {
         res.on('end', function () {
-          tv.reporter.sendReport = sendReport
+          ao.reporter.sendReport = sendReport
           done()
         })
         res.resume()
       })
     })
   })
+  // */
 })

@@ -1,10 +1,41 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var Promise = require('bluebird')
 var should = require('should')
-var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost:5672'
+var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
+
+describe('UDP', function () {
+  var conf = { enabled: true }
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  beforeEach(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  afterEach(function (done) {
+    emitter.close(done)
+  })
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
 
 describe('probes.amqplib', function () {
   var emitter
@@ -43,12 +74,12 @@ describe('probes.amqplib', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)

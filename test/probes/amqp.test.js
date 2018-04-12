@@ -1,16 +1,25 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 var amqp = require('amqp')
-var db_host = process.env.TEST_RABBITMQ_3_5 || 'localhost:5672'
+var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
+
+
+if (helper.skipTest(module.filename)) {
+  return
+}
 
 describe('probes.amqp', function () {
   var emitter
   var ctx = {}
   var client
   var db
+  var realSampleTrace
+
+  // increase timeout for travis-ci.
+  this.timeout(10000)
 
   //
   // Define some general message checks
@@ -42,14 +51,19 @@ describe('probes.amqp', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 
@@ -79,6 +93,18 @@ describe('probes.amqp', function () {
     } else {
       done()
     }
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   //
@@ -255,7 +281,7 @@ describe('probes.amqp', function () {
     ], done)
   })
 
-  it('should create entry layers for jobs', function (done) {
+  it('should create entry spans for jobs', function (done) {
     var ex = client.exchange('exchange', { type: 'fanout' })
     client.queue('queue', function (q) {
       q.bind(ex, '')
@@ -309,6 +335,7 @@ describe('probes.amqp', function () {
           checks.pushq(msg)
           msg.should.have.property('ExchangeName', 'exchange')
           msg.should.have.property('RoutingKey', 'message')
+          msg.should.have.property('X-Trace')
           id = msg['X-Trace']
         },
         function (msg) {
@@ -449,7 +476,7 @@ describe('probes.amqp', function () {
 
     it('should work with celery', function (done) {
       var client = celery.createClient({
-        CELERY_BROKER_URL: 'amqp://guest:guest@localhost:5672//',
+        CELERY_BROKER_URL: 'amqp://guest:guest@rabbitmq:5672//',
         CELERY_RESULT_BACKEND: 'amqp',
         CELERY_TASK_SERIALIZER: 'json',
         CELERY_RESULT_SERIALIZER: 'json'
@@ -466,7 +493,7 @@ describe('probes.amqp', function () {
         }, [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('RemoteHost', 'localhost:5672')
+            msg.should.have.property('RemoteHost', 'rabbitmq:5672')
             msg.should.have.property('ExchangeName', 'test')
             console.log(msg)
           },

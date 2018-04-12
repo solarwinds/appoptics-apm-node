@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -10,16 +10,22 @@ var http = require('http')
 describe('probes.http', function () {
   var ctx = { http: http }
   var emitter
+  var realSampleTrace
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 
@@ -59,12 +65,26 @@ describe('probes.http', function () {
   }
 
   describe('http-server', function () {
-    var conf = tv.http
+    var conf = ao.probes.http
+
+    // it's possible for a local UDP send to fail but oboe doesn't report
+    // it, so compensate for it.
+    it('UDP might lose a message running locally', function (done) {
+      helper.test(emitter, function (done) {
+        ao.instrument('fake', function () { })
+        done()
+      }, [
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+              msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
+    })
 
     //
     // Test a simple res.end() call in an http server
     //
-    it('should send traces for http routing and response layers', function (done) {
+    it('should send traces for http routing and response spans', function (done) {
       var port
       var server = http.createServer(function (req, res) {
         res.end('done')
@@ -102,7 +122,7 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      var origin = new tv.Event()
+      var origin = new ao.Event('span-name', 'label-name', '')
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -128,9 +148,9 @@ describe('probes.http', function () {
     })
 
     //
-    // Verify always trace mode forwards X-TV-Meta header and sampling data
+    // Verify always trace mode forwards sampling data
     //
-    it('should forward X-TV-Meta header and sampling data in always trace mode', function (done) {
+    it('should forward sampling data in always trace mode', function (done) {
       var server = http.createServer(function (req, res) {
         res.end('done')
       })
@@ -138,7 +158,6 @@ describe('probes.http', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('X-TV-Meta', 'foo')
           msg.should.have.property('SampleSource')
           msg.should.have.property('SampleRate')
         },
@@ -152,10 +171,7 @@ describe('probes.http', function () {
       server.listen(function () {
         var port = server.address().port
         request({
-          url: 'http://localhost:' + port,
-          headers: {
-            'X-TV-Meta': 'foo'
-          }
+          url: 'http://localhost:' + port
         })
       })
     })
@@ -371,7 +387,7 @@ describe('probes.http', function () {
   })
 
   describe('http-client', function () {
-    var conf = tv['http-client']
+    var conf = ao.probes['http-client']
 
     it('should trace http request', function (done) {
       var server = http.createServer(function (req, res) {

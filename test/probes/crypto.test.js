@@ -1,12 +1,18 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var crypto = require('crypto')
 var fs = require('fs')
 
 describe('probes.crypto', function () {
   var emitter
+
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
 
   //
   // Define some general message checks
@@ -23,15 +29,29 @@ describe('probes.crypto', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
+  })
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   //
@@ -40,7 +60,7 @@ describe('probes.crypto', function () {
   if (crypto.pbkdf2) {
     it('should support pbkdf2', function (done) {
       helper.test(emitter, function (done) {
-        crypto.pbkdf2('secret', 'salt', 4096, 512, function (e) {
+        crypto.pbkdf2('secret', 'salt', 4096, 512, 'sha1', function (e) {
           done(e)
         })
       }, [

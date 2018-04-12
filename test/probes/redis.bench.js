@@ -1,9 +1,9 @@
 var helper = require('../helper')
-var tv = helper.tv
-var Layer = tv.Layer
+var ao = helper.ao
+var Span = ao.Span
 
 var redis = require('redis')
-var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
+var db_host = process.env.REDIS_PORT_6379_TCP_ADDR || 'redis'
 var client = redis.createClient(6379, db_host, {})
 
 tracelyzer.setMaxListeners(Infinity)
@@ -12,13 +12,13 @@ suite('probes/redis', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
-    layer = new Layer('test', null, {})
-    layer.enter()
+    ao.requestStore.enter(context)
+    span = new Span('test', null, {})
+    span.enter()
   })
   after(function () {
-    tv.requestStore.exit(context)
-    layer.exit()
+    ao.requestStore.exit(context)
+    span.exit()
   })
 
   bench('set', function (done) {

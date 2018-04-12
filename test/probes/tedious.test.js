@@ -1,4 +1,4 @@
-if ( ! process.env.TEST_SQLSERVER_EX) {
+if ( ! process.env.AO_TEST_SQLSERVER_EX) {
   describe('probes.tedious', function () {
     function noop () {}
     it.skip('should support basic queries', noop)
@@ -9,8 +9,9 @@ if ( ! process.env.TEST_SQLSERVER_EX) {
 }
 
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
+var conf = ao.probes.tedious
 
 var should = require('should')
 
@@ -21,13 +22,15 @@ var Request = tedious.Request
 var TYPES = tedious.TYPES
 
 var addr
-if (process.env.TEST_SQLSERVER_EX) {
+if (process.env.AO_TEST_SQLSERVER_EX) {
   addr = helper.Address.from(
-    process.env.TEST_SQLSERVER_EX
+    process.env.AO_TEST_SQLSERVER_EX
   )[0]
+} else {
+  addr = 'mssql:1433'
 }
-var user = process.env.TEST_SQLSERVER_EX_USERNAME
-var pass = process.env.TEST_SQLSERVER_EX_PASSWORD
+var user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
+var pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
 
 describe('probes.tedious', function () {
   this.timeout(10000)
@@ -37,18 +40,42 @@ describe('probes.tedious', function () {
   var pool
   var db
 
+  beforeEach(function (done) {
+    setTimeout(function () {
+      done()
+    }, 250)
+  })
+
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    tv.fs.enabled = false
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.probes.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
-    tv.fs.enabled = true
+    ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+
+
+  it('should sanitize SQL by default', function () {
+    conf.should.have.property('sanitizeSql', true)
+    conf.sanitizeSql = false
   })
 
   var checks = {
@@ -129,7 +156,7 @@ describe('probes.tedious', function () {
 
   function test_sanitization (done) {
     helper.test(emitter, function (done) {
-      tv.tedious.sanitizeSql = true
+      ao.probes.tedious.sanitizeSql = true
       query(function () {
         var request = new Request("select 42, @msg", onComplete)
         request.addParameter('msg', TYPES.VarChar, 'hello world')
@@ -150,7 +177,7 @@ describe('probes.tedious', function () {
         checks['mssql-exit'](msg)
       }
     ], function (err) {
-      tv.tedious.sanitizeSql = false
+      ao.probes.tedious.sanitizeSql = false
       done(err)
     })
   }
@@ -158,12 +185,12 @@ describe('probes.tedious', function () {
   // Query helper
   function query (fn) {
     var connection = new Connection({
-      database: 'test',
       userName: user,
       password: pass,
       server: addr.host,
       port: addr.port,
       options: {
+        database: 'test',
         tdsVersion: '7_1'
       }
     })

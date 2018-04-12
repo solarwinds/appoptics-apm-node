@@ -1,7 +1,7 @@
 var helper = require('./helper')
-var tv = helper.tv
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = helper.ao
+var Span = ao.Span
+var Event = ao.Event
 
 var err = new Error('test')
 var event = new Event('error-test', 'info')
@@ -12,11 +12,11 @@ suite('event', function () {
   var context = {}
 
   before(function () {
-    tv.requestStore.enter(context)
+    ao.requestStore.enter(context)
   })
 
   after(function () {
-    tv.requestStore.exit(context)
+    ao.requestStore.exit(context)
   })
 
   bench('construction', function () {
@@ -38,8 +38,8 @@ suite('event', function () {
   })
 })
 
-function builder (layer) {
-  return layer.descend('test')
+function builder (span) {
+  return span.descend('test')
 }
 
 function error (done) {

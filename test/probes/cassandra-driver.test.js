@@ -1,12 +1,16 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
-var conf = tv['cassandra-driver']
+var ao = helper.ao
+var addon = ao.addon
+var conf = ao.probes['cassandra-driver']
 
 var should = require('should')
 var hosts = helper.Address.from(
-  process.env.TEST_CASSANDRA_2_2 || '127.0.0.1:9042'
+  process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
+
+if (helper.skipTest(module.filename)) {
+  return
+}
 
 //
 // Do not load unless stream.Readable exists.
@@ -18,6 +22,36 @@ var hasReadableStream = typeof stream.Readable !== 'undefined'
 if (hasReadableStream) {
   cassandra = require('cassandra-driver')
 }
+
+describe('probes.cassandra-driver UDP', function () {
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  after(function (done) {
+    emitter.close(done)
+  })
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
+
 
 describe('probes.cassandra-driver', function () {
   this.timeout(10000)
@@ -51,12 +85,12 @@ describe('probes.cassandra-driver', function () {
   //
   if (hasReadableStream) {
     //
-    // Intercept tracelyzer messages for analysis
+    // Intercept appoptics messages for analysis
     //
     before(function (done) {
-      emitter = helper.tracelyzer(done)
-      tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-      tv.traceMode = 'always'
+      emitter = helper.appoptics(done)
+      ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+      ao.sampleMode = 'always'
     })
     after(function (done) {
       emitter.close(done)
@@ -95,6 +129,10 @@ describe('probes.cassandra-driver', function () {
       client.execute('TRUNCATE "foo";', done)
     })
 
+    it('should sanitize SQL by default', function () {
+      conf.should.have.property('sanitizeSql', true)
+      conf.sanitizeSql = false
+    })
     it('should trace a basic query', test_basic)
     it('should trace a prepared query', test_prepare)
     it('should sanitize query string, when not using value list', test_sanitize)

@@ -1,31 +1,46 @@
 language: node_js
 
+env:
+    global:
+    - APPOPTICS_REPORTER=udp
+    - APPOPTICS_REPORTER_UDP=localhost:7832
+    - APPOPTICS_SERVICE_KEY=8f7994d481d87a29872aca3152492ed287d4b88896addb50ee88d75a49be9e950:ao-travis-test
+    - CXX=g++-4.8
+
+branches:
+  only:
+    - master
+    # slightly modified from https://github.com/sindresorhus/semver-regex
+    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)?(?:\+[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)$/
+
+
 cache:
   directories:
   - node_modules
 
 node_js:
-  - "6"
-  - "5"
   - "4"
-  - "3"
-  - "2"
-  - "1"
-  - "0.12"
-  - "0.10"
+  - "6"
+  - "8"
 
 install:
   - sudo apt-get autoremove -fy
-  - wget https://files.tv.solarwinds.com/install_traceview.sh
-  - sudo sh ./install_traceview.sh f08da708-7f1c-4935-ae2e-122caf1ebe31
   - sudo apt-get install libkrb5-dev
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
-  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
-  - npm install
-  - npm run install-deps || true
+#  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
+  - curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | force_npm=1 bash
+  - nvm use $TRAVIS_NODE_VERSION
+  - npm install .
+  #- npm run install-deps || true
 
-script: "npm test"
+script:
+  - source ./env.sh travis
+  - export APPOPTICS_REPORTER=$APPOPTICS_REPORTER
+  - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
+  - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
+  - export AO_SKIP_TEST=amqp,cassandra-driver
+  - npm test
 
 services:
   - cassandra
@@ -34,12 +49,12 @@ services:
   - memcached
   - rabbitmq
 
-# Support io.js 3.x and node 4.x+
-env:
-  - CXX=g++-4.8
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+
+after_failure:
+    - cat /home/travis/build/librato/node-appoptics/travis-dbg.log

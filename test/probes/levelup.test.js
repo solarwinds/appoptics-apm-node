@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -10,7 +10,7 @@ var http = require('http')
 // NOTE: requiring leveldown is necessary as the one that works with
 // node 0.11 does not match the one in the devDependencies of levelup.
 var level = require('levelup')
-var db = level('./test-db', {
+var db = level('../../test-db', {
   db: require('leveldown')
 })
 
@@ -19,12 +19,12 @@ describe('probes.levelup', function () {
   var emitter
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -40,6 +40,20 @@ describe('probes.levelup', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   it('should support put', function (done) {
     helper.test(emitter, function (done) {

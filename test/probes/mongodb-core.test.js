@@ -1,6 +1,6 @@
 var helper = require('../helper')
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -15,11 +15,49 @@ var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
 var hosts = {
-  '2.4': process.env.TEST_MONGODB_2_4 || 'localhost:27017',
-  '2.6': process.env.TEST_MONGODB_2_6,
-  '3.0': process.env.TEST_MONGODB_3_0,
-  'replica set': process.env.TEST_MONGODB_SET
+  '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
+  '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
+  '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3:27017',
+  'replica set': process.env.AO_TEST_MONGODB_SET
 }
+
+// if travis reset for now.
+// TODO BAM handle via env vars.
+if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
+  hosts = {
+    '3+': process.env.AO_TEST_MONGODB_3 || 'localhost:27017',
+    'replica set': process.env.AO_TEST_MONGODB_SET
+  }
+}
+
+describe('probes.mongodb-core UDP', function () {
+  var emitter
+
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+  })
+  after(function (done) {
+    emitter.close(done)
+  })
+
+  // fake test to work around UDP dropped message issue
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
+})
 
 describe('probes/mongodb-core', function () {
   Object.keys(hosts).forEach(function (host) {
@@ -37,6 +75,7 @@ function makeTests (db_host, host, isReplicaSet) {
   var ctx = {}
   var emitter
   var db
+  var realSampleTrace
 
   var options = {
     writeConcern: { w: 1 },
@@ -44,16 +83,22 @@ function makeTests (db_host, host, isReplicaSet) {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    tv.fs.enabled = false
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    ao.probes.fs.enabled = false
+    emitter = helper.appoptics(done)
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
+
   })
   afterEach(function (done) {
-    tv.fs.enabled = true
+    ao.probes.fs.enabled = true
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 

@@ -1,25 +1,37 @@
 var helper = require('../helper')
-var tv = helper.tv
+var ao = helper.ao
 
 var bcrypt = require('bcrypt')
 
 describe('probes/bcrypt', function () {
   it('should trace through async bcrypt', function (done) {
-    tv.requestStore.run(function () {
-      // Hack to look like there's a previous layer
-      tv.requestStore.set('lastEvent', true)
+    var test = 'foo'
+    var password = 'this is a test'
 
-      var password = 'this is a test'
-      tv.requestStore.set('foo', 'bar')
-      
-      bcrypt.genSalt(10, function (err, salt) {
-        bcrypt.hash(password, salt, function (err, hash) {
-          bcrypt.compare(password, hash, function (err, res) {
-            tv.requestStore.get('foo').should.equal('bar')
-            done()
+    ao.requestStore.run(function () {
+      // kludge to look like previous span
+      ao.requestStore.set('lastEvent', true)
+
+      var res = ao.startOrContinueTrace(
+        '',
+        'test-bcrypt',
+        function (cb) {
+          ao.requestStore.set(test, 'bar')
+          bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(password, salt, function (err, hash) {
+              bcrypt.compare(password, hash, function (err, res) {
+                var result = ao.requestStore.get(test)
+                // checking 'bar' against result prevents problems if
+                // result is undefined.
+                'bar'.should.equal(result, 'foo should equal bar')
+                return cb()
+              })
+            })
           })
-        })
-      })
+        },
+        { enabled: true },
+        function () { done() }
+      )
     })
   })
 })

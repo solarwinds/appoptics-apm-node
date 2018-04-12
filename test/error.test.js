@@ -1,15 +1,16 @@
 var helper = require('./helper')
-var tv = require('..')
-var Layer = tv.Layer
-var Event = tv.Event
+var ao = require('..')
+var Span = ao.Span
+var Event = ao.Event
 
 describe('error', function () {
   var conf = { enabled: true }
   var error = new Error('nope')
   var emitter
+  var realSampleTrace
 
-  function testLayer (layer) {
-    return layer.descend('test')
+  function testSpan (span) {
+    return span.descend('test')
   }
 
   function handleErrorTest (task, done) {
@@ -29,15 +30,36 @@ describe('error', function () {
   }
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = tv.addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
+  })
+
+  //
+  // Prophylactic test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  //
+  it('might lose a message (until the UDP problem is fixed)', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
   })
 
   //
@@ -68,7 +90,7 @@ describe('error', function () {
   it('should report errors in sync calls', function (done) {
     handleErrorTest(function (done) {
       try {
-        tv.instrument(testLayer, function () {
+        ao.instrument(testSpan, function () {
           throw error
         }, conf)
       } catch (e) {}
@@ -78,7 +100,7 @@ describe('error', function () {
 
   it('should report errors in error-first callbacks', function (done) {
     handleErrorTest(function (done) {
-      tv.instrument(testLayer, function (callback) {
+      ao.instrument(testSpan, function (callback) {
         callback(error)
       }, conf, function () {
         done()
@@ -89,7 +111,7 @@ describe('error', function () {
   it('should report custom errors', function (done) {
     var error = new Error('test')
     helper.test(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -102,20 +124,20 @@ describe('error', function () {
     ], done)
   })
 
-  it('should report custom errors within a layer', function (done) {
+  it('should report custom errors within a span', function (done) {
     var error = new Error('test')
     var last
 
     helper.test(emitter, function (done) {
-      tv.instrument(testLayer, function (callback) {
-        tv.reportError(error)
+      ao.instrument(testSpan, function (callback) {
+        ao.reportError(error)
         callback()
       }, conf, done)
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -124,7 +146,7 @@ describe('error', function () {
         msg.should.have.property('ErrorMsg', error.message)
         msg.should.have.property('Backtrace', error.stack)
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42)
+        last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -138,7 +160,7 @@ describe('error', function () {
     handleErrorTest(function (done) {
       var rethrow = false
       try {
-        tv.instrument(testLayer, function () {
+        ao.instrument(testSpan, function () {
           throw error
         }, conf)
       } catch (e) {
@@ -154,7 +176,7 @@ describe('error', function () {
   it('should support string errors', function (done) {
     var error = 'test'
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -170,7 +192,7 @@ describe('error', function () {
   it('should support empty string errors', function (done) {
     var error = ''
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
+      ao.reportError(error)
       done()
     }, [
       function (msg) {
@@ -184,17 +206,17 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    var layer = new Layer('test', null, {})
-    layer._internal = function () {
+    var span = new Span('test', null, {})
+    span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
-    layer.error({ foo: 'bar' })
-    layer.error(undefined)
-    layer.error(new Date)
-    layer.error(/foo/)
-    layer.error(null)
-    layer.error([])
-    layer.error(1)
+    span.error({ foo: 'bar' })
+    span.error(undefined)
+    span.error(new Date)
+    span.error(/foo/)
+    span.error(null)
+    span.error([])
+    span.error(1)
   })
 
   it('should allow sending the same error multiple times', function (done) {
@@ -210,22 +232,22 @@ describe('error', function () {
     }
 
     helper.httpTest(emitter, function (done) {
-      tv.reportError(error)
-      tv.reportError(error)
+      ao.reportError(error)
+      ao.reportError(error)
       done()
     }, [ validate, validate ], done)
   })
 
-  it('should not send error events when not in a layer', function () {
-    var layer = new Layer('test', null, {})
+  it('should not send error events when not in a span', function () {
+    var span = new Span('test', null, {})
 
     var send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
-      throw new Error('should not send when not in a layer')
+      throw new Error('should not send when not in a span')
     }
 
-    layer.error(error)
+    span.error(error)
     Event.prototype.send = send
   })
 

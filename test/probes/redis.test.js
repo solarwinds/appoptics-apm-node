@@ -1,7 +1,7 @@
 var helper = require('../helper')
 var Address = helper.Address
-var tv = helper.tv
-var addon = tv.addon
+var ao = helper.ao
+var addon = ao.addon
 
 var should = require('should')
 
@@ -9,7 +9,7 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
-var parts = (process.env.TEST_REDIS_3_0 || 'localhost:6379').split(':')
+var parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
 var host = parts.shift()
 var port = parts.shift()
 var addr = new Address(host, port)
@@ -18,16 +18,22 @@ var client = redis.createClient(addr.port, addr.host, {})
 describe('probes.redis', function () {
   var ctx = { redis: client }
   var emitter
+  var realSampleTrace
 
   //
-  // Intercept tracelyzer messages for analysis
+  // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.tracelyzer(done)
-    tv.sampleRate = addon.MAX_SAMPLE_RATE
-    tv.traceMode = 'always'
+    emitter = helper.appoptics(done)
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    realSampleTrace = ao.addon.Context.sampleTrace
+    ao.addon.Context.sampleTrace = function () {
+      return { sample: true, source: 6, rate: ao.sampleRate }
+    }
   })
   after(function (done) {
+    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 
@@ -42,6 +48,18 @@ describe('probes.redis', function () {
       msg.should.have.property('Label', 'exit')
     }
   }
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', ao.noop)
+      done()
+    }, [
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
+  })
 
   //
   // Test a simple res.end() call in an http server
