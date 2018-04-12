@@ -77,6 +77,7 @@ describe('probes.https', function () {
     }
   }
 
+  /*
   describe('UDP', function () {
     // this test exists only to fix a problem with oboe not reporting a UDP
     // send failure.
@@ -92,9 +93,24 @@ describe('probes.https', function () {
         ], done)
     })
   })
+  // */
 
   describe('https-server', function () {
     var conf = ao.probes.https
+
+    // it's possible for a local UDP send to fail but oboe doesn't report
+    // it, so compensate for it.
+    it('UDP might lose a message running locally', function (done) {
+      helper.test(emitter, function (done) {
+        ao.instrument('fake', function () { })
+        done()
+      }, [
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+              msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
+    })
 
     //
     // Test a simple res.end() call in an http server

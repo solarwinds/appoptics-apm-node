@@ -67,9 +67,9 @@ describe('probes.http', function () {
   describe('http-server', function () {
     var conf = ao.probes.http
 
-    // this test exists only to fix a problem with oboe not reporting a UDP
-    // send failure.
-    it('might lose a message (until the UDP problem is fixed)', function (done) {
+    // it's possible for a local UDP send to fail but oboe doesn't report
+    // it, so compensate for it.
+    it('UDP might lose a message running locally', function (done) {
       helper.test(emitter, function (done) {
         ao.instrument('fake', function () { })
         done()
