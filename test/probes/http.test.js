@@ -148,6 +148,35 @@ describe('probes.http', function () {
     })
 
     //
+    // Verify always trace mode forwards sampling data
+    //
+    it('should forward sampling data in always trace mode', function (done) {
+      var server = http.createServer(function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          msg.should.have.property('SampleSource')
+          msg.should.have.property('SampleRate')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        var port = server.address().port
+        request({
+          url: 'http://localhost:' + port
+        })
+      })
+    })
+
+    //
     // Verify behaviour of asyncrony within a request
     //
     it('should trace correctly within asyncrony', function (done) {
