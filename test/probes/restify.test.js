@@ -20,6 +20,7 @@ var restify = require('restify')
 describe('probes.restify', function () {
   var emitter
   var fsState
+  var logLevel
 
   //
   // Intercept appoptics messages for analysis
@@ -33,10 +34,13 @@ describe('probes.restify', function () {
       fsState = ao.probes.fs.enabled
       ao.probes.fs.enabled = false
     }
+    logLevel = ao.logLevel
+    ao.logLevel = 'test:message'
   })
   after(function (done) {
     emitter.close(done)
     ao.probes.fs.enabled = fsState
+    ao.logLevel = logLevel
   })
 
   var check = {
@@ -89,8 +93,12 @@ describe('probes.restify', function () {
     function (msg) {
       check['restify-entry'](msg)
     },
-    function () {},
-    function () {},
+    function (msg) {
+      msg.should.have.property('Label', 'profile_entry')
+    },
+    function (msg) {
+      msg.should.have.property('Label', 'profile_exit')
+    },
     function (msg) {
       check['restify-exit'](msg)
     },
