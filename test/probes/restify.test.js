@@ -7,14 +7,19 @@ var semver = require('semver')
 
 var request = require('request')
 
-var restify
 var pkg = require('restify/package.json')
-if (semver.satisfies(process.version, '>=4.0.0')) {
-  restify = require('restify')
+
+if (!semver.satisfies(process.version, '>=4')) {
+  describe('probes.restify')
+  it.skip('not supported for node version < 4', function () {})
+  return
 }
+
+var restify = require('restify')
 
 // restify does fs IO starting in node 8
 if (semver.satisfies(process.version, '>=8.0.0')) {
+  console.log('turning off fs instrumentation')
   ao.probes.fs.enabled = false
 }
 
