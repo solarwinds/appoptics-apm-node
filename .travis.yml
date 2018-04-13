@@ -20,8 +20,8 @@ cache:
   - node_modules
 
 node_js:
-  #- "4"
-  #- "6"
+  - "4"
+  - "6"
   - "8"
 
 install:
@@ -41,8 +41,7 @@ script:
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
-  - npm ls restify
-  - ./node_modules/gulp/bin/gulp.js test:probe:restify
+  - npm test
 
 services:
   - cassandra
