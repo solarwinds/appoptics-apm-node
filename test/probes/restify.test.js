@@ -6,12 +6,16 @@ var should = require('should')
 var semver = require('semver')
 
 var request = require('request')
-var fs = require('fs')
 
 var restify
 var pkg = require('restify/package.json')
-if (semver.satisfies(process.version.slice(1), '> 0.8')) {
+if (semver.satisfies(process.version, '>=4.0.0')) {
   restify = require('restify')
+}
+
+// restify does fs IO starting in node 8
+if (semver.satisfies(process.version, '>=8.0.0')) {
+  ao.probes.fs.enabled = false
 }
 
 describe('probes.restify', function () {
