@@ -29,11 +29,9 @@ describe('probes.restify', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
-    // restify does fs IO starting in node 8
-    if (semver.satisfies(process.version, '>=8.0.0')) {
-      fsState = ao.probes.fs.enabled
-      ao.probes.fs.enabled = false
-    }
+    // restify newer versions of restify use negotiator which does file io
+    fsState = ao.probes.fs.enabled
+    ao.probes.fs.enabled = false
     logLevel = ao.logLevel
     ao.logLevel = 'test:message'
   })
