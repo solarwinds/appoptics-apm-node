@@ -70,6 +70,11 @@ exports.appoptics = function (done) {
   // Create emitter to forward messages
   var emitter = new Emitter
 
+  // note emitter is being handled by appoptics. some tests don't invoke
+  // appoptics, only doChecks() which will need to log messages if this is
+  // not active.
+  emitter.__aoActive = true
+
   // Forward events
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
@@ -121,7 +126,9 @@ exports.doChecks = function (emitter, checks, done) {
   debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
 
   function onMessage (msg) {
-    //log.test.message('mock (' + addr.port + ') received message', msg)
+    if (!emitter.__aoActive) {
+      log.test.message('mock (' + addr.port + ') received message', msg)
+    }
     var check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
