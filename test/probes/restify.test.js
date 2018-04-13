@@ -17,14 +17,9 @@ if (!semver.satisfies(process.version, '>=4')) {
 
 var restify = require('restify')
 
-// restify does fs IO starting in node 8
-if (semver.satisfies(process.version, '>=8.0.0')) {
-  console.log('turning off fs instrumentation')
-  ao.probes.fs.enabled = false
-}
-
 describe('probes.restify', function () {
   var emitter
+  var fsState
 
   //
   // Intercept appoptics messages for analysis
@@ -33,9 +28,15 @@ describe('probes.restify', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    // restify does fs IO starting in node 8
+    if (semver.satisfies(process.version, '>=8.0.0')) {
+      fsState = ao.probes.fs.enabled
+      ao.probes.fs.enabled = false
+    }
   })
   after(function (done) {
     emitter.close(done)
+    ao.probes.fs.enabled = fsState
   })
 
   var check = {
