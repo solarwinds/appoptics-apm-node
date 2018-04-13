@@ -40,8 +40,8 @@ script:
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
-  - npm ls
-  - npm test
+  - npm ls restify
+  - ./node_modules/gulp/bin/gulp.js test:probe:restify
 
 services:
   - cassandra
