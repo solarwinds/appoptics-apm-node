@@ -21,6 +21,13 @@ if [[ -z "$ARG" ]]; then
     echo "you may also use the argument debug to define additional"
     echo "debugging variables, bindings to define alternate ao-bindings"
     echo "authentication and package, or tcpdump to get help on tcpdump"
+elif [[ "$ARG" = "key" ]]; then
+    if [[ -z "$PARAM" ]]; then
+        echo "defining the service key requires a service name argument"
+        return
+    fi
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:$PARAM
+    echo "set APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY"
 elif [[ "$ARG" = "docker" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
