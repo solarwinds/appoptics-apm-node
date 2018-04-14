@@ -31,8 +31,6 @@ install:
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
 #  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
   - curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | force_npm=1 bash
-  # it appears that node is already set correctly.
-  #- nvm use $TRAVIS_NODE_VERSION
   - npm install .
   #- npm run install-deps || true
 
@@ -42,9 +40,7 @@ script:
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
-  - nvm ls
-  - node -v
-  - npm ls
+  #- npm ls
   - npm test
 
 services:
