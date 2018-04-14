@@ -33,7 +33,7 @@ describe('probes.restify', function () {
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
     logLevel = ao.logLevel
-    ao.logLevel += ',debug,test:message'
+    ao.logLevel += ',debug'
   })
   after(function (done) {
     emitter.close(done)
