@@ -8,16 +8,20 @@ var semver = require('semver')
 var request = require('request')
 
 var pkg = require('restify/package.json')
+var opts = {
+  name: 'restify-test'
+}
 
 if (!semver.satisfies(process.version, '>=4')) {
-  describe('probes.restify')
-  it.skip('not supported for node version < 4', function () {})
+  describe('probes.restify', function () {
+    it.skip('not supported for node version < 4', function () {})
+  })
   return
 }
 
 var restify = require('restify')
 
-describe('probes.restify', function () {
+describe('probes.restify ' + pkg.version , function () {
   var emitter
   var fsState
   var logLevel
@@ -78,7 +82,7 @@ describe('probes.restify', function () {
   // Tests
   //
   function testControllerAction (done) {
-    var app = restify.createServer(pkg)
+    var app = restify.createServer(opts)
 
     app.get('/hello/:name', function hello (req, res) {
       res.send('done')
@@ -117,7 +121,7 @@ describe('probes.restify', function () {
   }
 
   function testMiddleware (done) {
-    var app = restify.createServer(pkg)
+    var app = restify.createServer(opts)
 
     app.get('/hello/:name', function renamer (req, res, next) {
       req.name = req.params.name
