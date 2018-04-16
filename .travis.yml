@@ -44,6 +44,9 @@ script:
   # why is 4.3.3 of restify being loaded?
   - cat package.json
   - cat package-lock.json || true
+  - pwd
+  - ls /home/travis
+  - cat /home/travis/.npmrc || true
   - npm test
 
 services:
