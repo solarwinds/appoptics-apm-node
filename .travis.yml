@@ -30,7 +30,6 @@ install:
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
 #  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
-  #- curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | force_npm=1 bash
   - npm install .
   #- npm run install-deps || true
 
@@ -42,11 +41,7 @@ script:
   - export AO_SKIP_TEST=amqp,cassandra-driver
   #- npm ls
   # why is 4.3.3 of restify being loaded?
-  - cat package.json
   - cat package-lock.json || true
-  - pwd
-  - ls /home/travis
-  - cat /home/travis/.npmrc || true
   - npm test
 
 services:
