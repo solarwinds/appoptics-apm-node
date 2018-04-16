@@ -41,6 +41,9 @@ script:
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
   #- npm ls
+  # why is 4.3.3 of restify being loaded?
+  - cat package.json
+  - cat package-lock.json || true
   - npm test
 
 services:
