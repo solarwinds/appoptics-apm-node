@@ -29,6 +29,11 @@ if (semver.satisfies(pkg.version, '>= 1.4.24')) {
 	hosts['replica set'] = process.env.AO_TEST_MONGODB_SET
 }
 
+ao.loggers.warn('hardcoded database for local test')
+hosts = {
+  "2.6": process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017'
+}
+
 describe('probes.mongodb-core UDP', function () {
   var emitter
 
@@ -58,7 +63,7 @@ describe('probes.mongodb-core UDP', function () {
   })
 })
 
-describe('probes.mongodb', function () {
+describe('probes.mongodb ' + pkg.version, function () {
 	Object.keys(hosts).forEach(function (host) {
 		var db_host = hosts[host]
 		if ( ! db_host) return
@@ -100,11 +105,14 @@ function makeTests (db_host, host, self) {
 	before(function (done) {
 		// AWS name resolution is slooooooooow
 		this.timeout(25000)
-		MongoDB.connect('mongodb://' + db_host + '/test', function (err, _db) {
-			if (err) return done(err)
-			ctx.mongo = db = _db
-			done()
-		})
+    MongoDB.connect('mongodb://' + db_host + '/test')
+      .then(_db => {
+        ctx.mongo = db = _db
+        done()
+      })
+      .catch(e => {
+        done(e)
+      })
 	})
 	after(function (done) {
 		ctx.mongo.close(done)

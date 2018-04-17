@@ -10,17 +10,18 @@ env:
 branches:
   only:
     - master
+    - /.+-test/
     # slightly modified from https://github.com/sindresorhus/semver-regex
-    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)?(?:\+[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)$/
+    #- /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)?(?:\+[\dA-Za-z-]+(?:\.[\dA-Za-z-]+)*)$/
 
 
-cache:
-  directories:
-  - node_modules
+#cache:
+#  directories:
+#  - node_modules
 
 node_js:
-  #- "4"
-  #- "6"
+  - "4"
+  - "6"
   - "8"
 
 install:
@@ -29,8 +30,6 @@ install:
   - psql -c 'create database test;' -U postgres
   - mysql -e 'CREATE DATABASE test; USE test; CREATE TABLE test (foo varchar(255));'
 #  - "echo \"create keyspace test with replication = {'class':'SimpleStrategy','replication_factor':1};\" | /usr/local/cassandra/bin/cqlsh --cqlversion=3.0.3"
-  - curl -s https://bb2874f186eb519f73ff3f8c64a777be6522ac88490ed0ca:@packagecloud.io/install/repositories/AppOptics/apm-node/script.node.sh | force_npm=1 bash
-  - nvm use $TRAVIS_NODE_VERSION
   - npm install .
   #- npm run install-deps || true
 
@@ -40,7 +39,6 @@ script:
   - export APPOPTICS_REPORTER_UDP=$APPOPTICS_REPORTER_UDP
   - export APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY
   - export AO_SKIP_TEST=amqp,cassandra-driver
-  - npm ls
   - npm test
 
 services:
