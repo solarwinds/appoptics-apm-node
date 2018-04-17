@@ -24,7 +24,6 @@ var restify = require('restify')
 describe('probes.restify ' + pkg.version , function () {
   var emitter
   var fsState
-  var logLevel
 
   //
   // Intercept appoptics messages for analysis
@@ -36,13 +35,10 @@ describe('probes.restify ' + pkg.version , function () {
     // restify newer versions of restify use negotiator which does file io
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
-    logLevel = ao.logLevel
-    ao.logLevel += ',debug'
   })
   after(function (done) {
     emitter.close(done)
     ao.probes.fs.enabled = fsState
-    ao.logLevel = logLevel
   })
 
   var check = {
