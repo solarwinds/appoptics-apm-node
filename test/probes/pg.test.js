@@ -24,8 +24,6 @@ var auth = {
   database: 'test'
 }
 
-console.log(`using password "${password}" for user "${auth.user}"`)
-
 var stream = require('stream')
 var canNative = typeof stream.Duplex !== 'undefined'
 
