@@ -5,6 +5,8 @@ var Span = ao.Span
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
+var pkg = require('mongoose/package')
+
 // use built-in Promise, replaceing mongoose's own implementation (deprecated)
 mongoose.Promise = Promise
 
@@ -14,7 +16,7 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   host = process.env.AO_TEST_MONGODB_3 || 'localhost:27017'
 }
 
-describe('probes/mongoose', function () {
+describe('probes/mongoose ' + pkg.version, function () {
   var Cat = mongoose.model('test', new Schema({
     name: String
   }))

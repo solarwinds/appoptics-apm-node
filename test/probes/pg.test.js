@@ -8,6 +8,7 @@ var should = require('should')
 
 var http = require('http')
 var postgres = require('pg')
+var pkg = require('pg/package')
 
 var env = process.env
 var addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
@@ -36,7 +37,7 @@ if (canNative) {
   }
 }
 
-describe('probes.postgres', function () {
+describe('probes.postgres ' + pkg.version, function () {
   var emitter
   var realSampleTrace
 

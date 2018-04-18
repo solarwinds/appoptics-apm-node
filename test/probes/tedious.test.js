@@ -32,7 +32,7 @@ if (process.env.AO_TEST_SQLSERVER_EX) {
 var user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
 var pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
 
-describe('probes.tedious', function () {
+describe('probes.tedious ' + pkg.version, function () {
   this.timeout(10000)
   var emitter
   var ctx = {}

@@ -23,7 +23,7 @@ if (semver.satisfies(process.version, '>=8.0.0')) {
   ao.probes.fs.enabled = false
 }
 
-describe('probes.restify', function () {
+describe('probes.restify ' + pkg.version, function () {
   var emitter
 
   //

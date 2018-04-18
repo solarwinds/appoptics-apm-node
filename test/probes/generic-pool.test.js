@@ -2,6 +2,7 @@ var helper = require('../helper')
 var ao = helper.ao
 
 var Pool = require('generic-pool').Pool
+var pkg = require('generic-pool/package')
 
 var foo = { bar: 'baz' }
 
@@ -14,7 +15,7 @@ var pool = new Pool({
   min: 1
 })
 
-describe('probes/generic-pool', function () {
+describe('probes/generic-pool ' + pkg.version, function () {
   it('should trace through generic-pool acquire', function (done) {
     var acquiring = false
 

@@ -2,6 +2,7 @@ var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
 
+var pkg = require('koa-router/package')
 
 var canGenerator = false
 try {
@@ -12,7 +13,7 @@ try {
 
 function noop () {}
 
-describe('probes/koa-router', function () {
+describe('probes/koa-router ' + pkg.version, function () {
   var emitter
   var tests = canGenerator && require('./koa')
   var realSampleTrace

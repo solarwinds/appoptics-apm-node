@@ -2,8 +2,9 @@ var helper = require('../helper')
 var ao = helper.ao
 
 var bcrypt = require('bcrypt')
+var pkg = require('bcrypt/package')
 
-describe('probes/bcrypt', function () {
+describe('probes/bcrypt ' + pkg.version, function () {
   it('should trace through async bcrypt', function (done) {
     var test = 'foo'
     var password = 'this is a test'

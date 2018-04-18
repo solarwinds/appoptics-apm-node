@@ -3,9 +3,10 @@ var ao = helper.ao
 var addon = ao.addon
 
 var crypto = require('crypto')
+var pkg = require('crypto/package')
 var fs = require('fs')
 
-describe('probes.crypto', function () {
+describe('probes.crypto ' + pkg.version, function () {
   var emitter
 
   beforeEach(function (done) {

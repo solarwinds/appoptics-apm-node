@@ -2,6 +2,8 @@ var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
 
+var pkg = require('koa-resource-router/package')
+
 
 var canGenerator = false
 try {
@@ -12,7 +14,7 @@ try {
 
 function noop () {}
 
-describe('probes/koa-resource-router', function () {
+describe('probes/koa-resource-router ' + pkg.version, function () {
   var emitter
   var tests = canGenerator && require('./koa')
 
