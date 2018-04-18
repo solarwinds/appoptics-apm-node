@@ -8,10 +8,14 @@ var semver = require('semver')
 var request = require('request')
 
 var pkg = require('restify/package.json')
+var opts = {
+  name: 'restify-test'
+}
 
 if (!semver.satisfies(process.version, '>=4')) {
-  describe('probes.restify')
-  it.skip('not supported for node version < 4', function () {})
+  describe('probes.restify', function () {
+    it.skip('not supported for node version < 4', function () {})
+  })
   return
 }
 
@@ -25,6 +29,7 @@ if (semver.satisfies(process.version, '>=8.0.0')) {
 
 describe('probes.restify ' + pkg.version, function () {
   var emitter
+  var fsState
 
   //
   // Intercept appoptics messages for analysis
@@ -33,9 +38,13 @@ describe('probes.restify ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    // restify newer versions of restify use negotiator which does file io
+    fsState = ao.probes.fs.enabled
+    ao.probes.fs.enabled = false
   })
   after(function (done) {
     emitter.close(done)
+    ao.probes.fs.enabled = fsState
   })
 
   var check = {
@@ -75,7 +84,7 @@ describe('probes.restify ' + pkg.version, function () {
   // Tests
   //
   function testControllerAction (done) {
-    var app = restify.createServer(pkg)
+    var app = restify.createServer(opts)
 
     app.get('/hello/:name', function hello (req, res) {
       res.send('done')
@@ -88,8 +97,12 @@ describe('probes.restify ' + pkg.version, function () {
     function (msg) {
       check['restify-entry'](msg)
     },
-    function () {},
-    function () {},
+    function (msg) {
+      msg.should.have.property('Label', 'profile_entry')
+    },
+    function (msg) {
+      msg.should.have.property('Label', 'profile_exit')
+    },
     function (msg) {
       check['restify-exit'](msg)
     },
@@ -110,7 +123,7 @@ describe('probes.restify ' + pkg.version, function () {
   }
 
   function testMiddleware (done) {
-    var app = restify.createServer(pkg)
+    var app = restify.createServer(opts)
 
     app.get('/hello/:name', function renamer (req, res, next) {
       req.name = req.params.name
