@@ -53,15 +53,19 @@ elif [[ "$ARG" = "bash-testing" ]]; then
     # this is used primarily to run the full appoptics-apm test suite.
     # presumes docker containers are running and their ports are addressable
     # as localhost. the port overrides (e.g., AO_TEST_MYSQL_HOST_PORT) allow
-    # local copies of the database to be running on the standard port numbers.
+    # existing local copies of the database that run on the standard port
+    # numbers to be used for testing (and not conflict with the port docker
+    # would normally expose).
     export AO_TEST_CASSANDRA_2_2=localhost:9042
     export AO_TEST_MEMCACHED_1_4=localhost:11211
     export AO_TEST_MONGODB_2_4=localhost:27016
     export AO_TEST_MONGODB_2_6=localhost:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}
     export AO_TEST_MONGODB_3=localhost:27018
+    # enable docker to run with different port
     export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
-    export AO_TEST_MYSQL_USERNAME=root
-    export AO_TEST_MYSQL_PASSWORD=admin
+    # if different port then use default user/password settings
+    export AO_TEST_MYSQL_USERNAME=${AO_TEST_MYSQL_HOST_PORT:root}
+    export AO_TEST_MYSQL_PASSWORD=${AO_TEST_MYSQL_HOST_PORT+}
     # this requires an entry in /etc/hosts because this
     # isn't run in a container it can't use docker names.
     # use the IP address from "docker inspect ao_oracle_1"
