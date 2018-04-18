@@ -3,7 +3,6 @@ var ao = helper.ao
 
 var concat = require('concat-stream')
 var zlib = require('zlib')
-var pkg = require('zlib/package')
 
 var classes = [
   'Deflate',
@@ -54,7 +53,7 @@ describe('probes.zlib once', function () {
   })
 })
 
-describe('probes.zlib ' + pkg.version, function () {
+describe('probes.zlib', function () {
   var options = { chunkSize: 1024 }
   var emitter
   var realSampleTrace = ao.addon.Context.sampleTrace
