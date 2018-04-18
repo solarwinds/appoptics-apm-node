@@ -17,7 +17,7 @@ var fs = require('fs')
 
 var pkg = require('express/package.json')
 
-describe('probes.express', function () {
+describe('probes.express ' + pkg.version, function () {
   var emitter
 
   //

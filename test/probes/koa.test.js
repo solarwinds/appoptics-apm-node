@@ -2,6 +2,7 @@ var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
 
+var pkg = require('koa/package')
 
 var canGenerator = false
 try {
@@ -12,7 +13,7 @@ try {
 
 function noop () {}
 
-describe('probes/koa', function () {
+describe('probes/koa ' + pkg.version, function () {
   var emitter
   var tests = canGenerator && require('./koa')
 

@@ -21,7 +21,13 @@ if (!semver.satisfies(process.version, '>=4')) {
 
 var restify = require('restify')
 
-describe('probes.restify ' + pkg.version , function () {
+// restify does fs IO starting in node 8
+if (semver.satisfies(process.version, '>=8.0.0')) {
+  console.log('turning off fs instrumentation')
+  ao.probes.fs.enabled = false
+}
+
+describe('probes.restify ' + pkg.version, function () {
   var emitter
   var fsState
 

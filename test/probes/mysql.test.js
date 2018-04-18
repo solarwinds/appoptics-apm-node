@@ -25,7 +25,7 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 
 var soon = global.setImmediate || process.nextTick
 
-describe('probes.mysql', function () {
+describe('probes.mysql ' + pkg.version, function () {
   this.timeout(10000)
   var emitter
   var ctx = {}

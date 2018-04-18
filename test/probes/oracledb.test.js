@@ -7,8 +7,10 @@ var log = ao.loggers
 var should = require('should')
 
 var oracledb
+var pkg = {version: '0.0.0'}
 try {
   oracledb = require('oracledb')
+  pkg = require('oracledb/package')
 } catch (e) {
   log.debug('cannot load oracledb', e)
 }
@@ -23,7 +25,7 @@ var config = {
 
 ao.debugLogging(true)
 
-describe('probes.oracledb', function () {
+describe('probes.oracledb ' + pkg.version, function () {
   var emitter
   var ctx = {}
   var cluster

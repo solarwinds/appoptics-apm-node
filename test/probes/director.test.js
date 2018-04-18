@@ -10,7 +10,7 @@ var http = require('http')
 var director = require('director')
 var pkg = require('director/package.json')
 
-describe('probes.director', function () {
+describe('probes.director ' + pkg.version, function () {
   var emitter
 
   //

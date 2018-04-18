@@ -9,10 +9,10 @@ var request = require('request')
 var express = require('express')
 var body = require('body-parser')
 var rawBody = require('raw-body')
-var version = require('raw-body/package.json').version
+var pkg = require('raw-body/package.json')
 var ReadableStream = require('stream').Readable
 
-describe('probes.raw-body', function () {
+describe('probes.raw-body ' + pkg.version, function () {
   var emitter
 
   //
@@ -115,7 +115,7 @@ describe('probes.raw-body', function () {
     })
   })
 
-  if (semver.satisfies(version, '< 2')) {
+  if (semver.satisfies(pkg.version, '< 2')) {
     it.skip('should support promises', test_promises)
     it('should support thunks', test_thunks)
   } else {

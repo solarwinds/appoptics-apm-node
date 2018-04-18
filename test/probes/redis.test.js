@@ -9,13 +9,15 @@ var request = require('request')
 var http = require('http')
 
 var redis = require('redis')
+var pkg = require('redis/package')
+
 var parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
 var host = parts.shift()
 var port = parts.shift()
 var addr = new Address(host, port)
 var client = redis.createClient(addr.port, addr.host, {})
 
-describe('probes.redis', function () {
+describe('probes.redis ' + pkg.version, function () {
   var ctx = { redis: client }
   var emitter
   var realSampleTrace

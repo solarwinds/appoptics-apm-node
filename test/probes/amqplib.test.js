@@ -4,6 +4,8 @@ var addon = ao.addon
 
 var Promise = require('bluebird')
 var should = require('should')
+var pkg = require('amqplib/package')
+
 var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 describe('UDP', function () {
@@ -37,7 +39,7 @@ describe('UDP', function () {
   })
 })
 
-describe('probes.amqplib', function () {
+describe('probes.amqplib ' + pkg.version, function () {
   var emitter
   var ctx = {}
   var client

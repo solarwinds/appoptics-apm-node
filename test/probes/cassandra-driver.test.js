@@ -22,6 +22,7 @@ var hasReadableStream = typeof stream.Readable !== 'undefined'
 if (hasReadableStream) {
   cassandra = require('cassandra-driver')
 }
+var pkg = require('cassandra-driver/package')
 
 describe('probes.cassandra-driver UDP', function () {
   var emitter
@@ -53,7 +54,7 @@ describe('probes.cassandra-driver UDP', function () {
 })
 
 
-describe('probes.cassandra-driver', function () {
+describe('probes.cassandra-driver ' + pkg.version, function () {
   this.timeout(10000)
   var emitter
   var ctx = {}

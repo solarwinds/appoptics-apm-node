@@ -31,7 +31,7 @@ if (semver.satisfies(nodeVersion, '> 0.8')) {
 }
 
 
-describe('probes.hapi', function () {
+describe('probes.hapi ' + pkg.version, function () {
   var emitter
   var port = 3000
 

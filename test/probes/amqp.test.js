@@ -4,6 +4,7 @@ var addon = ao.addon
 
 var should = require('should')
 var amqp = require('amqp')
+var pkg = require('amqp/package')
 var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 
@@ -11,7 +12,7 @@ if (helper.skipTest(module.filename)) {
   return
 }
 
-describe('probes.amqp', function () {
+describe('probes.amqp ' + pkg.version, function () {
   var emitter
   var ctx = {}
   var client

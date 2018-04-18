@@ -59,7 +59,7 @@ describe('probes.mongodb-core UDP', function () {
   })
 })
 
-describe('probes/mongodb-core', function () {
+describe('probes/mongodb-core ' + pkg.version, function () {
   Object.keys(hosts).forEach(function (host) {
     var db_host = hosts[host]
     if ( ! db_host) return

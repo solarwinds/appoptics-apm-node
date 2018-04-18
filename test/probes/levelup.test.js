@@ -14,7 +14,9 @@ var db = level('../../test-db', {
   db: require('leveldown')
 })
 
-describe('probes.levelup', function () {
+var pkg = require('levelup/package')
+
+describe('probes.levelup ' + pkg.version, function () {
   var ctx = { levelup: db }
   var emitter
 
