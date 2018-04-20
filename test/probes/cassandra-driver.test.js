@@ -2,6 +2,7 @@ var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon
 var conf = ao.probes['cassandra-driver']
+var log = ao.loggers
 
 var should = require('should')
 var hosts = helper.Address.from(
@@ -24,42 +25,13 @@ if (hasReadableStream) {
 }
 var pkg = require('cassandra-driver/package')
 
-describe('probes.cassandra-driver UDP', function () {
-  var emitter
-
-  //
-  // Intercept appoptics messages for analysis
-  //
-  before(function (done) {
-    emitter = helper.appoptics(done)
-    ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
-  })
-  after(function (done) {
-    emitter.close(done)
-  })
-
-  // fake test to work around UDP dropped message issue
-  it('UDP might lose a message', function (done) {
-    helper.test(emitter, function (done) {
-      ao.instrument('fake', ao.noop)
-      done()
-    }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
-  })
-})
-
-
 describe('probes.cassandra-driver ' + pkg.version, function () {
   this.timeout(10000)
   var emitter
   var ctx = {}
   var client
   var db
+  var prevDebug
 
   //
   // Define some general message checks
@@ -128,6 +100,30 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     })
     after(function (done) {
       client.execute('TRUNCATE "foo";', done)
+    })
+
+    beforeEach(function () {
+      prevDebug = ao.logLevel
+      if (this.currentTest.title === 'should trace a prepared query') {
+        //ao.logLevel += ',test:message'
+      }
+    })
+
+    afterEach(function () {
+      ao.logLevel = prevDebug
+    })
+
+    // test to work around UDP dropped message issue
+    it('UDP might lose a message', function (done) {
+      helper.test(emitter, function (done) {
+        ao.instrument('fake', ao.noop)
+        done()
+      }, [
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+              msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
     })
 
     it('should sanitize SQL by default', function () {
