@@ -1,6 +1,13 @@
 var helper = require('../helper')
 var ao = helper.ao
 
+var pkg
+try {
+  pkg = require('co-render/package')
+} catch (e) {
+  pkg = {version: '0.0.0'}
+}
+
 // Check for generator support
 var canGenerator = false
 try {
@@ -11,7 +18,7 @@ try {
 
 function noop () {}
 
-describe('probes/co-render', function () {
+describe('probes/co-render ' + pkg.version, function () {
   var emitter
   var tests = canGenerator && require('./koa')
 
@@ -49,7 +56,6 @@ describe('probes/co-render', function () {
   if ( ! canGenerator) {
     it.skip('should support co-render', noop)
     it.skip('should skip when disabled', noop)
-    it.skip('should include RUM scripts', noop)
   } else {
     it('should support co-render', function (done) {
       tests.render(emitter, done)
@@ -57,10 +63,5 @@ describe('probes/co-render', function () {
     it('should skip when disabled', function (done) {
       tests.render_disabled(emitter, done)
     })
-    /* TODO BAM remove
-    it('should include RUM scripts', function (done) {
-      tests.rum(emitter, done)
-    })
-    // */
   }
 })
