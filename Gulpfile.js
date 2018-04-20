@@ -120,7 +120,7 @@ gulp.task('docs', function () {
         name: pkg.name,
         description: pkg.description,
         version: pkg.version,
-        url: 'https://traceview.solarwinds.com/'
+        url: 'https://www.appoptics.com/'
       }
     }))
     .pipe(gulp.dest('./docs'))

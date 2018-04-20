@@ -2,22 +2,19 @@
 
 ## Dev environment
 
-The dev environments for [appoptics](https://github.com/librato/node-appoptics)
-and [appoptics-bindings](https://github.com/librato/node-appoptics-bindings)
+The dev environments for [appoptics-apm](https://github.com/appoptics/appoptics-apm-node)
+and [appoptics-bindings](https://github.com/appoptics/appoptics-bindings-node)
 consist of a [vagrant](https://www.vagrantup.com/) virtual machine with
-liboboe/tracelyzer and latest stable version of node installed. It reports
-to the [stephenappneta](http://stephenappneta.tv.solarwinds.com) organization.
+liboboe/tracelyzer and latest stable version of node installed.
 
 ### Setup
 
 The primary environment for testing is Docker. There is a complete environment
 for testing defined in `docker-compose.yml`. It depends on `collectors` that are
 defined in a directory parallel to to this directory. For example, if this (the
-node-appoptics directory) is `/solarwinds/ao` then the oboe-test repository must
+appoptics-apm-node directory) is `/solarwinds/ao` then the oboe-test repository must
 be cloned into `/solarwinds/oboe-test/` because `docker-compose.yml` references
 those docker files via `../oboe-test/`
-
-
 
 To start the dev environment, ensure vagrant and virtualbox are installed, then
 you can simply run `vagrant up` to start the environment and `vagrant ssh` to
@@ -41,19 +38,19 @@ rebuild the container.
 
 The full test suite can be run inside the `main` container (see `docker-compose.yml`).
 The main container name will be prefixed the name of the directory it is
-located in. While the github directory is `node-appoptics`, the directory name that
+located in. While the github directory is `appoptics-apm-node`, the directory name that
 was used for development is `ao` so the `main` container will be `ao_main_1`. The
 `docker-compose.yml` file requires the `librato/oboe-test` files are located in the
 relative `../oboe-test/`. This is not strictly necessary for testing alone and will
 be changed. So to get the test environment running:
 
-1. in the node-appoptics root directory `docker-compose build`
+1. in the appoptics-apm-node root directory `docker-compose build`
    - needs to use intermediate image to avoid multiple apt-get steps.
    - needs to remove tracelyzer install.
-2. when done `docker exec -it ao_main_1 /bin/bash` (if node-appoptics dir is named ao)
+2. when done `docker exec -it ao_main_1 /bin/bash` (if appoptics-apm-node dir is named ao)
 3. (at ao_main_1 bash prompt) cd appoptics
 4. npm install (should this be saved as part of the image?)
-5. npm run preinstall (this fetches and builds node-appoptics-bindings)
+5. npm run preinstall (this fetches and builds appoptics-bindings-node)
    - needs to be changed to npm script that will be run automatically
 6. to run tests `./node_modules/gulp/bin/gulp.js test` (or targets as show below)
    - should gulp be installed globally?
@@ -80,7 +77,7 @@ While developing a branch for the move from Traceview to AppOptics the repo
 is not public. In order to fetch from a private repo it is necessary to
 provide credentials of some sort. So `install-appoptics-bindings.js` is a
 `preinstall` script. The environment variable `AO_TEST_PACKAGE` specifies
-the source of the `node-appoptics-bindings` package because `npm` will, by
+the source of the `appoptics-bindings` package because `npm` will, by
 default, fetch the head of the master branch. In order to authorize for the
 private repository use either the environment variable `AO_TEST_GITAUTH` (a
 git Personal Access Token [tokens]) or use both `AO_TEST_GITUSER` and
