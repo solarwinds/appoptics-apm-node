@@ -120,7 +120,7 @@ elif [[ "$ARG" = "bindings" ]]; then
     # auth token in the variable AO_TEST_GITAUTH, will cause "npm run postinstall"
     # to fetch appoptics-bindings directly from github. documentation is the code
     # in install-appoptics-bindings.js
-    export AO_TEST_PACKAGE=librato/node-appoptics-bindings#per-request-v2
+    export AO_TEST_PACKAGE=appoptics/node-appoptics-bindings
     # this requires that one's git access token is already defined.
     export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
 elif [[ "$ARG" = "help" ]]; then
