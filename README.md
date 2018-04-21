@@ -57,38 +57,6 @@ npm install --save appoptics-apm@latest
 
 Documentation coming soon!
 
-## Testing
-
-Tests are written using [mocha](http://npmjs.org/package/mocha), and can be
-found in the `test` folder. Run them with:
-
-```
-npm test
-```
-
-#### Coverage reports
-
-Test coverage reporting is also included. You can get a summary by running:
-
-```
-npm run coverage:report
-```
-
-Or, for a more in-depth view that shows reached areas of code, run:
-
-```
-npm run coverage:html
-```
-
-## Auto Documentation
-
-Automatatic documentation is included via [yuidoc](http://yui.github.io/yuidoc/)
-and can be generated and viewed with:
-
-```
-npm run docs
-```
-
 ## Support
 
 If you find a bug or would like to request an enhancement, feel free to file
@@ -137,8 +105,8 @@ which is a dependency of this package.  It is used to report host and
 performance metrics to AppOptics servers.
 
 If you would like to work with the C++ extension, clone the github
-`node-appoptics-bindings` repository and work with that. It's possible to
-direct this package, `appoptics-apm`, to use a non-standard source of `node-appoptics-bindings`
+`appoptics-bindings-node` repository and work with that. It's possible to
+direct this package, `appoptics-apm`, to use a non-standard source of `appoptics-bindings-node`
 by setting the environment variable `AO\_TEST_PACKAGE`. See the file `install-appoptics-bindings.js` for further details.
 
 ## License
