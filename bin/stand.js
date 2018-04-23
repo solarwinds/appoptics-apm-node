@@ -1,13 +1,15 @@
+'use strict'
+
 //
 // Load our various dependencies
 //
-var MongoDB = require('mongodb').MongoClient
-var redis = require('redis').createClient()
-var cql = require('node-cassandra-cql')
-var postgres = require('pg')
-var https = require('https')
-var http = require('http')
-var ao = require('..')
+const MongoDB = require('mongodb').MongoClient
+const redis = require('redis').createClient()
+const cassandra = require('cassandra-driver')
+const postgres = require('pg')
+const https = require('https')
+const http = require('http')
+const ao = require('..')
 
 //
 // Load task file
@@ -26,8 +28,8 @@ exports.getContext = function (context, done) {
     // Some stuff works as-is
     //
     function (done) {
-      context.cql = new cql.Client({
-        hosts: ['localhost'],
+      context.cassandra = new cassandra.Client({
+        contactPoints: ['localhost'],
         keyspace: 'test'
       })
       context.redis = redis
@@ -41,7 +43,7 @@ exports.getContext = function (context, done) {
     // Mongo needs to connect and add the db to the context
     //
     function (done) {
-      var address = 'mongodb://localhost/test'
+      const address = 'mongodb://localhost/test'
       MongoDB.connect(address, function (err, db) {
         if (err) return done(err)
         context.mongo = db
@@ -54,9 +56,9 @@ exports.getContext = function (context, done) {
     // Postgres also needs to connect and add db to context
     //
     function (done) {
-      var pg = context.pg = postgres
+      const pg = context.pg = postgres
       pg.address = 'postgres://postgres@localhost/test'
-      var client = new pg.Client(pg.address)
+      const client = new pg.Client(pg.address)
       client.connect(function (err) {
         if (err) return done(err)
         pg.db = client
@@ -72,10 +74,10 @@ exports.getContext = function (context, done) {
 // Helper to connect to databases in parallel before adding to context
 //
 function parallel (tasks, done) {
-  var pending = tasks.length
+  let pending = tasks.length
   function taskComplete (err) {
     if (err) throw err
-    if ( ! --pending) done()
+    if (!--pending) done()
   }
 
   tasks.forEach(function (task) {

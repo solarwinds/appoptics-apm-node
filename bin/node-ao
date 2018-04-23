@@ -1,25 +1,27 @@
 #!/usr/bin/env node
-var min = require('minimist')
-var path = require('path')
+'use strict'
+
+const min = require('minimist')
+const path = require('path')
 
 // Get and parse argv
-var baseArgv = process.argv.slice(2)
-var argv = min(baseArgv, {
+const baseArgv = process.argv.slice(2)
+const argv = min(baseArgv, {
   boolean: true
 })
 
 // Get file path
-var file = argv._[0]
+const file = argv._[0]
 
 // Print usage info, where necessary
-if ( ! file || argv.help) {
+if (!file || argv.help) {
   console.warn('Usage:  node-ao [file] [arg]...')
   process.exit()
 }
 
 // Find position of file in argv
-var start = 0
-for (var i = 0; i < baseArgv.length; i++) {
+let start = 0
+for (let i = 0; i < baseArgv.length; i++) {
   if (baseArgv[i] === file) {
     start = i
     break
@@ -29,23 +31,24 @@ for (var i = 0; i < baseArgv.length; i++) {
 // Remove wrapper args
 process.argv = process.argv.slice(0, 2).concat(baseArgv.slice(start))
 
-// Load traceview
-global.tv = require('..')
+// Load appoptics
+/*global ao*/
+global.ao = require('..')
 
 // Set trace mode, if available
 if (argv.always) {
-  tv.sampleMode = 'always'
+  ao.sampleMode = 'always'
 } else if (argv.never) {
-  tv.sampleMode = 'never'
+  ao.sampleMode = 'never'
 }
 
 // Set sample rate, if available
 if (argv.sample_rate) {
-  tv.sampleRate = argv.sample_rate
+  ao.sampleRate = argv.sample_rate
 }
 
 // Define list of flags to pass through
-var passthroughs = [
+const passthroughs = [
   'sampleRate',
   'sampleMode',
   'host',
@@ -55,12 +58,12 @@ var passthroughs = [
 // Pass through flag values to configs
 passthroughs.forEach(function (name) {
   if (argv[name]) {
-    tv[name] = argv[name]
+    ao[name] = argv[name]
   }
 
-  var dashed = dash(name)
+  const dashed = dash(name)
   if (argv[dashed]) {
-    tv[name] = argv[dashed]
+    ao[name] = argv[dashed]
   }
 })
 
