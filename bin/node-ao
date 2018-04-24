@@ -58,22 +58,8 @@ passthroughs.forEach(function (name) {
   if (argv[name]) {
     ao[name] = argv[name]
   }
-
-  const dashed = dash(name)
-  if (argv[dashed]) {
-    ao[name] = argv[dashed]
-  }
 })
 
 // Load entrypoint file
 require(path.resolve(process.cwd(), file))
 
-//
-// Helpers
-//
-
-function dash (str) {
-  return str.replace(/([A-Z])/g, function (upper) {
-    return '-' + upper.toLowerCase()
-  })
-}
