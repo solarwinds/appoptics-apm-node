@@ -1,3 +1,5 @@
+'use strict'
+
 var ao = exports.ao = require('..')
 var realPort = ao.port
 ao.skipSample = true
@@ -149,9 +151,6 @@ exports.doChecks = function (emitter, checks, done) {
       // tests have less checks than messages
       emitter.removeListener('message', onMessage)
       done()
-      if (emitter.forward) {
-        console.log('Trace Link:', exports.traceLink(msg['X-Trace']))
-      }
     }
   }
 
@@ -265,10 +264,6 @@ exports.after = function (n, done) {
   return function () {
     --n || done()
   }
-}
-
-exports.traceLink = function (id) {
-  return 'https://stephenappneta.ao.solarwinds.com/traces/view/' + id.substr(2, 40)
 }
 
 function Address (host, port) {
