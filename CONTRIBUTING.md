@@ -138,8 +138,9 @@ I've used `npm version patch|minor|major` for this, but it can be done manually
 if you prefer.
 
 After the version bump commit has been made, make sure it is tagged and push the
-commit and tags to git. Note that `npm version *` creates the tag itself, so
-you can skip that step if you use it.
+commit using `git push <tag-name>`. This pushes the tagged commit and the tag. If
+you just `git push` the tag will not be pushed. Note that `npm version` creates the
+tag in git; you don't need to create it manually.
 
 After all commits and tags have been pushed to git, it's simply a matter of
 running `npm publish` to send the latest version to the npm registry.
