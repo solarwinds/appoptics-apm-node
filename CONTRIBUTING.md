@@ -138,7 +138,7 @@ I've used `npm version patch|minor|major` for this, but it can be done manually
 if you prefer.
 
 After the version bump commit has been made, make sure it is tagged and push the
-commit using `git push <tag-name>`. This pushes the tagged commit and the tag. If
+commit using `git push origin <tag-name>`. This pushes the tagged commit and the tag. If
 you just `git push` the tag will not be pushed. Note that `npm version` creates the
 tag in git; you don't need to create it manually.
 
