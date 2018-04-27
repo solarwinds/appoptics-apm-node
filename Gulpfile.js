@@ -1,14 +1,16 @@
-var fs = require('fs')
-var path = require('path')
-var gulp = require('gulp')
-var babel = require('gulp-babel')
-var mocha = require('gulp-mocha')
-var matcha = require('gulp-matcha')
-var yuidoc = require('gulp-yuidoc')
-var istanbul = require('gulp-istanbul')
-var spawn = require('child_process').spawn
-var mkdirp = require('mkdirp')
-var pkg = require('./package')
+'use strict'
+
+const fs = require('fs')
+const path = require('path')
+const gulp = require('gulp')
+const babel = require('gulp-babel')
+const mocha = require('gulp-mocha')
+const matcha = require('gulp-matcha')
+const yuidoc = require('gulp-yuidoc')
+const istanbul = require('gulp-istanbul')
+const spawn = require('child_process').spawn
+const mkdirp = require('mkdirp')
+const pkg = require('./package')
 
 // Ensure existence of dist and probe directories
 gulp.task('dist', function (cb) {
@@ -19,7 +21,7 @@ gulp.task('dist/probes', ['dist'], function (cb) {
 })
 
 // Describe basic tasks and their associated files
-var tasks = {
+const tasks = {
   unit: {
     lib: 'dist/*.js',
     test: 'test/*.test.js',
@@ -33,12 +35,13 @@ var tasks = {
 }
 
 // Make individual unit test tasks
-var unitTests = fs.readdirSync('test/')
-unitTests.forEach(function(file) {
+const unitTests = fs.readdirSync('test/')
+unitTests.forEach(function (file) {
   if (!/.+\.test\.js$/.test(file)) return
 
-  var name = file.replace(/^(.+)\.[^\.]+\.js/, '$1')
-  var task = tasks['unit:' + name] = {
+  const name = file.replace(/^(.+)\.[^\.]+\.js/, '$1')
+  // add the task to the dictionary.
+  tasks['unit:' + name] = {
     lib: 'dist/*.js',
     test: 'test/' + file,
     bench: 'test/' + name + '.bench.js'
@@ -46,19 +49,19 @@ unitTests.forEach(function(file) {
 })
 
 // Describe probe tasks automatically
-var probes = fs.readdirSync('lib/probes')
+const probes = fs.readdirSync('lib/probes')
 probes.forEach(function (probe) {
-  var name = probe.replace(/\.js$/, '')
-  var task = tasks['probe:' + name] = {
+  const name = probe.replace(/\.js$/, '')
+  const task = tasks['probe:' + name] = {
     lib: 'dist/probes/' + probe
   }
 
-  var test = 'test/probes/' + name + '.test.js'
+  const test = 'test/probes/' + name + '.test.js'
   if (fs.existsSync(test)) {
     task.test = test
   }
 
-  var bench = 'test/probes/' + name + '.bench.js'
+  const bench = 'test/probes/' + name + '.bench.js'
   if (fs.existsSync(bench)) {
     task.bench = bench
   }
@@ -68,7 +71,7 @@ probes.forEach(function (probe) {
 makeBuildTask('build', 'dist/**/*.js')
 makeBuildTask('build:probe', 'dist/probe/*.js')
 Object.keys(tasks).forEach(function (name) {
-  var task = tasks[name]
+  const task = tasks[name]
   if (task.lib) {
     makeBuildTask('build:' + name, task.lib)
   }
@@ -77,7 +80,7 @@ Object.keys(tasks).forEach(function (name) {
 // Create test tasks
 makeTestTask('test', 'test/**/*.test.js')
 Object.keys(tasks).forEach(function (name) {
-  var task = tasks[name]
+  const task = tasks[name]
   if (task.test) {
     makeTestTask('test:' + name, task.test)
   }
@@ -86,7 +89,7 @@ Object.keys(tasks).forEach(function (name) {
 // Create coverage tasks
 makeCoverageTask('coverage', 'test/**/*.test.js')
 Object.keys(tasks).forEach(function (name) {
-  var task = tasks[name]
+  const task = tasks[name]
   if (task.test) {
     makeCoverageTask('coverage:' + name, task.test, task.lib)
   }
@@ -95,7 +98,7 @@ Object.keys(tasks).forEach(function (name) {
 // Create benchmark tasks
 makeBenchTask('bench', 'test/**/*.bench.js')
 Object.keys(tasks).forEach(function (name) {
-  var task = tasks[name]
+  const task = tasks[name]
   if (task.bench) {
     makeBenchTask('bench:' + name, task.bench)
   }
@@ -130,9 +133,9 @@ gulp.task('docs', function () {
 gulp.task('watch', function () {
   Object.keys(tasks).forEach(function (name) {
     if (name === 'probes') return
-    var task = tasks[name]
+    const task = tasks[name]
 
-    var shouldBench = task.bench && ! process.env.SKIP_BENCH
+    const shouldBench = task.bench && !process.env.SKIP_BENCH
 
     // These spawns tasks in a child processes. This is useful for
     // preventing state persistence between runs in a watcher and
@@ -150,9 +153,9 @@ gulp.task('watch', function () {
     }
 
     function sequence (steps) {
-      function next() {
-        var step = steps.shift()
-        var v = step()
+      function next () {
+        const step = steps.shift()
+        const v = step()
         if (steps.length) {
           v.on('close', next)
         }
@@ -166,7 +169,7 @@ gulp.task('watch', function () {
     ])
 
     gulp.watch([ task.lib ], function () {
-      var steps = []
+      const steps = []
       if (task.test) steps.push(coverage)
       if (shouldBench) steps.push(bench)
       return sequence(steps)
@@ -198,16 +201,15 @@ function tester () {
   return mocha({
     reporter: 'spec',
     timeout: 5000
-  })
-  .once('error', function (e) {
+  }).once('error', function (e) {
     console.error(e.stack)
     process.exit(1)
   })
 }
 
 function makeBuildTask (name, files) {
-  var p = files.replace(/^dist/, 'lib')
-  var d = files.slice(0, files.length - path.basename(files).length - 1)
+  const p = files.replace(/^dist/, 'lib')
+  let d = files.slice(0, files.length - path.basename(files).length - 1)
   if (d === 'dist/**') d = 'dist'
   gulp.task(name, ['dist/probes'], function () {
     return gulp.src(p)
@@ -220,9 +222,9 @@ function makeBuildTask (name, files) {
 
 function makeBenchTask (name, files) {
   gulp.task(name, function (done) {
-    var helper = require('./test/helper')
+    const helper = require('./test/helper')
 
-    var ao = helper.ao
+    const ao = helper.ao
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
 
@@ -230,9 +232,11 @@ function makeBenchTask (name, files) {
       gulp.src(files, {
         read: false
       })
-      .pipe(matcha())
-      .once('end', process.exit)
+        .pipe(matcha())
+        .once('end', process.exit)
     })
+    // process.exit above exits but eslint like done to be used
+    done()
   })
 }
 
@@ -241,8 +245,8 @@ function makeTestTask (name, files) {
     return gulp.src(files, {
       read: false
     })
-    .pipe(tester())
-    .once('end', process.exit)
+      .pipe(tester())
+      .once('end', process.exit)
   })
 }
 
