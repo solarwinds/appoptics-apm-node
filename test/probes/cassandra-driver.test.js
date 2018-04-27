@@ -1,11 +1,11 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
-var conf = ao.probes['cassandra-driver']
-var log = ao.loggers
+'use strict'
 
-var should = require('should')
-var hosts = helper.Address.from(
+const helper = require('../helper')
+const ao = helper.ao
+const conf = ao.probes['cassandra-driver']
+
+const should = require('should')  // eslint-disable-line no-unused-vars
+const hosts = helper.Address.from(
   process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
@@ -17,26 +17,25 @@ if (helper.skipTest(module.filename)) {
 // Do not load unless stream.Readable exists.
 // It will fail silently, stalling the tests.
 //
-var cassandra
-var stream = require('stream')
-var hasReadableStream = typeof stream.Readable !== 'undefined'
+let cassandra
+const stream = require('stream')
+const hasReadableStream = typeof stream.Readable !== 'undefined'
 if (hasReadableStream) {
   cassandra = require('cassandra-driver')
 }
-var pkg = require('cassandra-driver/package')
+const pkg = require('cassandra-driver/package')
 
 describe('probes.cassandra-driver ' + pkg.version, function () {
   this.timeout(10000)
-  var emitter
-  var ctx = {}
-  var client
-  var db
-  var prevDebug
+  const ctx = {}
+  let emitter
+  let client
+  let prevDebug
 
   //
   // Define some general message checks
   //
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'cassandra')
       msg.should.have.property('Label', 'entry')
@@ -72,8 +71,11 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     //
     // Construct database client
     //
+    // TODO BAM add cassandra DB server version output.
+    //select peer, release_version from system.peers;
+    //select release_version from system.local;
     before(function (done) {
-      var testClient = new cassandra.Client({
+      const testClient = new cassandra.Client({
         contactPoints: hosts.map(function (v) { return v.host }),
         protocolOptions: { port: hosts[0].port }
       })
@@ -119,11 +121,11 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
         ao.instrument('fake', ao.noop)
         done()
       }, [
-          function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
-              msg.should.have.property('Layer', 'fake')
-          }
-        ], done)
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
     })
 
     it('should sanitize SQL by default', function () {
@@ -254,7 +256,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
       }
     ], next)
 
-    function next(err) {
+    function next (err) {
       if (err) return after(err)
 
       conf.sanitizeSql = true
@@ -286,18 +288,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
       done(err)
     }
 
-    function range (end, start, step) {
-      step = step || 1
-      start = start || 0
-      inc = start > end ? -step : step
-      var items = []
-      for (var i = start; i < end; i += inc) {
-        items.push(i)
-      }
-      return items
-    }
-
-    function next(err) {
+    function next (err) {
       if (err) return after(err)
       helper.test(emitter, helper.run(ctx, 'cassandra-driver/batch'), [], after)
     }
@@ -305,7 +296,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
 
   function test_query_shortening (done) {
     helper.test(emitter, function (done) {
-      var query = 'SELECT '
+      const query = 'SELECT '
         + range(300).map(function () { return 'now()' }).join(', ')
         + ' FROM system.local'
 
@@ -328,9 +319,9 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     function range (end, start, step) {
       step = step || 1
       start = start || 0
-      inc = start > end ? -step : step
-      var items = []
-      for (var i = start; i < end; i += inc) {
+      const inc = start > end ? -step : step
+      const items = []
+      for (let i = start; i < end; i += inc) {
         items.push(i)
       }
       return items
