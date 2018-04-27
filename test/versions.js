@@ -1,5 +1,7 @@
-var semver = require('semver')
-var modules = module.exports = []
+'use strict'
+
+const semver = require('semver')
+const modules = module.exports = []
 
 test('bcrypt',              '>= 0.7.4')
 test('bluebird')
@@ -31,7 +33,7 @@ test('memcached', version('>= 4.0.0') ? [
 
 // NOTE: Versions from mid 1.4.x to early 2.x are excluded due to mongodb bugs
 // NOTE: DB version impacts behaviour of driver version, so support range varies
-var MONGODB_VERSION = parseInt(process.env.MONGODB_VERSION || '2', 10)
+const MONGODB_VERSION = parseInt(process.env.MONGODB_VERSION || '2', 10)
 if (MONGODB_VERSION === 2) {
   test('mongodb', [
                             '1.2.9 - 1.4.12',
@@ -50,8 +52,7 @@ test('mongodb-core', '>= 1.1.0')
 
 test('mongoose',     '>= 2.2.1 < 4.2 || >= 4.2.2')
 
-test('mysql',               '> 0.9.0')
-test('node-cassandra-cql',  '>= 0.2.0')
+test('mysql',               '>= 2.0.0')
 test('oracledb')
 
 // Exclude versions older than 2.8.4 on newer node versions,
@@ -77,7 +78,7 @@ test('amqplib',             '>= 0.2.0')
 function test (name, range, task) {
   modules.push({
     name: name,
-    task: task || 'gulp test:probe:' + name,
+    task: task || './node_modules/gulp/bin/gulp.js test:probe:' + name,
     range: range || '*',
     timeout: 1000 * 60
   })
