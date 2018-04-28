@@ -3,6 +3,9 @@
 const semver = require('semver')
 const modules = module.exports = []
 
+test('amqp', '>= 0.1.8')
+test('amqplib', '>= 0.2.0')
+
 test('bcrypt',              '>= 0.7.4')
 test('bluebird')
 
@@ -50,10 +53,7 @@ test('raw-body')
 test('redis',               '>= 0.8.0')
 test('restify',             '>= 2.0.0 < 2.0.2 || >= 2.0.3')
 test('tedious',             '>= 0.1.5')
-test('amqp',                '>= 0.1.8')
-test('director',            '>= 1.2.0')
 
-test('amqplib',             '>= 0.2.0')
 
 //
 // Helpers
