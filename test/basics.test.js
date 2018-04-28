@@ -1,9 +1,9 @@
-var helper = require('./helper')
-var should = require('should')
-var debug = require('debug')
-var http = require('http')
-var ao = require('..')
-var Span = ao.Span
+'use strict'
+
+const should = require('should') // eslint-disable-line no-unused-vars
+const debug = require('debug')
+const ao = require('..')
+const Span = ao.Span
 
 describe('basics', function () {
   it('should set trace mode', function () {
@@ -68,38 +68,48 @@ describe('basics', function () {
   })
 
   it('should set logging', function () {
-    var called = false
-    var real = debug.enable
+    let called = false
+    const real = debug.enable
     debug.enable = function () {
       called = true
       debug.enable = real
     }
-    var before = ao.logLevel
+    const before = ao.logLevel
     ao.logLevel = 'span'
     ao.logLevel.should.equal('span')
     called.should.equal(true)
     ao.logLevel = before
   })
 
+  it('should add and remove logging', function () {
+    const add = 'info,span'
+    const previous = ao.logLevel
+    const expected = previous ? previous + ',' + add : add
+    ao.logLevelAdd(add)
+    ao.logLevel.should.equal(expected)
+    ao.logLevelRemove(add)
+    ao.logLevel.should.equal(previous)
+  })
+
   it('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
-    var span = new Span('test')
+    const span = new Span('test')
     span.run(function () {
       ao.tracing.should.be.true
     })
   })
 
   it('should support sampling', function () {
-    var skipSample = ao.skipSample
+    const skipSample = ao.skipSample
     ao.skipSample = false
     ao.sampleMode = 'always'
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    var s = ao.sample('test')
+    let s = ao.sample('test')
     s.should.not.be.false
 
     ao.sampleRate = 1
-    var samples = []
-    for (var i = 0; i < 1000; i++) {
+    const samples = []
+    for (let i = 0; i < 1000; i++) {
       s = ao.sample('test')
       samples.push(!!s[0])
     }
@@ -110,7 +120,7 @@ describe('basics', function () {
   it('should not call sampleRate setter from sample function', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
-    var skipSample = ao.skipSample
+    const skipSample = ao.skipSample
     ao.skipSample = false
 
     function after (err) {
