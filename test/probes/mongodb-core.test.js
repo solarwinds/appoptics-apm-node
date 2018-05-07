@@ -14,6 +14,8 @@ requirePatch.disable()
 var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
+// need to make decisions based on major version
+var majorVersion = semver.major(pkg.version)
 
 var hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
@@ -23,7 +25,7 @@ var hosts = {
 }
 
 // version 3 of mongodb requires server 2.6+
-if (semver.satisfies(pkg.version, '>= 3.0.0')) {
+if (majorVersion >= 3) {
   delete hosts['2.4']
 }
 
