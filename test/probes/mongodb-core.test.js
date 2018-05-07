@@ -14,11 +14,17 @@ requirePatch.disable()
 var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
+
 var hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
   '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
   '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3:27017',
   'replica set': process.env.AO_TEST_MONGODB_SET
+}
+
+// version 3 of mongodb requires server 2.6+
+if (semver.satisfies(pkg.version, '>= 3.0.0')) {
+  delete hosts['2.4']
 }
 
 // if travis reset for now.
