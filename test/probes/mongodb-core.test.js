@@ -125,7 +125,10 @@ function makeTests (db_host, host, isReplicaSet) {
         reconnectInterval: 50
       })
 
-    server.on('error', done)
+    server.on('error', function (err) {
+      console.log('error connecting', err)
+      done()
+    })
     server.on('connect', function (_db) {
       ctx.mongo = db = _db
       done()
