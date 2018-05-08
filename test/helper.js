@@ -40,6 +40,7 @@ exports.skipTest = function (filename) {
 
 // if not specifically turning on error and warning debugging, turn it off
 if (!process.env.AO_TEST_DEBUG_LOGLEVEL) {
+  log.debug('AO_TEST_DEBUG_LOGLEVEL not set, turning off logging')
   var logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {return !item.startsWith('appoptics:')}).join(',')
   process.env.DEBUG = logs
