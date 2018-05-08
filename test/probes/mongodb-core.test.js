@@ -24,8 +24,7 @@ var hosts = {
   'replica set': process.env.AO_TEST_MONGODB_SET
 }
 
-// version 3 of mongodb requires protocol 2.6+ and removed the
-// 2.4 protocol driver.
+// version 3 of mongodb removed the 2.4 protocol driver.
 if (majorVersion >= 3) {
   delete hosts['2.4']
 }
