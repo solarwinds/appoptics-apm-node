@@ -131,11 +131,11 @@ services:
     ports:
       - "${AO_TEST_MONGO_2_6_HOST_PORT:-27017}:27017"
 
-  mongo_3:
-    image: "mongo_3"
+  mongo_3_0:
+    image: "mongo_3_0"
     build:
       context: test/docker/
-      dockerfile: mongo_3.yml
+      dockerfile: mongo_3_0.yml
     logging:
       options:
         max-file: "1"
