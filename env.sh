@@ -49,8 +49,8 @@ elif [[ "$ARG" = "bash" ]]; then
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
     # set this to ssl in order to use APPOPTICS_COLLECTOR
     export APPOPTICS_REPORTER=udp
-elif [[ "$ARG" = "bash-testing" ]]; then
-    # this is used primarily to run the full appoptics-apm test suite.
+
+    # the following are used primarily to run the full appoptics-apm test suite.
     # presumes docker containers are running and their ports are addressable
     # as localhost. the port overrides (e.g., AO_TEST_MYSQL_HOST_PORT) allow
     # existing local copies of the database that run on the standard port
@@ -80,6 +80,11 @@ elif [[ "$ARG" = "bash-testing" ]]; then
     export AO_TEST_REDIS_3_0=localhost:6379
     # the tedious probe tests SQL Server.
     export AO_TEST_SQLSERVER_EX=localhost:1433
+elif [[ "$ARG" = "bam-local" ]]; then
+    # I have local copies running so this reassigns
+    # the ports that docker uses.
+    AO_TEST_MONGO_2_6_HOST_PORT=27027
+    AO_TEST_MYSQL_HOST_PORT=33306
 elif [[ "$ARG" = "travis" ]]; then
     # presume a travis-ci environment. servers should be running
     # as localhost on standard ports.
