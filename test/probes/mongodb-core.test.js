@@ -14,11 +14,19 @@ requirePatch.disable()
 var pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
+// need to make decisions based on major version
+var majorVersion = semver.major(pkg.version)
+
 var hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
   '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
-  '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3:27017',
+  '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
   'replica set': process.env.AO_TEST_MONGODB_SET
+}
+
+// version 3 of mongodb removed the 2.4 protocol driver.
+if (majorVersion >= 3) {
+  delete hosts['2.4']
 }
 
 // if travis reset for now.
@@ -117,7 +125,7 @@ function makeTests (db_host, host, isReplicaSet) {
     })
 
     var server = hosts.length > 1
-      ? new mongodb.ReplSet(hosts, { setName: 'default' })
+      ? new mongodb.ReplSet(hosts, {setName: 'default'})
       : new mongodb.Server({
         host: hosts[0].host,
         port: hosts[0].port,
@@ -125,7 +133,10 @@ function makeTests (db_host, host, isReplicaSet) {
         reconnectInterval: 50
       })
 
-    server.on('error', done)
+    server.on('error', function (err) {
+      console.log('error connecting', err)
+      done()
+    })
     server.on('connect', function (_db) {
       ctx.mongo = db = _db
       done()

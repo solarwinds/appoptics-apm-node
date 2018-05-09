@@ -134,7 +134,7 @@ to refactor core components.
 When you are ready to release, rebase your branches off master, run the tests,
 then merge to master and repeat for subsequent branches. When all the things
 planned for release have been merged to master, create a version bump commit.
-I've used `npm version patch|minor|major` for this, but it can be done manually
+I've used `npm version major.minor.patch` for this, but it can be done manually
 if you prefer.
 
 After the version bump commit has been made, make sure it is tagged and push the
