@@ -28,8 +28,7 @@ test('koa')
 test('levelup', '>= 0.17.0')
 test('memcached', '>= 2.2.0')
 
-// MongoDB 2.x support is handle via mongodb-core instrumentation
-test('mongodb-core', '>= 1.1.0')
+test('mongodb-core', '>= 2.0.0')
 
 test('mongoose', '>= 2.2.1 < 4.2 || >= 4.2.2')
 
