@@ -154,7 +154,7 @@ services:
         max-size: 50m
     ports:
       - "27020:27016"
-      - "27021:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}"
+      - "27021:27017"
       - "27022:27018"
     environment:
       - "REPLSETMEMBERS=3"
