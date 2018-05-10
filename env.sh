@@ -103,8 +103,8 @@ elif [[ "$ARG" = "travis" ]]; then
     export AO_TEST_ORACLE_USERNAME=system
     export AO_TEST_ORACLE_PASSWORD=oracle
     # defaults should be fine.
-    #export AO_TEST_POSTGRES_USER=postgres
-    #export AO_TEST_POSTGRES_PASSWORD=
+    #export AO_TEST_POSTGRES_USERNAME=postgres
+    #export AO_TEST_POSTGRES_PASSWORD=xyzzy
     export AO_TEST_POSTGRES=localhost:5432
     export AO_TEST_RABBITMQ_3_5=localhost:5672
     export AO_TEST_REDIS_3_0=localhost:6379

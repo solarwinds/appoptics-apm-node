@@ -13,13 +13,12 @@ var pkg = require('pg/package')
 var env = process.env
 var addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
 // using a null password is valid.
-var password = 'AO_TEST_POSTGRES_PASSWORD' in env
-  ? env.AO_TEST_POSTGRES_PASSWORD
-  : (env.DATABASE_POSTGRESQL_PASSWORD || 'xyzzy')
+var password = ('AO_TEST_POSTGRES_PASSWORD' in env) ? env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
+
 var auth = {
   host: addr.host,
   port: addr.port,
-  user: env.AO_TEST_POSTGRES_USER || env.DATABASE_POSTGRESQL_USERNAME || 'postgres',
+  user: env.AO_TEST_POSTGRES_USERNAME || 'postgres',
   password: password,
   database: 'test'
 }
