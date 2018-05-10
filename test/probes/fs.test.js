@@ -269,18 +269,6 @@ describe('probes.fs', function () {
       name: 'lstat',
       args: ['fs-output/foo.bar.link']
     },
-    // fs.lchown
-    {
-      type: 'path',
-      name: 'lchown',
-      args: ['fs-output/foo.bar.link', process.getuid(), process.getgid()]
-    },
-    // fs.lchmod
-    {
-      type: 'path',
-      name: 'lchmod',
-      args: ['fs-output/foo.bar.link', 0777]
-    },
     // fs.rename
     {
       type: 'link',
