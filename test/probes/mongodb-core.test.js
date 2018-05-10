@@ -299,7 +299,14 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry, exit ]
+        var steps = [entry]
+
+        if (isReplicaSet) {
+          steps.push(entry)
+          steps.push(exit)
+        }
+
+        steps.push(exit)
 
         helper.test(emitter, function (done) {
           db.insert('test.data', [{ a: 1 }, { a: 2 }], options, done)
@@ -324,7 +331,14 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry, exit ]
+        var steps = [entry]
+
+        if (isReplicaSet) {
+          steps.push(entry)
+          steps.push(exit)
+        }
+
+        steps.push(exit)
 
         helper.test(emitter, function (done) {
           db.update('test.data', [{
@@ -448,7 +462,14 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry, exit ]
+        var steps = [entry]
+
+        if (isReplicaSet) {
+          steps.push(entry)
+          steps.push(exit)
+        }
+
+        steps.push(exit)
 
         helper.test(emitter, function (done) {
           db.remove('test.data', [{
