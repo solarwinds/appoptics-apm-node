@@ -275,9 +275,10 @@ function makeCoverageTask (name, files, libs) {
 
 function makeMatrixTask (name) {
   gulp.task('support-matrix:' + name, function () {
-    return spawn('alltheversions', [
-      '--module', name,
-      '--verbose'
+    return spawn('testeachversion', [
+      '--package', name,
+      '--verbose',
+      '--suppress', 'false'
     ], {
       stdio: 'inherit'
     })
