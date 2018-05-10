@@ -18,11 +18,11 @@ It's typically easiest to work at the bash shell and test against docker contain
 
 ### Running the basic test suite
 
-In order to run the full test suite various databases are required so that instrumentation for the database drivers can be tested. The test environment is created by first executing the bash command `source env.sh bash-testing` and then executing `docker-compose up -d`.
+In order to run the full test suite various databases are required so that instrumentation for the database drivers can be tested. The test environment is created by first executing the bash command `source env.sh bash` and then executing `docker-compose up -d`. This two steps will set environment variables and bring up docker containers that provide services (mostly databases) needed by the test suite.
 
 beta note: `docker-compose.yml` references docker via `../oboe-test/` that are not available yet. The `java-collector` and `scribe-collector` containers will not be found.
 
-With that in place, the full suite of tests can be run using `npm test`. It is also possible to run subsets of the tests by directly invoking gulp, e.g., `./node_modules/gulp/bin/gulp.js test:unit` to run only the unit tests or `./node_modules/gulp/bin/gulp.js test:probes` to run just the probes. More useful is the ability to test only one probe, `./node_modules/gulp/bin/gulp.js test:probe:mysql`.
+With that in place, the full suite of tests can be run using `npm test`. It is also possible to run subsets of the tests by directly invoking gulp, e.g., `gulp test:unit` to run only the unit tests or `gulp test:probes` to run just the probes. More useful is the ability to test only one probe, `gulp test:probe:mysql`. N.B. `gulp` is directly referenceable because `./node_modules/.bin` was added to `PATH` by `source env.sh bash`.
 
 There is also a `main` container created that can be used as a clean-room environment for testing. So if we have put the `appoptics-apm-node` code in the `ao` directory (because it is short and concise) docker will create the container `ao_main_1` as a default name. To use that, presuming the `docker-compose up -d` command has already been executed:
 
@@ -30,23 +30,18 @@ There is also a `main` container created that can be used as a clean-room enviro
 2. `cd appoptics` - change to the appoptics directory
 3. `npm install` - to install the package and dependencies
 4. `source env.sh docker` - to setup the java-collector (beta note: the "docker" arg needs to be updated)
-5. run tests using `npm test` or `./node_modules/gulp/bin/gulp.js test[:unit|probes|probe:${module}]`
+5. `source env.sh add-bin` - to add the node_module executables to the path
+5. run tests using `npm test` or `gulp.js test[:unit|probes|probe:${module}]`
 
 
-For testing, a mock reporter that listens on UDP port 7832 is used. When you source `env.sh` it will set environment variables appropriately. It does require that `AO_TOKEN_STG` exists in your environment. That is the service key that is used for access.  If using the java-collector or scribe-collector the key can be fake, like `f08da708-7f1c-4935-ae2e-122caf1ebe31`. If accessing a production environment it must be a valid key.
+For testing, a mock reporter that listens on UDP port 7832 is used (hardcoded in `test/helper.js`). The mock reporter intercepts UDP messages and checks them for correctness. When you source `env.sh` it will set environment variables appropriately. It does require that `AO_TOKEN_STG` exists in your environment. That is the service key that is used for access.  If using the java-collector or scribe-collector the key can be fake, like `f08da708-7f1c-4935-ae2e-122caf1ebe31`. If accessing a production or staging environment it must be a valid key.
 
 
 It is possible to use non-production versions of the `appoptics-bindings` package when developing. There are many different ways to do so ranging from npm's `link` command, manually copying files, and many options embedded in the npm `postinstall` script, `install-appoptics-bindings.js`. The primary documentation for this advanced feature is the code.
 
-
-The tests are done using a mock UDP server that receives the messages from the agent. This allows the test code to intercept the messages and check them for correctness. It is hardwired, in `test/helper.js`, to use port 7832. This requires that these environment variables must be set:
-- APPOPTICS\_REPORTER=udp
-- APPOPTICS\_REPORTER_UDP=localhost:7832
-
-
 ### Running the support matrix test suite
 
-(beta note: this is not yet functional)
+(beta note: this is method is lightly tested as most testing is done using `testeachversion` directly in ec2 instances.)
 
 The support matrix test suite runs the tests for a given module against every
 supported version of that module, down to patch releases. Note that this can
@@ -55,6 +50,8 @@ take a *very* long time!
 You can run the full support matrix test suite with `gulp support-matrix`,
 but generally you are better off scoping to a module by simply running
 `gulp support-matrix:${module}`
+
+In addition to the logging to the tty an output file is generated `node-<version>-summary-<timestamp>.json` which can be formatted more nicely by running `humanize <summary-file-name>` (if `node_modules/.bin` was added to PATH).
 
 ### Running the test suite with code coverage analysis
 
@@ -129,6 +126,9 @@ unrelated changes need to be made to the same file, which could potentially
 produce merge conflicts. In practice, this generally only comes up when I try
 to refactor core components.
 
+Documentation changes, changes to testing, and changes to the development
+environment are often committed directly to master.
+
 ### Releasing
 
 When you are ready to release, rebase your branches off master, run the tests,
@@ -137,8 +137,8 @@ planned for release have been merged to master, create a version bump commit.
 I've used `npm version major.minor.patch` for this, but it can be done manually
 if you prefer.
 
-After the version bump commit has been made, make sure it is tagged and push the
-commit using `git push origin <tag-name>`. This pushes the tagged commit and the tag. If
+After the version bump commit has been made, make sure it is tagged, committed, and pushed. Then
+be sure to push the tag using `git push origin <tag-name>`. If
 you just `git push` the tag will not be pushed. Note that `npm version` creates the
 tag in git; you don't need to create it manually.
 
