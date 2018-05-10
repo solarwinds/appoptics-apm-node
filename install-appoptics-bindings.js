@@ -5,15 +5,15 @@
 // to enable access to private repositories or alternate branches. it is expected
 // that this will only be used in development and testing.
 //
+var env = process.env
+
+// development setting to allow fetching on bindings from other than npm.
+if (!env.AO_TEST_FETCH_NON_STANDARD_BINDINGS) {
+  process.exit(0)
+}
 
 var spawn = require('child_process').spawnSync
 
-var env = process.env
-
-// development setting to prevent reinstalls when local changes have been made
-if (env.AO_TEST_BINDINGS_ARE_PREBUILT) {
-  process.exit(0)
-}
 
 // if neither form of git authorization is set then bindings should be fetchable
 // from a standard npm-like repository, so the default npm install should have worked
@@ -33,19 +33,19 @@ var prefix = ''
 if (env.AO_TEST_GITAUTH) {
   // an authentication token is specified
   prefix = 'https://' + env.AO_TEST_GITAUTH + ':x-oauth-basic@github.com/'
-  suffix = 'librato/node-appoptics-bindings'
+  suffix = 'appoptics/appoptics-bindings-node'
 
 } else if (env.AO_TEST_GITUSER && env.AO_TEST_GITPASS) {
   // a user and password are specified
   prefix = 'https://' + env.AO_TEST_GITUSER + ':' + env.AO_TEST_GITPASS + '@github.com/'
-  suffix = 'librato/node-appoptics-bindings'
+  suffix = 'appoptics/appoptics-bindings-node'
 }
 
 // if the package is specified override the default. this allows specifying a
 // branch other than master or a specific version. it also allows accessing a
 // public github repository by setting the name via AO_TEST_PACKAGE. if the
 // repository is public then none of the AO_TEST_GIT* environment variables
-// are needd.
+// are needEd.
 if (env.AO_TEST_PACKAGE) {
   suffix = env.AO_TEST_PACKAGE
 }
