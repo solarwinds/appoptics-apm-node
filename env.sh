@@ -28,6 +28,9 @@ elif [[ "$ARG" = "key" ]]; then
     fi
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:$PARAM
     echo "set APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY"
+elif [[ "$ARG" = "add-bin" ]]; then
+    # add ./node_modules/.bin to PATH
+    [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
 elif [[ "$ARG" = "docker" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
@@ -44,6 +47,10 @@ elif [[ "$ARG" = "docker-scribe" ]]; then
     export APPOPTICS_REPORTER=udp
 elif [[ "$ARG" = "bash" ]]; then
     # this is used primarily for manual interactive testing.
+    [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
+
+    # these are generally the right settings unless a collector
+    # is required.
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
