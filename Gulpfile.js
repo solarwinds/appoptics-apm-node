@@ -5,8 +5,6 @@ const path = require('path')
 const gulp = require('gulp')
 const babel = require('gulp-babel')
 const mocha = require('gulp-mocha')
-const matcha = require('gulp-matcha')
-const yuidoc = require('gulp-yuidoc')
 const istanbul = require('gulp-istanbul')
 const spawn = require('child_process').spawn
 const mkdirp = require('mkdirp')
@@ -95,14 +93,6 @@ Object.keys(tasks).forEach(function (name) {
   }
 })
 
-// Create benchmark tasks
-makeBenchTask('bench', 'test/**/*.bench.js')
-Object.keys(tasks).forEach(function (name) {
-  const task = tasks[name]
-  if (task.bench) {
-    makeBenchTask('bench:' + name, task.bench)
-  }
-})
 
 // Create support-matrix tasks
 require('./test/versions')
@@ -113,20 +103,6 @@ gulp.task('support-matrix', function () {
   return spawn('alltheversions', ['--verbose'], {
     stdio: 'inherit'
   })
-})
-
-// Create auto-docs task
-gulp.task('docs', function () {
-  return gulp.src('lib/**/*.js')
-    .pipe(yuidoc({
-      project: {
-        name: pkg.name,
-        description: pkg.description,
-        version: pkg.version,
-        url: 'https://www.appoptics.com/'
-      }
-    }))
-    .pipe(gulp.dest('./docs'))
 })
 
 // Create watcher task
@@ -217,26 +193,6 @@ function makeBuildTask (name, files) {
         presets: ['es2015-minus-generators']
       }))
       .pipe(gulp.dest(d))
-  })
-}
-
-function makeBenchTask (name, files) {
-  gulp.task(name, function (done) {
-    const helper = require('./test/helper')
-
-    const ao = helper.ao
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
-
-    global.appoptics = helper.appoptics(function () {
-      gulp.src(files, {
-        read: false
-      })
-        .pipe(matcha())
-        .once('end', process.exit)
-    })
-    // process.exit above exits but eslint like done to be used
-    done()
   })
 }
 
