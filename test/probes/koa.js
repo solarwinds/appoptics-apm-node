@@ -356,7 +356,7 @@ exports.rum = function (emitter, done) {
   var exit
 
   app.use(function* () {
-    exit = this.res._http_span.events.exit
+    exit = this.res._ao_http_span.events.exit
     this.body = yield render('rum')
   })
 
