@@ -20,63 +20,48 @@ ao.cfg.domainPrefix = true
 
 
 //
-// helper function to return expected results for:
+// helper function to return a function that returns expected results for:
 //   tx - transaction name
 //   c - controller
 //   a - action
 //   p - profile
 //
-
-var host       // hack - set by each test's request handler from req.headers.host
-
 function makeExpected (req, func) {
+  return function (what) {
+    var controller
+    var action
+    var result
 
-}
-
-function expected (what, method, path, func) {
-  var req = {
-    method: method,
-    route: {
-      path: path
-    },
-    headers: {
-      host: host
+    if (ao.probes.express.legacyTxname) {
+      // old way of setting these
+      // Controller = req.route.path
+      // Action = func.name || '(anonymous)'
+      controller = req.route.path
+      action = func.name || '(anonymous)'
+    } else {
+      // new way
+      // Controller = 'express.' + (func.name || '(anonymous)')
+      // Action = req.method + req.route.path
+      controller = 'express.' + (func.name || '(anonymous)')
+      action = req.method + req.route.path
     }
+
+    if (what === 'tx') {
+      result = controller + '.' + action
+    } else if (what === 'c') {
+      result = controller
+    } else if (what === 'a') {
+      result = action
+    } else if (what === 'p') {
+      result = controller + ' ' + action
+    }
+
+    if (ao.cfg.domainPrefix && what === 'tx') {
+      result = req.headers.host + '/' + result
+    }
+
+    return result
   }
-
-  var controller
-  var action
-  var result
-
-  if (ao.probes.express.legacyTxname) {
-    // old way of setting these
-    // Controller = req.route.path
-    // Action = func.name || '(anonymous)'
-    controller = req.route.path
-    action = func.name || '(anonymous)'
-  } else {
-    // new way
-    // Controller = 'express.' + (func.name || '(anonymous)')
-    // Action = req.method + req.route.path
-    controller = 'express.' + (func.name || '(anonymous)')
-    action = req.method + req.route.path
-  }
-
-  if (what === 'tx') {
-    result = controller + '.' + action
-  } else if (what === 'c') {
-    result = controller
-  } else if (what === 'a') {
-    result = action
-  } else if (what === 'p') {
-    result = controller + ' ' + action
-  }
-
-  if (ao.cfg.domainPrefix && what === 'tx') {
-    result = req.headers.host + '/' + result
-  }
-
-  return result
 }
 
 var pkg = require('express/package.json')
@@ -143,8 +128,9 @@ describe('probes.express ' + pkg.version, function () {
     // be tested.
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
     function hello (req, res) {
-      host = req.headers.host
+      expected = makeExpected(req, hello)
       res.send('done')
     }
 
@@ -166,9 +152,9 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('TransactionName', expected('tx', method, reqRoutePath, hello))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('TransactionName', expected('tx'))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -185,10 +171,12 @@ describe('probes.express ' + pkg.version, function () {
   it('should allow a custom TransactionName', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
-    var customReq = {method: method, route: {path: reqRoutePath}}
+    var customReq
+    var expected
 
     function hello(req, res) {
-      host = req.headers.host
+      customReq = req
+      expected = makeExpected(req, hello)
       res.send('done')
     }
     // supply a simple custom function that accesses only a small
@@ -220,11 +208,11 @@ describe('probes.express ' + pkg.version, function () {
         check['http-exit'](msg)
         var expectedCustom = custom(customReq)
         if (ao.cfg.domainPrefix) {
-          expectedCustom = host + '/' + expectedCustom
+          expectedCustom = customReq.headers.host + '/' + expectedCustom
         }
         msg.should.have.property('TransactionName', expectedCustom)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -242,12 +230,16 @@ describe('probes.express ' + pkg.version, function () {
   it('should profile each middleware', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
+
     function renamer(req, res, next) {
-      host = req.headers.host
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
     function responder (req, res) {
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
@@ -267,26 +259,26 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, renamer))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, responder))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
 
       },
       function (msg) {
@@ -309,13 +301,17 @@ describe('probes.express ' + pkg.version, function () {
   it('should profile multiple middlewares', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
+
     function renamer(req, res, next) {
-      host = req.headers.host
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
@@ -333,26 +329,26 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, renamer))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, responder))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -374,14 +370,17 @@ describe('probes.express ' + pkg.version, function () {
   it('should profile middleware specified as array', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
 
     function renamer(req, res, next) {
-      host = req.headers.host
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
@@ -399,26 +398,26 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, renamer))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, renamer))
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, responder))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, responder))
+        msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -440,8 +439,10 @@ describe('probes.express ' + pkg.version, function () {
   it('should trace through param() calls', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
+
     function hello(req, res) {
-      host = req.headers.host
+      expected = makeExpected(req, hello)
       res.send('Hello, ' + req.hello + '!')
     }
 
@@ -468,8 +469,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -483,11 +484,12 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   function renderTest (done) {
-    var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
     var locals
-    var fn = function (req, res) {
-      host = req.headers.host
+
+    function fn (req, res) {
+      expected = makeExpected(req, fn)
       locals = {
         name: req.params.name
       }
@@ -539,8 +541,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, fn))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, fn))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -560,9 +562,11 @@ describe('probes.express ' + pkg.version, function () {
   }
 
   it('should work with supertest', function (done) {
-    var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
+
     function hello(req, res) {
+      expected = makeExpected(req, hello)
       host = req.headers.host
       res.send('done')
     }
@@ -586,8 +590,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, done)
@@ -633,9 +637,11 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should be able to report errors from error handler', function (done) {
-    var method = 'GET'
     var reqRoutePath = '/'
+    var expected
+
     function route(req, res, next) {
+      expected = makeExpected(req, route)
       ao.instrument(function (span) {
         return span.descend('sub')
       }, setImmediate, function (err, res) {
@@ -663,16 +669,16 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, route))
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, route))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, route))
+        msg.should.have.property('ProfileName', expected('p'))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       },
       function () {},
       function () {},
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p', method, reqRoutePath, route))
+        msg.should.have.property('ProfileName', expected('p'))
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -699,10 +705,11 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should nest properly', function (done) {
-    var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
+
     function hello(req, res) {
-      host = req.headers.host
+      expected = makeExpected(req, hello)
       res.send('done')
     }
 
@@ -733,8 +740,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -761,7 +768,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/:name'
     function hello(req, res) {
-      host = req.headers.host
+      expected = makeExpected(req, hello)
       res.send('done')
     }
 
@@ -787,8 +794,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -805,7 +812,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function hello(req, res) {
-      host = req.headers.host
+      expected = makeExpected(req, hello)
       res.send('done')
     }
 
@@ -828,8 +835,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
-        msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
