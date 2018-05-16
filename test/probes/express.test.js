@@ -12,18 +12,41 @@ var request = require('request')
 var express = require('express')
 var fs = require('fs')
 
+// global configuration that probably should be set
+// outside so multiple passes can be run from the
+// same file with a little wrapper.
 ao.probes.express.legacyTxname = false
+ao.cfg.domainPrefix = true
+
+
+//
+// helper function to return expected results for:
+//   tx - transaction name
+//   c - controller
+//   a - action
+//   p - profile
+//
+
+var host       // hack - set by each test's request handler from req.headers.host
+
+function makeExpected (req, func) {
+
+}
 
 function expected (what, method, path, func) {
   var req = {
     method: method,
     route: {
       path: path
+    },
+    headers: {
+      host: host
     }
   }
 
   var controller
   var action
+  var result
 
   if (ao.probes.express.legacyTxname) {
     // old way of setting these
@@ -40,14 +63,20 @@ function expected (what, method, path, func) {
   }
 
   if (what === 'tx') {
-    return controller + '.' + action
+    result = controller + '.' + action
   } else if (what === 'c') {
-    return controller
+    result = controller
   } else if (what === 'a') {
-    return action
+    result = action
   } else if (what === 'p') {
-    return controller + ' ' + action
+    result = controller + ' ' + action
   }
+
+  if (ao.cfg.domainPrefix && what === 'tx') {
+    result = req.headers.host + '/' + result
+  }
+
+  return result
 }
 
 var pkg = require('express/package.json')
@@ -115,6 +144,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function hello (req, res) {
+      host = req.headers.host
       res.send('done')
     }
 
@@ -155,11 +185,17 @@ describe('probes.express ' + pkg.version, function () {
   it('should allow a custom TransactionName', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var customReq = {method: method, route: {path: reqRoutePath}}
+
     function hello(req, res) {
+      host = req.headers.host
       res.send('done')
     }
+    // supply a simple custom function that accesses only a small
+    // subset of req fields.
     function custom (req, res) {
-      return 'new-name.' + req.method + req.route.path
+      var result = 'new-name.' + req.method + req.route.path
+      return result
     }
 
     var app = express()
@@ -182,7 +218,11 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('TransactionName', custom({method: method, route: {path: reqRoutePath}}))
+        var expectedCustom = custom(customReq)
+        if (ao.cfg.domainPrefix) {
+          expectedCustom = host + '/' + expectedCustom
+        }
+        msg.should.have.property('TransactionName', expectedCustom)
         msg.should.have.property('Controller', expected('c', method, reqRoutePath, hello))
         msg.should.have.property('Action', expected('a', method, reqRoutePath, hello))
       }
@@ -203,6 +243,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function renamer(req, res, next) {
+      host = req.headers.host
       req.name = req.params.name
       next()
     }
@@ -269,6 +310,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function renamer(req, res, next) {
+      host = req.headers.host
       req.name = req.params.name
       next()
     }
@@ -334,6 +376,7 @@ describe('probes.express ' + pkg.version, function () {
     var reqRoutePath = '/hello/:name'
 
     function renamer(req, res, next) {
+      host = req.headers.host
       req.name = req.params.name
       next()
     }
@@ -397,7 +440,10 @@ describe('probes.express ' + pkg.version, function () {
   it('should trace through param() calls', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
-    function hello(req, res) {res.send('Hello, ' + req.hello + '!')}
+    function hello(req, res) {
+      host = req.headers.host
+      res.send('Hello, ' + req.hello + '!')
+    }
 
     var app = express()
 
@@ -441,6 +487,7 @@ describe('probes.express ' + pkg.version, function () {
     var reqRoutePath = '/hello/:name'
     var locals
     var fn = function (req, res) {
+      host = req.headers.host
       locals = {
         name: req.params.name
       }
@@ -516,6 +563,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function hello(req, res) {
+      host = req.headers.host
       res.send('done')
     }
 
@@ -654,6 +702,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function hello(req, res) {
+      host = req.headers.host
       res.send('done')
     }
 
@@ -712,6 +761,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/:name'
     function hello(req, res) {
+      host = req.headers.host
       res.send('done')
     }
 
@@ -755,6 +805,7 @@ describe('probes.express ' + pkg.version, function () {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     function hello(req, res) {
+      host = req.headers.host
       res.send('done')
     }
 
