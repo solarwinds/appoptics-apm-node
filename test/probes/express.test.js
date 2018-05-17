@@ -27,6 +27,10 @@ ao.cfg.domainPrefix = true
 //   p - profile
 //
 function makeExpected (req, func) {
+  // bind this when created. an error causes req.route
+  // to become undefined
+  var pathToUse = req.route.path
+
   return function (what) {
     var controller
     var action
@@ -36,14 +40,14 @@ function makeExpected (req, func) {
       // old way of setting these
       // Controller = req.route.path
       // Action = func.name || '(anonymous)'
-      controller = req.route.path
+      controller = pathToUse
       action = func.name || '(anonymous)'
     } else {
       // new way
       // Controller = 'express.' + (func.name || '(anonymous)')
       // Action = req.method + req.route.path
       controller = 'express.' + (func.name || '(anonymous)')
-      action = req.method + req.route.path
+      action = req.method + pathToUse
     }
 
     if (what === 'tx') {
