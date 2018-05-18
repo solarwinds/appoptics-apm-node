@@ -16,8 +16,6 @@ var fs = require('fs')
 // outside so multiple passes can be run from the
 // same file with a little wrapper.
 ao.probes.express.legacyTxname = false
-ao.cfg.domainPrefix = true
-
 
 //
 // helper function to return a function that returns expected results for:
@@ -61,7 +59,10 @@ function makeExpected (req, func) {
     }
 
     if (ao.cfg.domainPrefix && what === 'tx') {
-      result = req.headers.host + '/' + result
+      var prefix = ao.getDomainPrefix(req)
+      if (prefix) {
+        result = prefix + '/' + result
+      }
     }
 
     return result
@@ -124,16 +125,30 @@ describe('probes.express ' + pkg.version, function () {
       ], done)
   })
 
+
   //
   // Tests
   //
   it('should forward controller/action', function (done) {
+    forwardControllerAction(done)
+  })
+
+  it ('should forward controller/action with domain prefix', function (done) {
+    ao.cfg.domainPrefix = true
+    try {
+      customTransactionName(done)
+    } finally {
+      ao.cfg.domainPrefix = false
+    }
+  })
+
+  function forwardControllerAction (done) {
     // define vars needed for expected() so multiple naming conventions can
     // be tested.
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     var expected
-    function hello (req, res) {
+    function hello(req, res) {
       expected = makeExpected(req, hello)
       res.send('done')
     }
@@ -149,8 +164,8 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         check['express-entry'](msg)
       },
-      function () {},
-      function () {},
+      function () { },
+      function () { },
       function (msg) {
         check['express-exit'](msg)
       },
@@ -169,10 +184,22 @@ describe('probes.express ' + pkg.version, function () {
       var port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
-  })
-
+  }
 
   it('should allow a custom TransactionName', function (done) {
+    customTransactionName(done)
+  })
+
+  it('should allow a custom TransactionName with domain prefix', function (done) {
+    ao.cfg.domainPrefix = true
+    try {
+      customTransactionName(done)
+    } finally {
+      ao.cfg.domainPrefix = false
+    }
+  })
+
+  function customTransactionName (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     var customReq
@@ -185,7 +212,7 @@ describe('probes.express ' + pkg.version, function () {
     }
     // supply a simple custom function that accesses only a small
     // subset of req fields.
-    function custom (req, res) {
+    function custom(req, res) {
       var result = 'new-name.' + req.method + req.route.path
       return result
     }
@@ -228,7 +255,8 @@ describe('probes.express ' + pkg.version, function () {
       var port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
-  })
+  }
+
 
 
   it('should profile each middleware', function (done) {
