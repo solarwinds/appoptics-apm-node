@@ -2,6 +2,7 @@
 
 const helper = require('../helper')
 const ao = helper.ao
+const noop = helper.noop
 const conf = ao.probes['cassandra-driver']
 
 const should = require('should')  // eslint-disable-line no-unused-vars
@@ -118,7 +119,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     // test to work around UDP dropped message issue
     it('UDP might lose a message', function (done) {
       helper.test(emitter, function (done) {
-        ao.instrument('fake', ao.noop)
+        ao.instrument('fake', noop)
         done()
       }, [
         function (msg) {

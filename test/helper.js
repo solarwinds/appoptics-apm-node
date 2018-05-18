@@ -20,6 +20,8 @@ log.addGroup({
   subNames: ['info', 'mock-port', 'message']
 })
 
+exports.noop = function () {}
+
 // each module must implement. this only provides a
 // common framework to check the environment variable.
 exports.skipTest = function (filename) {
