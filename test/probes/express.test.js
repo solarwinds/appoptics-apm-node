@@ -136,7 +136,7 @@ describe('probes.express ' + pkg.version, function () {
   it ('should forward controller/action with domain prefix', function (done) {
     ao.cfg.domainPrefix = true
     try {
-      customTransactionName(done)
+      forwardControllerAction(done)
     } finally {
       ao.cfg.domainPrefix = false
     }
@@ -186,20 +186,49 @@ describe('probes.express ' + pkg.version, function () {
     })
   }
 
+  //
+  // custom transaction names
+  //
   it('should allow a custom TransactionName', function (done) {
-    customTransactionName(done)
+    // supply a simple custom function
+    function custom (req, res) {
+      var result = 'new-name.' + req.method + req.route.path
+      return result
+    }
+
+    customTransactionName(custom, done)
   })
 
   it('should allow a custom TransactionName with domain prefix', function (done) {
+    // simple custom function
+    function custom (req, res) {
+      var result = 'new-name.' + req.method + req.route.path
+      return result
+    }
+
     ao.cfg.domainPrefix = true
     try {
-      customTransactionName(done)
+      customTransactionName(custom, done)
     } finally {
       ao.cfg.domainPrefix = false
     }
   })
 
-  function customTransactionName (done) {
+  it('should handle an error in the custom name function', function (done) {
+    function custom (req, res) {
+      throw new Error('I am a bad function')
+    }
+    customTransactionName(undefined, done)
+  })
+
+  it('should handle a falsey return by the custom name function', function (done) {
+    function custom (req, res) {
+      return ''
+    }
+    customTransactionName(custom, done)
+  })
+
+  function customTransactionName (custom, done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
     var customReq
@@ -209,12 +238,6 @@ describe('probes.express ' + pkg.version, function () {
       customReq = req
       expected = makeExpected(req, hello)
       res.send('done')
-    }
-    // supply a simple custom function that accesses only a small
-    // subset of req fields.
-    function custom(req, res) {
-      var result = 'new-name.' + req.method + req.route.path
-      return result
     }
 
     var app = express()
@@ -237,7 +260,12 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        var expectedCustom = custom(customReq)
+        var expectedCustom
+        if (custom && custom(customReq)) {
+          expectedCustom = custom(customReq)
+        } else {
+          expectedCustom = expected('tx')
+        }
         if (ao.cfg.domainPrefix) {
           expectedCustom = customReq.headers.host + '/' + expectedCustom
         }
@@ -248,7 +276,6 @@ describe('probes.express ' + pkg.version, function () {
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
-      delete conf.makeMetricsName
     })
 
     var server = app.listen(function () {
@@ -257,8 +284,9 @@ describe('probes.express ' + pkg.version, function () {
     })
   }
 
-
-
+  //
+  // multiple handlers
+  //
   it('should profile each middleware', function (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
