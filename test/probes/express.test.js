@@ -10,6 +10,10 @@ var semver = require('semver')
 
 var request = require('request')
 var express = require('express')
+var morgan = require('morgan')
+var bodyParser = require('body-parser')
+var methodOverride = require('method-override')
+
 var fs = require('fs')
 
 // global configuration that probably should be set
@@ -129,33 +133,60 @@ describe('probes.express ' + pkg.version, function () {
   //
   // Tests
   //
-  it('should forward controller/action', function (done) {
-    forwardControllerAction(done)
+  it('should forward controller/action for GET', function (done) {
+    forwardControllerAction('get', done)
+  })
+
+  it('should forward controller/action for POST', function (done) {
+    forwardControllerAction('post', done)
   })
 
   it ('should forward controller/action with domain prefix', function (done) {
     ao.cfg.domainPrefix = true
     try {
-      forwardControllerAction(done)
+      forwardControllerAction('get', done)
     } finally {
       ao.cfg.domainPrefix = false
     }
   })
 
-  function forwardControllerAction (done) {
+  function forwardControllerAction (method, done) {
     // define vars needed for expected() so multiple naming conventions can
     // be tested.
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
+    var getRoutePath = '/hello/:name'
+    var postRoutePath = '/api/set-name'
+
     var expected
-    function hello(req, res) {
+    function hello (req, res) {
+      helper.clsCheck()
       expected = makeExpected(req, hello)
+      res.send('done')
+    }
+    function setName (req, res) {
+      helper.clsCheck()
+      var name = req.body.name
+      expected = makeExpected(req, setName)
       res.send('done')
     }
 
     var app = express()
+    // log every request to the console
+    app.use(morgan('dev', {
+      skip: function (req, res) {return true}
+    }))
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ 'extended': 'true' }))
+    // parse application/json
+    app.use(bodyParser.json())
+    // simulate DELETE and PUT
+    app.use(methodOverride())
 
-    app.get(reqRoutePath, hello)
+    app.get('*', function globalRoute (req, res, next) {
+      helper.clsCheck()
+      next()
+    })
+    app.get(getRoutePath, hello)
+    app.post(postRoutePath, setName)
 
     var validations = [
       function (msg) {
@@ -164,8 +195,18 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         check['express-entry'](msg)
       },
-      function () { },
-      function () { },
+      // skip the reqRoutePath profile entry and exit
+      function () {},
+      function () {}
+    ]
+
+    // if it is get then skip the '*' profile entry and exit too.
+    // (it will be called first, but we need two more skips anyway.)
+    if (method === 'get' || true) {
+      validations = validations.concat([function () {}, function () {}])
+    }
+
+    validations = validations.concat([
       function (msg) {
         check['express-exit'](msg)
       },
@@ -175,14 +216,21 @@ describe('probes.express ' + pkg.version, function () {
         msg.should.have.property('Controller', expected('c'))
         msg.should.have.property('Action', expected('a'))
       }
-    ]
+    ])
+
     helper.doChecks(emitter, validations, function () {
       server.close(done)
     })
 
     var server = app.listen(function () {
       var port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      var options = {
+        url: 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
+      }
+      if (method === 'post') {
+        options.json = {name: 'bruce'}
+      }
+      request[method](options)
     })
   }
 
@@ -235,6 +283,7 @@ describe('probes.express ' + pkg.version, function () {
     var expected
 
     function hello(req, res) {
+      helper.clsCheck()
       customReq = req
       expected = makeExpected(req, hello)
       res.send('done')
@@ -294,11 +343,13 @@ describe('probes.express ' + pkg.version, function () {
     var expectedRes
 
     function renamer(req, res, next) {
+      helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
     function responder (req, res) {
+      helper.clsCheck()
       expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
@@ -365,12 +416,14 @@ describe('probes.express ' + pkg.version, function () {
     var expectedRes
 
     function renamer(req, res, next) {
+      helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      helper.clsCheck()
       expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
@@ -434,12 +487,14 @@ describe('probes.express ' + pkg.version, function () {
     var expectedRes
 
     function renamer(req, res, next) {
+      helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      helper.clsCheck()
       expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
@@ -502,6 +557,7 @@ describe('probes.express ' + pkg.version, function () {
     var expected
 
     function hello(req, res) {
+      helper.clsCheck()
       expected = makeExpected(req, hello)
       res.send('Hello, ' + req.hello + '!')
     }
