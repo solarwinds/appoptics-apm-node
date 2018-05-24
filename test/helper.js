@@ -13,6 +13,8 @@ var https = require('https')
 var http = require('http')
 var path = require('path')
 
+Error.stackTraceLimit = 25
+
 var log = ao.loggers
 
 log.addGroup({
