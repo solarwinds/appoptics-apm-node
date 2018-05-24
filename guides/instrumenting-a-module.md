@@ -165,20 +165,20 @@ http.createServer((req, res) => {
 Sometimes `ao.instrument(...)` or `ao.instrumentHttp(...)` don't quite fit
 what is needed for a given patch. For these situations, you can drop down to
 the lower-level API. Those other functions are really just sugar over the
-`Layer`	class. The current layer reference you'd expect to get from the builder
+`Span`	class. The current span reference you'd expect to get from the builder
 function can be acquired at `ao.Span.last` and, as usual, you can call the
 `current.descend(...)` function on that. The runner part is encapsulated in
-`layer.runSync(fn)` and `layer.runAsync(fn)`, with a function length based
-sugar wrapper around both of those at `layer.run(fn)`. When using the `Layer`
+`span.runSync(fn)` and `span.runAsync(fn)`, with a function length based
+sugar wrapper around both of those at `span.run(fn)`. When using the `Span`
 class, you will need to call both the run callback and the callback for the
 instrumented function itself separately.
 
 ```js
 const last = ao.Span.last
-const layer = last.descend('abc', {
+const span = last.descend('abc', {
   foo: 'bar'
 })
-layer.runSync(() => {
+span.runSync(() => {
   console.log('doing some stuff')
 })
 ```
