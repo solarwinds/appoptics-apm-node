@@ -4,10 +4,10 @@ const semver = require('semver')
 const modules = module.exports = []
 
 //
-// using a minimum version can avoid testing
-// versions known to fail, speeding the test.
+// using a minimum version can avoid testing versions
+// known to fail or deprecated, speeding the test.
 //
-test('amqp', '>= 0.2.0')
+//test('amqp', '>= 0.2.0')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', '>= 0.8.5')
