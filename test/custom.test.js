@@ -70,9 +70,9 @@ describe('custom', function () {
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
     emitter.close(done)
@@ -575,51 +575,6 @@ describe('custom', function () {
       should.exist(ao.traceId)
     })
     should.not.exist(ao.traceId)
-  })
-
-  // Verify start with meta works
-  it('should start with meta', function (done) {
-    var previous = new Span('previous')
-    var entry = previous.events.entry
-    var last
-
-    var called = false
-    var sample = ao.sample
-    ao.sample = function (a, b, meta) {
-      ao.sample = sample
-      meta.should.equal(entry.toString())
-      called = true
-      return sample.call(this, a, b, meta)
-    }
-
-    helper.doChecks(emitter, [
-      function (msg) {
-        msg.should.have.property('Layer', 'test')
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('SampleSource')
-        msg.should.have.property('SampleRate')
-        last = msg['X-Trace'].substr(42, 16)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'test')
-        msg.should.have.property('Label', 'exit')
-        msg.Edge.should.equal(last)
-      }
-    ], function (err) {
-      called.should.equal(true)
-      done(err)
-    })
-
-    // Clear context
-    Span.last = Event.last = null
-
-    ao.startOrContinueTrace(
-      { meta: entry.toString() },
-      'test',
-      function (cb) { cb() },
-      conf,
-      function () {}
-    )
   })
 
   it('should bind functions to requestStore', function () {
