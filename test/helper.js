@@ -13,12 +13,21 @@ var https = require('https')
 var http = require('http')
 var path = require('path')
 
+Error.stackTraceLimit = 25
+
 var log = ao.loggers
 
 log.addGroup({
   groupName: 'test',
   subNames: ['info', 'mock-port', 'message']
 })
+
+exports.clsCheck = function () {
+  let c = ao.requestStore
+  if (!c || !c.active) throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
+}
+
+exports.noop = function () {}
 
 // each module must implement. this only provides a
 // common framework to check the environment variable.
@@ -37,10 +46,11 @@ exports.skipTest = function (filename) {
   ao.loggers.warn('skipping test', test)
   return true
 }
+log.debug('Using oboe version %s', ao.addon.Config.getVersionString())
 
 // if not specifically turning on error and warning debugging, turn it off
-if (!process.env.AO_TEST_DEBUG_LOGLEVEL) {
-  log.debug('AO_TEST_DEBUG_LOGLEVEL not set, turning off logging')
+if (!('AO_TEST_SHOW_LOGS' in process.env)) {
+  log.debug('AO_TEST_SHOW_LOGS not set, turning off logging')
   var logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {return !item.startsWith('appoptics:')}).join(',')
   process.env.DEBUG = logs

@@ -4,10 +4,10 @@ const semver = require('semver')
 const modules = module.exports = []
 
 //
-// using a minimum version can avoid testing
-// versions known to fail, speeding the test.
+// using a minimum version can avoid testing versions
+// known to fail or deprecated, speeding the test.
 //
-test('amqp', '>= 0.2.0')
+//test('amqp', '>= 0.2.0')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', '>= 0.8.5')
@@ -36,6 +36,7 @@ test('mysql', '>= 2.0.0')
 test('oracledb', '>=2.0.0')
 
 test('pg', '>= 2.8.4')
+test('q', '>= 0.9.0')
 test('raw-body')
 test('redis', '>= 0.8.0')
 test('restify', '>= 2.0.0 < 2.0.2 || >= 2.0.3')

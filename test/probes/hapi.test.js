@@ -241,7 +241,7 @@ describe('probes.hapi ' + pkg.version, function () {
       method: 'GET',
       path: '/',
       handler: function hello (request, reply) {
-        exit = request.raw.res._http_span.events.exit
+        exit = request.raw.res._ao_http_span.events.exit
         renderer(request, reply)('rum.ejs')
       }
     })

@@ -62,30 +62,39 @@ shimmer.wrap(abc, 'xyz', xyz => {
 There are several different ways to use the instrumentation API, with varying
 degrees of control.
 
-### Basic instrumentaiton
+### Basic instrumentation
 
 Wherever possible, it is preferred that `ao.instrument(...)` is used, however
 there are some alternatives, which we'll explore later. The `ao.instrument(...)`
 function takes four arguments:
 
-- a layer name or builder function that returns a layer describing
-the lifetime of the call and provides a mechanism to report metadata about
-it.
-- a runner function that will run the real function you wish to instrument.
-- [optional] config
-- [async only] callback
+The signature is `ao.instrument (span, fn, config, callback)`.
 
-#### Builder functions
+- `span` is either the string name of the span to be created or a function that returns the span to use.
+- `fn` is a function that will run the function to be instrumented.
+- `config` [optional] allows non-default settings to be specified.
+- `callback` is only present if the function to be instrumented is asynchronous.
 
-The builder function receives a reference to the current layer, which you can
-call `current.descend(...)` on to produce a new layer describing the call to be
-instrumented. It accepts a layer name and an object with key/value pairs to be
-serialized and sent as layer metadata.
+#### Span
+
+If the `span` argument is a string a span will be created using that name.
+
+If the `span` argument is a function (a "span-maker" function), it must create and return a `span`.
+
+The span-maker function's signature is `span-maker (current)`.
+
+- `current` is the current span. You can call `current.descend(...)` to create a new span descended from the current span. will be called to create a `span` which it must return.
+
+The `descend` method's signature is `descend (name, kvPairs)`.
+
+- `name` is the string name of the span to be created.
+- `kvPairs` is an object of key-value pairs that will be sent as span metadata.
 
 ```js
 function build (current) {
-  return current.descend('xyz', {
-    foo: 'bar'
+  return current.descend('span-name', {
+    elapsed: currentTime() - startTime,
+    cpuTime: currentCpu() - startCpu
   })
 }
 ```
@@ -122,7 +131,7 @@ When instrumenting an async function, a callback should be provided for the
 runner to call when it completes. It can be in the fourth argument position,
 if optional configs are included or the third position if configs are omitted.
 
-The signature of the callback is unconstrained. It should match the signatur of
+The signature of the callback is unconstrained. It should match the signature of
 the callback in the runner function. The only assumption made is that
 the callback may have an error to report in the first argument position, but
 this is not required. If it is something other than an error object, it will
@@ -136,9 +145,9 @@ it'd look something like this:
 ```js
 shimmer.wrap(abc, 'xyz', xyz => {
   return function (n, cb) {
-    const builder = current => current.descend('xyz', { n: n })
+    const spanMaker = current => current.descend('awesome-span', {n: n})
     const runner = done => xyz.call(this, n, done)
-    return ao.instrument(builder, runner, { enabled: true }, cb)
+    return ao.instrument(spanMaker, runner, {enabled: true}, cb)
   }
 })
 ```
@@ -154,9 +163,9 @@ callback. It will trigger the exits in reverse chronological order when the
 
 ```js
 http.createServer((req, res) => {
-  const builder = current => current.descend('http-layer')
+  const spanMaker = current => current.descend('http-span')
   const runner = () => res.end('done')
-  ao.instrumentHttp(builder, runner, options, res)
+  ao.instrumentHttp(spanMaker, runner, options, res)
 })
 ```
 
@@ -165,20 +174,20 @@ http.createServer((req, res) => {
 Sometimes `ao.instrument(...)` or `ao.instrumentHttp(...)` don't quite fit
 what is needed for a given patch. For these situations, you can drop down to
 the lower-level API. Those other functions are really just sugar over the
-`Layer`	class. The current layer reference you'd expect to get from the builder
+`Span`	class. The current span reference you'd expect to get from the builder
 function can be acquired at `ao.Span.last` and, as usual, you can call the
 `current.descend(...)` function on that. The runner part is encapsulated in
-`layer.runSync(fn)` and `layer.runAsync(fn)`, with a function length based
-sugar wrapper around both of those at `layer.run(fn)`. When using the `Layer`
+`span.runSync(fn)` and `span.runAsync(fn)`, with a function length based
+sugar wrapper around both of those at `span.run(fn)`. When using the `Span`
 class, you will need to call both the run callback and the callback for the
 instrumented function itself separately.
 
 ```js
 const last = ao.Span.last
-const layer = last.descend('abc', {
+const span = last.descend('abc', {
   foo: 'bar'
 })
-layer.runSync(() => {
+span.runSync(() => {
   console.log('doing some stuff')
 })
 ```
@@ -206,7 +215,7 @@ method, you can use the `ao.xtraceId` getter.
 
 ### Info and error events
 
-Info and error events are simply insert into the current layer and can be
+Info and error events are simply inserted into the current span and can be
 created with the `ao.reportInfo(...)` and `ao.reportError(...)` functions.
 
 ```js

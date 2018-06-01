@@ -1,6 +1,6 @@
 {
   "name": "appoptics-apm",
-  "version": "4.2.2-beta",
+  "version": "4.3.2-beta",
   "description": "Agent for AppOptics APM",
   "main": "dist/index.js",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "node install-appoptics-bindings.js",
     "test": "gulp test",
-    "docs": "gulp docs",
+    "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
     "install-deps": "./deps.sh",
     "coverage": "gulp coverage",
     "support-matrix": "gulp support-matrix",
@@ -62,7 +62,7 @@
     "babel-preset-es2015-minus-generators": "^6.6.0",
     "bcrypt": "^2.0.1",
     "bluebird": "^3.5.1",
-    "body-parser": "^1.13.3",
+    "body-parser": "^1.18.3",
     "bson": "^0.4.11",
     "cassandra-driver": "^3.3.0",
     "co-render": "^1.1.0",
@@ -84,9 +84,11 @@
     "leveldown": "^1.4.1",
     "levelup": "^1.3.9",
     "memcached": "^2.2.2",
+    "method-override": "^2.3.10",
     "mkdirp": "^0.5.1",
     "mongodb-core": "^2.1.19",
     "mongoose": "^4.0.3",
+    "morgan": "^1.9.0",
     "mysql": "^2.1.1",
     "oracledb": "^2.2.0",
     "pg": "^4.5.7",
@@ -99,11 +101,11 @@
     "should": "^8.3.1",
     "supertest": "^3.0.0",
     "tedious": "^2.3.1",
-    "testeachversion": "^4.3.1",
+    "testeachversion": "5",
     "vision": "^4.1.0"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "^4.6.1"
+    "appoptics-bindings": "appoptics-bindings@5.0.1"
   },
   "unused": {
     "dev-dependency-oracledb-1.13.1": "^1.13.1",

@@ -1,5 +1,6 @@
 var helper = require('../helper')
 var ao = helper.ao
+var noop = helper.noop
 var addon = ao.addon
 
 var should = require('should')
@@ -56,7 +57,7 @@ describe('probes.mongodb-core UDP', function () {
   // fake test to work around UDP dropped message issue
   it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('fake', ao.noop)
+      ao.instrument('fake', noop)
       done()
     }, [
         function (msg) {

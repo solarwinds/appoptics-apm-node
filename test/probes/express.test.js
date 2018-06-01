@@ -3,17 +3,75 @@ var ao = helper.ao
 var addon = ao.addon
 var log = ao.loggers
 var conf = ao.probes.express
+var legacy = ao.probes.express.legacyTxname
 
 var should = require('should')
 var semver = require('semver')
 
-/* TODO BAM remove
-var rum = require('../../dist/rum')
-// */
-
 var request = require('request')
 var express = require('express')
+var morgan = require('morgan')
+var bodyParser = require('body-parser')
+var methodOverride = require('method-override')
+
 var fs = require('fs')
+
+// global configuration that probably should be set
+// outside so multiple passes can be run from the
+// same file with a little wrapper.
+ao.probes.express.legacyTxname = false
+
+//
+// helper function to return a function that returns expected results for:
+//   tx - transaction name
+//   c - controller
+//   a - action
+//   p - profile
+//
+function makeExpected (req, func) {
+  // bind this when created. an error causes req.route
+  // to become undefined
+  var pathToUse = req.route.path
+
+  return function (what) {
+    var controller
+    var action
+    var result
+
+    if (ao.probes.express.legacyTxname) {
+      // old way of setting these
+      // Controller = req.route.path
+      // Action = func.name || '(anonymous)'
+      controller = pathToUse
+      action = func.name || '(anonymous)'
+    } else {
+      // new way
+      // Controller = 'express.' + (func.name || '(anonymous)')
+      // Action = req.method + req.route.path
+      controller = 'express.' + (func.name || '(anonymous)')
+      action = req.method + pathToUse
+    }
+
+    if (what === 'tx') {
+      result = controller + '.' + action
+    } else if (what === 'c') {
+      result = controller
+    } else if (what === 'a') {
+      result = action
+    } else if (what === 'p') {
+      result = controller + ' ' + action
+    }
+
+    if (ao.cfg.domainPrefix && what === 'tx') {
+      var prefix = ao.getDomainPrefix(req)
+      if (prefix) {
+        result = prefix + '/' + result
+      }
+    }
+
+    return result
+  }
+}
 
 var pkg = require('express/package.json')
 
@@ -25,9 +83,9 @@ describe('probes.express ' + pkg.version, function () {
   //
   before(function (done) {
     ao.probes.fs.enabled = false
-    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    emitter = helper.appoptics(done)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
@@ -65,64 +123,177 @@ describe('probes.express ' + pkg.version, function () {
       done()
     }, [
         function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
+          msg.should.have.property('Label').oneOf('entry', 'exit')
+          msg.should.have.property('Layer', 'fake')
         }
       ], done)
   })
 
+
   //
   // Tests
   //
-  it('should forward controller/action', function (done) {
-    var app = express()
-
-    app.get('/hello/:name', function hello (req, res) {
-      res.send('done')
-    })
-
-    var validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['express-entry'](msg)
-      },
-      function () {},
-      function () {},
-      function (msg) {
-        check['express-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-        msg.should.have.property('TransactionName', 'express.GET/hello/:name')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
-      }
-    ]
-    helper.doChecks(emitter, validations, function () {
-      server.close(done)
-    })
-
-    var server = app.listen(function () {
-      var port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
-    })
+  it('should forward controller/action for GET', function (done) {
+    forwardControllerAction('get', done)
   })
 
-  it('should allow a custom TransactionName', function (done) {
-    var app = express()
+  it('should forward controller/action for POST', function (done) {
+    forwardControllerAction('post', done)
+  })
 
-    conf.makeMetricsName = function (req, res) {
-      return {
-        Controller: 'new-name',
-        Action: req.method + req.route.path
-      }
+  it('should forward controller/action with domain prefix', function (done) {
+    ao.cfg.domainPrefix = true
+    try {
+      forwardControllerAction('get', done)
+    } finally {
+      ao.cfg.domainPrefix = false
+    }
+  })
+
+  function forwardControllerAction (method, done) {
+    // define vars needed for expected() so multiple naming conventions can
+    // be tested.
+    var getRoutePath = '/hello/:name'
+    var postRoutePath = '/api/set-name'
+
+    var expected
+    function hello (req, res) {
+      helper.clsCheck()
+      expected = makeExpected(req, hello)
+      res.send('done')
+    }
+    function setName (req, res) {
+      helper.clsCheck()
+      var name = req.body.name
+      expected = makeExpected(req, setName)
+      res.send('done')
     }
 
-    app.get('/hello/:name', function hello(req, res) {
-      res.send('done')
+    var app = express()
+    // log every request to the console
+    app.use(morgan('dev', {
+      skip: function (req, res) {return true}
+    }))
+    // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ 'extended': 'true' }))
+    // parse application/json
+    app.use(bodyParser.json())
+    // simulate DELETE and PUT
+    app.use(methodOverride())
+
+    app.get('*', function globalRoute (req, res, next) {
+      helper.clsCheck()
+      next()
     })
+    app.get(getRoutePath, hello)
+    app.post(postRoutePath, setName)
+
+    var validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['express-entry'](msg)
+      },
+      // skip the reqRoutePath profile entry and exit
+      function () {},
+      function () {}
+    ]
+
+    // if it is get then skip the '*' profile entry and exit too.
+    // (it will be called first, but we need two more skips anyway.)
+    if (method === 'get' || true) {
+      validations = validations.concat([function () {}, function () {}])
+    }
+
+    validations = validations.concat([
+      function (msg) {
+        check['express-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('TransactionName', expected('tx'))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
+      }
+    ])
+
+    helper.doChecks(emitter, validations, function () {
+      server.close(done)
+    })
+
+    var server = app.listen(function () {
+      var port = server.address().port
+      var options = {
+        url: 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
+      }
+      if (method === 'post') {
+        options.json = {name: 'bruce'}
+      }
+      request[method](options)
+    })
+  }
+
+  //
+  // custom transaction names
+  //
+  it('should allow a custom TransactionName', function (done) {
+    // supply a simple custom function
+    function custom (req, res) {
+      var result = 'new-name.' + req.method + req.route.path
+      return result
+    }
+
+    customTransactionName(custom, done)
+  })
+
+  it('should allow a custom TransactionName with domain prefix', function (done) {
+    // simple custom function
+    function custom (req, res) {
+      var result = 'new-name.' + req.method + req.route.path
+      return result
+    }
+
+    ao.cfg.domainPrefix = true
+    try {
+      customTransactionName(custom, done)
+    } finally {
+      ao.cfg.domainPrefix = false
+    }
+  })
+
+  it('should handle an error in the custom name function', function (done) {
+    function custom (req, res) {
+      throw new Error('I am a bad function')
+    }
+    customTransactionName(custom, done)
+  })
+
+  it('should handle a falsey return by the custom name function', function (done) {
+    function custom (req, res) {
+      return ''
+    }
+    customTransactionName(custom, done)
+  })
+
+  function customTransactionName (custom, done) {
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var customReq
+    var expected
+
+    function hello(req, res) {
+      helper.clsCheck()
+      customReq = req
+      expected = makeExpected(req, hello)
+      res.send('done')
+    }
+
+    var app = express()
+
+    ao.setCustomTxNameFunction('express', custom)
+
+    app.get(reqRoutePath, hello)
 
     var validations = [
       function (msg) {
@@ -138,33 +309,68 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('TransactionName', 'new-name.GET/hello/:name')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
+        var expectedCustom = expected('tx')
+        if (custom) {
+          try {
+            var expectedCustomName = custom(customReq)
+            if (expectedCustomName) {
+              expectedCustom = expectedCustomName
+            }
+          } catch (e) {
+            // do nothing
+          }
+        }
+        /*
+        if (custom && custom(customReq)) {
+          expectedCustom = custom(customReq)
+        } else {
+          expectedCustom = expected('tx')
+        }
+        // */
+        if (ao.cfg.domainPrefix) {
+          expectedCustom = customReq.headers.host + '/' + expectedCustom
+        }
+        msg.should.have.property('TransactionName', expectedCustom)
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
-      delete conf.makeMetricsName
     })
 
     var server = app.listen(function () {
       var port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
-  })
+  }
 
+  //
+  // multiple handlers
+  //
   it('should profile each middleware', function (done) {
-    var app = express()
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
 
-    app.get('/hello/:name', function renamer (req, res, next) {
+    function renamer(req, res, next) {
+      helper.clsCheck()
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
-    })
-
-    app.get('/hello/:name', function responder (req, res) {
+    }
+    function responder (req, res) {
+      helper.clsCheck()
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
-    })
+    }
+
+    var app = express()
+
+    app.get(reqRoutePath, renamer)
+
+    app.get(reqRoutePath, responder)
 
     var validations = [
       function (msg) {
@@ -176,26 +382,27 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
+
       },
       function (msg) {
         check['express-exit'](msg)
@@ -215,18 +422,27 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should profile multiple middlewares', function (done) {
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
+
     function renamer(req, res, next) {
+      helper.clsCheck()
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      helper.clsCheck()
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
     var app = express()
 
-    app.get('/hello/:name', renamer, responder)
+    app.get(reqRoutePath, renamer, responder)
 
     var validations = [
       function (msg) {
@@ -238,26 +454,26 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -277,18 +493,27 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should profile middleware specified as array', function (done) {
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var expectedRen
+    var expectedRes
+
     function renamer(req, res, next) {
+      helper.clsCheck()
+      expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
     function responder(req, res) {
+      helper.clsCheck()
+      expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
     var app = express()
 
-    app.get('/hello/:name', [renamer,responder])
+    app.get(reqRoutePath, [renamer, responder])
 
     var validations = [
       function (msg) {
@@ -300,26 +525,26 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
+        msg.should.have.property('Controller', expectedRen('c'))
+        msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name renamer')
+        msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
+        msg.should.have.property('Controller', expectedRes('c'))
+        msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/hello/:name responder')
+        msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -339,6 +564,16 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should trace through param() calls', function (done) {
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var expected
+
+    function hello(req, res) {
+      helper.clsCheck()
+      expected = makeExpected(req, hello)
+      res.send('Hello, ' + req.hello + '!')
+    }
+
     var app = express()
 
     app.param('name', function (req, req, next, name) {
@@ -346,9 +581,7 @@ describe('probes.express ' + pkg.version, function () {
       next()
     })
 
-    app.get('/hello/:name', function hello (req, res) {
-      res.send('Hello, ' + req.hello + '!')
-    })
+    app.get(reqRoutePath, hello)
 
     var validations = [
       function (msg) {
@@ -364,8 +597,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -379,13 +612,12 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   function renderTest (done) {
-    var app = express()
+    var reqRoutePath = '/hello/:name'
+    var expected
     var locals
 
-    app.set('views', __dirname)
-    app.set('view engine', 'ejs')
-
-    app.get('/hello/:name', function (req, res) {
+    function fn (req, res) {
+      expected = makeExpected(req, fn)
       locals = {
         name: req.params.name
       }
@@ -393,7 +625,14 @@ describe('probes.express ' + pkg.version, function () {
       // NOTE: We need to do Object.create() here because
       // express 3.x and earlier pollute this object
       res.render('hello', Object.create(locals))
-    })
+    }
+
+    var app = express()
+
+    app.set('views', __dirname)
+    app.set('view engine', 'ejs')
+
+    app.get(reqRoutePath, fn)
 
     var validations = [
       function (msg) {
@@ -430,8 +669,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', '(anonymous)')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -444,101 +683,26 @@ describe('probes.express ' + pkg.version, function () {
     })
   }
 
-  /* TODO BAM remove
-  function rumTest (done) {
-    ao.rumId = 'foo'
-    var app = express()
-    var locals
-    var exit
-
-    // Define simply template engine
-    app.set('views', __dirname)
-    app.set('view engine', 'ejs')
-
-    // Define route to render template that should inject rum scripts
-    app.get('/', function (req, res) {
-      // Store exit event for use in response tests
-      exit = res._http_span.events.exit
-      res.render('rum')
-    })
-
-    // Define appoptics message validations
-    var validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['express-entry'](msg)
-      },
-      function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'express-render')
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('TemplateFile')
-        msg.should.have.property('TemplateLanguage', '.ejs')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'express-render')
-        msg.should.have.property('Label', 'exit')
-      },
-      function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-      },
-      function (msg) {
-        check['express-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-        msg.should.have.property('Controller', '/')
-        msg.should.have.property('Action', '(anonymous)')
-      }
-    ]
-
-    // Delay completion until both test paths end
-    var complete = helper.after(2, function () {
-      server.close(done)
-      delete ao.rumId
-    })
-
-    // Run appoptics checks
-    helper.doChecks(emitter, validations, complete)
-
-    // Start server and make a request
-    var server = app.listen(function () {
-      var port = server.address().port
-      request('http://localhost:' + port, function (a, b, body) {
-        // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(ao.rumId, exit.toString()))
-        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
-        complete()
-      })
-    })
-  }
-  // */
-
   if (semver.satisfies(pkg.version, '< 3.2.0')) {
     it.skip('should trace render span', renderTest)
-    /* TODO BAM remove
-    it.skip('should include RUM scripts', rumTest)
-    // */
   } else {
     it('should trace render span', renderTest)
-    /* TODO BAM remove
-    it('should include RUM scripts', rumTest)
-    // */
   }
 
   it('should work with supertest', function (done) {
+    var reqRoutePath = '/hello/:name'
+    var expected
+
+    function hello(req, res) {
+      expected = makeExpected(req, hello)
+      host = req.headers.host
+      res.send('done')
+    }
+
     var request = require('supertest')
     var app = express()
 
-    app.get('/hello/:name', function hello (req, res) {
-      res.send('done')
-    })
+    app.get(reqRoutePath, hello)
 
     var validations = [
       function (msg) {
@@ -554,8 +718,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, done)
@@ -601,16 +765,22 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should be able to report errors from error handler', function (done) {
-    var error = new Error('test')
-    var app = express()
+    var reqRoutePath = '/'
+    var expected
 
-    app.get('/', function route (req, res, next) {
+    function route(req, res, next) {
+      expected = makeExpected(req, route)
       ao.instrument(function (span) {
         return span.descend('sub')
       }, setImmediate, function (err, res) {
         next(error)
       })
-    })
+    }
+
+    var error = new Error('test')
+    var app = express()
+
+    app.get(reqRoutePath, route)
 
     app.use(function (error, req, res, next) {
       ao.reportError(error)
@@ -627,16 +797,16 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', '/ route')
-        msg.should.have.property('Controller', '/')
-        msg.should.have.property('Action', 'route')
+        msg.should.have.property('ProfileName', expected('p'))
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       },
       function () {},
       function () {},
       function (msg) {
         msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', '/ route')
+        msg.should.have.property('ProfileName', expected('p'))
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -663,14 +833,20 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should nest properly', function (done) {
+    var reqRoutePath = '/hello/:name'
+    var expected
+
+    function hello(req, res) {
+      expected = makeExpected(req, hello)
+      res.send('done')
+    }
+
     var app = express()
 
     var app2 = express()
     app.use(app2)
 
-    app2.get('/hello/:name', function hello (req, res) {
-      res.send('done')
-    })
+    app2.get(reqRoutePath, hello)
 
     var validations = [
       function (msg) {
@@ -692,8 +868,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -710,6 +886,7 @@ describe('probes.express ' + pkg.version, function () {
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)
+    // the following test fails intermittently by never sending a message
     it('should support app.route(path)', appRouteTest)
   } else {
     it.skip('should support express.Router()', expressRouterTest)
@@ -717,13 +894,20 @@ describe('probes.express ' + pkg.version, function () {
   }
 
   function expressRouterTest (done) {
+    var method = 'GET'
+    var reqRoutePath = '/:name'
+    var expected
+
+    function hello(req, res) {
+      expected = makeExpected(req, hello)
+      res.send('done')
+    }
+
     var app = express()
 
     var router = express.Router()
 
-    router.get('/:name', function hello (req, res) {
-      res.send('done')
-    })
+    router.get(reqRoutePath, hello)
 
     app.use('/hello', router)
 
@@ -741,8 +925,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/:name')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -756,12 +940,21 @@ describe('probes.express ' + pkg.version, function () {
   }
 
   function appRouteTest (done) {
+    var method = 'GET'
+    var reqRoutePath = '/hello/:name'
+    var expected
+
+
+    function hello(req, res) {
+      helper.clsCheck()
+      expected = makeExpected(req, hello)
+      res.send('done')
+    }
+
     var app = express()
 
-    app.route('/hello/:name')
-      .get(function hello (req, res) {
-        res.send('done')
-      })
+    app.route(reqRoutePath)
+      .get(hello)
 
     var validations = [
       function (msg) {
@@ -777,8 +970,8 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/:name')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', expected('c'))
+        msg.should.have.property('Action', expected('a'))
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -787,7 +980,13 @@ describe('probes.express ' + pkg.version, function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      request.get('http://localhost:' + port + '/hello/world', function (err, res, body) {
+        if (err) {
+          throw new Error('request failed')
+        } else {
+          //log.debug('response: %s', body)
+        }
+      })
     })
   }
 

@@ -1,4 +1,5 @@
 var helper = require('../helper')
+var should = require('should')
 var ao = helper.ao
 var Span = ao.Span
 
@@ -29,7 +30,9 @@ describe('probes/mongoose ' + pkg.version, function () {
     mongoose.disconnect()
   })
 
-  it('should trace through mongoose', function (done) {
+  var savedCat
+
+  it('should trace through mongoose adding an object', function (done) {
     var span = new Span('outer', {})
     span.run(function () {
       var data = {
@@ -40,10 +43,32 @@ describe('probes/mongoose ' + pkg.version, function () {
       ao.requestStore.set('name', data.name)
 
       var kitty = new Cat(data)
-      kitty.save(function (err) {
-        ao.requestStore.get('name').should.equal(data.name)
+      kitty.save(function (err, item, rows) {
+        let name = ao.requestStore.get('name')
+        should.equal(name, data.name)
+        savedCat = item
         Cat.findOne(data, function () {
-          ao.requestStore.get('name').should.equal(data.name)
+          name = ao.requestStore.get('name')
+          should.equal(name, data.name)
+          done()
+        })
+      })
+    })
+  })
+
+  it('should trace through mongoose deleting an object', function (done) {
+    var span = new Span('outer', {})
+    span.run(function () {
+
+      ao.requestStore.set('cat', 'Mimi')
+
+      Cat.remove(function (err, deletedCat) {
+        let storedCat = ao.requestStore.get('cat')
+        should.equal(storedCat, 'Mimi')
+        Cat.findOne(savedCat, function (err, cat) {
+          storedCat = ao.requestStore.get('cat')
+          should.equal(storedCat, 'Mimi')
+          should.not.exist(cat)
           done()
         })
       })
