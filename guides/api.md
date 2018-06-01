@@ -1,7 +1,11 @@
-## Objects
+## Classes
 
 <dl>
-<dt><a href="#ao">ao</a> : <code>object</code></dt>
+<dt><a href="#ao">ao</a></dt>
+<dd></dd>
+<dt><a href="#Span">Span</a></dt>
+<dd></dd>
+<dt><a href="#Event">Event</a></dt>
 <dd></dd>
 </dl>
 
@@ -14,10 +18,10 @@
 
 <a name="ao"></a>
 
-## ao : <code>object</code>
-**Kind**: global namespace  
+## ao
+**Kind**: global class  
 
-* [ao](#ao) : <code>object</code>
+* [ao](#ao)
     * [.logLevel](#ao.logLevel)
     * [.serviceKey](#ao.serviceKey)
     * [.sampleMode](#ao.sampleMode)
@@ -187,14 +191,7 @@ Check whether the appoptics agent is ready to sample. It will wait up to
 the specified number of milliseconds before returning.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>boolean</code> - - true if ready to sample; false if not
-
-UNKNOWN 0
-OK 1
-TRY_LATER 2
-LIMIT_EXCEEDED 3
-INVALID_API_KEY 4
-CONNECT_ERROR 5  
+**Returns**: <code>boolean</code> - - true if ready to sample; false if not  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -255,7 +252,7 @@ metadata.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| item | <code>string</code> \| <code>Event</code> \| <code>Metadata</code> | the item to check the sampling flag of |
+| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metadata</code> | the item to check the sampling flag of |
 
 <a name="ao.stringToMetadata"></a>
 
@@ -310,7 +307,7 @@ Start or continue a trace
 
 | Param | Type | Description |
 | --- | --- | --- |
-| xtrace | <code>string</code> | X-Trace ID to continue from |
+| xtrace | <code>string</code> | X-Trace ID to continue from or null |
 | build | <code>string</code> \| <code>function</code> | Name or function to build a span |
 | run | <code>function</code> | Code to instrument and run |
 | [options] | <code>object</code> | Options |
@@ -339,6 +336,268 @@ Report an info event in the current trace.
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | Data to report in the info event |
+
+<a name="Span"></a>
+
+## Span
+**Kind**: global class  
+
+* [Span](#Span)
+    * [new Span(name, parent, [data])](#new_Span_new)
+    * [.descend(name, data)](#Span+descend)
+    * [.run(fn)](#Span+run)
+    * [.runAsync(fn)](#Span+runAsync)
+    * [.runSync(fn)](#Span+runSync)
+    * [.enter(data)](#Span+enter)
+    * [.exit(data)](#Span+exit)
+    * [.exitWithError(err, data)](#Span+exitWithError)
+    * [.setExitError(err)](#Span+setExitError)
+    * [.info(data)](#Span+info)
+    * [.error(data)](#Span+error)
+
+<a name="new_Span_new"></a>
+
+### new Span(name, parent, [data])
+Create an execution span.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Span name |
+| parent | <code>string</code> \| [<code>Event</code>](#Event) | Context to continue from |
+| [data] | <code>object</code> | Key/Value pairs of info to add to event |
+
+**Example**  
+```js
+var span = new Span('fs', Event.last, {
+  File: file
+})
+```
+<a name="Span+descend"></a>
+
+### span.descend(name, data)
+Create a new span descending from the current span
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | Span name |
+| data | <code>object</code> | Key/Value pairs of info to add to the entry event |
+
+**Example**  
+```js
+var inner = outer.descend('fs', {
+  File: file
+})
+```
+<a name="Span+run"></a>
+
+### span.run(fn)
+Run a function within the context of this span. Similar to mocha, this
+identifies asynchronicity by function arity and invokes runSync or runAsync
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | function to run within the span context |
+
+**Example**  
+```js
+span.run(function () {
+  syncCallToTrace()
+})
+```
+**Example**  
+```js
+span.run(function (wrap) {
+  asyncCallToTrace(wrap(callback))
+})
+```
+<a name="Span+runAsync"></a>
+
+### span.runAsync(fn)
+Run an async function within the context of this span.
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | async function to run within the span context |
+
+**Example**  
+```js
+span.runAsync(function (wrap) {
+  asyncCallToTrace(wrap(callback))
+})
+```
+<a name="Span+runSync"></a>
+
+### span.runSync(fn)
+Run a sync function within the context of this span.
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | sync function to run withing the span context |
+
+**Example**  
+```js
+span.runSync(function () {
+  syncCallToTrace()
+})
+```
+<a name="Span+enter"></a>
+
+### span.enter(data)
+Send the enter event
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | Key/Value pairs of info to add to event |
+
+**Example**  
+```js
+span.enter()
+syncCallToTrace()
+span.exit()
+```
+**Example**  
+```js
+// If using enter/exit to trace async calls, you must flag it as async
+// manually and bind the callback to maintain the trace context
+span.async = true
+span.enter()
+asyncCallToTrace(ao.bind(function (err, res) {
+  span.exit()
+  callback(err, res)
+}))
+```
+<a name="Span+exit"></a>
+
+### span.exit(data)
+Send the exit event
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>bbject</code> | Key/Value pairs of info to add to event |
+
+<a name="Span+exitWithError"></a>
+
+### span.exitWithError(err, data)
+Send the exit event with an error status
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Error to add to event |
+| data | <code>object</code> | Key/Value pairs of info to add to event |
+
+<a name="Span+setExitError"></a>
+
+### span.setExitError(err)
+Set an error to be sent with the exit event
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Error to add to event |
+
+<a name="Span+info"></a>
+
+### span.info(data)
+Create and send an info event
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | key-value pairs to add to event |
+
+**Example**  
+```js
+span.info({Foo: 'bar'})
+```
+<a name="Span+error"></a>
+
+### span.error(data)
+Create and send an error event
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | Key/Value pairs to add to event |
+
+**Example**  
+```js
+span.error(error)
+```
+<a name="Event"></a>
+
+## Event
+**Kind**: global class  
+
+* [Event](#Event)
+    * [new Event(span, label, parent)](#new_Event_new)
+    * [.set(data)](#Event+set)
+    * [.enter()](#Event+enter)
+    * [.toString()](#Event+toString)
+    * [.sendReport(data)](#Event+sendReport)
+
+<a name="new_Event_new"></a>
+
+### new Event(span, label, parent)
+Create an event
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| span | <code>string</code> | name of the event's span |
+| label | <code>string</code> | Event label (usually entry or exit) |
+| parent | <code>object</code> | Parent event to edge back to |
+
+<a name="Event+set"></a>
+
+### event.set(data)
+Set key-value pairs on this event
+
+**Kind**: instance method of [<code>Event</code>](#Event)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | Key/Value pairs of info to add to event |
+
+<a name="Event+enter"></a>
+
+### event.enter()
+Enter the context of this event
+
+**Kind**: instance method of [<code>Event</code>](#Event)  
+<a name="Event+toString"></a>
+
+### event.toString()
+Get the X-Trace ID string of the event
+
+**Kind**: instance method of [<code>Event</code>](#Event)  
+<a name="Event+sendReport"></a>
+
+### event.sendReport(data)
+Send this event to the reporter
+
+**Kind**: instance method of [<code>Event</code>](#Event)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | additional key-value pairs to send |
 
 <a name="SampleInfo"></a>
 

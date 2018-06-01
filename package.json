@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "node install-appoptics-bindings.js",
     "test": "gulp test",
-    "docs": "gulp docs",
+    "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
     "install-deps": "./deps.sh",
     "coverage": "gulp coverage",
     "support-matrix": "gulp support-matrix",
@@ -105,7 +105,7 @@
     "vision": "^4.1.0"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "appoptics/appoptics-bindings-node#object-args"
+    "appoptics-bindings": "appoptics-bindings@5.0.1"
   },
   "unused": {
     "dev-dependency-oracledb-1.13.1": "^1.13.1",
