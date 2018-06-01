@@ -83,9 +83,9 @@ describe('probes.express ' + pkg.version, function () {
   //
   before(function (done) {
     ao.probes.fs.enabled = false
-    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    emitter = helper.appoptics(done)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
@@ -123,8 +123,8 @@ describe('probes.express ' + pkg.version, function () {
       done()
     }, [
         function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
+          msg.should.have.property('Label').oneOf('entry', 'exit')
+          msg.should.have.property('Layer', 'fake')
         }
       ], done)
   })
@@ -141,7 +141,7 @@ describe('probes.express ' + pkg.version, function () {
     forwardControllerAction('post', done)
   })
 
-  it ('should forward controller/action with domain prefix', function (done) {
+  it('should forward controller/action with domain prefix', function (done) {
     ao.cfg.domainPrefix = true
     try {
       forwardControllerAction('get', done)
@@ -266,7 +266,7 @@ describe('probes.express ' + pkg.version, function () {
     function custom (req, res) {
       throw new Error('I am a bad function')
     }
-    customTransactionName(undefined, done)
+    customTransactionName(custom, done)
   })
 
   it('should handle a falsey return by the custom name function', function (done) {
@@ -309,12 +309,24 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        var expectedCustom
+        var expectedCustom = expected('tx')
+        if (custom) {
+          try {
+            var expectedCustomName = custom(customReq)
+            if (expectedCustomName) {
+              expectedCustom = expectedCustomName
+            }
+          } catch (e) {
+            // do nothing
+          }
+        }
+        /*
         if (custom && custom(customReq)) {
           expectedCustom = custom(customReq)
         } else {
           expectedCustom = expected('tx')
         }
+        // */
         if (ao.cfg.domainPrefix) {
           expectedCustom = customReq.headers.host + '/' + expectedCustom
         }
@@ -874,6 +886,7 @@ describe('probes.express ' + pkg.version, function () {
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)
+    // the following test fails intermittently by never sending a message
     it('should support app.route(path)', appRouteTest)
   } else {
     it.skip('should support express.Router()', expressRouterTest)
@@ -883,6 +896,8 @@ describe('probes.express ' + pkg.version, function () {
   function expressRouterTest (done) {
     var method = 'GET'
     var reqRoutePath = '/:name'
+    var expected
+
     function hello(req, res) {
       expected = makeExpected(req, hello)
       res.send('done')
@@ -927,7 +942,11 @@ describe('probes.express ' + pkg.version, function () {
   function appRouteTest (done) {
     var method = 'GET'
     var reqRoutePath = '/hello/:name'
+    var expected
+
+
     function hello(req, res) {
+      helper.clsCheck()
       expected = makeExpected(req, hello)
       res.send('done')
     }
@@ -961,7 +980,13 @@ describe('probes.express ' + pkg.version, function () {
 
     var server = app.listen(function () {
       var port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      request.get('http://localhost:' + port + '/hello/world', function (err, res, body) {
+        if (err) {
+          throw new Error('request failed')
+        } else {
+          //log.debug('response: %s', body)
+        }
+      })
     })
   }
 
