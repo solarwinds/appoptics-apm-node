@@ -55,7 +55,7 @@ npm install --save appoptics-apm@latest
 
 ## Adding Your Own Spans
 
-Documentation coming soon!
+Our GitHub repository hosts an [overview](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/instrumenting-a-module.md) and a [complete API reference](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/api.md).
 
 ## Support
 
