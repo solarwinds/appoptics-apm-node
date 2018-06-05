@@ -120,13 +120,12 @@ elif [[ "$ARG" = "travis" ]]; then
     export AO_TEST_SQLSERVER_EX=mssql:1433
     export AO_TEST_SQLSERVER_EX_USERNAME=sa
 elif [[ "$ARG" = "debug" ]]; then
+    # this section is more for reference than anything else.
     export APPOPTICS_DEBUG_LEVEL=6
-    # see src/loggers.js for all the options
-    export DDEBUG=appoptics:flow,appoptics:metadata,appoptics:test:message
-
-    # Turn on the requestStore debug logging proxy (should work with fs now
-    # that logging uses in memory logger if stdout or stderr are not a TTY.
-    #export AO_TEST_REQUESTSTORE_PROXY=1
+    # see lib/loggers.js for all the options
+    export DEBUG=appoptics:error,appoptics:warn,appoptics:debug
+    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    export APPOPTICS_TOKEN_BUCKET_RATE=1000
 elif [[ "$ARG" = "bindings" ]]; then
     # use these to provide authentication and specify an alternate branch/tag
     # for use by install-appoptics-bindings.js. the example below, given a git
