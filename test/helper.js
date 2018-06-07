@@ -46,7 +46,8 @@ exports.skipTest = function (filename) {
   ao.loggers.warn('skipping test', test)
   return true
 }
-log.debug('Using oboe version %s', ao.addon.Config.getVersionString())
+let oboeVersion = ao.addon ? ao.addon.Config.getVersionString() : '<not loaded>'
+log.debug('Using oboe version %s', oboeVersion)
 
 // if not specifically turning on error and warning debugging, turn it off
 if (!('AO_TEST_SHOW_LOGS' in process.env)) {
