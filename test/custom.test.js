@@ -2,6 +2,7 @@ var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')
 var ao = require('..')
+var log = ao.loggers
 var Span = ao.Span
 var Event = ao.Event
 
@@ -358,7 +359,16 @@ describe('custom', function () {
   it('should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
       function build (span) { return span.descend('test') }
-      function inc () { count++ }
+      let expected = ['ibuild', 'irun', 'sbuild', 'srun']
+      let found = []
+      let i = 0
+      function getInc () {
+        let what = expected[i++]
+        return function () {
+          count++
+          found.push(what)
+        }
+      }
       function run () {}
       var count = 0
 
@@ -371,8 +381,9 @@ describe('custom', function () {
       ao.startOrContinueTrace(null, null, run)
 
       // Verify the runner is still run when builder fails to return a span
-      ao.instrument(inc, inc)
-      ao.startOrContinueTrace(null, inc, inc)
+      ao.instrument(getInc(), getInc())
+      ao.startOrContinueTrace(null, getInc(), getInc())
+      found.should.deepEqual(expected)
       count.should.equal(4)
 
       done()
@@ -408,7 +419,7 @@ describe('custom', function () {
   })
 
   // Verify startOrContinueTrace creates a new trace when not already tracing.
-  it('should start a fresh trace', function (done) {
+  it('should start a fresh trace for sync function', function (done) {
     var last
 
     helper.doChecks(emitter, [
@@ -433,6 +444,48 @@ describe('custom', function () {
     }, function () {
       return test
     }, conf)
+
+    res.should.equal(test)
+  })
+
+  // Verify startOrContinueTrace creates a new trace when not already tracing.
+  it('should start a fresh trace for async function', function (done) {
+    var last
+
+    helper.doChecks(emitter, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('SampleSource')
+        msg.should.have.property('SampleRate')
+        msg.should.not.have.property('Edge')
+        last = msg['X-Trace'].substr(42, 16)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+
+    var test = 'foo'
+    var res = ao.startOrContinueTrace(
+      null,                          // xtrace
+      function (last) {              // span maker function
+        return last.descend('test')
+      },
+      function (cb) {                // runner
+        setTimeout(function () {cb(1, 2, 3, 5)}, 100)
+        return test
+      },
+      conf,                          // configuration
+      function callback () {
+        arguments.should.have.property('0', 1)
+        arguments.should.have.property('1', 2)
+        arguments.should.have.property('2', 3)
+        arguments.should.have.property('3', 5)
+      }
+    )
 
     res.should.equal(test)
   })

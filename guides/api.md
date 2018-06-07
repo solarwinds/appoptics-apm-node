@@ -41,7 +41,7 @@
     * [.stringToMetadata(metadata)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
     * [.instrumentHttp(build, run, [options], res)](#ao.instrumentHttp)
     * [.instrument(build, run, [options], [callback])](#ao.instrument)
-    * [.startOrContinueTrace(xtrace, build, run, [options], [callback])](#ao.startOrContinueTrace)
+    * [.startOrContinueTrace(xtrace, build, run, [opts], [callback])](#ao.startOrContinueTrace)
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
 
@@ -300,21 +300,63 @@ Apply custom instrumentation to a function.
 
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, build, run, [options], [callback])
-Start or continue a trace
+### ao.startOrContinueTrace(xtrace, build, run, [opts], [callback])
+Start or continue a trace. Continue is in the sense of continuing a
+trace based on an X-Trace ID received from an external source, e.g.,
+HTTP headers or message queue headers.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| xtrace | <code>string</code> | X-Trace ID to continue from or null |
-| build | <code>string</code> \| <code>function</code> | Name or function to build a span |
-| run | <code>function</code> | Code to instrument and run |
-| [options] | <code>object</code> | Options |
-| [options.enabled] | <code>boolean</code> | Enable tracing |
-| [options.collectBacktraces] | <code>boolean</code> | Collect backtraces |
-| [callback] | <code>function</code> | Callback, if async |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
+| build | <code>string</code> \| <code>function</code> |  | name or function to return a span |
+| run | <code>function</code> |  | run the code. if sync, no arguments, else one argument |
+| [opts] | <code>object</code> |  | options |
+| [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
+| [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
+| [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function to return name |
+| [callback] | <code>function</code> |  | Callback, if async |
 
+**Example**  
+```js
+ao.startOrContinueTrace(
+  null,
+  'sync-span-name',
+  functionToRun,           // synchronous so function takes no arguments
+  {customTxName: 'special-span-name'}
+)
+```
+**Example**  
+```js
+ao.startOrContinueTrace(
+  null,
+  'sync-span-name',
+  functionToRun,
+  // note - no context is provided for the customTxName function. If
+  // context is required the caller should wrap the function in a closure.
+  {customTxName: customNameFunction}
+)
+```
+**Example**  
+```js
+// this is the function that should be instrumented
+request('https://www.google.com', function realCallback (err, res, body) {...})
+// because asyncFunctionToRun only accepts one parameter it must be
+// wrapped, so the function to run becomes
+function asyncFunctionToRun (cb) {
+  request('https://www.google.com', cb)
+}
+// and realCallback is supplied as the optional callback parameter
+
+ao.startOrContinueTrace(
+  null,
+  'async-span-name',
+  asyncFunctionToRun,     // async, so function takes one argument
+  // no options this time
+  realCallback            // receives request's callback arguments.
+)
+```
 <a name="ao.reportError"></a>
 
 ### ao.reportError(error)
@@ -346,8 +388,8 @@ Report an info event in the current trace.
     * [new Span(name, parent, [data])](#new_Span_new)
     * [.descend(name, data)](#Span+descend)
     * [.run(fn)](#Span+run)
-    * [.runAsync(fn)](#Span+runAsync)
-    * [.runSync(fn)](#Span+runSync)
+    * [.runAsync(fn, [rootOpts])](#Span+runAsync)
+    * [.runSync(fn, [rootOpts])](#Span+runSync)
     * [.enter(data)](#Span+enter)
     * [.exit(data)](#Span+exit)
     * [.exitWithError(err, data)](#Span+exitWithError)
@@ -417,7 +459,7 @@ span.run(function (wrap) {
 ```
 <a name="Span+runAsync"></a>
 
-### span.runAsync(fn)
+### span.runAsync(fn, [rootOpts])
 Run an async function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
@@ -425,6 +467,9 @@ Run an async function within the context of this span.
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | async function to run within the span context |
+| [rootOpts] | <code>object</code> | presence indicates that this is a root span |
+| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name to use |
+| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function returning string |
 
 **Example**  
 ```js
@@ -434,7 +479,7 @@ span.runAsync(function (wrap) {
 ```
 <a name="Span+runSync"></a>
 
-### span.runSync(fn)
+### span.runSync(fn, [rootOpts])
 Run a sync function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
@@ -442,6 +487,9 @@ Run a sync function within the context of this span.
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | sync function to run withing the span context |
+| [rootOpts] | <code>object</code> | presence indicates that this is a root span |
+| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name to use |
+| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function returning string |
 
 **Example**  
 ```js
@@ -486,7 +534,7 @@ Send the exit event
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>bbject</code> | Key/Value pairs of info to add to event |
+| data | <code>object</code> | key-value pairs of info to add to event |
 
 <a name="Span+exitWithError"></a>
 
