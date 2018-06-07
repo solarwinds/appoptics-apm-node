@@ -886,7 +886,9 @@ describe('probes.express ' + pkg.version, function () {
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)
-    // the following test fails intermittently by never sending a message
+    // if the following test fails intermittently or unpredictably
+    // you may need to set the BUCKET settings shown in the env.sh "debug"
+    // section.
     it('should support app.route(path)', appRouteTest)
   } else {
     it.skip('should support express.Router()', expressRouterTest)
