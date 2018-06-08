@@ -1,3 +1,4 @@
+'use strict'
 var Emitter = require('events').EventEmitter
 var helper = require('./helper')
 var should = require('should')

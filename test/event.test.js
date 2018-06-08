@@ -1,3 +1,4 @@
+'use strict'
 var helper = require('./helper')
 var should = require('should')
 var ao = require('..')

@@ -1,3 +1,4 @@
+'use strict'
 var helper = require('./helper')
 var ao = require('..')
 var Span = ao.Span
