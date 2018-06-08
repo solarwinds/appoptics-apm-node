@@ -121,7 +121,7 @@ elif [[ "$ARG" = "travis" ]]; then
     export AO_TEST_SQLSERVER_EX_USERNAME=sa
 elif [[ "$ARG" = "debug" ]]; then
     # this section is more for reference than anything else.
-    # valid values for DEBUG_LEVEL are 1 to 6
+    # LEVEL 2 is most of what you want to see. 6 (highest) is too much.
     export APPOPTICS_DEBUG_LEVEL=2
     # see lib/loggers.js for all the options
     export DEBUG=appoptics:error,appoptics:warn,appoptics:debug
