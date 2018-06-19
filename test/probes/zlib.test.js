@@ -1,11 +1,13 @@
-var helper = require('../helper')
-var ao = helper.ao
-var noop = helper.noop
+'use strict'
 
-var concat = require('concat-stream')
-var zlib = require('zlib')
+const helper = require('../helper')
+const ao = helper.ao
+const noop = helper.noop
 
-var classes = [
+const concat = require('concat-stream')
+const zlib = require('zlib')
+
+const classes = [
   'Deflate',
   'Inflate',
   'Gzip',
@@ -15,7 +17,7 @@ var classes = [
   'Unzip'
 ]
 
-var methods = [
+const methods = [
   'deflate',
   'deflateRaw',
   'gzip',
@@ -26,19 +28,19 @@ var methods = [
 ]
 
 describe('probes.zlib once', function () {
-  var emitter
+  let emitter
 
-	//
-	// Intercept appoptics messages for analysis
-	//
-	before(function (done) {
-		emitter = helper.appoptics(done)
-		ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+  //
+  // Intercept appoptics messages for analysis
+  //
+  before(function (done) {
+    emitter = helper.appoptics(done)
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
-	})
-	after(function (done) {
+  })
+  after(function (done) {
     emitter.close(done)
-	})
+  })
 
   // fake test to work around UDP dropped message issue
   it('UDP might lose a message', function (done) {
@@ -55,9 +57,9 @@ describe('probes.zlib once', function () {
 })
 
 describe('probes.zlib', function () {
-  var options = { chunkSize: 1024 }
-  var emitter
-  var realSampleTrace = ao.addon.Context.sampleTrace
+  const options = { chunkSize: 1024 }
+  let emitter
+  let realSampleTrace = ao.addon.Context.sampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -76,7 +78,7 @@ describe('probes.zlib', function () {
     emitter.close(done)
   })
 
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'zlib')
       msg.should.have.property('Label', 'entry')
@@ -94,9 +96,9 @@ describe('probes.zlib', function () {
   //
   // Prepare input and output values
   //
-  var test = new Buffer('test')
-  var inputs = {}
-  var outputs = {}
+  const test = new Buffer('test')
+  const inputs = {}
+  const outputs = {}
 
   // Deflate/Inflate
   before(function (done) {
@@ -141,7 +143,7 @@ describe('probes.zlib', function () {
   //
   describe('async', function () {
     methods.forEach(function (method) {
-      var className = upperFirst(method)
+      const className = upperFirst(method)
       if (zlib[method]) {
         it('should support ' + method, function (done) {
           helper.test(emitter, function (done) {
@@ -167,13 +169,13 @@ describe('probes.zlib', function () {
 
   describe('sync', function () {
     methods.forEach(function (method) {
-      var className = upperFirst(method)
-      var syncMethod = method + 'Sync'
+      const className = upperFirst(method)
+      const syncMethod = method + 'Sync'
       if (zlib[syncMethod]) {
         it('should support ' + syncMethod, function (done) {
           helper.test(emitter, function (done) {
             try {
-              var buf = zlib[syncMethod](inputs[className])
+              const buf = zlib[syncMethod](inputs[className])
               buf.toString().should.equal(outputs[className].toString())
             } catch (e) {}
             process.nextTick(done)
@@ -197,7 +199,7 @@ describe('probes.zlib', function () {
       if (zlib[name]) {
         it('should support ' + name, function (done) {
           helper.test(emitter, function (done) {
-            var inst = new (zlib[name])(options)
+            const inst = new (zlib[name])(options)
             inst.should.be.an.instanceOf(zlib[name])
             inst.on('error', done)
             inst.on('close', done)
@@ -227,11 +229,11 @@ describe('probes.zlib', function () {
 
   describe('creators', function () {
     classes.forEach(function (name) {
-      var creator = 'create' + name
+      const creator = 'create' + name
       if (zlib[creator]) {
         it('should support ' + creator, function (done) {
           helper.test(emitter, function (done) {
-            var inst = new zlib[creator](options)
+            const inst = new zlib[creator](options)
             inst.should.be.an.instanceOf(zlib[name])
             inst.on('error', done)
             inst.on('close', done)
@@ -261,11 +263,14 @@ describe('probes.zlib', function () {
 
   it('should support report errors', function (done) {
     helper.test(emitter, function (done) {
+      let count = 0
       function after () {
+        count += 1
+        ao.clsCheck(`in after ${count}`)
         done()
       }
 
-      var inst = new zlib.Gunzip(options)
+      const inst = new zlib.Gunzip(options)
       inst.on('error', after)
       inst.on('close', after)
       inst.on('end', after)
@@ -279,6 +284,7 @@ describe('probes.zlib', function () {
       function (msg) {
         checks.exit(msg)
         msg.should.have.property('ErrorMsg')
+        msg.should.have.property('ErrorMsg', 'incorrect header check')
       }
     ], done)
   })
