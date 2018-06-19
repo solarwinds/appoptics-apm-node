@@ -53,14 +53,14 @@ services:
   # extend the collector services into this composition.
   # NOTE: extend goes away in version 3.0 of docker-compose.yml
   #
-  scribe-collector:
-    extends:
-      file: "../oboe-test/collectors/docker-compose.yml"
-      service: "scribe-collector"
-  java-collector:
-    extends:
-      file: "../oboe-test/collectors/docker-compose.yml"
-      service: "java-collector"
+  #scribe-collector:
+  #  extends:
+  #    file: "../oboe-test/collectors/docker-compose.yml"
+  #    service: "scribe-collector"
+  #java-collector:
+  #  extends:
+  #    file: "../oboe-test/collectors/docker-compose.yml"
+  #    service: "java-collector"
 
   #
   # Not used with appoptics.
@@ -160,7 +160,7 @@ services:
       - "REPLSETMEMBERS=3"
 
   mysql:
-    container_name: mysql
+    #container_name: mysql
     image: "mysql:5.7.13"
     ports:
       - "${AO_TEST_MYSQL_HOST_PORT:-3306}:3306"
