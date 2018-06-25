@@ -57,6 +57,11 @@ elif [[ "$ARG" = "bash" ]]; then
     # set this to ssl in order to use APPOPTICS_COLLECTOR
     export APPOPTICS_REPORTER=udp
 
+    # and the buckets need to be adjusted if using UDP because the defaults
+    # result in lost messages without notification.
+    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    export APPOPTICS_TOKEN_BUCKET_RATE=1000
+
     # the following are used primarily to run the full appoptics-apm test suite.
     # presumes docker containers are running and their ports are addressable
     # as localhost. the port overrides (e.g., AO_TEST_MYSQL_HOST_PORT) allow
