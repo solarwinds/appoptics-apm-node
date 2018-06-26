@@ -1,14 +1,18 @@
-var helper = require('../../helper')
-var ao = helper.ao
+'use strict'
 
-var domain = require('domain')
+const helper = require('../../helper')
+const ao = helper.ao
+const fs = require('fs')
+const should = require('should')
+
+const domain = require('domain')
 
 // To prevent the done call from continuing the context,
 // the done callbacks must be triggered indirectly.
 function indirectDone (done) {
-  var stopped = false
+  let stopped = false
 
-  var t = setInterval(function () {
+  const t = setInterval(function () {
     if (stopped) {
       clearInterval(t)
       done()
@@ -30,46 +34,60 @@ module.exports = function (Promise) {
     })
   }
 
-  it('should support promises', function (done) {
-    var t = indirectDone(done)
+  it('should support promises via delay', function (done) {
+    const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      ao.requestStore.set('lastSpan', true)
+      //ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
+        return delay(100)
+      }).then(function () {
         ao.requestStore.get('foo').should.equal('bar')
         t.done()
-      }, done)
+      })
     })
   })
 
-  it('should support promises', function (done) {
-    var t = indirectDone(done)
+  it('should support promises via fs.readFile', function (done) {
+    const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      ao.requestStore.set('lastSpan', true)
+      //ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
-      delay(100).then(function () {
+      const p = new Promise(function (resolve, reject) {
+        fs.readFile('./package.json', 'utf8', function (err, data) {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(data)
+          }
+        })
+      })
+      p.then(function () {
         ao.requestStore.get('foo').should.equal('bar')
         t.done()
-      }, done)
+      })
     })
   })
 
   it('should support promises in domains', function (done) {
-    var t = indirectDone(done)
-    var d = domain.create()
+    const t = indirectDone(done)
+    const d = domain.create()
     d.on('error', done)
     d.run(function () {
       ao.requestStore.run(function () {
         // Hack to look like there's a previous span
-        ao.requestStore.set('lastSpan', true)
+        //ao.requestStore.set('lastSpan', true)
 
         ao.requestStore.set('foo', 'bar')
         delay(100).then(function () {
-          ao.requestStore.get('foo').should.equal('bar')
+          const foo = ao.requestStore.get('foo')
+          should.exist(foo)
+          foo.should.equal('bar')
+          //ao.requestStore.get('foo').should.equal('bar')
           t.done()
         }, done)
       })
@@ -77,17 +95,17 @@ module.exports = function (Promise) {
   })
 
   it('should not interfere with untraced promises', function (done) {
-    var t = indirectDone(done)
+    const t = indirectDone(done)
     delay(100).then(function () {
       t.done()
     }, done)
   })
 
   it('should support progress callbacks', function (done) {
-    var t = indirectDone(done)
+    const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      ao.requestStore.set('lastSpan', true)
+      //ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
