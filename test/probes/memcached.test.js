@@ -1,20 +1,19 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+const helper = require('../helper')
+const ao = helper.ao
 
-var Memcached = require('memcached')
-var pkg = require('memcached/package.json')
-var db_host = process.env.AO_TEST_MEMCACHED_1_4 || 'memcached:11211'
+const semver = require('semver')
+
+const Memcached = require('memcached')
+const pkg = require('memcached/package.json')
+const db_host = process.env.AO_TEST_MEMCACHED_1_4 || 'memcached:11211'
 
 describe('probes.memcached ' + pkg.version, function () {
   this.timeout(10000)
-  var emitter
-  var ctx = {}
-  var mem
-  var realSampleTrace
+  let emitter
+  let mem
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -25,7 +24,7 @@ describe('probes.memcached ' + pkg.version, function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -43,7 +42,7 @@ describe('probes.memcached ' + pkg.version, function () {
   //
   // Define generic checks
   //
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'memcached')
       msg.should.have.property('Label', 'entry')
@@ -62,11 +61,11 @@ describe('probes.memcached ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
@@ -115,11 +114,11 @@ describe('probes.memcached ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   it('should get', function (done) {
@@ -140,7 +139,7 @@ describe('probes.memcached ' + pkg.version, function () {
 
   it('should getMulti', function (done) {
     helper.test(emitter, function (done) {
-      mem.getMulti(['foo','bar'], done)
+      mem.getMulti(['foo', 'bar'], done)
     }, [
       function (msg) {
         checks.entry(msg)
@@ -293,7 +292,7 @@ describe('probes.memcached ' + pkg.version, function () {
 
   it('should report errors', function (done) {
     helper.test(emitter, function (done) {
-      mem.get(new Date, function () {
+      mem.get(new Date(), function () {
         done()
       })
     }, [
