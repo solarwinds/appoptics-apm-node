@@ -1,21 +1,21 @@
 'use strict'
 
-var ao = exports.ao = require('..')
-var realPort = ao.port
+const ao = exports.ao = require('..')
+const realPort = ao.port
 ao.skipSample = true
 
-var Emitter = require('events').EventEmitter
-var debug = require('debug')('appoptics:test:helper')
-var extend = require('util')._extend
-var bson = require('bson')
-var dgram = require('dgram')
-var https = require('https')
-var http = require('http')
-var path = require('path')
+const Emitter = require('events').EventEmitter
+const debug = require('debug')('appoptics:test:helper')
+const extend = require('util')._extend
+const bson = require('bson')
+const dgram = require('dgram')
+const https = require('https')
+const http = require('http')
+const path = require('path')
 
 Error.stackTraceLimit = 25
 
-var log = ao.loggers
+const log = ao.loggers
 
 log.addGroup({
   groupName: 'test',
@@ -23,8 +23,10 @@ log.addGroup({
 })
 
 exports.clsCheck = function () {
-  let c = ao.requestStore
-  if (!c || !c.active) throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
+  const c = ao.requestStore
+  if (!c || !c.active) {
+    throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
+  }
 }
 
 exports.noop = function () {}
@@ -36,8 +38,8 @@ exports.skipTest = function (filename) {
     return false
   }
 
-  var skips = process.env.AO_SKIP_TEST.split(',')
-  var test = path.basename(filename, '.test.js')
+  const skips = process.env.AO_SKIP_TEST.split(',')
+  const test = path.basename(filename, '.test.js')
 
   if (!~skips.indexOf(test)) {
     return false
@@ -46,32 +48,37 @@ exports.skipTest = function (filename) {
   ao.loggers.warn('skipping test', test)
   return true
 }
-let oboeVersion = ao.addon ? ao.addon.Config.getVersionString() : '<not loaded>'
+
+const addon = ao.addon
+const oboeVersion = addon ? addon.Config.getVersionString() : '<not loaded>'
 log.debug('Using oboe version %s', oboeVersion)
 
 // if not specifically turning on error and warning debugging, turn it off
 if (!('AO_TEST_SHOW_LOGS' in process.env)) {
   log.debug('AO_TEST_SHOW_LOGS not set, turning off logging')
-  var logs = (process.env.DEBUG || '').split(',')
-  logs = logs.filter(function (item) {return !item.startsWith('appoptics:')}).join(',')
+  let logs = (process.env.DEBUG || '').split(',')
+  logs = logs.filter(function (item) {
+    return !item.startsWith('appoptics:')
+  }).join(',')
+  // set to whatever it was with appoptics items removed
   process.env.DEBUG = logs
   // pseudo-log-level that has no logger.
   ao.logLevel = 'none'
 }
 
-var BSON = new bson.BSONPure.BSON()
+const BSON = new bson.BSONPure.BSON()
 
-var udpPort = 7832
+let udpPort = 7832
 
 if (process.env.APPOPTICS_REPORTER_UDP) {
-  var parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
+  const parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
   if (parts.length == 2) udpPort = parts[1]
 }
 
 debug('helper found real port = ' + realPort)
 
 function udpSend (msg, port, host) {
-  var client = dgram.createSocket('udp4')
+  const client = dgram.createSocket('udp4')
   client.send(msg, 0, msg.length, Number(port), host, function () {
     client.close()
   })
@@ -79,10 +86,10 @@ function udpSend (msg, port, host) {
 
 exports.appoptics = function (done) {
   // Create UDP server to mock appoptics
-  var server = dgram.createSocket('udp4')
+  const server = dgram.createSocket('udp4')
 
   // Create emitter to forward messages
-  var emitter = new Emitter
+  const emitter = new Emitter()
 
   // note emitter is being handled by appoptics. some tests don't invoke
   // appoptics, only doChecks() which will need to log messages if this is
@@ -92,8 +99,8 @@ exports.appoptics = function (done) {
   // Forward events
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
-    var port = server.address().port
-    var parsed = BSON.deserialize(msg)
+    const port = server.address().port
+    const parsed = BSON.deserialize(msg)
     log.test.message('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)
@@ -107,7 +114,7 @@ exports.appoptics = function (done) {
 
   // Wait for the server to become available
   server.on('listening', function () {
-    var port = server.address().port
+    const port = server.address().port
     ao.port = port.toString()
     emitter.port = port
     debug('mock appoptics (port ' + port + ') listening')
@@ -122,7 +129,7 @@ exports.appoptics = function (done) {
 
   // Attach close function to use in after()
   emitter.close = function (done) {
-    var port = server.address().port
+    const port = server.address().port
     server.on('close', function () {
       debug('mock appoptics (port ' + port + ') closed')
       process.nextTick(done)
@@ -134,16 +141,16 @@ exports.appoptics = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done) {
-  var addr = emitter.server.address()
+  const addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
-  debug('doChecks invoked with server address ' + addr.address + ':' + addr.port)
+  debug('doChecks invoked - server address ' + addr.address + ':' + addr.port)
 
   function onMessage (msg) {
     if (!emitter.__aoActive) {
       log.test.message('mock (' + addr.port + ') received message', msg)
     }
-    var check = checks.shift()
+    const check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
         try { check(msg) }
@@ -158,7 +165,7 @@ exports.doChecks = function (emitter, checks, done) {
     if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
 
     debug(checks.length + ' checks left')
-    if ( ! checks.length) {
+    if (!checks.length) {
       // NOTE: This is only needed because some
       // tests have less checks than messages
       emitter.removeListener('message', onMessage)
@@ -169,7 +176,7 @@ exports.doChecks = function (emitter, checks, done) {
   emitter.on('message', onMessage)
 }
 
-var check = {
+const check = {
   'http-entry': function (msg) {
     msg.should.have.property('Layer', 'nodejs')
     msg.should.have.property('Label', 'entry')
@@ -190,7 +197,7 @@ exports.test = function (emitter, test, validations, done) {
   exports.doChecks(emitter, validations, done)
 
   ao.requestStore.run(function () {
-    var span = new ao.Span('outer')
+    const span = new ao.Span('outer')
     // span.async = true
     span.enter()
 
@@ -198,18 +205,19 @@ exports.test = function (emitter, test, validations, done) {
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)
+      data // suppress the eslint error.
       span.exit()
     })
   })
 }
 
 exports.httpTest = function (emitter, test, validations, done) {
-  var server = http.createServer(function (req, res) {
+  const server = http.createServer(function (req, res) {
     debug('test started')
     test(function (err, data) {
       debug('test ended')
       if (err) return done(err)
-      res.end('done')
+      res.end(data)
     })
   })
 
@@ -220,7 +228,7 @@ exports.httpTest = function (emitter, test, validations, done) {
   })
 
   server.listen(function () {
-    var port = server.address().port
+    const port = server.address().port
     debug('test server listening on port ' + port)
     http.get('http://localhost:' + port, function (res) {
       res.resume()
@@ -229,12 +237,12 @@ exports.httpTest = function (emitter, test, validations, done) {
 }
 
 exports.httpsTest = function (emitter, options, test, validations, done) {
-  var server = https.createServer(options, function (req, res) {
+  const server = https.createServer(options, function (req, res) {
     debug('test started')
     test(function (err, data) {
       debug('test ended')
       if (err) return done(err)
-      res.end('done')
+      res.end(data)
     })
   })
 
@@ -245,7 +253,7 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
   })
 
   server.listen(function () {
-    var port = server.address().port
+    const port = server.address().port
     debug('test server listening on port ' + port)
     https.get('https://localhost:' + port, function (res) {
       res.resume()
@@ -255,10 +263,10 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
 
 exports.run = function (context, path) {
   context.data = context.data || {}
-  var mod = require('./probes/' + path)
+  const mod = require('./probes/' + path)
 
   if (mod.data) {
-    var data = mod.data
+    let data = mod.data
     if (typeof data === 'function') {
       data = data(context)
     }
@@ -289,15 +297,15 @@ Address.prototype.toString = function () {
 
 Address.from = function (input) {
   return input.split(',').map(function (name) {
-    var parts = name.split(':')
-    var host = parts.shift()
-    var port = parts.shift() || ''
+    const parts = name.split(':')
+    const host = parts.shift()
+    const port = parts.shift() || ''
     return new Address(host, port)
   })
 }
 
 exports.setUntil = function (obj, prop, value, done) {
-  var old = obj[prop]
+  const old = obj[prop]
   obj[prop] = value
   return function () {
     obj[prop] = old
@@ -312,10 +320,10 @@ function linksTo (a, b) {
 
 exports.edgeTracker = edgeTracker
 function edgeTracker (parent, fn) {
-  var started = false
+  let started = false
   function tracker (msg) {
     // Verify link to last message in parent
-    if ( ! started) {
+    if (!started) {
       if (parent) {
         linksTo(msg, parent.last)
       }
@@ -356,7 +364,7 @@ function checkExit (name, fn) {
 
 exports.checkInfo = checkInfo
 function checkInfo (data, fn) {
-  var withData = checkData(data)
+  const withData = checkData(data)
   return function (msg) {
     msg.should.not.have.property('Layer')
     msg.should.have.property('Label', 'info')
