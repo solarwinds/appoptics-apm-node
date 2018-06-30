@@ -1,16 +1,16 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
+const helper = require('../helper')
+const ao = helper.ao
+const addon = ao.addon
 
-var request = require('request')
-var http = require('http')
+const request = require('request')
+const http = require('http')
 
 describe('probes.http', function () {
-  var ctx = { http: http }
-  var emitter
-  var realSampleTrace
+  const ctx = {http: http}
+  let emitter
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -21,7 +21,7 @@ describe('probes.http', function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -29,7 +29,7 @@ describe('probes.http', function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     server: {
       entry: function (msg) {
         msg.should.have.property('Layer', 'nodejs')
@@ -65,7 +65,7 @@ describe('probes.http', function () {
   }
 
   describe('http-server', function () {
-    var conf = ao.probes.http
+    const conf = ao.probes.http
 
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
@@ -74,19 +74,19 @@ describe('probes.http', function () {
         ao.instrument('fake', function () { })
         done()
       }, [
-          function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
-              msg.should.have.property('Layer', 'fake')
-          }
-        ], done)
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
     })
 
     //
     // Test a simple res.end() call in an http server
     //
     it('should send traces for http routing and response spans', function (done) {
-      var port
-      var server = http.createServer(function (req, res) {
+      let port
+      const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
@@ -118,11 +118,11 @@ describe('probes.http', function () {
     // Verify X-Trace header results in a continued trace
     //
     it('should continue tracing when receiving an xtrace id header', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
-      var origin = new ao.Event('span-name', 'label-name', '')
+      const origin = new ao.Event('span-name', 'label-name', '')
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -137,7 +137,7 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request({
           url: 'http://localhost:' + port,
           headers: {
@@ -151,7 +151,7 @@ describe('probes.http', function () {
     // Verify always trace mode forwards sampling data
     //
     it('should forward sampling data in always trace mode', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
@@ -169,7 +169,7 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request({
           url: 'http://localhost:' + port
         })
@@ -180,7 +180,7 @@ describe('probes.http', function () {
     // Verify behaviour of asyncrony within a request
     //
     it('should trace correctly within asyncrony', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 10)
@@ -198,7 +198,7 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('http://localhost:' + port)
       })
     })
@@ -208,7 +208,7 @@ describe('probes.http', function () {
     //
     it('should support query param filtering', function (done) {
       conf.includeRemoteUrlParams = false
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
@@ -226,7 +226,7 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('http://localhost:' + port + '/foo?bar=baz')
       })
     })
@@ -234,7 +234,7 @@ describe('probes.http', function () {
     //
     // Validate the various headers that get passed through to the event
     //
-    var passthroughHeaders = {
+    const passthroughHeaders = {
       'X-Forwarded-For': 'Forwarded-For',
       'X-Forwarded-Host': 'Forwarded-Host',
       'X-Forwarded-Port': 'Forwarded-Port',
@@ -245,13 +245,13 @@ describe('probes.http', function () {
     }
 
     Object.keys(passthroughHeaders).forEach(function (key) {
-      var val = passthroughHeaders[key]
+      const val = passthroughHeaders[key]
 
-      var headers = {}
+      const headers = {}
       headers[key] = 'test'
 
       it('should map ' + key + ' header to event.' + val, function (done) {
-        var server = http.createServer(function (req, res) {
+        const server = http.createServer(function (req, res) {
           res.end('done')
         })
 
@@ -268,8 +268,8 @@ describe('probes.http', function () {
         })
 
         server.listen(function () {
-          var port = server.address().port
-          var options = {
+          const port = server.address().port
+          const options = {
             url: 'http://localhost:' + port,
             headers: headers
           }
@@ -282,9 +282,9 @@ describe('probes.http', function () {
     // Test errors emitted on http request object
     //
     it('should report request errors', function (done) {
-      var error = new Error('test')
-      var port
-      var server = http.createServer(function (req, res) {
+      const error = new Error('test')
+      let port
+      const server = http.createServer(function (req, res) {
         req.on('error', noop)
         req.emit('error', error)
         res.end('done')
@@ -317,9 +317,9 @@ describe('probes.http', function () {
     // Test errors emitted on http response object
     //
     it('should report response errors', function (done) {
-      var error = new Error('test')
-      var port
-      var server = http.createServer(function (req, res) {
+      const error = new Error('test')
+      let port
+      const server = http.createServer(function (req, res) {
         res.on('error', noop)
         res.emit('error', error)
         res.end('done')
@@ -352,14 +352,14 @@ describe('probes.http', function () {
     // Validate that server.setTimeout(...) exits correctly
     //
     it('should exit when timed out', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 20)
       })
 
       // Set timeout
-      var reached = false
+      let reached = false
       server.setTimeout(10)
       server.on('timeout', function (res) {
         res._httpMessage.statusCode = 500
@@ -380,24 +380,24 @@ describe('probes.http', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('http://localhost:' + port)
       })
     })
   })
 
   describe('http-client', function () {
-    var conf = ao.probes['http-client']
+    const conf = ao.probes['http-client']
 
     it('should trace http request', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'http/client')
+        ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'http/client')
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -420,15 +420,15 @@ describe('probes.http', function () {
     })
 
     it('should support object-based requests', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var d = ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'http/client-object')
-        var url = 'http://' + d.hostname + ':' + d.port + d.path
+        const d = ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'http/client-object')
+        const url = 'http://' + d.hostname + ':' + d.port + d.path
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -451,14 +451,14 @@ describe('probes.http', function () {
     })
 
     it('should trace streaming http request', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'http/stream')
+        ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'http/stream')
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -483,19 +483,19 @@ describe('probes.http', function () {
     it('should support query filtering', function (done) {
       conf.includeRemoteUrlParams = false
 
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'http/query-filtering')
+        ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'http/query-filtering')
 
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
-            var url = ctx.data.url.replace(/\?.*/, '')
+            const url = ctx.data.url.replace(/\?.*/, '')
             msg.should.have.property('RemoteURL', url)
             msg.should.have.property('IsService', 'yes')
           },
@@ -515,18 +515,18 @@ describe('probes.http', function () {
     })
 
     it('should report request errors', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'http://localhost:' + port + '/?foo=bar'
-        var error = new Error('test')
+        const port = server.address().port
+        const url = 'http://localhost:' + port + '/?foo=bar'
+        const error = new Error('test')
 
         helper.test(emitter, function (done) {
-          var req = http.get(url, function (res) {
+          const req = http.get(url, function (res) {
             res.on('end', done)
             res.resume()
           })
@@ -559,15 +559,15 @@ describe('probes.http', function () {
     })
 
     it('should report response errors', function (done) {
-      var server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'http://localhost:' + port + '/?foo=bar'
-        var error = new Error('test')
+        const port = server.address().port
+        const url = 'http://localhost:' + port + '/?foo=bar'
+        const error = new Error('test')
 
         helper.test(emitter, function (done) {
           http.get(url, function (res) {

@@ -1,7 +1,6 @@
-var helper = require('../helper')
-var ao = helper.ao
+'use strict'
 
-var pkg = require('bluebird/package')
+const pkg = require('bluebird/package')
 
 describe('probes/bluebird ' + pkg.version, function () {
   require('./promises')(require('bluebird'))
