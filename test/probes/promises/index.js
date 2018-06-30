@@ -46,6 +46,10 @@ module.exports = function (Promise) {
       }).then(function () {
         ao.requestStore.get('foo').should.equal('bar')
         t.done()
+      }).catch(e => {
+        // this shouldn't happen so check that it doesn't.
+        should.notExist(e)
+        t.done()
       })
     })
   })
@@ -69,6 +73,8 @@ module.exports = function (Promise) {
       p.then(function () {
         ao.requestStore.get('foo').should.equal('bar')
         t.done()
+      }).catch(e => {
+        should.notExist(e)
       })
     })
   })
