@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # don't even try install these in production
-[ $NODE_ENV = "production" ] && exit 0
+[ "$NODE_ENV" = "production" ] && exit 0
 
 # they're all optional, so ignore failures
 {
