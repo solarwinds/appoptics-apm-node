@@ -7,10 +7,10 @@
     "node-ao": "./bin/node-ao"
   },
   "scripts": {
-    "postinstall": "node install-appoptics-bindings.js",
     "test": "gulp test",
     "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
     "install-deps": "./deps.sh",
+    "postinstall": "./deps.sh",
     "coverage": "gulp coverage",
     "support-matrix": "gulp support-matrix",
     "watch": "gulp watch",
@@ -99,13 +99,11 @@
     "should": "^8.3.1",
     "supertest": "^3.0.0",
     "tedious": "^2.3.1",
-    "testeachversion": "^5.1.1",
+    "testeachversion": "^6.0.0",
     "vision": "^4.1.0"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "5.2.0",
-    "pg": "^4.5.7",
-    "pg-native": "^1.10.0"
+    "appoptics-bindings": "5.2.0"
   },
   "unused": {
     "dev-dependency-oracledb-1.13.1": "^1.13.1",
