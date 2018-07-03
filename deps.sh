@@ -5,7 +5,7 @@
 
 # they're all optional, so ignore failures
 {
-    npm install oracledb@0.3.1
+    npm install oracledb@2.2.0
 } || {
     echo "unable to install optional oracledb package"
 }
