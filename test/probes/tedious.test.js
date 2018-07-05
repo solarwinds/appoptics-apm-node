@@ -1,4 +1,6 @@
-if ( ! process.env.AO_TEST_SQLSERVER_EX) {
+'use strict'
+
+if (!process.env.AO_TEST_SQLSERVER_EX) {
   describe('probes.tedious', function () {
     function noop () {}
     it.skip('should support basic queries', noop)
@@ -8,20 +10,17 @@ if ( ! process.env.AO_TEST_SQLSERVER_EX) {
   return
 }
 
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
-var conf = ao.probes.tedious
+const helper = require('../helper')
+const ao = helper.ao
+const conf = ao.probes.tedious
 
-var should = require('should')
+const pkg = require('tedious/package.json')
+const tedious = require('tedious')
+const Connection = tedious.Connection
+const Request = tedious.Request
+const TYPES = tedious.TYPES
 
-var pkg = require('tedious/package.json')
-var tedious = require('tedious')
-var Connection = tedious.Connection
-var Request = tedious.Request
-var TYPES = tedious.TYPES
-
-var addr
+let addr
 if (process.env.AO_TEST_SQLSERVER_EX) {
   addr = helper.Address.from(
     process.env.AO_TEST_SQLSERVER_EX
@@ -29,16 +28,12 @@ if (process.env.AO_TEST_SQLSERVER_EX) {
 } else {
   addr = 'mssql:1433'
 }
-var user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
-var pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
+const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
+const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
 
 describe('probes.tedious ' + pkg.version, function () {
   this.timeout(10000)
-  var emitter
-  var ctx = {}
-  var cluster
-  var pool
-  var db
+  let emitter
 
   beforeEach(function (done) {
     setTimeout(function () {
@@ -65,11 +60,11 @@ describe('probes.tedious ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
 
@@ -78,7 +73,7 @@ describe('probes.tedious ' + pkg.version, function () {
     conf.sanitizeSql = false
   })
 
-  var checks = {
+  const checks = {
     'mssql-entry': function (msg) {
       msg.should.have.property('Layer', 'mssql')
       msg.should.have.property('Label', 'entry')
@@ -107,6 +102,7 @@ describe('probes.tedious ' + pkg.version, function () {
       query(function () {
         return new Request("select 42, 'hello world'", onComplete)
         function onComplete (err, count) {
+          count
           done()
         }
       })
@@ -122,15 +118,16 @@ describe('probes.tedious ' + pkg.version, function () {
   }
 
   function test_parameters (done) {
-    var request
+    let request
 
     helper.test(emitter, function (done) {
       query(function () {
-        request = new Request("select @num, @msg", onComplete)
+        request = new Request('select @num, @msg', onComplete)
         request.addParameter('num', TYPES.Int, '42')
         request.addParameter('msg', TYPES.VarChar, 'hello world')
 
         function onComplete (err, count) {
+          count
           done()
         }
 
@@ -139,11 +136,11 @@ describe('probes.tedious ' + pkg.version, function () {
     }, [
       function (msg) {
         checks['mssql-entry'](msg)
-        msg.should.have.property('Query', "select @num, @msg")
+        msg.should.have.property('Query', 'select @num, @msg')
         msg.should.have.property('QueryArgs')
 
-        var QueryArgs = JSON.parse(msg.QueryArgs)
-        var params = request.originalParameters
+        const QueryArgs = JSON.parse(msg.QueryArgs)
+        const params = request.originalParameters
 
         QueryArgs.should.have.property('num', findParam('num', params))
         QueryArgs.should.have.property('msg', findParam('msg', params))
@@ -158,10 +155,11 @@ describe('probes.tedious ' + pkg.version, function () {
     helper.test(emitter, function (done) {
       ao.probes.tedious.sanitizeSql = true
       query(function () {
-        var request = new Request("select 42, @msg", onComplete)
+        const request = new Request('select 42, @msg', onComplete)
         request.addParameter('msg', TYPES.VarChar, 'hello world')
 
         function onComplete (err, count) {
+          count
           done()
         }
 
@@ -170,7 +168,7 @@ describe('probes.tedious ' + pkg.version, function () {
     }, [
       function (msg) {
         checks['mssql-entry'](msg)
-        msg.should.have.property('Query', "select 0, @msg")
+        msg.should.have.property('Query', 'select 0, @msg')
         msg.should.not.have.property('QueryArgs')
       },
       function (msg) {
@@ -184,14 +182,15 @@ describe('probes.tedious ' + pkg.version, function () {
 
   // Query helper
   function query (fn) {
-    var connection = new Connection({
+    const connection = new Connection({
       userName: user,
       password: pass,
       server: addr.host,
       port: addr.port,
       options: {
         database: 'test',
-        tdsVersion: '7_1'
+        tdsVersion: '7_1',
+        encrypt: false
       }
     })
 
