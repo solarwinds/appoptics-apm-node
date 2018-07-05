@@ -11,7 +11,7 @@ view metrics.  Get yours; [it's free](https://my.appoptics.com/sign_up).
 ## Dependencies
 
 - Linux
-- Node.js v4+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
+- Node.js v6+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
 
 The agent compiles a C++ addon during install, thus you’ll need to have the following on the system prior to installing the agent:
 
@@ -69,9 +69,9 @@ appreciate all contributions to the oboe module whether it is documentation,
 a bug fix, new instrumentation for a library or framework or anything else
 we haven't thought of.
 
-We welcome you to send us PRs. We also humbly request that any new
+We welcome you to send us PRs. We do request that any new
 instrumentation submissions have corresponding tests that accompany
-them. This way we don't break any of your additions when we (and others)
+them. This way we won't break any of your additions when we (and others)
 make changes after the fact.
 
 ## Developer Resources
