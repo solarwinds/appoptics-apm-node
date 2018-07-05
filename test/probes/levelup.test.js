@@ -1,24 +1,19 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-
-var request = require('request')
-var http = require('http')
+const helper = require('../helper')
+const ao = helper.ao
 
 // NOTE: requiring leveldown is necessary as the one that works with
 // node 0.11 does not match the one in the devDependencies of levelup.
-var level = require('levelup')
-var db = level('../../test-db', {
+const level = require('levelup')
+const db = level('../test-db', {
   db: require('leveldown')
 })
 
-var pkg = require('levelup/package')
+const pkg = require('levelup/package')
 
 describe('probes.levelup ' + pkg.version, function () {
-  var ctx = { levelup: db }
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -32,7 +27,7 @@ describe('probes.levelup ' + pkg.version, function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'levelup-entry': function (msg) {
       msg.should.have.property('Layer', 'levelup')
       msg.should.have.property('Label', 'entry')
@@ -50,11 +45,11 @@ describe('probes.levelup ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   it('should support put', function (done) {
@@ -106,8 +101,8 @@ describe('probes.levelup ' + pkg.version, function () {
   it('should support array batch', function (done) {
     helper.test(emitter, function (done) {
       db.batch([
-        { type: 'put', key: 'foo', value: 'bar' },
-        { type: 'del', key: 'foo' },
+        {type: 'put', key: 'foo', value: 'bar'},
+        {type: 'del', key: 'foo'},
       ], done)
     }, [
       function (msg) {
