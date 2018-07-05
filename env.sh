@@ -31,20 +31,18 @@ elif [[ "$ARG" = "key" ]]; then
 elif [[ "$ARG" = "add-bin" ]]; then
     # add ./node_modules/.bin to PATH
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
-elif [[ "$ARG" = "docker" ]]; then
+elif [[ "$ARG" = "docker-java" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
     export APPOPTICS_COLLECTOR=java-collector:12222
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
-    # need to change next line to ssl to use java-collector
-    export APPOPTICS_REPORTER=udp
+    export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "docker-scribe" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/scribe-collector.crt
     export APPOPTICS_COLLECTOR=scribe-collector:4444
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
-    # need to change next line to ssl to use scribe collector
-    export APPOPTICS_REPORTER=udp
+    export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "bash" ]]; then
     # this is used primarily for manual interactive testing.
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
