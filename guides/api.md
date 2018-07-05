@@ -156,7 +156,7 @@ logging on/off.
 Add log levels to the existing set of log levels.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>string</code> \| <code>undefined</code> - - the log levels in effect or undefined if an error  
+**Returns**: <code>string</code> \| <code>undefined</code> - - the current log levels or undefined if an error  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -172,7 +172,8 @@ ao.logLevelAdd('warn,debug')
 Remove log levels from the current set.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>string</code> \| <code>undefined</code> - - log levels active after removals or undefined if an error.  
+**Returns**: <code>string</code> \| <code>undefined</code> - - log levels after removals or undefined if an
+                             error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -204,7 +205,8 @@ the specified number of milliseconds before returning.
 Bind a function to the CLS context if tracing.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>function</code> - The bound function or the original function if it can't be bound.  
+**Returns**: <code>function</code> - The bound function or the unmodified argument if it can't
+  be bound.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -216,7 +218,7 @@ Bind a function to the CLS context if tracing.
 Bind an emitter, if tracing
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if it can't be bound.  
+**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -239,7 +241,7 @@ most commonly used when setting custom names for all or most routes.
 | Param | Type | Description |
 | --- | --- | --- |
 | probe | <code>string</code> | The probe to set the function for |
-| fn | <code>function</code> | A function that returns a string name to use or a falsey                        value to use the default. The calling signature of the                        function varies by the probe.                        Pass a falsey value instead of a function to clear. |
+| fn | <code>function</code> | A function that returns a string custom name or a                        falsey value indicating the default should be used.                        The calling signature of the function varies by the                        probe. Pass a falsey value for the function to clean. |
 
 <a name="ao.sampling"></a>
 
@@ -252,7 +254,7 @@ metadata.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metadata</code> | the item to check the sampling flag of |
+| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metadata</code> | the item to get the sampling flag of |
 
 <a name="ao.stringToMetadata"></a>
 
@@ -260,7 +262,8 @@ metadata.
 Convert an xtrace ID to a metadata object.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>bindings.Metadata</code> \| <code>undefined</code> - - bindings.Metadata object if successful.  
+**Returns**: <code>bindings.Metadata</code> \| <code>undefined</code> - - bindings.Metadata object if
+                                        successful.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -275,12 +278,12 @@ Instrument HTTP request/response
 
 | Param | Type | Description |
 | --- | --- | --- |
-| build | <code>string</code> \| <code>function</code> | Span name or builder function |
-| run | <code>function</code> | Code to instrument and run |
-| [options] | <code>object</code> | Options |
-| [options.enabled] | <code>object</code> | Enable tracing, on by default |
-| [options.collectBacktraces] | <code>object</code> | Collect backtraces |
-| res | <code>HTTPResponse</code> | HTTP Response to patch |
+| build | <code>string</code> \| <code>function</code> | span name or builder function |
+| run | <code>function</code> | code to instrument and run |
+| [options] | <code>object</code> | options |
+| [options.enabled] | <code>object</code> | enable tracing, on by default |
+| [options.collectBacktraces] | <code>object</code> | collect backtraces |
+| res | <code>HTTPResponse</code> | HTTP response to patch |
 
 <a name="ao.instrument"></a>
 
@@ -289,15 +292,45 @@ Apply custom instrumentation to a function.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| build | <code>string</code> \| <code>function</code> | Span name or builder function |
-| run | <code>function</code> | Code to instrument and run |
-| [options] | <code>object</code> | Options |
-| [options.enabled] | <code>boolean</code> | Enable tracing, on by default |
-| [options.collectBacktraces] | <code>boolean</code> | Enable tracing, on by default |
-| [callback] | <code>function</code> | Callback, if async A `build` function is run only when tracing; it is used to generate a span. It can include custom data, but custom data can not be nested and all values must be strings or numbers. The `run` function runs the function which you wish to instrument. Rather than giving it a callback directly, you give the done argument. This tells AppOptics when your instrumented code is done running. The `callback` function is simply the callback you normally would have given directly to the code you want to instrument. It receives the same arguments as were received by the `done` callback for the `run` function, and the same `this` context is also applied to it.     function build (last) {       return last.descend('custom', { Foo: 'bar' })     }     function run (done) {       fs.readFile('some-file', done)     }     function callback (err, data) {       console.log('file contents are: ' + data)     }     ao.instrument(build, run, callback) |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| build | <code>string</code> \| <code>function</code> |  | span name or builder function |
+| run | <code>function</code> |  | code to instrument and run |
+| [options] | <code>object</code> |  | options |
+| [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
+| [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
+| [callback] | <code>function</code> |  | callback, if async |
 
+**Example**  
+```js
+//
+// A `build` function is run only when tracing; it is used to generate
+// a span. It can include custom key value pairs, but the values must be
+// strings or numbers; the cannot be nested objects.
+//
+// The `run` function runs the function which you wish to instrument.
+// Rather than giving it a callback directly, you give the done argument.
+// This tells AppOptics when your instrumented code is done running.
+//
+// The `callback` function is the callback you normally would have given
+// directly to the code you want to instrument. It receives the same
+// arguments as were received by the `done` callback for the `run` function
+// and the same `this` context is also applied to it.
+//
+function build (last) {
+  return last.descend('custom', { Foo: 'bar' })
+}
+
+function run (done) {
+  fs.readFile('some-file', done)
+}
+
+function callback (err, data) {
+  console.log('file contents are: ' + data)
+}
+
+ao.instrument(build, run, callback)
+```
 <a name="ao.startOrContinueTrace"></a>
 
 ### ao.startOrContinueTrace(xtrace, build, run, [opts], [callback])
@@ -311,11 +344,11 @@ HTTP headers or message queue headers.
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
 | build | <code>string</code> \| <code>function</code> |  | name or function to return a span |
-| run | <code>function</code> |  | run the code. if sync, no arguments, else one argument |
+| run | <code>function</code> |  | run the code. if sync, no arguments, else one |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
-| [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function to return name |
+| [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 | [callback] | <code>function</code> |  | Callback, if async |
 
 **Example**  
@@ -468,8 +501,8 @@ Run an async function within the context of this span.
 | --- | --- | --- |
 | fn | <code>function</code> | async function to run within the span context |
 | [rootOpts] | <code>object</code> | presence indicates that this is a root span |
-| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name to use |
-| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function returning string |
+| [rootOpts.defaultTxName] | <code>string</code> | default transaction name to use |
+| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
 **Example**  
 ```js
@@ -488,8 +521,8 @@ Run a sync function within the context of this span.
 | --- | --- | --- |
 | fn | <code>function</code> | sync function to run withing the span context |
 | [rootOpts] | <code>object</code> | presence indicates that this is a root span |
-| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name to use |
-| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function returning string |
+| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name |
+| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
 **Example**  
 ```js
