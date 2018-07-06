@@ -76,8 +76,9 @@ make changes after the fact.
 
 ## Developer Resources
 
-We have made a large effort to expose as much technical information
-as possible to assist developers wishing to contribute to the appoptics module.
+We have made an effort to expose technical information to enable
+developers to contribute to the appoptics module for any that may
+wish to do so.
 Below is a good source of information and help for developers:
 
 * The [AppOptics Knowledge Base](https://docs.appoptics.com) has
@@ -93,7 +94,6 @@ The oboe module uses a standard layout.  Here are the notable directories.
 ```
 lib/probes  # Auto loaded instrumentation
 lib         # Span and Event constructors
-src         # Bindings to liboboe
 test        # Mocha test suite
 ```
 
@@ -105,9 +105,7 @@ which is a dependency of this package.  It is used to report host and
 performance metrics to AppOptics servers.
 
 If you would like to work with the C++ extension, clone the github
-`appoptics-bindings-node` repository and work with that. It's possible to
-direct this package, `appoptics-apm`, to use a non-standard source of `appoptics-bindings-node`
-by setting the environment variable `AO\_TEST_PACKAGE`. See the file `install-appoptics-bindings.js` for further details.
+`appoptics-bindings-node` repository and work with that.
 
 ## License
 
