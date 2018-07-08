@@ -91,6 +91,16 @@ describe('basics', function () {
     ao.logLevel.should.equal(previous)
   })
 
+  it('should be able to check metadata\'s sample flag', function () {
+    const md0 = new ao.addon.Metadata.makeRandom()
+    const md1 = new ao.addon.Metadata.makeRandom(1)
+
+    ao.sampling(md0).should.equal(false)
+    ao.sampling(md0.toString()).should.equal(false)
+    ao.sampling(md1).should.equal(true)
+    ao.sampling(md1.toString()).should.equal(true)
+  })
+
   it('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
     const span = new Span('test')
@@ -124,11 +134,12 @@ describe('basics', function () {
     ao.skipSample = false
 
     function after (err) {
+      should.equal(err, undefined)
       ao.addon.Context.setDefaultSampleRate = old
       ao.skipSample = skipSample
     }
 
-    var old = ao.addon.Context.setDefaultSampleRate
+    const old = ao.addon.Context.setDefaultSampleRate
     ao.addon.Context.setDefaultSampleRate = function () {
       after()
       throw new Error('Should not have called sampleRate setter')
@@ -137,33 +148,4 @@ describe('basics', function () {
     ao.sample('test')
     after()
   })
-
-  // TODO consider removing this old test for "through" mode
-  /*
-  it('should not trace when mode "never"', function (done) {
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'never'
-
-    var sendReport = ao.reporter.sendReport
-    ao.reporter.sendReport = function (event) {
-      ao.reporter.sendReport = sendReport
-      done(new Error('Tried to send an event'))
-    }
-
-    var server = http.createServer(function (req, res) {
-      res.end('hi')
-    })
-
-    server.listen(function () {
-      var port = server.address().port
-      http.get('http://localhost:' + port, function (res) {
-        res.on('end', function () {
-          ao.reporter.sendReport = sendReport
-          done()
-        })
-        res.resume()
-      })
-    })
-  })
-  // */
 })

@@ -1,13 +1,13 @@
 'use strict'
-var helper = require('./helper')
-var should = require('should')
-var ao = require('..')
-var addon = ao.addon
-var Event = ao.Event
+const helper = require('./helper')
+const ao = require('..')
+const should = require('should')    // eslint-disable-line no-unused-vars
+const addon = ao.addon
+const Event = ao.Event
 
 describe('event', function () {
-  var emitter
-  var event
+  let emitter
+  let event
 
   //
   // Intercept appoptics messages for analysis
@@ -19,6 +19,18 @@ describe('event', function () {
   })
   after(function (done) {
     emitter.close(done)
+  })
+
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () {})
+      done()
+    }, [
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   it('should construct valid event', function () {
@@ -33,14 +45,28 @@ describe('event', function () {
     event.toString().should.match(/^2B[0-9A-F]{58}$/)
   })
 
+  it('should fetch an event\'s sample flag', function () {
+    ao.sampleRate = 0
+    ao.sampleMode = 'never'
+    event = new Event('test', 'entry')
+    ao.sampling(event).should.equal(false)
+    ao.sampling(event.toString()).should.equal(false)
+
+    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleMode = 'always'
+    event = new Event('test', 'entry')
+    ao.sampling(event).should.equal(true)
+    ao.sampling(event.toString()).should.equal(true)
+  })
+
   it('should enter the event context', function () {
-    var context = addon.Context.toString()
+    const context = addon.Context.toString()
     event.enter()
     addon.Context.toString().should.not.equal(context)
   })
 
   it('should send the event', function (done) {
-    var event2 = new Event('test', 'exit', event.event)
+    const event2 = new Event('test', 'exit', event.event)
 
     emitter.once('message', function (msg) {
       msg.should.have.property('X-Trace', event2.toString())
@@ -57,18 +83,18 @@ describe('event', function () {
   })
 
   it('should support set function', function () {
-    var event = new Event('test', 'entry')
-    event.set({ Foo: 'bar' })
+    const event = new Event('test', 'entry')
+    event.set({Foo: 'bar'})
     event.should.have.property('Foo', 'bar')
   })
 
   it('should support data in send function', function () {
-    var event = new Event('test', 'entry')
-    var called = false
+    const event = new Event('test', 'entry')
+    let called = false
     event.set = function () {
       called = true
     }
-    event.sendReport({ Foo: 'bar' })
+    event.sendReport({Foo: 'bar'})
     called.should.equal(true)
   })
 })
