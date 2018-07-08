@@ -1,13 +1,15 @@
-var helper = require('./helper')
-var should = require('should')
-var ao = require('..')
-var addon = ao.addon
-var Span = ao.Span
-var Event = ao.Event
+'use strict'
+
+const helper = require('./helper')
+const should = require('should')
+const ao = require('..')
+const addon = ao.addon
+const Span = ao.Span
+const Event = ao.Event
 
 describe('span', function () {
-  var emitter
-  var realSampleTrace
+  let emitter
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -18,7 +20,7 @@ describe('span', function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -30,26 +32,26 @@ describe('span', function () {
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
   //
-  it('might lose a message (until the UDP problem is fixed)', function (done) {
+  it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('fake', function () { })
+      ao.instrument('fake', function () {})
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Verify basic structural integrity
   //
   it('should construct valid span', function () {
-    var span = new Span('test', null, {})
+    const span = new Span('test', null, {})
 
     span.should.have.property('events')
-    var events = ['entry','exit']
+    const events = ['entry', 'exit']
     events.forEach(function (event) {
       span.events.should.have.property(event)
       span.events[event].taskId.should.not.match(/^0*$/)
@@ -61,13 +63,13 @@ describe('span', function () {
   // Verify base span reporting
   //
   it('should report sync boundaries', function (done) {
-    var name = 'test'
-    var data = { Foo: 'bar' }
-    var span = new Span(name, null, data)
+    const name = 'test'
+    const data = {Foo: 'bar'}
+    const span = new Span(name, null, data)
 
-    var e = span.events
+    const e = span.events
 
-    var checks = [
+    const checks = [
       helper.checkEntry(name, helper.checkData(data, function (msg) {
         msg.should.have.property('X-Trace', e.entry.toString())
       })),
@@ -85,13 +87,13 @@ describe('span', function () {
   })
 
   it('should report async boundaries', function (done) {
-    var name = 'test'
-    var data = { Foo: 'bar' }
-    var span = new Span(name, null, data)
+    const name = 'test'
+    const data = {Foo: 'bar'}
+    const span = new Span(name, null, data)
 
-    var e = span.events
+    const e = span.events
 
-    var checks = [
+    const checks = [
       // Verify structure of entry event
       helper.checkEntry(name, helper.checkData(data, function (msg) {
         msg.should.have.property('X-Trace', e.entry.toString())
@@ -106,7 +108,7 @@ describe('span', function () {
     helper.doChecks(emitter, checks, done)
 
     span.runAsync(function (wrap) {
-      var cb = wrap(function (err, res) {
+      const cb = wrap(function (err, res) {
         should.not.exist(err)
         res.should.equal('foo')
       })
@@ -121,11 +123,11 @@ describe('span', function () {
   // Verify behaviour when reporting nested spans
   //
   it('should report nested sync boundaries', function (done) {
-    var outerData = { Foo: 'bar' }
-    var innerData = { Baz: 'buz' }
-    var outer, inner
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    let inner
 
-    var checks = [
+    const checks = [
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
       })),
@@ -145,7 +147,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Span('outer', null, outerData)
+    const outer = new Span('outer', null, outerData)
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function () {})
@@ -153,11 +155,11 @@ describe('span', function () {
   })
 
   it('should report nested boundaries of async event within sync event', function (done) {
-    var outerData = { Foo: 'bar' }
-    var innerData = { Baz: 'buz' }
-    var outer, inner
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    let inner
 
-    var checks = [
+    const checks = [
       // Outer entry
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
@@ -181,11 +183,11 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Span('outer', null, outerData)
+    const outer = new Span('outer', null, outerData)
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function (wrap) {
-        var delayed = wrap(function (err, res) {
+        const delayed = wrap(function (err, res) {
           should.not.exist(err)
           should.exist(res)
           res.should.equal('foo')
@@ -199,11 +201,12 @@ describe('span', function () {
   })
 
   it('should report nested boundaries of sync event within async event', function (done) {
-    var outerData = { Foo: 'bar' }
-    var innerData = { Baz: 'buz' }
-    var outer, inner
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    const outer = new Span('outer', null, outerData)
+    let inner
 
-    var checks = [
+    const checks = [
       // Outer entry (async)
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
@@ -227,9 +230,8 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    outer = new Span('outer', null, outerData)
     outer.run(function (wrap) {
-      var delayed = wrap(function (err, res) {
+      const delayed = wrap(function (err, res) {
         should.not.exist(err)
         should.exist(res)
         res.should.equal('foo')
@@ -250,12 +252,12 @@ describe('span', function () {
   // Special events
   //
   it('should send info events', function (done) {
-    var span = new Span('test', null, {})
-    var data = {
+    const span = new Span('test', null, {})
+    const data = {
       Foo: 'bar'
     }
 
-    var checks = [
+    const checks = [
       helper.checkEntry('test'),
       helper.checkInfo(data),
       helper.checkExit('test'),
@@ -269,10 +271,10 @@ describe('span', function () {
   })
 
   it('should send error events', function (done) {
-    var span = new Span('test', null, {})
-    var err = new Error('nope')
+    const span = new Span('test', null, {})
+    const err = new Error('nopeconst')
 
-    var checks = [
+    const checks = [
       helper.checkEntry('test'),
       helper.checkError(err),
       helper.checkExit('test'),
@@ -287,17 +289,17 @@ describe('span', function () {
 
   it('should support setting an exit error', function () {
     // Proper errors should work
-    var a = new Span('test', null, {})
-    var aExit = a.events.exit
-    var err = new Error('nope')
+    const a = new Span('test', null, {})
+    const aExit = a.events.exit
+    const err = new Error('nope')
     a.setExitError(err)
     aExit.should.have.property('ErrorClass', 'Error')
     aExit.should.have.property('ErrorMsg', err.message)
     aExit.should.have.property('Backtrace', err.stack)
 
     // As should error strings
-    var b = new Span('test', null, {})
-    var bExit = b.events.exit
+    const b = new Span('test', null, {})
+    const bExit = b.events.exit
     b.setExitError('nope')
     bExit.should.have.property('ErrorClass', 'Error')
     bExit.should.have.property('ErrorMsg', 'nope')
@@ -307,21 +309,20 @@ describe('span', function () {
   // Safety and correctness
   //
   it('should only send valid properties', function (done) {
-    var span = new Span('test', null, {})
-    var e = span.events.entry
-    var data = {
+    const span = new Span('test', null, {})
+    const data = {
       Array: [],
-      Object: { bar: 'baz' },
+      Object: {bar: 'baz'},
       Function: function () {},
-      Date: new Date,
+      Date: new Date(),
       String: 'bix'
     }
 
-    var expected = {
+    const expected = {
       String: 'bix'
     }
 
-    var checks = [
+    const checks = [
       helper.checkEntry('test'),
       helper.checkInfo(expected, function (msg) {
         msg.should.not.have.property('Object')
@@ -340,10 +341,10 @@ describe('span', function () {
   })
 
   it('should not send info events when not in a span', function () {
-    var span = new Span('test', null, {})
-    var data = { Foo: 'bar' }
+    const span = new Span('test', null, {})
+    const data = {Foo: 'bar'}
 
-    var send = Event.prototype.send
+    const send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
       throw new Error('should not send when not in a span')
@@ -354,9 +355,8 @@ describe('span', function () {
   })
 
   it('should allow sending the same info data multiple times', function (done) {
-    var span = new Span('test', null, {})
-    var e = span.events.entry
-    var data = {
+    const span = new Span('test', null, {})
+    const data = {
       Foo: 'bar'
     }
 
@@ -374,12 +374,12 @@ describe('span', function () {
   })
 
   it('should fail silently when sending non-object-literal info', function () {
-    var span = new Span('test', null, {})
+    const span = new Span('test', null, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
     span.info(undefined)
-    span.info(new Date)
+    span.info(new Date())
     span.info(/foo/)
     span.info('wat')
     span.info(null)
@@ -391,12 +391,12 @@ describe('span', function () {
   // Structural integrity
   //
   it('should chain internal event edges', function (done) {
-    var n = 10 + Math.floor(Math.random() * 10)
-    var span = new Span('test', null, {})
-    var tracker = helper.edgeTracker()
+    const n = 10 + Math.floor(Math.random() * 10)
+    const span = new Span('test', null, {})
+    const tracker = helper.edgeTracker()
 
-    var checks = [ tracker, tracker ]
-    for (var i = 0; i < n; i++) {
+    const checks = [ tracker, tracker ]
+    for (let i = 0; i < n; i++) {
       checks.push(tracker)
     }
 
@@ -406,31 +406,31 @@ describe('span', function () {
       if (Math.random() > 0.5) {
         span.error(new Error('error ' + i))
       } else {
-        span.info({ index: i })
+        span.info({index: i})
       }
     }
 
     span.run(function () {
-      for (var i = 0; i < n; i++) {
+      for (let i = 0; i < n; i++) {
         sendAThing(i)
       }
     })
   })
 
   it('should chain internal events around sync sub span', function (done) {
-    var span = new Span('outer', null, {})
+    const span = new Span('outer', null, {})
 
-    var before = { state: 'before' }
-    var after = { state: 'after' }
+    const before = {state: 'before'}
+    const after = {state: 'after'}
 
-    var track = helper.edgeTracker()
+    const track = helper.edgeTracker()
 
-    var checks = [
+    const checks = [
       helper.checkEntry('outer', track),
-        helper.checkInfo(before, track),
-        helper.checkEntry('inner', track),
-        helper.checkExit('inner', track),
-        helper.checkInfo(after, track),
+      helper.checkInfo(before, track),
+      helper.checkEntry('inner', track),
+      helper.checkExit('inner', track),
+      helper.checkInfo(after, track),
       helper.checkExit('outer', track)
     ]
 
@@ -446,37 +446,37 @@ describe('span', function () {
   })
 
   it('should chain internal events around async sub span', function (done) {
-    var span = new Span('outer', null, {})
+    const span = new Span('outer', null, {})
 
-    var before = { state: 'before' }
-    var after = { state: 'after' }
+    const before = {state: 'before'}
+    const after = {state: 'after'}
 
-    var trackOuter = helper.edgeTracker()
-    var trackInner = helper.edgeTracker()
+    const trackOuter = helper.edgeTracker()
+    const trackInner = helper.edgeTracker()
 
-    var checks = [
+    const checks = [
       helper.checkEntry('outer', trackOuter),
-        helper.checkInfo(before, trackOuter),
+      helper.checkInfo(before, trackOuter),
 
-        // Async call
-        helper.checkEntry('inner', trackInner),
-        helper.checkInfo(before, trackInner),
+      // Async call
+      helper.checkEntry('inner', trackInner),
+      helper.checkInfo(before, trackInner),
 
-        helper.checkInfo(after, trackOuter),
+      helper.checkInfo(after, trackOuter),
       helper.checkExit('outer', trackOuter),
 
-        // Next tick
-        helper.checkInfo(after, trackInner),
-        helper.checkExit('inner', trackInner)
+      // Next tick
+      helper.checkInfo(after, trackInner),
+      helper.checkExit('inner', trackInner)
     ]
 
     helper.doChecks(emitter, checks, done)
 
     span.run(function () {
       span.info(before)
-      var sub = span.descend('inner')
+      const sub = span.descend('inner')
       sub.run(function (wrap) {
-        var cb = wrap(function () {})
+        const cb = wrap(function () {})
         setImmediate(function () {
           ao.reportInfo(after)
           cb()
@@ -490,69 +490,69 @@ describe('span', function () {
   // TODO BAM fix this brittle test. 'inner-2' sometimes shows up instead
   // of 'inner-3'. Until then skip it for false negatives.
   it.skip('should properly attribute dangling info/error events', function (done) {
-    var span = new Span('outer', null, {})
+    const span = new Span('outer', null, {})
 
-    var before = { state: 'before' }
-    var after = { state: 'after' }
-    var error = new Error('wat')
+    const before = {state: 'before'}
+    const after = {state: 'after'}
+    const error = new Error('wat')
 
-    var trackOuter = helper.edgeTracker()
-    var trackInner1 = helper.edgeTracker(trackOuter)
-    var trackInner2 = helper.edgeTracker(trackInner1)
-    var trackInner3 = helper.edgeTracker(trackInner1)
-    var trackInner4 = helper.edgeTracker(trackInner3)
+    const trackOuter = helper.edgeTracker()
+    const trackInner1 = helper.edgeTracker(trackOuter)
+    const trackInner2 = helper.edgeTracker(trackInner1)
+    const trackInner3 = helper.edgeTracker(trackInner1)
+    const trackInner4 = helper.edgeTracker(trackInner3)
 
     // The weird indentation is to match depth of trigerring code,
     // it might make it easier to match a span entry to its exit.
-    var checks = [
+    const checks = [
       // Start async outer
       helper.checkEntry('outer', trackOuter),
 
-        // Start sync inner-1
-        helper.checkEntry('inner-1', trackInner1),
+      // Start sync inner-1
+      helper.checkEntry('inner-1', trackInner1),
 
-          // Start async inner-3, surrounded by info events
-          helper.checkInfo(before, trackInner1),
-          helper.checkEntry('inner-3', trackInner3),
-          helper.checkInfo(after, trackInner1),
+      // Start async inner-3, surrounded by info events
+      helper.checkInfo(before, trackInner1),
+      helper.checkEntry('inner-3', trackInner3),
+      helper.checkInfo(after, trackInner1),
 
-        // Finish sync inner-1
-        helper.checkExit('inner-1', trackInner1),
+      // Finish sync inner-1
+      helper.checkExit('inner-1', trackInner1),
 
-        // Start async inner-2
-        helper.checkEntry('inner-2', trackInner2),
+      // Start async inner-2
+      helper.checkEntry('inner-2', trackInner2),
 
-          // Finish async inner-3
-          helper.checkExit('inner-3', trackInner3),
+      // Finish async inner-3
+      helper.checkExit('inner-3', trackInner3),
 
-            // Start async inner-4
-            helper.checkError(error, trackInner3),
-            helper.checkEntry('inner-4', trackInner4),
+      // Start async inner-4
+      helper.checkError(error, trackInner3),
+      helper.checkEntry('inner-4', trackInner4),
 
-        // Finish async inner-2
-        helper.checkExit('inner-2', trackInner2),
+      // Finish async inner-2
+      helper.checkExit('inner-2', trackInner2),
 
       // Finish async outer
       helper.checkExit('outer', trackInner2),
 
-            // Finish async inner-4
-            helper.checkExit('inner-4', trackInner4),
+      // Finish async inner-4
+      helper.checkExit('inner-4', trackInner4),
     ]
 
     helper.doChecks(emitter, checks, done)
 
     ao.requestStore.run(function () {
       span.enter()
-      var sub1 = span.descend('inner-1')
+      const sub1 = span.descend('inner-1')
       sub1.run(function () {
         ao.reportInfo(before)
 
-        var sub2 = span.descend('inner-3')
+        const sub2 = span.descend('inner-3')
         sub2.run(function (wrap) {
           setImmediate(wrap(function () {
             ao.reportError(error)
 
-            var sub2 = span.descend('inner-4')
+            const sub2 = span.descend('inner-4')
             sub2.run(function (wrap) {
               setImmediate(wrap(function () {}))
             })
@@ -562,7 +562,7 @@ describe('span', function () {
         ao.reportInfo(after)
       })
 
-      var sub2 = span.descend('inner-2')
+      const sub2 = span.descend('inner-2')
       sub2.run(function (wrap) {
         setTimeout(wrap(function () {
           span.exit()
