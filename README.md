@@ -111,4 +111,4 @@ If you would like to work with the C++ extension, clone the github
 
 Copyright (c) 2016, 2017, 2018 SolarWinds, LLC
 
-Released under the [Librato Open License](http://docs.traceview.solarwinds.com/Instrumentation/librato-open-license.html)
+Released under the [Librato Open License](https://docs.appoptics.com/kb/apm_tracing/librato-open-license/)
