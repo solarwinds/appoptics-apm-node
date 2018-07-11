@@ -1,3 +1,4 @@
+'use strict'
 exports.data = function (ctx) {
   return {
     url: 'http://localhost:' + ctx.data.port + '/?foo=bar'

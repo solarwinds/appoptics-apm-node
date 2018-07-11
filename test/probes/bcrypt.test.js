@@ -1,19 +1,21 @@
-var helper = require('../helper')
-var ao = helper.ao
+'use strict'
 
-var bcrypt = require('bcrypt')
-var pkg = require('bcrypt/package')
+const helper = require('../helper')
+const ao = helper.ao
+
+const bcrypt = require('bcrypt')
+const pkg = require('bcrypt/package')
 
 describe('probes/bcrypt ' + pkg.version, function () {
   it('should trace through async bcrypt', function (done) {
-    var test = 'foo'
-    var password = 'this is a test'
+    const test = 'foo'
+    const password = 'this is a test'
 
     ao.requestStore.run(function () {
       // kludge to look like previous span
       ao.requestStore.set('lastEvent', true)
 
-      var res = ao.startOrContinueTrace(
+      ao.startOrContinueTrace(
         '',
         'test-bcrypt',
         function (cb) {
@@ -21,7 +23,9 @@ describe('probes/bcrypt ' + pkg.version, function () {
           bcrypt.genSalt(10, function (err, salt) {
             bcrypt.hash(password, salt, function (err, hash) {
               bcrypt.compare(password, hash, function (err, res) {
-                var result = ao.requestStore.get(test)
+                // the passwords should match
+                res.should.equal(true)
+                const result = ao.requestStore.get(test)
                 // checking 'bar' against result prevents problems if
                 // result is undefined.
                 'bar'.should.equal(result, 'foo should equal bar')
@@ -30,8 +34,8 @@ describe('probes/bcrypt ' + pkg.version, function () {
             })
           })
         },
-        { enabled: true },
-        function () { done() }
+        {enabled: true},
+        function () {done()}
       )
     })
   })
