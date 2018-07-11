@@ -5,24 +5,42 @@ const debug = require('debug')
 const ao = require('..')
 const Span = ao.Span
 
+let ifaob
+let ALWAYS
+let NEVER
+let MAX_SAMPLE_RATE
+
+if (ao.addon) {
+  ifaob = it
+  ALWAYS = ao.addon.TRACE_ALWAYS
+  NEVER = ao.addon.TRACE_NEVER
+  MAX_SAMPLE_RATE = ao.addon.MAX_SAMPLE_RATE
+} else {
+  ifaob = it.skip
+  ALWAYS = 1
+  NEVER = 0
+  MAX_SAMPLE_RATE = 1000000
+}
+
+
 describe('basics', function () {
   it('should set trace mode', function () {
-    ao.sampleMode = ao.addon.TRACE_ALWAYS
+    ao.sampleMode = ALWAYS
   })
 
   it('should get trace mode', function () {
-    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
+    ao.sampleMode.should.equal(ALWAYS)
   })
 
   it('should set trace mode as string', function () {
     ao.sampleMode = 'never'
-    ao.sampleMode.should.equal(ao.addon.TRACE_NEVER)
+    ao.sampleMode.should.equal(NEVER)
 
     ao.sampleMode = 'always'
-    ao.sampleMode.should.equal(ao.addon.TRACE_ALWAYS)
+    ao.sampleMode.should.equal(ALWAYS)
   })
 
-  it('should set and get sample rate', function () {
+  ifaob('should set and get sample rate', function () {
     ao.sampleRate = 0
     ao.sampleRate.should.equal(0, 'when setting to 0')
     ao.sampleRate = 1000000
@@ -31,7 +49,7 @@ describe('basics', function () {
     ao.sampleRate.should.equal(100, 'when setting to 100')
   })
 
-  it('should handle invalid sample rates correctly', function () {
+  ifaob('should handle invalid sample rates correctly', function () {
     ao.sampleRate = NaN
     ao.sampleRate.should.equal(100, 'when trying to set to NaN')
     ao.sampleRate = 2000000
@@ -52,18 +70,18 @@ describe('basics', function () {
 
   it('should have sugary trace mode detectors', function () {
     // Reset first
-    ao.sampleMode = ao.addon.TRACE_NEVER
+    ao.sampleMode = NEVER
 
     ao.always.should.be.false
-    ao.sampleMode = ao.addon.TRACE_ALWAYS
+    ao.sampleMode = ALWAYS
     ao.always.should.be.true
 
     ao.never.should.be.false
-    ao.sampleMode = ao.addon.TRACE_NEVER
+    ao.sampleMode = NEVER
     ao.never.should.be.true
   })
 
-  it('should get the service key', function () {
+  ifaob('should get the service key', function () {
     ao.serviceKey.should.be.a.String
   })
 
@@ -91,7 +109,7 @@ describe('basics', function () {
     ao.logLevel.should.equal(previous)
   })
 
-  it('should be able to check metadata\'s sample flag', function () {
+  ifaob('should be able to check metadata\'s sample flag', function () {
     const md0 = new ao.addon.Metadata.makeRandom()
     const md1 = new ao.addon.Metadata.makeRandom(1)
 
@@ -101,7 +119,7 @@ describe('basics', function () {
     ao.sampling(md1.toString()).should.equal(true)
   })
 
-  it('should be able to detect if it is in a trace', function () {
+  ifaob('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
     const span = new Span('test')
     span.run(function () {
@@ -113,7 +131,7 @@ describe('basics', function () {
     const skipSample = ao.skipSample
     ao.skipSample = false
     ao.sampleMode = 'always'
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.sample('test')
     s.should.not.be.false
 
@@ -127,7 +145,7 @@ describe('basics', function () {
     ao.skipSample = skipSample
   })
 
-  it('should not call sampleRate setter from sample function', function () {
+  ifaob('should not call sampleRate setter from sample function', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     const skipSample = ao.skipSample
