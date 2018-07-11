@@ -1,11 +1,10 @@
 'use strict'
-var Emitter = require('events').EventEmitter
-var helper = require('./helper')
-var should = require('should')
-var ao = require('..')
-var log = ao.loggers
-var Span = ao.Span
-var Event = ao.Event
+const Emitter = require('events').EventEmitter
+const helper = require('./helper')
+const should = require('should')
+const ao = require('..')
+const Span = ao.Span
+const Event = ao.Event
 
 //
 //                 ^     ^
@@ -21,18 +20,14 @@ var Event = ao.Event
 //     |\__|| |\___/| |\___/| ||  \\||
 //     \____/  \___/   \___/  ||   \_|
 //
-var soon = global.setImmediate || process.nextTick
-
-var fakeTaskId = 'DummyTaskId0123456789ForAppOpticsCustom2'
-var fakeOpId = '1234567890123456'
-var fakeId = '2B' + fakeTaskId + fakeOpId + '\u0001'
+const soon = global.setImmediate || process.nextTick
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if ( ! ao.addon) {
+if (!ao.addon) {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
-      var counter = 0
+      let counter = 0
       ao.instrument('test', function () {
         counter++
       })
@@ -43,7 +38,7 @@ if ( ! ao.addon) {
     })
 
     it('should passthrough sync startOrContinueTrace', function () {
-      var counter = 0
+      let counter = 0
       ao.startOrContinueTrace(null, 'test', function () {
         counter++
       })
@@ -65,8 +60,8 @@ if ( ! ao.addon) {
 }
 
 describe('custom', function () {
-  var conf = { enabled: true }
-  var emitter
+  const conf = {enabled: true}
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -87,11 +82,11 @@ describe('custom', function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   it('should custom instrument sync code', function (done) {
@@ -193,8 +188,8 @@ describe('custom', function () {
   })
 
   it('should report custom info events within a span', function (done) {
-    var data = { Foo: 'bar' }
-    var last
+    const data = {Foo: 'bar'}
+    let last
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
@@ -225,9 +220,10 @@ describe('custom', function () {
   })
 
   it('should link info events correctly', function (done) {
-    var outer, inner = []
+    let outer
+    const inner = []
 
-    var checks = [
+    const checks = [
       // Outer entry
       function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
@@ -297,10 +293,10 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       function makeInner (data, done) {
-        var span = Span.last.descend('inner')
+        const span = Span.last.descend('inner')
         inner.push(span)
         span.run(function (wrap) {
-          var delayed = wrap(done)
+          const delayed = wrap(done)
           ao.reportInfo(data)
           process.nextTick(function () {
             delayed()
@@ -310,7 +306,7 @@ describe('custom', function () {
 
       outer = Span.last.descend('outer')
       outer.run(function () {
-        var cb = after(2, done)
+        const cb = after(2, done)
         makeInner({
           Index: 0
         }, cb)
@@ -325,8 +321,8 @@ describe('custom', function () {
   })
 
   it('should report partitioned spans', function (done) {
-    var data = { Foo: 'bar', Partition: 'bar' }
-    var last
+    const data = {Foo: 'bar', Partition: 'bar'}
+    let last
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
@@ -360,18 +356,18 @@ describe('custom', function () {
   it('should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
       function build (span) { return span.descend('test') }
-      let expected = ['ibuild', 'irun', 'sbuild', 'srun']
-      let found = []
+      const expected = ['ibuild', 'irun', 'sbuild', 'srun']
+      const found = []
       let i = 0
       function getInc () {
-        let what = expected[i++]
+        const what = expected[i++]
         return function () {
           count++
           found.push(what)
         }
       }
       function run () {}
-      var count = 0
+      let count = 0
 
       // Verify nothing bad happens when run function is missing
       ao.instrument(build)
@@ -393,11 +389,11 @@ describe('custom', function () {
 
   it('should handle errors correctly between build and run functions', function (done) {
     helper.test(emitter, function (done) {
-      var err = new Error('nope')
+      const err = new Error('nope')
       function build (span) { return span.descend('test') }
       function nope () { count++; throw err }
       function inc () { count++ }
-      var count = 0
+      let count = 0
 
       // Verify errors thrown in builder do not propagate
       ao.instrument(nope, inc)
@@ -421,7 +417,7 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for sync function', function (done) {
-    var last
+    let last
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -439,8 +435,8 @@ describe('custom', function () {
       }
     ], done)
 
-    var test = 'foo'
-    var res = ao.startOrContinueTrace(null, function (last) {
+    const test = 'foo'
+    const res = ao.startOrContinueTrace(null, function (last) {
       return last.descend('test')
     }, function () {
       return test
@@ -451,7 +447,7 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for async function', function (done) {
-    var last
+    let last
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -469,8 +465,8 @@ describe('custom', function () {
       }
     ], done)
 
-    var test = 'foo'
-    var res = ao.startOrContinueTrace(
+    const test = 'foo'
+    const res = ao.startOrContinueTrace(
       null,                          // xtrace
       function (last) {              // span maker function
         return last.descend('test')
@@ -493,7 +489,7 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace continues from provided trace id.
   it('should continue from previous trace id', function (done) {
-    var last
+    let last
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -522,8 +518,8 @@ describe('custom', function () {
       }
     ], done)
 
-    var previous = new Span('previous')
-    var entry = previous.events.entry
+    const previous = new Span('previous')
+    const entry = previous.events.entry
     previous.async = true
     previous.enter()
 
@@ -540,7 +536,7 @@ describe('custom', function () {
   // Verify startOrContinueTrace continues from existing traces,
   // when already tracing, whether or not an xtrace if is provided.
   it('should continue outer traces when already tracing', function (done) {
-    var prev, outer, sub
+    let prev, outer, sub
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -584,8 +580,8 @@ describe('custom', function () {
       }
     ], done)
 
-    var previous = new Span('previous')
-    var entry = previous.events.entry
+    const previous = new Span('previous')
+    const entry = previous.events.entry
 
     previous.run(function (wrap) {
       // Verify ID-less calls continue
@@ -602,8 +598,8 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function (done) {
-    var realSample = ao.sample
-    var called = false
+    const realSample = ao.sample
+    let called = false
     ao.sample = function () {
       called = true
       return {sample: true, source: 0, rate: 0}
@@ -632,9 +628,9 @@ describe('custom', function () {
   })
 
   it('should bind functions to requestStore', function () {
-    var bind = ao.requestStore.bind
-    var threw = false
-    var called = false
+    const bind = ao.requestStore.bind
+    let threw = false
+    let called = false
 
     ao.requestStore.bind = function () {
       called = true
@@ -645,7 +641,7 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      var span = new Span('test', 'entry')
+      const span = new Span('test', 'entry')
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -662,20 +658,20 @@ describe('custom', function () {
   })
 
   it('should bind emitters to requestStore', function () {
-    var bindEmitter = ao.requestStore.bindEmitter
-    var threw = false
-    var called = false
+    const bindEmitter = ao.requestStore.bindEmitter
+    let threw = false
+    let called = false
 
     ao.requestStore.bindEmitter = function () {
       called = true
     }
 
-    var emitter = new Emitter
+    const emitter = new Emitter()
 
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      var span = new Span('test', 'entry')
+      const span = new Span('test', 'entry')
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
@@ -693,9 +689,9 @@ describe('custom', function () {
 
   it('should support instrumentHttp', function (done) {
     // Fake response object
-    var res = new Emitter
+    const res = new Emitter()
     res.end = res.emit.bind(res, 'end')
-    var last
+    let last
 
     helper.test(emitter, function (done) {
       ao.instrumentHttp(function (span) {
