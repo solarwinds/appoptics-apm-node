@@ -148,6 +148,40 @@ describe('probes.http', function () {
     })
 
     //
+    // Verify that a bad X-Trace header does not result in a continued trace
+    //
+    it('should mot continue tracing when receiving a bad xtrace id header', function (done) {
+      const server = http.createServer(function (req, res) {
+        res.end('done')
+      })
+
+      const origin = new ao.Event('span-name', 'label-name', '')
+      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          msg.should.not.have.property('Edge', origin.opId)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        request({
+          url: 'http://localhost:' + port,
+          headers: {
+            'X-Trace': xtrace
+          }
+        })
+      })
+    })
+
+    //
     // Verify always trace mode forwards sampling data
     //
     it('should forward sampling data in always trace mode', function (done) {
