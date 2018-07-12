@@ -29,6 +29,9 @@ const tasks = {
     lib: 'dist/probes/*.js',
     test: 'test/probes/*.test.js',
     bench: 'test/probes/*.bench.js',
+  },
+  composite: {
+    test: 'test/composite/*.test.js'
   }
 }
 
@@ -65,6 +68,18 @@ probes.forEach(function (probe) {
   }
 })
 
+// make composite test tasks entries
+const compositeTests = fs.readdirSync('test/composite')
+compositeTests.forEach(function (file) {
+  if (!/.+\.test\.js$/.test(file)) return
+
+  // get only the name before .test|bench.js
+  const name = file.replace(/^(.+)\.[^\.]+\.js/, '$1')
+  tasks['composite:' + name] = {
+    test: 'test/composite/' + name + '.test.js'
+  }
+})
+
 // Create build tasks
 makeBuildTask('build', 'dist/**/*.js')
 makeBuildTask('build:probe', 'dist/probe/*.js')
@@ -96,7 +111,7 @@ Object.keys(tasks).forEach(function (name) {
 
 // Create support-matrix tasks
 require('./test/versions')
-  .map(function (mod) { return mod.name })
+  .map(function (mod) {return mod.name})
   .forEach(makeMatrixTask)
 
 gulp.task('support-matrix', function () {
