@@ -19,7 +19,7 @@ const log = ao.loggers
 
 log.addGroup({
   groupName: 'test',
-  subNames: ['info', 'mock-port', 'message']
+  subNames: ['info', 'mock-port', 'message', 'span']
 })
 
 exports.clsCheck = function () {
@@ -200,6 +200,7 @@ exports.test = function (emitter, test, validations, done) {
     const span = new ao.Span('outer')
     // span.async = true
     span.enter()
+    log.test.span('helper.test outer: %l', span)
 
     log.test.info('test started')
     test(function (err, data) {
