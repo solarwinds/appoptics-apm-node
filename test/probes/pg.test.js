@@ -1,22 +1,20 @@
-var extend = require('util')._extend
-var helper = require('../helper')
-var ao = helper.ao
-var noop = helper.noop
-var addon = ao.addon
-var conf = ao.probes.pg
+'use strict'
 
-var should = require('should')
+const extend = require('util')._extend
+const helper = require('../helper')
+const ao = helper.ao
+const noop = helper.noop
+const conf = ao.probes.pg
 
-var http = require('http')
-var postgres = require('pg')
-var pkg = require('pg/package')
+const postgres = require('pg')
+const pkg = require('pg/package')
 
-var env = process.env
-var addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
+const env = process.env
+const addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
 // using a null password is valid.
-var password = ('AO_TEST_POSTGRES_PASSWORD' in env) ? env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
+const password = 'AO_TEST_POSTGRES_PASSWORD' in env ? env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
 
-var auth = {
+const auth = {
   host: addr.host,
   port: addr.port,
   user: env.AO_TEST_POSTGRES_USERNAME || 'postgres',
@@ -24,8 +22,8 @@ var auth = {
   database: 'test'
 }
 
-var stream = require('stream')
-var canNative = typeof stream.Duplex !== 'undefined'
+const stream = require('stream')
+let canNative = typeof stream.Duplex !== 'undefined'
 
 if (canNative) {
   try {
@@ -36,8 +34,8 @@ if (canNative) {
 }
 
 describe('probes.postgres ' + pkg.version, function () {
-  var emitter
-  var realSampleTrace
+  let emitter
+  let realSampleTrace
 
   it('should sanitize SQL by default', function () {
     conf.should.have.property('sanitizeSql', true)
@@ -54,7 +52,7 @@ describe('probes.postgres ' + pkg.version, function () {
     ao.probes.fs.enabled = false
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -65,8 +63,8 @@ describe('probes.postgres ' + pkg.version, function () {
 
   before(function (done) {
     this.timeout(10000)
-    var tmpAuth = extend(extend({}, auth), { database: 'postgres' })
-    var client = new postgres.Client(tmpAuth)
+    const tmpAuth = extend(extend({}, auth), {database: 'postgres'})
+    const client = new postgres.Client(tmpAuth)
     client.connect(function (err) {
       if (err) return done(err)
       client.query('create database test;', function () {
@@ -83,7 +81,7 @@ describe('probes.postgres ' + pkg.version, function () {
   // The postgres.native property must NOT be accessed
   // until the before() step of that test collection.
   //
-  var drivers = {
+  const drivers = {
     javascript: {
       skip: false,
       get: function () {
@@ -93,7 +91,7 @@ describe('probes.postgres ' + pkg.version, function () {
     native: {
       // Only test the native driver when Duplex streams are available,
       // otherwise node 0.8 will crash while trying to load pg-native
-      skip: ! canNative,
+      skip: !canNative,
       get: function () {
         return postgres.native
       }
@@ -104,11 +102,11 @@ describe('probes.postgres ' + pkg.version, function () {
   // Test against both native and js postgres drivers
   //
   Object.keys(drivers).forEach(function (type) {
-    var ctx = {}
-    var pg
-    var db
+    const ctx = {ao}
+    let pg
+    let db
 
-    var checks = {
+    const checks = {
       entry: function (msg) {
         msg.should.have.property('Layer', 'postgres')
         msg.should.have.property('Label', 'entry')
@@ -122,7 +120,7 @@ describe('probes.postgres ' + pkg.version, function () {
       }
     }
 
-    var driver = drivers[type]
+    const driver = drivers[type]
     if (driver.skip) {
       describe.skip(type, test)
     } else {
@@ -134,7 +132,7 @@ describe('probes.postgres ' + pkg.version, function () {
         this.timeout(10000)
         ctx.pg = pg = driver.get()
         pg.address = auth
-        var client = new pg.Client(auth)
+        const client = new pg.Client(auth)
         client.connect(function (err) {
           if (err) return done(err)
           pg.db = db = client
@@ -157,11 +155,11 @@ describe('probes.postgres ' + pkg.version, function () {
           ao.instrument('fake', noop)
           done()
         }, [
-            function (msg) {
-              msg.should.have.property('Label').oneOf('entry', 'exit'),
-                msg.should.have.property('Layer', 'fake')
-            }
-          ], done)
+          function (msg) {
+            msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Layer', 'fake')
+          }
+        ], done)
       })
 
       it('should trace a basic query', function (done) {
@@ -237,11 +235,11 @@ describe('probes.postgres ' + pkg.version, function () {
 
       it('should trim long queries', function (done) {
         helper.test(emitter, function (done) {
-          var nums = []
-          for (var i = 0; i < 1000; i++) {
+          const nums = []
+          for (let i = 0; i < 1000; i++) {
             nums.push('1::int AS number')
           }
-          var query = 'SELECT ' + nums.join(', ')
+          const query = 'SELECT ' + nums.join(', ')
           db.query(query, function (err) {
             done(err)
           })
