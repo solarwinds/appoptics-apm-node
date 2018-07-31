@@ -57,7 +57,7 @@ describe('probes.zlib once', function () {
 })
 
 describe('probes.zlib', function () {
-  const options = { chunkSize: 1024 }
+  const options = {chunkSize: 1024}
   let emitter
   let realSampleTrace = ao.addon.Context.sampleTrace
 
