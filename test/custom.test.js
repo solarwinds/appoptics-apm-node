@@ -641,7 +641,7 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = new Span('test', 'entry')
+      const span = new Span('test')
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
