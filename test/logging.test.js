@@ -70,7 +70,6 @@ describe('logging', function () {
       text.should.equal(msg)
       called = true
     }
-    ao.debugCheck(debug, debug.log)
     ao.loggers.error(msg)
     called.should.equal(true, 'logger must be called')
   })
@@ -80,20 +79,21 @@ describe('logging', function () {
     const aolevel = 'error'
     let debounced = new ao.loggers.Debounce('error')
     let count = 0
+    let i
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
       level.should.equal('appoptics:' + aolevel)
-      text.should.equal(msg)
+      text.should.equal('[' + (i + 1) + ']' + msg)
       count += 1
     }
-    for (let i = 0; i < 1000; i++) {
+    for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
     count.should.equal(11)
 
     debounced = new ao.loggers.Debounce('error', {deltaCount: 500})
     count = 0
-    for (let i = 0; i < 1000; i++) {
+    for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
     count.should.equal(3)
@@ -108,17 +108,19 @@ describe('logging', function () {
     }
     const debounced = new ao.loggers.Debounce('error', options)
     let count = 0
+    let calls = 0
 
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
       level.should.equal('appoptics:' + aolevel)
-      text.should.equal(msg)
+      text.should.equal('[' + calls + ']' + msg)
       count += 1
     }
 
     let i = 0
 
     const id = setInterval(function () {
+      calls += 1
       debounced.log(msg)
       i += 1
       if (i >= 4) {
@@ -131,6 +133,7 @@ describe('logging', function () {
 
     // log every 10 ms
     const lid = setInterval(function () {
+      calls += 1
       debounced.log(msg)
     }, 10)
 
