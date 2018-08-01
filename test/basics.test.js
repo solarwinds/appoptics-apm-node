@@ -5,7 +5,7 @@ const debug = require('debug')
 const ao = require('..')
 const Span = ao.Span
 
-let ifaob
+let ifaob    // execute or skip test depending on whether bindings are loaded.
 let ALWAYS
 let NEVER
 let MAX_SAMPLE_RATE
