@@ -207,7 +207,7 @@ describe('probes.fs', function () {
     {
       type: 'path',
       name: 'chmod',
-      args: ['fs-output/foo.bar', 0x777]
+      args: ['fs-output/foo.bar', 0o777]
     },
     // fs.utimes
     {
@@ -302,7 +302,7 @@ describe('probes.fs', function () {
     {
       type: 'fd',
       name: 'fchmod',
-      args: function () { return [fd, 0x777] }
+      args: function () { return [fd, 0o777] }
     },
     // fs.fstat
     {
