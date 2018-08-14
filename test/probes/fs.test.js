@@ -1,22 +1,23 @@
-var helper = require('../helper')
-var ao = helper.ao
-var noop = helper.noop
-var addon = ao.addon
+'use strict'
 
-var semver = require('semver')
-var path = require('path')
-var fs = require('fs')
+const helper = require('../helper')
+const ao = helper.ao
+const noop = helper.noop
+
+const semver = require('semver')
+const path = require('path')
+const fs = require('fs')
 
 describe('probes.fs once', function () {
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    emitter = helper.appoptics(done)
   })
   after(function (done) {
     emitter.close(done)
@@ -28,18 +29,18 @@ describe('probes.fs once', function () {
       ao.instrument('fake', noop)
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-          msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 })
 
 describe('probes.fs', function () {
-  var emitter
-  var mode
-  var realSampleTrace
+  let emitter
+  let mode
+  let realSampleTrace
 
   beforeEach(function (done) {
     setTimeout(function () {
@@ -50,7 +51,7 @@ describe('probes.fs', function () {
   //
   // Define some general message checks
   //
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'fs')
       msg.should.have.property('Label', 'entry')
@@ -64,7 +65,7 @@ describe('probes.fs', function () {
   function entry (name) {
     name = mode === 'sync' ? name + 'Sync' : name
     // If a requested op does not exist yet, create it
-    if ( ! checks[name + '-entry']) {
+    if (!checks[name + '-entry']) {
       checks[name + '-entry'] = function (msg) {
         checks.entry(msg)
         msg.should.have.property('Operation', name)
@@ -98,7 +99,7 @@ describe('probes.fs', function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -106,13 +107,13 @@ describe('probes.fs', function () {
     ao.addon.Context.sampleTrace = realSampleTrace
   })
 
-  var resolved = path.resolve('fs-output/foo.bar.link')
-  var fd
+  const resolved = path.resolve('fs-output/foo.bar.link')
+  let fd
 
   //
   // This is used to describe the inputs and behaviour of each function
   //
-  var calls = [
+  const calls = [
     // fs.mkdir
     {
       type: 'path',
@@ -156,16 +157,16 @@ describe('probes.fs', function () {
       args: ['fs-output/foo.bar'],
       subs: function () {
         // 6.0.0-rc.* does not satisfy >1.0.0? WAT?
-        var v = process.versions.node.split('-').shift()
+        const v = process.versions.node.split('-').shift()
         if (semver.satisfies(v, '>1.0.0', true) && mode !== 'sync') {
           return []
         }
         // node changed readFile so there is no call to fstat
         // between versions 6 and 8.
-        var expected = [span('open')]
+        const expected = [span('open')]
         if (semver.satisfies(v, '<8.0.0')) {
           expected.push(span('fstat'))
-      }
+        }
         return expected.concat([span('read'), span('close')])
       }
     },
@@ -206,7 +207,7 @@ describe('probes.fs', function () {
     {
       type: 'path',
       name: 'chmod',
-      args: ['fs-output/foo.bar', 0777]
+      args: ['fs-output/foo.bar', 0o777]
     },
     // fs.utimes
     {
@@ -254,7 +255,7 @@ describe('probes.fs', function () {
       // version 6 and after 6.3, except between 6.3.x and 8 the sync version does
       // not call lstat at all (https://github.com/nodejs/node/commit/71097744b2)
       subs: function () {
-        var v = process.versions.node.split('-').shift()
+        const v = process.versions.node.split('-').shift()
         if (semver.satisfies(v, '>=8') && mode === 'sync') {
           return []
         }
@@ -301,7 +302,7 @@ describe('probes.fs', function () {
     {
       type: 'fd',
       name: 'fchmod',
-      args: function () { return [fd, 0777] }
+      args: function () { return [fd, 0o777] }
     },
     // fs.fstat
     {
@@ -326,7 +327,7 @@ describe('probes.fs', function () {
       type: 'fd',
       name: 'write',
       args: function () {
-        var buf = new Buffer('some data')
+        const buf = new Buffer('some data')
         return [fd, buf, 0, 'some data'.length, 0]
       }
       // args: function () { return [fd, 'some data'] }
@@ -336,7 +337,7 @@ describe('probes.fs', function () {
       type: 'fd',
       name: 'read',
       args: function () {
-        var buf = new Buffer('some data'.length)
+        const buf = new Buffer('some data'.length)
         return [fd, buf, 0, 'some data'.length, 0]
       }
     },
@@ -373,11 +374,11 @@ describe('probes.fs', function () {
       if (result(call.exclude)) return
 
       it('should support ' + call.name, function (done) {
-        var args = result(call.args)
+        const args = result(call.args)
         emitter.log = call.log
 
         // First step is to expect the message for the operation we are making
-        var steps = [
+        const steps = [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Operation', call.name)
@@ -397,7 +398,7 @@ describe('probes.fs', function () {
           steps.push(step)
         }
 
-        var subs = result(call.subs)
+        const subs = result(call.subs)
         if (Array.isArray(subs)) {
           subs.forEach(function (sub) {
             if (Array.isArray(sub)) {
@@ -441,14 +442,14 @@ describe('probes.fs', function () {
     calls.forEach(function (call) {
       if (result(call.exclude)) return
 
-      var name = call.name + 'Sync'
+      const name = call.name + 'Sync'
 
       it('should support ' + name, function (done) {
-        var args = result(call.args)
+        const args = result(call.args)
         emitter.log = call.log
 
         // First step is to expect the message for the operation we are making
-        var steps = [
+        const steps = [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Operation', name)
@@ -465,7 +466,7 @@ describe('probes.fs', function () {
           steps.push(step)
         }
 
-        var subs = result(call.subs)
+        const subs = result(call.subs)
         if (Array.isArray(subs)) {
           subs.forEach(function (sub) {
             if (Array.isArray(sub)) {
@@ -492,7 +493,7 @@ describe('probes.fs', function () {
           // */
           // Make call and pass result or error to after handler, if present
           try {
-            var res = fs[name].apply(fs, args)
+            const res = fs[name].apply(fs, args)
             if (call.after) call.after(null, res)
           } catch (e) {
             if (call.after) call.after(e)
