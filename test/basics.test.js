@@ -166,4 +166,11 @@ describe('basics', function () {
     ao.sample('test')
     after()
   })
+
+  it('should not re-execute appoptics even if deleted from the require.cache', function () {
+    const key = require.resolve('..')
+    delete require.cache[key]
+    const ao2 = require('..')
+    ao.should.equal(ao2)
+  })
 })
