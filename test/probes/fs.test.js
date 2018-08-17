@@ -7,6 +7,7 @@ const noop = helper.noop
 const semver = require('semver')
 const path = require('path')
 const fs = require('fs')
+ao.probes.fs.collectBacktraces = false
 
 describe('probes.fs once', function () {
   let emitter
@@ -178,8 +179,12 @@ describe('probes.fs', function () {
       subs: function () {
         if (mode === 'sync') {
           return [span('open'), span('ftruncate'), span('close')]
+        } else {
+          // if cls-hooked
+          return [span('open'), span('close')]
+          // if continuation-local-storage
+          // return [span('open')]
         }
-        return [span('open')]
       }
     },
     // fs.appendFile
