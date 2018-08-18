@@ -14,6 +14,8 @@ const v3 = semver.satisfies(pkg.version, '>= 3')
 const ifv3 = v3 ? it : it.skip
 const ifv2 = v3 ? it.skip : it
 
+const hasAsync = semver.satisfies(process.version, '>= 8')
+
 let n = 0
 const max = 2
 const foo = {bar: 'baz'}
@@ -170,8 +172,13 @@ describe('probes/generic-pool ' + pkg.version, function () {
         done(e)
       })
 
-      async function acquire () {
-        return await pool.acquire()
+      let acquire
+      if (hasAsync) {
+        // kind of ugly, but how else to get around JavaScript  < 8 issuing a
+        // syntax error?
+        eval('acquire = async function () {return await pool.acquire()}')
+      } else {
+        acquire = pool.acquire
       }
 
       //
@@ -179,7 +186,6 @@ describe('probes/generic-pool ' + pkg.version, function () {
       // immediately for the first trace but the second trace will have to wait until
       // the interval timer pops.
       //
-      //pool.acquire().then(function (resource) {
       acquire().then(function (resource) {
         log.debug('%s acquired %o for %e', span, resource, ao.lastEvent)
 
