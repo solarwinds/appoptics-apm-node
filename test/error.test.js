@@ -1,14 +1,14 @@
 'use strict'
-var helper = require('./helper')
-var ao = require('..')
-var Span = ao.Span
-var Event = ao.Event
+const helper = require('./helper')
+const ao = require('..')
+const Span = ao.Span
+const Event = ao.Event
 
 describe('error', function () {
-  var conf = { enabled: true }
-  var error = new Error('nope')
-  var emitter
-  var realSampleTrace
+  const conf = {enabled: true}
+  const error = new Error('nope')
+  let emitter
+  let realSampleTrace
 
   function testSpan (span) {
     return span.descend('test')
@@ -39,7 +39,7 @@ describe('error', function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -56,19 +56,19 @@ describe('error', function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Tests
   //
   it('should add error properties to event', function () {
-    var event = new Event('error-test', 'info')
-    var err = new Error('test')
+    const event = new Event('error-test', 'info')
+    const err = new Error('test')
     event.error = err
 
     event.should.have.property('ErrorClass', 'Error')
@@ -77,9 +77,9 @@ describe('error', function () {
   })
 
   it('should set error multiple times (keeping last)', function () {
-    var event = new Event('error-test', 'info')
-    var first = new Error('first')
-    var second = new Error('second')
+    const event = new Event('error-test', 'info')
+    const first = new Error('first')
+    const second = new Error('second')
     event.error = first
     event.error = second
 
@@ -110,7 +110,7 @@ describe('error', function () {
   })
 
   it('should report custom errors', function (done) {
-    var error = new Error('test')
+    const error = new Error('test')
     helper.test(emitter, function (done) {
       ao.reportError(error)
       done()
@@ -126,8 +126,8 @@ describe('error', function () {
   })
 
   it('should report custom errors within a span', function (done) {
-    var error = new Error('test')
-    var last
+    const error = new Error('test')
+    let last
 
     helper.test(emitter, function (done) {
       ao.instrument(testSpan, function (callback) {
@@ -159,7 +159,7 @@ describe('error', function () {
 
   it('should rethrow errors in sync calls', function (done) {
     handleErrorTest(function (done) {
-      var rethrow = false
+      let rethrow = false
       try {
         ao.instrument(testSpan, function () {
           throw error
@@ -167,7 +167,7 @@ describe('error', function () {
       } catch (e) {
         rethrow = e === error
       }
-      if ( ! rethrow) {
+      if (!rethrow) {
         throw new Error('did not rethrow')
       }
       done()
@@ -175,7 +175,7 @@ describe('error', function () {
   })
 
   it('should support string errors', function (done) {
-    var error = 'test'
+    const error = 'test'
     helper.httpTest(emitter, function (done) {
       ao.reportError(error)
       done()
@@ -191,7 +191,7 @@ describe('error', function () {
   })
 
   it('should support empty string errors', function (done) {
-    var error = ''
+    const error = ''
     helper.httpTest(emitter, function (done) {
       ao.reportError(error)
       done()
@@ -207,13 +207,13 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    var span = new Span('test', null, {})
+    const span = new Span('test', null, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
-    span.error({ foo: 'bar' })
+    span.error({foo: 'bar'})
     span.error(undefined)
-    span.error(new Date)
+    span.error(new Date())
     span.error(/foo/)
     span.error(null)
     span.error([])
@@ -221,7 +221,7 @@ describe('error', function () {
   })
 
   it('should allow sending the same error multiple times', function (done) {
-    var error = new Error('dupe')
+    const error = new Error('dupe')
 
     // TODO: validate edge chaining
     function validate (msg) {
@@ -240,9 +240,9 @@ describe('error', function () {
   })
 
   it('should not send error events when not in a span', function () {
-    var span = new Span('test', null, {})
+    const span = new Span('test', null, {})
 
-    var send = Event.prototype.send
+    const send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
       throw new Error('should not send when not in a span')

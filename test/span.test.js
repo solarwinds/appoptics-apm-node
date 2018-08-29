@@ -291,7 +291,7 @@ describe('span', function () {
     // Proper errors should work
     const a = new Span('test', null, {})
     const aExit = a.events.exit
-    const err = new Error('nope')
+    const err = new Error('Exit error message')
     a.setExitError(err)
     aExit.should.have.property('ErrorClass', 'Error')
     aExit.should.have.property('ErrorMsg', err.message)
@@ -300,9 +300,9 @@ describe('span', function () {
     // As should error strings
     const b = new Span('test', null, {})
     const bExit = b.events.exit
-    b.setExitError('nope')
+    b.setExitError('Exit error string')
     bExit.should.have.property('ErrorClass', 'Error')
-    bExit.should.have.property('ErrorMsg', 'nope')
+    bExit.should.have.property('ErrorMsg', 'Exit error string')
   })
 
   //
