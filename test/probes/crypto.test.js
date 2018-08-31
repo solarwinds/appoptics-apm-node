@@ -82,7 +82,7 @@ describe('probes.crypto', function () {
     it('should support pbkdf2Sync', function (done) {
       helper.test(emitter, function (done) {
         try {
-          crypto.pbkdf2Sync('secret', 'salt', 4096, 512)
+          crypto.pbkdf2Sync('secret', 'salt', 4096, 512, 'sha1')
         } catch (e) {}
         done()
       }, [
