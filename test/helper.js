@@ -12,6 +12,7 @@ const dgram = require('dgram')
 const https = require('https')
 const http = require('http')
 const path = require('path')
+const assert = require('assert')
 
 Error.stackTraceLimit = 25
 
@@ -395,3 +396,49 @@ function checkData (data, fn) {
     if (fn) fn(msg)
   }
 }
+
+//*
+exports.checkLogMessages = checkLogMessages
+function checkLogMessages (debug, checks) {
+  const defaultLogger = debug.log
+  let count = 0
+
+  // log is called before substitutions are done, so don't check for the final
+  // message as output.
+  debug.log = function (output) {
+    const [level, text] = getLevelAndText(output)
+    const check = checks[count++]
+    // catch errors so this logger isn't left in place after an error is found
+    try {
+      assert('appoptics:' + check.level === level, 'message level should be ' + check.level)
+      assert(text.indexOf(check.message) === 0, 'found: ' + text + ' expected ' + check.message)
+      if (check.values) {
+        for (let i = 0; i < check.values.length; i++) {
+          if (isNaN(check.values[i])) {
+            assert(isNaN(arguments[i + 1])), 'argument ' + i + ' should be NaN'
+          } else {
+            assert(check.values[i] === arguments[i + 1], 'argument ' + i + ' should be ', check.values[i])
+          }
+        }
+      }
+    } catch (e) {
+      debug.log = defaultLogger
+      throw e
+    }
+    // restore the default logger when out of messages to check too.
+    if (count >= checks.length) {
+      debug.log = defaultLogger
+    }
+  }
+}
+
+exports.getLevelAndText = getLevelAndText
+function getLevelAndText (text) {
+  // eslint-disable-next-line no-control-regex
+  const match = text.match(/\s*\u001b\[[0-9;]+m(.+) \u001b\[0m(.+)/)
+  if (match) {
+    return [match[1], match[2]]
+  }
+  return ['', '']
+}
+// */
