@@ -5,7 +5,6 @@ const realPort = ao.port
 ao.skipSample = true
 
 const Emitter = require('events').EventEmitter
-const debug = require('debug')('appoptics:test:helper')
 const extend = require('util')._extend
 const bson = require('bson')
 const dgram = require('dgram')
@@ -76,7 +75,7 @@ if (process.env.APPOPTICS_REPORTER_UDP) {
   if (parts.length == 2) udpPort = parts[1]
 }
 
-debug('helper found real port = ' + realPort)
+log.test.info('helper found real port = ' + realPort)
 
 function udpSend (msg, port, host) {
   const client = dgram.createSocket('udp4')
@@ -118,7 +117,7 @@ exports.appoptics = function (done) {
     const port = server.address().port
     ao.port = port.toString()
     emitter.port = port
-    debug('mock appoptics (port ' + port + ') listening')
+    log.test.info('mock appoptics (port ' + port + ') listening')
     process.nextTick(done)
   })
 
@@ -132,7 +131,7 @@ exports.appoptics = function (done) {
   emitter.close = function (done) {
     const port = server.address().port
     server.on('close', function () {
-      debug('mock appoptics (port ' + port + ') closed')
+      log.test.info('mock appoptics (port ' + port + ') closed')
       process.nextTick(done)
     })
     server.close()
@@ -145,7 +144,7 @@ exports.doChecks = function (emitter, checks, done) {
   const addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
-  debug('doChecks invoked - server address ' + addr.address + ':' + addr.port)
+  log.test.info('doChecks invoked - server address ' + addr.address + ':' + addr.port)
 
   function onMessage (msg) {
     if (!emitter.__aoActive) {
@@ -165,7 +164,7 @@ exports.doChecks = function (emitter, checks, done) {
     msg.should.have.property('X-Trace').and.match(/^2B[0-9A-F]{58}$/)
     if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
 
-    debug(checks.length + ' checks left')
+    log.test.info(checks.length + ' checks left')
     if (!checks.length) {
       // NOTE: This is only needed because some
       // tests have less checks than messages
@@ -181,12 +180,12 @@ const check = {
   'http-entry': function (msg) {
     msg.should.have.property('Layer', 'nodejs')
     msg.should.have.property('Label', 'entry')
-    debug('entry is valid')
+    log.test.info('entry is valid')
   },
   'http-exit': function (msg) {
     msg.should.have.property('Layer', 'nodejs')
     msg.should.have.property('Label', 'exit')
-    debug('exit is valid')
+    log.test.info('exit is valid')
   }
 }
 
@@ -215,9 +214,9 @@ exports.test = function (emitter, test, validations, done) {
 
 exports.httpTest = function (emitter, test, validations, done) {
   const server = http.createServer(function (req, res) {
-    debug('test started')
+    log.test.info('test started')
     test(function (err, data) {
-      debug('test ended')
+      log.test.info('test ended')
       if (err) return done(err)
       res.end(data)
     })
@@ -231,7 +230,7 @@ exports.httpTest = function (emitter, test, validations, done) {
 
   server.listen(function () {
     const port = server.address().port
-    debug('test server listening on port ' + port)
+    log.test.info('test server listening on port ' + port)
     http.get('http://localhost:' + port, function (res) {
       res.resume()
     }).on('error', done)
@@ -240,9 +239,9 @@ exports.httpTest = function (emitter, test, validations, done) {
 
 exports.httpsTest = function (emitter, options, test, validations, done) {
   const server = https.createServer(options, function (req, res) {
-    debug('test started')
+    log.test.info('test started')
     test(function (err, data) {
-      debug('test ended')
+      log.test.info('test ended')
       if (err) return done(err)
       res.end(data)
     })
@@ -256,7 +255,7 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
 
   server.listen(function () {
     const port = server.address().port
-    debug('test server listening on port ' + port)
+    log.test.info('test server listening on port ' + port)
     https.get('https://localhost:' + port, function (res) {
       res.resume()
     }).on('error', done)
@@ -397,7 +396,6 @@ function checkData (data, fn) {
   }
 }
 
-//*
 exports.checkLogMessages = checkLogMessages
 function checkLogMessages (debug, checks) {
   const defaultLogger = debug.log
@@ -441,4 +439,3 @@ function getLevelAndText (text) {
   }
   return ['', '']
 }
-// */
