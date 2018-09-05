@@ -242,6 +242,11 @@ describe('error', function () {
   it('should not send error events when not in a span', function () {
     const span = new Span('test', null, {})
 
+    const logChecks = [
+      {level: 'error', message: 'test span error call could not find last event'},
+    ]
+    helper.checkLogMessages(ao.debug, logChecks)
+
     const send = Event.prototype.send
     Event.prototype.send = function () {
       Event.prototype.send = send
