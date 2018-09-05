@@ -88,13 +88,16 @@ describe('event', function () {
     event.should.have.property('Foo', 'bar')
   })
 
-  it('should support data in send function', function () {
+  it('should support data in send function', function (done) {
     const event = new Event('test', 'entry')
-    let called = false
-    event.set = function () {
-      called = true
-    }
-    event.sendReport({Foo: 'bar'})
-    called.should.equal(true)
+
+    emitter.once('message', function (msg) {
+      msg.should.have.property('Foo')
+      msg.Foo.should.equal('fubar')
+      done()
+    })
+    ao.requestStore.run(function () {
+      event.sendReport({Foo: 'fubar'})
+    })
   })
 })
