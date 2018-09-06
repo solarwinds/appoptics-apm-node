@@ -409,7 +409,7 @@ function checkLogMessages (debug, checks) {
     // catch errors so this logger isn't left in place after an error is found
     try {
       assert('appoptics:' + check.level === level, 'message level should be ' + check.level)
-      assert(text.indexOf(check.message) === 0, 'found: ' + text + ' expected ' + check.message)
+      assert(text.indexOf(check.message) === 0, 'found: "' + text + '" expected "' + check.message + '"')
       if (check.values) {
         for (let i = 0; i < check.values.length; i++) {
           if (isNaN(check.values[i])) {
