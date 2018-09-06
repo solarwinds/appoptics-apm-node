@@ -1,25 +1,21 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
-var log = ao.loggers
-var conf = ao.probes.express
-var legacy = ao.probes.express.legacyTxname
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+const helper = require('../helper')
+const ao = helper.ao
+const legacy = ao.probes.express.legacyTxname
 
-var request = require('request')
-var express = require('express')
-var morgan = require('morgan')
-var bodyParser = require('body-parser')
-var methodOverride = require('method-override')
+const semver = require('semver')
 
-var fs = require('fs')
+const request = require('request')
+const express = require('express')
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 // global configuration that probably should be set
 // outside so multiple passes can be run from the
 // same file with a little wrapper.
-ao.probes.express.legacyTxname = false
+ao.probes.express.legacyTxname = false && legacy
 
 //
 // helper function to return a function that returns expected results for:
@@ -31,12 +27,12 @@ ao.probes.express.legacyTxname = false
 function makeExpected (req, func) {
   // bind this when created. an error causes req.route
   // to become undefined
-  var pathToUse = req.route.path
+  const pathToUse = req.route.path
 
   return function (what) {
-    var controller
-    var action
-    var result
+    let controller
+    let action
+    let result
 
     if (ao.probes.express.legacyTxname) {
       // old way of setting these
@@ -63,7 +59,7 @@ function makeExpected (req, func) {
     }
 
     if (ao.cfg.domainPrefix && what === 'tx') {
-      var prefix = ao.getDomainPrefix(req)
+      const prefix = ao.getDomainPrefix(req)
       if (prefix) {
         result = prefix + '/' + result
       }
@@ -73,10 +69,13 @@ function makeExpected (req, func) {
   }
 }
 
-var pkg = require('express/package.json')
+//
+// Tests
+//
+const pkg = require('express/package.json')
 
 describe('probes.express ' + pkg.version, function () {
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -92,7 +91,7 @@ describe('probes.express ' + pkg.version, function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
@@ -122,11 +121,11 @@ describe('probes.express ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit')
-          msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit')
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
 
@@ -153,10 +152,10 @@ describe('probes.express ' + pkg.version, function () {
   function forwardControllerAction (method, done) {
     // define vars needed for expected() so multiple naming conventions can
     // be tested.
-    var getRoutePath = '/hello/:name'
-    var postRoutePath = '/api/set-name'
+    const getRoutePath = '/hello/:name'
+    const postRoutePath = '/api/set-name'
 
-    var expected
+    let expected
     function hello (req, res) {
       helper.clsCheck()
       expected = makeExpected(req, hello)
@@ -164,18 +163,18 @@ describe('probes.express ' + pkg.version, function () {
     }
     function setName (req, res) {
       helper.clsCheck()
-      var name = req.body.name
+      //const name = req.body.name
       expected = makeExpected(req, setName)
       res.send('done')
     }
 
-    var app = express()
+    const app = express()
     // log every request to the console
     app.use(morgan('dev', {
       skip: function (req, res) {return true}
     }))
     // parse application/x-www-form-urlencoded
-    app.use(bodyParser.urlencoded({ 'extended': 'true' }))
+    app.use(bodyParser.urlencoded({extended: 'true'}))
     // parse application/json
     app.use(bodyParser.json())
     // simulate DELETE and PUT
@@ -188,7 +187,7 @@ describe('probes.express ' + pkg.version, function () {
     app.get(getRoutePath, hello)
     app.post(postRoutePath, setName)
 
-    var validations = [
+    let validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -222,9 +221,9 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
-      var options = {
+    const server = app.listen(function () {
+      const port = server.address().port
+      const options = {
         url: 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
       }
       if (method === 'post') {
@@ -240,7 +239,7 @@ describe('probes.express ' + pkg.version, function () {
   it('should allow a custom TransactionName', function (done) {
     // supply a simple custom function
     function custom (req, res) {
-      var result = 'new-name.' + req.method + req.route.path
+      const result = 'new-name.' + req.method + req.route.path
       return result
     }
 
@@ -250,7 +249,7 @@ describe('probes.express ' + pkg.version, function () {
   it('should allow a custom TransactionName with domain prefix', function (done) {
     // simple custom function
     function custom (req, res) {
-      var result = 'new-name.' + req.method + req.route.path
+      const result = 'new-name.' + req.method + req.route.path
       return result
     }
 
@@ -263,9 +262,14 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   it('should handle an error in the custom name function', function (done) {
+    const error = new Error('I am a bad function')
     function custom (req, res) {
-      throw new Error('I am a bad function')
+      throw error
     }
+    const logChecks = [
+      {level: 'error', message: 'express customNameFunc() error:', values: [error]},
+    ]
+    helper.checkLogMessages(ao.debug, logChecks)
     customTransactionName(custom, done)
   })
 
@@ -277,25 +281,24 @@ describe('probes.express ' + pkg.version, function () {
   })
 
   function customTransactionName (custom, done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var customReq
-    var expected
+    const reqRoutePath = '/hello/:name'
+    let customReq
+    let expected
 
-    function hello(req, res) {
+    function hello (req, res) {
       helper.clsCheck()
       customReq = req
       expected = makeExpected(req, hello)
       res.send('done')
     }
 
-    var app = express()
+    const app = express()
 
     ao.setCustomTxNameFunction('express', custom)
 
     app.get(reqRoutePath, hello)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -309,10 +312,10 @@ describe('probes.express ' + pkg.version, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        var expectedCustom = expected('tx')
+        let expectedCustom = expected('tx')
         if (custom) {
           try {
-            var expectedCustomName = custom(customReq)
+            const expectedCustomName = custom(customReq)
             if (expectedCustomName) {
               expectedCustom = expectedCustomName
             }
@@ -339,8 +342,8 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   }
@@ -349,12 +352,11 @@ describe('probes.express ' + pkg.version, function () {
   // multiple handlers
   //
   it('should profile each middleware', function (done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var expectedRen
-    var expectedRes
+    const reqRoutePath = '/hello/:name'
+    let expectedRen
+    let expectedRes
 
-    function renamer(req, res, next) {
+    function renamer (req, res, next) {
       helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
@@ -366,13 +368,13 @@ describe('probes.express ' + pkg.version, function () {
       res.send(req.name)
     }
 
-    var app = express()
+    const app = express()
 
     app.get(reqRoutePath, renamer)
 
     app.get(reqRoutePath, responder)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -415,36 +417,35 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
 
   it('should profile multiple middlewares', function (done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var expectedRen
-    var expectedRes
+    const reqRoutePath = '/hello/:name'
+    let expectedRen
+    let expectedRes
 
-    function renamer(req, res, next) {
+    function renamer (req, res, next) {
       helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
-    function responder(req, res) {
+    function responder (req, res) {
       helper.clsCheck()
       expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
-    var app = express()
+    const app = express()
 
     app.get(reqRoutePath, renamer, responder)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -486,36 +487,35 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
 
   it('should profile middleware specified as array', function (done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var expectedRen
-    var expectedRes
+    const reqRoutePath = '/hello/:name'
+    let expectedRen
+    let expectedRes
 
-    function renamer(req, res, next) {
+    function renamer (req, res, next) {
       helper.clsCheck()
       expectedRen = makeExpected(req, renamer)
       req.name = req.params.name
       next()
     }
 
-    function responder(req, res) {
+    function responder (req, res) {
       helper.clsCheck()
       expectedRes = makeExpected(req, responder)
       res.send(req.name)
     }
 
-    var app = express()
+    const app = express()
 
     app.get(reqRoutePath, [renamer, responder])
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -557,33 +557,32 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
 
   it('should trace through param() calls', function (done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var expected
+    const reqRoutePath = '/hello/:name'
+    let expected
 
-    function hello(req, res) {
+    function hello (req, res) {
       helper.clsCheck()
       expected = makeExpected(req, hello)
       res.send('Hello, ' + req.hello + '!')
     }
 
-    var app = express()
+    const app = express()
 
-    app.param('name', function (req, req, next, name) {
+    app.param('name', function (req, req2, next, name) {
       req.hello = name
       next()
     })
 
     app.get(reqRoutePath, hello)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -605,16 +604,16 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
 
   function renderTest (done) {
-    var reqRoutePath = '/hello/:name'
-    var expected
-    var locals
+    const reqRoutePath = '/hello/:name'
+    let expected
+    let locals
 
     function fn (req, res) {
       expected = makeExpected(req, fn)
@@ -627,14 +626,14 @@ describe('probes.express ' + pkg.version, function () {
       res.render('hello', Object.create(locals))
     }
 
-    var app = express()
+    const app = express()
 
     app.set('views', __dirname)
     app.set('view engine', 'ejs')
 
     app.get(reqRoutePath, fn)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -677,8 +676,8 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   }
@@ -690,21 +689,21 @@ describe('probes.express ' + pkg.version, function () {
   }
 
   it('should work with supertest', function (done) {
-    var reqRoutePath = '/hello/:name'
-    var expected
+    const reqRoutePath = '/hello/:name'
+    let expected
 
-    function hello(req, res) {
+    function hello (req, res) {
       expected = makeExpected(req, hello)
-      host = req.headers.host
+      //host = req.headers.host
       res.send('done')
     }
 
-    var request = require('supertest')
-    var app = express()
+    const request = require('supertest')
+    const app = express()
 
     app.get(reqRoutePath, hello)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -734,7 +733,7 @@ describe('probes.express ' + pkg.version, function () {
 
   it('should skip when disabled', function (done) {
     ao.probes.express.enabled = false
-    var app = express()
+    const app = express()
 
     app.set('views', __dirname)
     app.set('view engine', 'ejs')
@@ -745,7 +744,7 @@ describe('probes.express ' + pkg.version, function () {
       }))
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -758,17 +757,17 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
 
   it('should be able to report errors from error handler', function (done) {
-    var reqRoutePath = '/'
-    var expected
+    const reqRoutePath = '/'
+    let expected
 
-    function route(req, res, next) {
+    function route (req, res, next) {
       expected = makeExpected(req, route)
       ao.instrument(function (span) {
         return span.descend('sub')
@@ -777,8 +776,8 @@ describe('probes.express ' + pkg.version, function () {
       })
     }
 
-    var error = new Error('test')
-    var app = express()
+    const error = new Error('test')
+    const app = express()
 
     app.get(reqRoutePath, route)
 
@@ -787,7 +786,7 @@ describe('probes.express ' + pkg.version, function () {
       res.send('test')
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -826,29 +825,29 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port)
     })
   })
 
   it('should nest properly', function (done) {
-    var reqRoutePath = '/hello/:name'
-    var expected
+    const reqRoutePath = '/hello/:name'
+    let expected
 
-    function hello(req, res) {
+    function hello (req, res) {
       expected = makeExpected(req, hello)
       res.send('done')
     }
 
-    var app = express()
+    const app = express()
 
-    var app2 = express()
+    const app2 = express()
     app.use(app2)
 
     app2.get(reqRoutePath, hello)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -876,13 +875,11 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
-
-
 
   if (semver.satisfies(pkg.version, '>= 4')) {
     it('should support express.Router()', expressRouterTest)
@@ -896,24 +893,23 @@ describe('probes.express ' + pkg.version, function () {
   }
 
   function expressRouterTest (done) {
-    var method = 'GET'
-    var reqRoutePath = '/:name'
-    var expected
+    const reqRoutePath = '/:name'
+    let expected
 
-    function hello(req, res) {
+    function hello (req, res) {
       expected = makeExpected(req, hello)
       res.send('done')
     }
 
-    var app = express()
+    const app = express()
 
-    var router = express.Router()
+    const router = express.Router()
 
     router.get(reqRoutePath, hello)
 
     app.use('/hello', router)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -935,30 +931,29 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   }
 
   function appRouteTest (done) {
-    var method = 'GET'
-    var reqRoutePath = '/hello/:name'
-    var expected
+    const reqRoutePath = '/hello/:name'
+    let expected
 
 
-    function hello(req, res) {
+    function hello (req, res) {
       helper.clsCheck()
       expected = makeExpected(req, hello)
       res.send('done')
     }
 
-    var app = express()
+    const app = express()
 
     app.route(reqRoutePath)
       .get(hello)
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -980,8 +975,8 @@ describe('probes.express ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request.get('http://localhost:' + port + '/hello/world', function (err, res, body) {
         if (err) {
           throw new Error('request failed')
