@@ -1,10 +1,13 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var pkg = require('koa/package')
+const helper = require('../helper')
+const ao = helper.ao
+const assert = require('assert')
 
-var canGenerator = false
+const koa = require('koa')
+const pkg = require('koa/package')
+
+let canGenerator = false
 try {
   eval('(function* () {})()')
   canGenerator = true
@@ -14,8 +17,8 @@ try {
 function noop () {}
 
 describe('probes/koa ' + pkg.version, function () {
-  var emitter
-  var tests = canGenerator && require('./koa')
+  let emitter
+  const tests = canGenerator && require('./koa')
 
   //
   // Intercept appoptics messages for analysis
@@ -39,17 +42,38 @@ describe('probes/koa ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
+  })
+
+  it('should allow creating the app with or without "new"', function () {
+    let app = undefined
+    let error = false
+    try {
+      app = new koa()
+    } catch (e) {
+      error = e
+    }
+    assert (app !== undefined, 'a koa app should be returned')
+    assert (error === false, 'should allow "new koa()"')
+
+    app = undefined
+    try {
+      app = koa()
+    } catch (e) {
+      error = e
+    }
+    assert (app !== undefined, 'a koa app should be returned')
+    assert (error === false, 'should allow "koa()"')
   })
 
   //
   // Tests
   //
-  if ( ! canGenerator) {
+  if (!canGenerator) {
     it.skip('should support koa outer span', noop)
     it.skip('should skip when disabled', noop)
   } else {
