@@ -1,27 +1,24 @@
-var helper = require('../helper')
-var Address = helper.Address
-var ao = helper.ao
-var noop = helper.noop
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
+const helper = require('../helper')
+const Address = helper.Address
+const ao = helper.ao
+const noop = helper.noop
+const addon = ao.addon
 
-var request = require('request')
-var http = require('http')
+const redis = require('redis')
+const pkg = require('redis/package')
 
-var redis = require('redis')
-var pkg = require('redis/package')
-
-var parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
-var host = parts.shift()
-var port = parts.shift()
-var addr = new Address(host, port)
-var client = redis.createClient(addr.port, addr.host, {})
+const parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
+const host = parts.shift()
+const port = parts.shift()
+const addr = new Address(host, port)
+const client = redis.createClient(addr.port, addr.host, {})
 
 describe('probes.redis ' + pkg.version, function () {
-  var ctx = { redis: client }
-  var emitter
-  var realSampleTrace
+  const ctx = {redis: client}
+  let emitter
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -32,7 +29,7 @@ describe('probes.redis ' + pkg.version, function () {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -40,7 +37,7 @@ describe('probes.redis ' + pkg.version, function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'redis-entry': function (msg) {
       msg.should.have.property('Layer', 'redis')
       msg.should.have.property('Label', 'entry')
@@ -57,11 +54,11 @@ describe('probes.redis ' + pkg.version, function () {
       ao.instrument('fake', noop)
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
@@ -85,7 +82,7 @@ describe('probes.redis ' + pkg.version, function () {
   // Test a simple res.end() call in an http server
   //
   it('should support multi', function (done) {
-    var steps = [
+    const steps = [
       function (msg) {
         check['redis-entry'](msg)
         msg.should.have.property('KVOp', 'multi')

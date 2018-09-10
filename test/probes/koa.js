@@ -1,21 +1,23 @@
-var Resource = require('koa-resource-router')
-var router = require('koa-router')
-var _ = require('koa-route')
-var koa = require('koa')
+'use strict'
 
-var helper = require('../helper')
-var request = require('request')
+const Resource = require('koa-resource-router')
+const router = require('koa-router')
+const _ = require('koa-route')
+const koa = require('koa')
 
-var ao = require('../..')
+const helper = require('../helper')
+const request = require('request')
 
-var views = require('co-views')
+const ao = require('../..')
 
-var render = views('test/probes', {
-  map: { ejs: 'ejs' },
+const views = require('co-views')
+
+const render = views('test/probes', {
+  map: {ejs: 'ejs'},
   ext: 'ejs'
 })
 
-var check = {
+const check = {
   'http-entry': function (msg) {
     msg.should.have.property('Layer', 'nodejs')
     msg.should.have.property('Label', 'entry')
@@ -43,7 +45,7 @@ var check = {
 }
 
 function controllerValidations (controller, action) {
-  var profileName = controller + ' ' + action
+  const profileName = controller + ' ' + action
   return [
     function (msg) {
       check['http-entry'](msg)
@@ -73,7 +75,7 @@ function controllerValidations (controller, action) {
 }
 
 exports.basic = function (emitter, done) {
-  var app = koa()
+  const app = koa()
 
   app.use(function* () {
     this.body = 'done'
@@ -88,15 +90,15 @@ exports.basic = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
   })
 }
 
 exports.disabled = function (emitter, done) {
   ao.probes.koa.enabled = false
-  var app = koa()
+  const app = koa()
 
   app.use(function* () {
     this.body = 'done'
@@ -110,33 +112,33 @@ exports.disabled = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port)
   })
 }
 
 exports.route = function (emitter, done) {
-  var app = koa()
+  const app = koa()
 
   app.use(_.get('/hello/:name', function* hello () {
     this.body = 'done'
   }))
 
-  var validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations('get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
   })
 }
 
 exports.route_disabled = function (emitter, done) {
   ao.probes['koa-route'].enabled = false
-  var app = koa()
+  const app = koa()
 
   app.use(_.get('/hello/:name', function* hello () {
     this.body = 'done'
@@ -152,21 +154,21 @@ exports.route_disabled = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
   })
 }
 
 exports.router = function (emitter, done) {
-  var app = koa()
+  const app = koa()
 
   function* hello () {
     this.body = 'done'
   }
 
   // Mount router
-  var r = router(app)
+  const r = router(app)
   if (typeof r.routes === 'function') {
     app.use(r.routes())
     r.get('/hello/:name', hello)
@@ -175,27 +177,27 @@ exports.router = function (emitter, done) {
     app.get('/hello/:name', hello)
   }
 
-  var validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations('get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
   })
 }
 
 exports.router_disabled = function (emitter, done) {
   ao.probes['koa-router'].enabled = false
-  var app = koa()
+  const app = koa()
 
   function* hello () {
     this.body = 'done'
   }
 
   // Mount router
-  var r = router(app)
+  const r = router(app)
   if (typeof r.routes === 'function') {
     app.use(r.routes())
     r.get('/hello/:name', hello)
@@ -214,16 +216,16 @@ exports.router_disabled = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
   })
 }
 
 exports.resourceRouter = function (emitter, done) {
-  var app = koa()
+  const app = koa()
 
-  var res = new Resource('hello', {
+  const res = new Resource('hello', {
     index: function* index () {
       this.body = 'done'
     }
@@ -231,22 +233,22 @@ exports.resourceRouter = function (emitter, done) {
 
   app.use(res.middleware())
 
-  var validations = controllerValidations('hello', 'index')
+  const validations = controllerValidations('hello', 'index')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello')
   })
 }
 
 exports.resourceRouter_disabled = function (emitter, done) {
   ao.probes['koa-resource-router'].enabled = false
-  var app = koa()
+  const app = koa()
 
-  var res = new Resource('hello', {
+  const res = new Resource('hello', {
     index: function* index () {
       this.body = 'done'
     }
@@ -264,14 +266,14 @@ exports.resourceRouter_disabled = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port + '/hello')
   })
 }
 
 exports.render = function (emitter, done) {
-  var app = koa()
+  const app = koa()
 
   app.use(function* () {
     this.body = yield render('hello', {
@@ -279,7 +281,7 @@ exports.render = function (emitter, done) {
     })
   })
 
-  var validations = [
+  const validations = [
     function (msg) {
       check['http-entry'](msg)
     },
@@ -306,15 +308,15 @@ exports.render = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port)
   })
 }
 
 exports.render_disabled = function (emitter, done) {
   ao.probes['co-render'].enabled = false
-  var app = koa()
+  const app = koa()
 
   app.use(function* () {
     this.body = yield render('hello', {
@@ -322,7 +324,7 @@ exports.render_disabled = function (emitter, done) {
     })
   })
 
-  var validations = [
+  const validations = [
     function (msg) {
       check['http-entry'](msg)
     },
@@ -342,63 +344,8 @@ exports.render_disabled = function (emitter, done) {
     server.close(done)
   })
 
-  var server = app.listen(function () {
-    var port = server.address().port
+  const server = app.listen(function () {
+    const port = server.address().port
     request('http://localhost:' + port)
   })
 }
-
-/* TODO BAM remove
-exports.rum = function (emitter, done) {
-  ao.rumId = 'foo'
-  var app = koa()
-
-  var exit
-
-  app.use(function* () {
-    exit = this.res._ao_http_span.events.exit
-    this.body = yield render('rum')
-  })
-
-  var validations = [
-    function (msg) {
-      check['http-entry'](msg)
-    },
-    function (msg) {
-      check['koa-entry'](msg)
-    },
-    function (msg) {
-      check['render-entry'](msg)
-      msg.should.have.property('TemplateFile')
-      msg.should.have.property('TemplateLanguage', 'ejs')
-    },
-    function (msg) {
-      check['render-exit'](msg)
-    },
-    function (msg) {
-      check['koa-exit'](msg)
-    },
-    function (msg) {
-      check['http-exit'](msg)
-    }
-  ]
-
-  // Delay completion until both test paths end
-  var complete = helper.after(2, function () {
-    server.close(done)
-    delete ao.rumId
-  })
-
-  helper.doChecks(emitter, validations, complete)
-
-  var server = app.listen(function () {
-    var port = server.address().port
-    request('http://localhost:' + port, function (a, b, body) {
-      // Verify that the rum scripts are included in the body
-      body.should.containEql(rum.header(ao.rumId, exit.toString()))
-      body.should.containEql(rum.footer(ao.rumId, exit.toString()))
-      complete()
-    })
-  })
-}
-// */

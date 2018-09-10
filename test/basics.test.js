@@ -4,6 +4,7 @@ const should = require('should') // eslint-disable-line no-unused-vars
 const debug = require('debug')
 const ao = require('..')
 const Span = ao.Span
+const helper = require('./helper')
 
 let ifaob    // execute or skip test depending on whether bindings are loaded.
 let ALWAYS
@@ -50,8 +51,16 @@ describe('basics', function () {
   })
 
   ifaob('should handle invalid sample rates correctly', function () {
+
+    const logChecks = [
+      {level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN]},
+      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000]},
+      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0]},
+    ]
+    helper.checkLogMessages(debug, logChecks)
+
     ao.sampleRate = NaN
-    ao.sampleRate.should.equal(100, 'when trying to set to NaN')
+    ao.sampleRate.should.equal(100, '(unchanged) when trying to set to NaN')
     ao.sampleRate = 2000000
     ao.sampleRate.should.equal(1000000, 'when trying to set to 2000000')
     ao.sampleRate = -10
@@ -168,6 +177,10 @@ describe('basics', function () {
   })
 
   it('should not re-execute appoptics even if deleted from the require.cache', function () {
+    const logChecks = [
+      {level: 'warn', message: 'appoptics-apm is being executed more than once'},
+    ]
+    helper.checkLogMessages(debug, logChecks)
     const key = require.resolve('..')
     delete require.cache[key]
     const ao2 = require('..')
