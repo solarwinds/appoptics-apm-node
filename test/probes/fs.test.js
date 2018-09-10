@@ -180,10 +180,11 @@ describe('probes.fs', function () {
         if (mode === 'sync') {
           return [span('open'), span('ftruncate'), span('close')]
         } else {
-          // if cls-hooked
-          return [span('open'), span('close')]
-          // if continuation-local-storage
-          // return [span('open')]
+          const expected = [span('open')]
+          if (ao.contextProvider === 'cls-hooked') {
+            expected.push(span('close'))
+          }
+          return expected
         }
       }
     },

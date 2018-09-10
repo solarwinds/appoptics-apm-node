@@ -2,6 +2,7 @@
 
 const helper = require('./helper')
 const should = require('should')
+const debug = require('debug')
 const ao = require('..')
 const addon = ao.addon
 const Span = ao.Span
@@ -335,6 +336,15 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
+    const logChecks = [
+      {level: 'error', message: 'Invalid type for KV'},
+      {level: 'error', message: 'Invalid type for KV'},
+      {level: 'error', message: 'Invalid type for KV'},
+      {level: 'error', message: 'Invalid type for KV'},
+    ]
+
+    helper.checkLogMessages(debug, logChecks)
+
     span.run(function () {
       span.info(data)
     })
@@ -349,6 +359,11 @@ describe('span', function () {
       Event.prototype.send = send
       throw new Error('should not send when not in a span')
     }
+
+    const logChecks = [
+      {level: 'error', message: 'test span info call could not find last event'}
+    ]
+    helper.checkLogMessages(debug, logChecks)
 
     span.info(data)
     Event.prototype.send = send
