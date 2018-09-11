@@ -132,11 +132,30 @@ describe('probes/generic-pool ' + pkg.version, function () {
     okToRelease = true
   })
 
+  ifv3('should execute generic-pool without error whether patched or not', function (done) {
+
+    function spanRunner (done) {
+      pool.acquire().then(function (resource) {
+        log.debug('%s acquired(queue) %o for %e', ao.lastEvent.Layer, resource, ao.lastEvent)
+
+        setTimeout(function () {
+          log.debug('releasing %o by %e', resource, ao.lastEvent)
+          pool.release(resource)
+          done()
+        }, 10)
+      }).catch(function (e) {
+        done(e)
+      })
+    }
+
+    ao.startOrContinueTrace('', 'generic-pool-x', spanRunner, function (e) {log.debug('gp-x'); done(e)})
+
+  })
+
   ifv3('should trace through generic-pool acquire for versions > 3', function (done) {
     //
     // v3 uses promises
     //
-    assert(nodeVersion >= 8, 'version 3 is not instrumentable with node versions < 8')
     let okToRelease = false
 
     function spanRunner (done) {
@@ -179,9 +198,9 @@ describe('probes/generic-pool ' + pkg.version, function () {
       if (hasAsync) {
         // kind of ugly, but how else to get around JavaScript  < 8 issuing a
         // syntax error?
-        eval('acquire = async function () {return await pool.acquire()}')
+        eval('acquire = (async function () {return await pool.acquire()}).bind(pool)')
       } else {
-        acquire = pool.acquire
+        acquire = pool.acquire.bind(pool)
       }
 
       //
