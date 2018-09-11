@@ -3,6 +3,7 @@
 const helper = require('../helper')
 const semver = require('semver')
 const should = require('should')
+const assert = require('assert')
 const ao = helper.ao
 const log = ao.loggers
 
@@ -13,6 +14,7 @@ const pkg = require('generic-pool/package')
 const v3 = semver.satisfies(pkg.version, '>= 3')
 const ifv3 = v3 ? it : it.skip
 const ifv2 = v3 ? it.skip : it
+const nodeVersion = semver.major(process.version)
 
 const hasAsync = semver.satisfies(process.version, '>= 8')
 
@@ -134,6 +136,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
     //
     // v3 uses promises
     //
+    assert(nodeVersion >= 8, 'version 3 is not instrumentable with node versions < 8')
     let okToRelease = false
 
     function spanRunner (done) {
