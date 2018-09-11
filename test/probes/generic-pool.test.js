@@ -3,7 +3,6 @@
 const helper = require('../helper')
 const semver = require('semver')
 const should = require('should')
-const assert = require('assert')
 const ao = helper.ao
 const log = ao.loggers
 
@@ -16,7 +15,7 @@ const ifv3 = v3 ? it : it.skip
 const ifv2 = v3 ? it.skip : it
 const nodeVersion = semver.major(process.version)
 
-const hasAsync = semver.satisfies(process.version, '>= 8')
+const hasAsync = nodeVersion >= 8
 
 let n = 0
 const max = 2
