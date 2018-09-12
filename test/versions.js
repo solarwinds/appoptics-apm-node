@@ -10,7 +10,7 @@ const modules = module.exports = []
 //test('amqp', '>= 0.2.0')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
-test('bcrypt', '>= 0.8.5')
+test('bcrypt', '>= 0.8.6')
 test('bluebird')
 
 test('cassandra-driver', '>= 3.3.0')

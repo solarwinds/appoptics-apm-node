@@ -1,7 +1,9 @@
-var helper = require('../helper')
-var ao = helper.ao
+'use strict'
 
-var pkg
+const helper = require('../helper')
+const ao = helper.ao
+
+let pkg
 try {
   pkg = require('co-render/package')
 } catch (e) {
@@ -9,7 +11,7 @@ try {
 }
 
 // Check for generator support
-var canGenerator = false
+let canGenerator = false
 try {
   eval('(function* () {})()')
   canGenerator = true
@@ -19,13 +21,14 @@ try {
 function noop () {}
 
 describe('probes/co-render ' + pkg.version, function () {
-  var emitter
-  var tests = canGenerator && require('./koa')
+  let emitter
+  const tests = canGenerator && require('./koa')
 
   //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
+    ao.resetRequestStore()
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
@@ -43,17 +46,17 @@ describe('probes/co-render ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Tests
   //
-  if ( ! canGenerator) {
+  if (!canGenerator) {
     it.skip('should support co-render', noop)
     it.skip('should skip when disabled', noop)
   } else {

@@ -1,44 +1,39 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+const helper = require('../helper')
+const ao = helper.ao
+const semver = require('semver')
 
-/* TODO BAM remove
-var rum = require('../../dist/rum')
-// */
-var path = require('path')
-
-var request = require('request')
-var fs = require('fs')
+const request = require('request')
 
 // Don't even load hapi in 0.8. Bad stuff will happen.
-var nodeVersion = process.version.slice(1)
-var hasES6 = semver.satisfies(nodeVersion, '> 4')
-var pkg = require('hapi/package.json')
-var hapi
-var vision
+const nodeVersion = process.version.slice(1)
+const hasES6 = semver.satisfies(nodeVersion, '> 4')
+const pkg = require('hapi/package.json')
+let hapi
+let vision
+let visionPkg
 if (semver.satisfies(nodeVersion, '> 0.8')) {
   if (hasES6 || semver.satisfies(pkg.version, '< 13.6')) {
     hapi = require('hapi')
   }
 
-  var visionPkg = require('vision/package.json')
+  visionPkg = require('vision/package.json')
   if (hasES6 || semver.satisfies(visionPkg.version, '<= 4.1.1')) {
     vision = require('vision')
   }
 }
 
 
-describe('probes.hapi ' + pkg.version, function () {
-  var emitter
-  var port = 3000
+describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function () {
+  let emitter
+  let port = 3000
 
   //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
+    helper.ao.resetRequestStore()
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
@@ -49,7 +44,7 @@ describe('probes.hapi ' + pkg.version, function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
@@ -72,14 +67,25 @@ describe('probes.hapi ' + pkg.version, function () {
     }
   }
 
+  // the promise in case it's not hapi v17
+  let p = Promise.resolve()
+
   //
   // Helpers
   //
   function makeServer (config) {
     config = config || {}
-    var server
+    let server
 
-    if (semver.satisfies(pkg.version, '>= 9.0.0')) {
+    if (semver.gte(pkg.version, '17.0.0')) {
+      server = new hapi.Server({port: ++port})
+      p = server.register({plugin: require('vision')})
+      p.then(() => {
+        if (config.views) {
+          server.views(config.views)
+        }
+      })
+    } else if (semver.satisfies(pkg.version, '>= 9.0.0')) {
       server = new hapi.Server()
       server.register(vision, function () {
         if (config.views) {
@@ -109,7 +115,7 @@ describe('probes.hapi ' + pkg.version, function () {
     return server
   }
   function viewServer () {
-    var config = {
+    const config = {
       views: {
         path: __dirname,
         engines: {
@@ -119,7 +125,7 @@ describe('probes.hapi ' + pkg.version, function () {
     }
 
     // Avoid "not allowed" errors from pre-8.x versions
-    if (semver.satisfies(pkg.version, '>= 8.0.0')) {
+    if (semver.gte(pkg.version, '8.0.0')) {
       config.relativeTo = __dirname
     }
 
@@ -141,7 +147,7 @@ describe('probes.hapi ' + pkg.version, function () {
   //
   function controllerTest (method) {
     return function (done) {
-      var server = makeServer()
+      const server = makeServer()
 
       server.route({
         method: method.toUpperCase(),
@@ -151,7 +157,7 @@ describe('probes.hapi ' + pkg.version, function () {
         }
       })
 
-      var validations = [
+      const validations = [
         function (msg) {
           check['http-entry'](msg)
         },
@@ -174,17 +180,19 @@ describe('probes.hapi ' + pkg.version, function () {
         })
       })
 
-      server.start(function () {
-        request({
-          method: method.toUpperCase(),
-          url: 'http://localhost:' + port + '/hello/world'
+      p.then(() => {
+        server.start(function () {
+          request({
+            method: method.toUpperCase(),
+            url: 'http://localhost:' + port + '/hello/world'
+          })
         })
       })
     }
   }
 
   function renderTest (done) {
-    var server = viewServer()
+    const server = viewServer()
 
     server.route({
       method: 'GET',
@@ -196,7 +204,7 @@ describe('probes.hapi ' + pkg.version, function () {
       }
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -226,79 +234,16 @@ describe('probes.hapi ' + pkg.version, function () {
       server.listener.close(done)
     })
 
-    server.start(function () {
-      request('http://localhost:' + port + '/hello/world')
-    })
-  }
-
-  /* TODO BAM remove
-  function rumTest (done) {
-    var server = viewServer()
-    ao.rumId = 'foo'
-    var exit
-
-    server.route({
-      method: 'GET',
-      path: '/',
-      handler: function hello (request, reply) {
-        exit = request.raw.res._ao_http_span.events.exit
-        renderer(request, reply)('rum.ejs')
-      }
-    })
-
-    var validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['hapi-entry'](msg)
-      },
-      function (msg) {
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', 'hapi-render')
-        msg.should.have.property('TemplateLanguage', '.ejs')
-        msg.should.have.property('TemplateFile', 'rum.ejs')
-      },
-      function (msg) {
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', 'hapi-render')
-      },
-      function (msg) {
-        check['hapi-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-        msg.should.have.property('Controller', '/')
-        msg.should.have.property('Action', 'hello')
-      }
-    ]
-
-    // Delay completion until both test paths end
-    var complete = helper.after(2, function () {
-      server.listener.close(done)
-      delete ao.rumId
-    })
-
-    // Run appoptics checks
-    helper.doChecks(emitter, validations, complete)
-
-    server.start(function () {
-      request('http://localhost:' + port, function (a, b, body) {
-        // Verify that the rum scripts are included in the body
-        body.should.containEql(rum.header(ao.rumId, exit.toString()))
-        body.should.containEql(rum.footer(ao.rumId, exit.toString()))
-        complete()
+    p.then(() => {
+      server.start(function () {
+        request('http://localhost:' + port + '/hello/world')
       })
     })
   }
-  // */
 
   function disabledTest (done) {
     ao.probes.hapi.enabled = false
-    var server = viewServer()
-    /* TODO BAM remove
-    ao.rumId = 'foo'
-    // */
+    const server = viewServer()
 
     server.route({
       method: 'GET',
@@ -310,7 +255,7 @@ describe('probes.hapi ' + pkg.version, function () {
       }
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -321,15 +266,14 @@ describe('probes.hapi ' + pkg.version, function () {
     helper.doChecks(emitter, validations, function () {
       server.listener.close(done)
       ao.probes.hapi.enabled = true
-      /* TODO BAM remove
-      delete ao.rumId
-      // */
     })
 
-    server.start(function () {
-      request({
-        method: 'GET',
-        url: 'http://localhost:' + port + '/hello/world'
+    p.then(() => {
+      server.start(function () {
+        request({
+          method: 'GET',
+          url: 'http://localhost:' + port + '/hello/world'
+        })
       })
     })
   }
@@ -342,31 +286,25 @@ describe('probes.hapi ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
-  var httpMethods = ['get','post','put','delete']
+  const httpMethods = ['get', 'post', 'put', 'delete']
   if (hapi && vision) {
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
     it('should trace render span', renderTest)
-    /* TODO BAM remove
-    it('should include RUM scripts', rumTest)
-    // */
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should skip when disabled', disabledTest)
     it.skip('should trace render span', renderTest)
-    /* TODO BAM remove
-    it.skip('should include RUM scripts', rumTest)
-    // */
   }
 })
