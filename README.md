@@ -43,7 +43,7 @@ Now restart your app and you should see data in your AppOptics dashboard in a mi
 
 ## Configuration
 
-Documentation coming soon!
+See the [Configuration Guide](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/configuration.md)
 
 ## Upgrading
 
@@ -69,10 +69,10 @@ appreciate all contributions to the oboe module whether it is documentation,
 a bug fix, new instrumentation for a library or framework or anything else
 we haven't thought of.
 
-We welcome you to send us PRs. We do request that any new
+We welcome your PRs. We ask that any new
 instrumentation submissions have corresponding tests that accompany
 them. This way we won't break any of your additions when we (and others)
-make changes after the fact.
+make subsequent changes.
 
 ## Developer Resources
 
@@ -92,9 +92,9 @@ If you have any questions or ideas, don't hesitate to contact us anytime.
 The oboe module uses a standard layout.  Here are the notable directories.
 
 ```
+lib/        # Span and Event constructors
 lib/probes  # Auto loaded instrumentation
-lib         # Span and Event constructors
-test        # Mocha test suite
+test/       # Mocha test suite
 ```
 
 ## Compiling the C extension

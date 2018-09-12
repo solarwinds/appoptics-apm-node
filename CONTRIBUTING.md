@@ -41,7 +41,7 @@ It is possible to use non-production versions of the `appoptics-bindings` packag
 
 ### Running the support matrix test suite
 
-(beta note: this is method is lightly tested as most testing is done using `testeachversion` directly in ec2 instances.)
+(this legacy method is lightly tested as most testing is done using `testeachversion` directly in ec2 instances.)
 
 The support matrix test suite runs the tests for a given module against every
 supported version of that module, down to patch releases. Note that this can
@@ -55,7 +55,7 @@ In addition to the logging to the tty an output file is generated `node-<version
 
 ### Running the test suite with code coverage analysis
 
-(beta note: this is not yet functional)
+(this is not yet functional)
 
 Any test task can be run with code coverage analysis by simply replacing the
 `test:` prefix with `coverage:`. Note that coverage from the full test suite
@@ -65,7 +65,7 @@ though, as it can help to spot areas that *should* be exercised, but are not.
 
 ## Benchmarking
 
-(beta note: this is not yet functional)
+(this is not yet functional)
 
 ### Running the benchmark suite
 
@@ -74,10 +74,8 @@ Similar to the test suite running options, there are also `gulp bench`,
 
 ## Docs
 
-(beta note: this is not yet functional)
-
 The repo includes code comment based API docs, which can be generated with
-`gulp docs`.
+`npm docs`.
 
 ## Project layout
 
