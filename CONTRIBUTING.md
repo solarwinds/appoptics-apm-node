@@ -132,16 +132,21 @@ supplied using docker. In the `appoptics-apm-node` root directory run:
 
 `docker-compose up -d`
 
-to start the containers needed for testing. Next use `env.sh` to setup the environment
-variables correctly. `env.sh` requires that the `AO_TOKEN_STG` environment variable
-be defined as holding the secret token portion (the part before `:service-name`) of
-`APPOPTICS_SERVICE_KEY`.
+to start the containers needed for testing.
+
+Next use `env.sh` to setup the environment variables correctly. `env.sh` requires that
+the `AO_TOKEN_STG` environment variable be defined as holding the secret token portion
+(the part before `:service-name`) of `APPOPTICS_SERVICE_KEY`.
 
 `env.sh` defines environment variables for the testing modules; it must be sourced,
 not invoked as an executable. To setup the environment for the `npm test` command run
-`. env.sh bash`. The primary documentation for `env.sh` is the file itself.
 
-After `. env.sh bash` should be able to run the test suite using `npm test`. You can
+
+`. env.sh bash`.
+
+The primary documentation for `env.sh` is the file itself.
+
+After `. env.sh bash` you should be able to run the test suite using `npm test`. You can
 also use gulp directly to choose specific tests like `gulp test:unit` or `gulp test:probes`
 or even a single specific test with `gulp test:probe:generic-pool`.
 
@@ -149,7 +154,8 @@ or even a single specific test with `gulp test:probe:generic-pool`.
 
 When you are ready to release, create a staging branch (name n.n.n - the intended version
 of the release) from master, rebase your branch(es) off the staging branch, run the local
-tests, and repeat for any additional branch(es).
+tests, and repeat for any additional branch(es). If there is only one branch then it may
+be used instead of creating a staging branch.
 
 When all items planned for the release have been incorporated into the staging branch then
 run additional some additional tests. At a minimum, start with a clean copy of the repository
@@ -161,7 +167,7 @@ git clone --depth=1 https://github.com/appoptics/appoptics-apm-node clean-apm
 cd clean-apm
 git checkout n.n.n     # the branch name
 npm install
-npm test               # presumes the docker environment for testing (see below).
+npm test               # presumes the docker environment for testing (see above).
 ```
 
 If the change is significant you may need to run the support matrix again. That's beyond
@@ -175,7 +181,7 @@ https://github.com/bmacnaughton/todomvc-mongodb. In the the `clean-apm` director
 using `npm install`, setup the environment with `. env.sh stg` (works against the staging
 server - you might use another key), and run the server with `node server.js --fe_ip=localhost:port`.
 Use curl or a browser to execute requests against the server then check the backend to make
-sure the traces appear and look good. `server.js` is the only documentation for the supported
+sure the traces appear and look good. The source, `server.js`, is the only documentation for the supported
 transactions.
 
 Once testing has been done and you are confident that the release works, then merge the
@@ -186,4 +192,7 @@ new version.
 After all commits and tags have been pushed to git, it's simply a matter of running `npm publish`
 to send the latest version to the npm registry. Note that your account should have 2FA authentication
 enabled for publishing. The default `npm` distributed with node 6 doesn't support that so I release
-using node 8. The command `npm publish --otp=dddddd` adds the one-time password required.
+using node 8. The command `npm publish --otp=dddddd` adds the one-time password required. If the
+release is non-production, i.e., `-beta.1` or `-rc.1`, etc., then be sure to add `--tag beta` or
+`--tag rc`. If no tag is supplied then it gets the default `latest` and any user doing an install
+will get that version (not usually desired for release-candidates).
