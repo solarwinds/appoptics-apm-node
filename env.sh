@@ -91,7 +91,7 @@ elif [[ "$ARG" = "bash" ]]; then
     export AO_TEST_REDIS_3_0=localhost:6379
     # the tedious probe tests SQL Server.
     export AO_TEST_SQLSERVER_EX=localhost:1433
-elif [[ "$ARG" = "bam-local" ]]; then
+elif [[ "$ARG" = "bam-local-mongo" ]]; then
     # I have local copies running so this reassigns
     # the ports that docker uses.
     AO_TEST_MONGO_2_6_HOST_PORT=27027
@@ -127,7 +127,7 @@ elif [[ "$ARG" = "debug" ]]; then
     # LEVEL 2 is most of what you want to see. 6 (highest) is too much.
     export APPOPTICS_DEBUG_LEVEL=2
     # see lib/loggers.js for all the options
-    export DEBUG=appoptics:error,appoptics:warn,appoptics:debug
+    export DEBUG=appoptics:error,appoptics:warn,appoptics:debug,appoptics:patching
     export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
     export APPOPTICS_TOKEN_BUCKET_RATE=1000
 elif [[ "$ARG" = "bindings" ]]; then

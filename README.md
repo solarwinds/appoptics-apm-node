@@ -41,6 +41,12 @@ require('appoptics-apm')
 
 Now restart your app and you should see data in your AppOptics dashboard in a minute or two.
 
+## Installation warning
+
+`appoptics-apm` should be the first file required. If, for example, you are using the `esm` package to enable ES module syntax (import rather than require) and you use the following command to invoke your program `node -r esm index.js` then `esm.js` is loaded first and `appoptics-apm` is unable to instrument modules. You can use it, just make sure to require `appoptics-apm` first, e.g., `node -r appoptics-apm -r esm index.js`.
+
+If you are using the custom instrumentation SDK then appoptics must be loaded in the code so that a reference to the SDK is obtained, like `const ao = require('appoptics-apm')`. It is still be possible to use the command line `node -r appoptics-apm -r esm index.js`; the require in the code will just get a reference to the results of the command line require.
+
 ## Configuration
 
 See the [Configuration Guide](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/configuration.md)

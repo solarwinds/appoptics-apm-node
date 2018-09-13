@@ -1,3 +1,19 @@
+Table of Contents
+=================
+
+* [Contributing](#contributing)
+  * [Dev environment](#dev-environment)
+    * [Setup](#setup)
+  * [Testing](#testing)
+    * [Running the basic test suite](#running-the-basic-test-suite)
+  * [Docs](#docs)
+  * [Project layout](#project-layout)
+  * [Process](#process)
+    * [Building](#building)
+    * [Developing](#developing)
+    * [Testing](#testing-1)
+    * [Releasing](#releasing)
+
 # Contributing
 
 ## Dev environment
@@ -10,7 +26,9 @@ The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-a
 The primary environment for testing is Docker. Unit tests can be run without docker but probe testing requires databases and servers to test against. `docker-compose.yml` defines a complete environment for testing. It depends on `collectors` that are defined in a directory parallel to to this directory. For example, if this (the
 appoptics-apm-node directory) is `/solarwinds/ao` then the oboe-test repository must be cloned into `/solarwinds/oboe-test/` because `docker-compose.yml` references those docker files via `../oboe-test/`
 
-`env.sh` is desiged to be sourced, `$ source env.sh <args>` in order to set up environment variables for different testing scenarios.
+`env.sh` is desiged to be sourced,
+
+`$ source env.sh <args>` in order to set up environment variables for different testing scenarios.
 
 It's typically easiest to work at the bash shell and test against docker containers. That is the method that the rest of this document focuses on.
 
@@ -29,7 +47,7 @@ There is also a `main` container created that can be used as a clean-room enviro
 1. `docker exec -it ao_main_1 /bin/bash` - get a command prompt in the container
 2. `cd appoptics` - change to the appoptics directory
 3. `npm install` - to install the package and dependencies
-4. `source env.sh docker` - to setup the java-collector (beta note: the "docker" arg needs to be updated)
+4. `source env.sh docker-java` - to setup the java-collector (beta note: the "docker" arg needs to be updated)
 5. `source env.sh add-bin` - to add the node_module executables to the path
 5. run tests using `npm test` or `gulp.js test[:unit|probes|probe:${module}]`
 
@@ -39,38 +57,6 @@ For testing, a mock reporter that listens on UDP port 7832 is used (hardcoded in
 
 It is possible to use non-production versions of the `appoptics-bindings` package when developing. There are many different ways to do so ranging from npm's `link` command, manually copying files, and many options embedded in the npm `postinstall` script, `install-appoptics-bindings.js`. The primary documentation for this advanced feature is the code.
 
-### Running the support matrix test suite
-
-(this legacy method is lightly tested as most testing is done using `testeachversion` directly in ec2 instances.)
-
-The support matrix test suite runs the tests for a given module against every
-supported version of that module, down to patch releases. Note that this can
-take a *very* long time!
-
-You can run the full support matrix test suite with `gulp support-matrix`,
-but generally you are better off scoping to a module by simply running
-`gulp support-matrix:${module}`
-
-In addition to the logging to the tty an output file is generated `node-<version>-summary-<timestamp>.json` which can be formatted more nicely by running `humanize <summary-file-name>` (if `node_modules/.bin` was added to PATH).
-
-### Running the test suite with code coverage analysis
-
-(this is not yet functional)
-
-Any test task can be run with code coverage analysis by simply replacing the
-`test:` prefix with `coverage:`. Note that coverage from the full test suite
-will show the best coverage numbers because subsections of the test suite may
-not exercise particular areas. It's useful to be able to do subsection analysis
-though, as it can help to spot areas that *should* be exercised, but are not.
-
-## Benchmarking
-
-(this is not yet functional)
-
-### Running the benchmark suite
-
-Similar to the test suite running options, there are also `gulp bench`,
-`gulp bench:unit`, `gulp bench:probes` and numerous `gulp bench:probe:*` tasks.
 
 ## Docs
 
@@ -118,28 +104,84 @@ The development process thus far has involved maintaining separate branches
 for each feature, which get rebased from master before a squash or merge back
 to master, depending on complexity (ie: need to keep commits separate).
 
-If necessary, a staging branch is used to merge features to before targeting
-master, but this is generally avoided. This mostly only comes up when multiple
-unrelated changes need to be made to the same file, which could potentially
-produce merge conflicts. In practice, this generally only comes up when I try
-to refactor core components.
+I'm finding that creating a staging branch before merging to master makes testing
+easier; if only one branch is being merged it is effectively its own staging branch.
+See the releasing section below for more on why the staging branch is useful.
 
 Documentation changes, changes to testing, and changes to the development
 environment are often committed directly to master.
 
+### Testing
+
+This is an abbreviated version of the testing section above so that it falls in the
+develop, test, release sequence.
+
+The most basic testing requires that various backend servers are available; these are
+supplied using docker. In the `appoptics-apm-node` root directory run:
+
+`docker-compose up -d`
+
+to start the containers needed for testing.
+
+Next use `env.sh` to setup the environment variables correctly. `env.sh` requires that
+the `AO_TOKEN_STG` environment variable be defined as holding the secret token portion
+(the part before `:service-name`) of `APPOPTICS_SERVICE_KEY`.
+
+`env.sh` defines environment variables for the testing modules; it must be sourced,
+not invoked as an executable. To setup the environment for the `npm test` command run
+
+
+`. env.sh bash`.
+
+The primary documentation for `env.sh` is the file itself.
+
+After `. env.sh bash` you should be able to run the test suite using `npm test`. You can
+also use gulp directly to choose specific tests like `gulp test:unit` or `gulp test:probes`
+or even a single specific test with `gulp test:probe:generic-pool`.
+
 ### Releasing
 
-When you are ready to release, rebase your branches off master, run the tests,
-then merge to master and repeat for subsequent branches. When all the things
-planned for release have been merged to master, create a version bump commit.
-I've used `npm version major.minor.patch` for this, but it can be done manually
-if you prefer.
+When you are ready to release, create a staging branch (name n.n.n - the intended version
+of the release) from master, rebase your branch(es) off the staging branch, run the local
+tests, and repeat for any additional branch(es). If there is only one branch then it may
+be used instead of creating a staging branch.
 
-After the version bump commit has been made, make sure it is tagged, committed, and pushed. Then
-be sure to push the tag using `git push origin <tag-name>`. If
-you just `git push` the tag will not be pushed. Note that `npm version` creates the
-tag in git; you don't need to create it manually.
+When all items planned for the release have been incorporated into the staging branch then
+run additional some additional tests. At a minimum, start with a clean copy of the repository
+and run the test suite again. This will catch missing dependencies that may still be in the
+`node_modules` directory in a development area. So, in some directory,
 
-After all commits and tags have been pushed to git, it's simply a matter of
-running `npm publish` to send the latest version to the npm registry.
+```
+git clone --depth=1 https://github.com/appoptics/appoptics-apm-node clean-apm
+cd clean-apm
+git checkout n.n.n     # the branch name
+npm install
+npm test               # presumes the docker environment for testing (see above).
+```
 
+If the change is significant you may need to run the support matrix again. That's beyond
+the scope of this document but involves testing appoptics against each released version
+of each package.
+
+As an extra precaution it is useful to test this in a real-world test harness. I use
+https://github.com/bmacnaughton/todomvc-mongodb. In the the `clean-apm` directory use
+`npm pack` to make a `.tgz` file, copy that to the `todomvc-mongodb` directory, change
+`package.json` for the `appoptics-apm` dependency to reference the `.tgz` file, install
+using `npm install`, setup the environment with `. env.sh stg` (works against the staging
+server - you might use another key), and run the server with `node server.js --fe_ip=localhost:port`.
+Use curl or a browser to execute requests against the server then check the Appoptics
+dashboard to make sure the traces appear and look good. The source, `server.js`, is the
+only documentation for the supported transactions.
+
+Once testing has been done and you are confident that the release works, then merge the
+staging branch to master, create a version bump commit. I use `npm version major.minor.patch`
+but if can be done manually if you prefer. The `npm` command updates `package.json` with the
+new version.
+
+After all commits and tags have been pushed to git, it's simply a matter of running `npm publish`
+to send the latest version to the npm registry. Note that your account should have 2FA authentication
+enabled for publishing. The default `npm` distributed with node 6 doesn't support that so I release
+using node 8. The command `npm publish --otp=dddddd` adds the one-time password required. If the
+release is non-production, i.e., `-beta.1` or `-rc.1`, etc., then be sure to add `--tag beta` or
+`--tag rc`. If no tag is supplied then it gets the default `latest` and any user doing an install
+will get that version (not usually desired for release-candidates).
