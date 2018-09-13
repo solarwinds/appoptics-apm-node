@@ -118,28 +118,72 @@ The development process thus far has involved maintaining separate branches
 for each feature, which get rebased from master before a squash or merge back
 to master, depending on complexity (ie: need to keep commits separate).
 
-If necessary, a staging branch is used to merge features to before targeting
-master, but this is generally avoided. This mostly only comes up when multiple
-unrelated changes need to be made to the same file, which could potentially
-produce merge conflicts. In practice, this generally only comes up when I try
-to refactor core components.
+I'm finding that creating a staging branch before merging to master makes testing
+easier; if only one branch is being merged it is effectively its own staging branch.
+See the releasing section below for more on why the staging branch is useful.
 
 Documentation changes, changes to testing, and changes to the development
 environment are often committed directly to master.
 
+### Testing
+
+The most basic testing requires that various backend servers are available; these are
+supplied using docker. In the `appoptics-apm-node` root directory run:
+
+`docker-compose up -d`
+
+to start the containers needed for testing. Next use `env.sh` to setup the environment
+variables correctly. `env.sh` requires that the `AO_TOKEN_STG` environment variable
+be defined as holding the secret token portion (the part before `:service-name`) of
+`APPOPTICS_SERVICE_KEY`.
+
+`env.sh` defines environment variables for the testing modules; it must be sourced,
+not invoked as an executable. To setup the environment for the `npm test` command run
+`. env.sh bash`. The primary documentation for `env.sh` is the file itself.
+
+After `. env.sh bash` should be able to run the test suite using `npm test`. You can
+also use gulp directly to choose specific tests like `gulp test:unit` or `gulp test:probes`
+or even a single specific test with `gulp test:probe:generic-pool`.
+
 ### Releasing
 
-When you are ready to release, rebase your branches off master, run the tests,
-then merge to master and repeat for subsequent branches. When all the things
-planned for release have been merged to master, create a version bump commit.
-I've used `npm version major.minor.patch` for this, but it can be done manually
-if you prefer.
+When you are ready to release, create a staging branch (name n.n.n - the intended version
+of the release) from master, rebase your branch(es) off the staging branch, run the local
+tests, and repeat for any additional branch(es).
 
-After the version bump commit has been made, make sure it is tagged, committed, and pushed. Then
-be sure to push the tag using `git push origin <tag-name>`. If
-you just `git push` the tag will not be pushed. Note that `npm version` creates the
-tag in git; you don't need to create it manually.
+When all items planned for the release have been incorporated into the staging branch then
+run additional some additional tests. At a minimum, start with a clean copy of the repository
+and run the test suite again. This will catch missing dependencies that may still be in the
+`node_modules` directory in a development area. So, in some directory,
 
-After all commits and tags have been pushed to git, it's simply a matter of
-running `npm publish` to send the latest version to the npm registry.
+```
+git clone --depth=1 https://github.com/appoptics/appoptics-apm-node clean-apm
+cd clean-apm
+git checkout n.n.n     # the branch name
+npm install
+npm test               # presumes the docker environment for testing (see below).
+```
 
+If the change is significant you may need to run the support matrix again. That's beyond
+the scope of this document but involves testing appoptics against each released version
+of each package.
+
+An an extra precaution it is useful to test this in a real-world test harness. I use
+https://github.com/bmacnaughton/todomvc-mongodb. In the the `clean-apm` directory use
+`npm pack` to make a `.tgz` file, copy that to the `todomvc-mongodb` directory, change
+`package.json` for the `appoptics-apm` dependency to reference the `.tgz` file, install
+using `npm install`, setup the environment with `. env.sh stg` (works against the staging
+server - you might use another key), and run the server with `node server.js --fe_ip=localhost:port`.
+Use curl or a browser to execute requests against the server then check the backend to make
+sure the traces appear and look good. `server.js` is the only documentation for the supported
+transactions.
+
+Once testing has been done and you are confident that the release works, then merge the
+staging branch to master, create a version bump commit. I use `npm version major.minor.patch`
+but if can be done manually if you prefer. The `npm` command updates `package.json` with the
+new version.
+
+After all commits and tags have been pushed to git, it's simply a matter of running `npm publish`
+to send the latest version to the npm registry. Note that your account should have 2FA authentication
+enabled for publishing. The default `npm` distributed with node 6 doesn't support that so I release
+using node 8. The command `npm publish --otp=dddddd` adds the one-time password required.
