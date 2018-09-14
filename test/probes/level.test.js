@@ -5,14 +5,12 @@ const ao = helper.ao
 
 // NOTE: requiring leveldown is necessary as the one that works with
 // node 0.11 does not match the one in the devDependencies of levelup.
-const level = require('levelup')
-const db = level('../test-db', {
-  db: require('leveldown')
-})
+const level = require('level')
+const db = level('../test-db')
 
-const pkg = require('levelup/package')
+const pkg = require('level/package')
 
-describe('probes.levelup ' + pkg.version, function () {
+describe('probes.level ' + pkg.version, function () {
   let emitter
 
   //

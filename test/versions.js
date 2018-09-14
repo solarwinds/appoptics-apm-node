@@ -25,7 +25,7 @@ test('koa-resource-router')
 test('koa-route', '>= 1.0.1')
 test('koa-router', '>= 1.6.0')
 test('koa')
-test('levelup', '>= 0.17.0')
+test('level', '>= 1.0.0')
 test('memcached', '>= 2.2.0')
 
 test('mongodb-core', '>= 2.0.0')
