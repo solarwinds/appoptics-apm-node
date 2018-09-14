@@ -49,10 +49,23 @@ unitTests.forEach(function (file) {
   }
 })
 
+// some probes run a different named test. this is important
+// because testeachversion needs to change a package; it doesn't
+// handle changing two packages in a synchronized fashion. E.g.,
+// the levelup probe is tested using the level package. The testing
+// program, testeachversion, doesn't know that it needs a specific
+// versions of leveldown for each version of levelup.
+const nameMap = {
+  levelup: 'level'
+}
+
 // Describe probe tasks automatically
 const probes = fs.readdirSync('lib/probes')
 probes.forEach(function (probe) {
-  const name = probe.replace(/\.js$/, '')
+  let name = probe.replace(/\.js$/, '')
+  if (name in nameMap) {
+    name = nameMap[name]
+  }
   const task = tasks['probe:' + name] = {
     lib: 'dist/probes/' + probe
   }
