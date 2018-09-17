@@ -1,24 +1,22 @@
-var helper = require('../helper')
-var ao = helper.ao
-var noop = helper.noop
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
+const helper = require('../helper')
+const ao = helper.ao
+const noop = helper.noop
+const addon = ao.addon
 
-var semver = require('semver')
-var request = require('request')
-var mongodb = require('mongodb-core')
-var http = require('http')
+const semver = require('semver')
+const mongodb = require('mongodb-core')
 
-var requirePatch = require('../../dist/require-patch')
+const requirePatch = require('../../dist/require-patch')
 requirePatch.disable()
-var pkg = require('mongodb-core/package.json')
+const pkg = require('mongodb-core/package.json')
 requirePatch.enable()
 
 // need to make decisions based on major version
-var majorVersion = semver.major(pkg.version)
+const majorVersion = semver.major(pkg.version)
 
-var hosts = {
+let hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
   '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
   '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
@@ -40,7 +38,7 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 }
 
 describe('probes.mongodb-core UDP', function () {
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -60,34 +58,32 @@ describe('probes.mongodb-core UDP', function () {
       ao.instrument('fake', noop)
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 })
 
 describe('probes/mongodb-core ' + pkg.version, function () {
   Object.keys(hosts).forEach(function (host) {
-    var db_host = hosts[host]
-    if ( ! db_host) return
+    const db_host = hosts[host]
+    if (!db_host) return
     describe(host, function () {
       makeTests(db_host, host, host === 'replica set')
     })
   })
 })
 
-function noop () {}
-
 function makeTests (db_host, host, isReplicaSet) {
-  var ctx = {}
-  var emitter
-  var db
-  var realSampleTrace
+  const ctx = {}
+  let emitter
+  let db
+  let realSampleTrace
 
-  var options = {
-    writeConcern: { w: 1 },
+  const options = {
+    writeConcern: {w: 1},
     ordered: true
   }
 
@@ -101,7 +97,7 @@ function makeTests (db_host, host, isReplicaSet) {
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
 
   })
@@ -115,24 +111,30 @@ function makeTests (db_host, host, isReplicaSet) {
   // Open a fresh mongodb connection for each test
   //
   before(function (done) {
-    var hosts = db_host.split(',').map(function (host) {
-      var parts = host.split(':')
-      var host = parts.shift()
-      var port = parts.shift()
+    const hosts = db_host.split(',').map(function (host) {
+      const parts = host.split(':')
+      host = parts.shift()
+      const port = parts.shift()
       return {
         host: host,
         port: Number(port)
       }
     })
 
-    var server = hosts.length > 1
-      ? new mongodb.ReplSet(hosts, {setName: 'default'})
-      : new mongodb.Server({
+    let server
+    if (hosts.length > 1) {
+      const options = {
+        setName: 'default'
+      }
+      server = new mongodb.ReplSet(hosts, options)
+    } else {
+      server = new mongodb.Server({
         host: hosts[0].host,
         port: hosts[0].port,
         reconnect: true,
         reconnectInterval: 50
       })
+    }
 
     server.on('error', function (err) {
       console.log('error connecting', err)
@@ -146,15 +148,21 @@ function makeTests (db_host, host, isReplicaSet) {
     server.connect()
   })
   before(function (done) {
+    if (!db) {
+      done()
+      return
+    }
     db.command('test.$cmd', {
       dropDatabase: 1
     }, done)
   })
   after(function () {
-    db.destroy()
+    if (db) {
+      db.destroy()
+    }
   })
 
-  var check = {
+  const check = {
     base: function (msg) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
@@ -178,7 +186,7 @@ function makeTests (db_host, host, isReplicaSet) {
   //
   // Tests
   //
-  var tests = {
+  const tests = {
     databases: function () {
       it('should drop', function (done) {
         function entry (msg) {
@@ -191,7 +199,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -201,7 +209,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', { dropDatabase: 1 }, done)
+          db.command('test.$cmd', {dropDatabase: 1}, done)
         }, steps, done)
       })
     },
@@ -219,7 +227,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -229,7 +237,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', { create: 'test' }, done)
+          db.command('test.$cmd', {create: 'test'}, done)
         }, steps, done)
       })
 
@@ -244,7 +252,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -273,7 +281,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [entry]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -283,7 +291,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', { drop: 'test2' }, done)
+          db.command('test.$cmd', {drop: 'test2'}, done)
         }, steps, done)
       })
     },
@@ -300,7 +308,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [entry]
+        const steps = [entry]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -310,14 +318,14 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.insert('test.data', [{ a: 1 }, { a: 2 }], options, done)
+          db.insert('test.data', [{a: 1}, {a: 2}], options, done)
         }, steps, done)
       })
 
       it('should update', function (done) {
-        var query = { a: 1 }
-        var update = {
-          $set: { b: 1 }
+        const query = {a: 1}
+        const update = {
+          $set: {b: 1}
         }
 
         function entry (msg) {
@@ -332,7 +340,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [entry]
+        const steps = [entry]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -350,8 +358,8 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should findAndModify', function (done) {
-        var query = { a: 1 }
-        var update = { a:1, b: 2 }
+        const query = {a: 1}
+        const update = {a:1, b: 2}
 
         function entry (msg) {
           check.entry(msg)
@@ -365,7 +373,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -385,8 +393,8 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should distinct', function (done) {
-        var query = { a: 1 }
-        var key = 'b'
+        const query = {a: 1}
+        const key = 'b'
 
         function entry (msg) {
           check.entry(msg)
@@ -400,7 +408,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -419,7 +427,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should count', function (done) {
-        var query = { a: 1 }
+        const query = {a: 1}
 
         function entry (msg) {
           check.entry(msg)
@@ -432,7 +440,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -450,7 +458,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should remove', function (done) {
-        var query = { a: 1 }
+        const query = {a: 1}
 
         function entry (msg) {
           check.entry(msg)
@@ -463,7 +471,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [entry]
+        const steps = [entry]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -490,8 +498,8 @@ function makeTests (db_host, host, isReplicaSet) {
       }
 
       it('should create_indexes', function (done) {
-        var index = {
-          key: { a: 1, b: 2 },
+        const index = {
+          key: {a: 1, b: 2},
           name: 'data'
         }
 
@@ -506,7 +514,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -534,7 +542,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -551,7 +559,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should drop_indexes', function (done) {
-        var index = { a: 1, b: 2 }
+        const index = {a: 1, b: 2}
 
         function entry (msg) {
           check.entry(msg)
@@ -564,7 +572,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -585,9 +593,9 @@ function makeTests (db_host, host, isReplicaSet) {
     cursors: function () {
       it('should find', function (done) {
         helper.test(emitter, function (done) {
-          var cursor = db.cursor('test.data', {
+          const cursor = db.cursor('test.data', {
             find: 'test.data',
-            query: { a: 1 }
+            query: {a: 1}
           }, options)
           cursor.next(done)
         }, [
@@ -603,13 +611,13 @@ function makeTests (db_host, host, isReplicaSet) {
 
     aggregations: function () {
       it('should group', function (done) {
-        var group = {
+        const group = {
           ns: 'test.data',
           key: {},
-          initial: { count: 0 },
-          $reduce: function (doc, out) { out.count++ }.toString(),
+          initial: {count: 0},
+          $reduce: function (doc, out) {out.count++}.toString(),
           out: 'inline',
-          cond: { a: { $gte: 0 } }
+          cond: {a: {$gte: 0}}
         }
 
         function entry (msg) {
@@ -626,7 +634,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -648,8 +656,8 @@ function makeTests (db_host, host, isReplicaSet) {
       }
 
       it('should map_reduce', function (done) {
-        function map () { emit(this.a, 1) }
-        function reduce (k, vals) { return 1 }
+        function map () {emit(this.a, 1)}
+        function reduce (k, vals) {return 1}
 
         function entry (msg) {
           check.entry(msg)
@@ -663,7 +671,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        var steps = [ entry ]
+        const steps = [ entry ]
 
         if (isReplicaSet) {
           steps.push(entry)
