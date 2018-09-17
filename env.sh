@@ -71,7 +71,7 @@ elif [[ "$ARG" = "bash" ]]; then
     export AO_TEST_MONGODB_2_4=localhost:27016
     export AO_TEST_MONGODB_2_6=localhost:${AO_TEST_MONGO_2_6_HOST_PORT:-27017}
     export AO_TEST_MONGODB_3_0=localhost:27018
-    export AO_TEST_MONGODB_SET=
+    export AO_TEST_MONGODB_SET=localhost:30001,localhost:30002,localhost:30003
     # enable docker to run with different port
     export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
     # if different port then use default user/password settings
