@@ -150,13 +150,18 @@ describe('probes.http', function () {
     //
     // Verify that a bad X-Trace header does not result in a continued trace
     //
-    it('should mot continue tracing when receiving a bad xtrace id header', function (done) {
+    it('should not continue tracing when receiving a bad xtrace id header', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
       const origin = new ao.Event('span-name', 'label-name', '')
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+
+      const logChecks = [
+        {level: 'warn', message: 'invalid X-Trace header received: %s', values: [xtrace]},
+      ]
+      helper.checkLogMessages(ao.debug, logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {
