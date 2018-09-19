@@ -4,7 +4,7 @@ const helper = require('../helper')
 const semver = require('semver')
 const should = require('should')
 const ao = helper.ao
-const log = ao.loggers
+const gpDebug = ao.debug('appoptics:probe:generic-pool')
 
 const gp = require('generic-pool')
 
@@ -68,7 +68,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
     let okToRelease = false
 
     function spanRunner (done) {
-      log.debug('%s spanRunner %e', ao.lastEvent.Layer, ao.lastEvent)
+      gpDebug('%s spanRunner %e', ao.lastEvent.Layer, ao.lastEvent)
 
       // use taskId and layer name to verify that the correct context is maintained across calls
       const span = ao.lastEvent.Layer
@@ -81,7 +81,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
           done(err)
           return
         }
-        log.debug('%s acquired(queue) %o for %e', span, resource, ao.lastEvent)
+        gpDebug('%s acquired(queue) %o for %e', span, resource, ao.lastEvent)
 
         should.exist(ao.lastEvent.Layer)
         ao.lastEvent.Layer.should.equal(span)
@@ -89,7 +89,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
 
         const t = setInterval(function () {
           if (okToRelease) {
-            log.debug('releasing %o by %e', resource, ao.lastEvent)
+            gpDebug('releasing %o by %e', resource, ao.lastEvent)
 
             should.exist(ao.lastEvent.Layer)
             ao.lastEvent.Layer.should.equal(span)
@@ -106,7 +106,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
           done(err)
           return
         }
-        log.debug('%s acquired %o for %e', span, resource, ao.lastEvent)
+        gpDebug('%s acquired %o for %e', span, resource, ao.lastEvent)
 
         should(ao.requestStore.get('key')).equal(span)
         should.exist(ao.lastEvent.Layer)
@@ -125,8 +125,8 @@ describe('probes/generic-pool ' + pkg.version, function () {
       }
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) {log.debug('gp-1'); bothDone(e)})
-    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) {log.debug('gp-2'); bothDone(e)})
+    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) {gpDebug('gp-1'); bothDone(e)})
+    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) {gpDebug('gp-2'); bothDone(e)})
 
     okToRelease = true
   })
@@ -135,10 +135,10 @@ describe('probes/generic-pool ' + pkg.version, function () {
 
     function spanRunner (done) {
       pool.acquire().then(function (resource) {
-        log.debug('%s acquired(queue) %o for %e', ao.lastEvent.Layer, resource, ao.lastEvent)
+        gpDebug('%s acquired(queue) %o for %e', ao.lastEvent.Layer, resource, ao.lastEvent)
 
         setTimeout(function () {
-          log.debug('releasing %o by %e', resource, ao.lastEvent)
+          gpDebug('releasing %o by %e', resource, ao.lastEvent)
           pool.release(resource)
           done()
         }, 10)
@@ -147,7 +147,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
       })
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-x', spanRunner, function (e) {log.debug('gp-x'); done(e)})
+    ao.startOrContinueTrace('', 'generic-pool-x', spanRunner, function (e) {gpDebug('gp-x'); done(e)})
 
   })
 
@@ -158,7 +158,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
     let okToRelease = false
 
     function spanRunner (done) {
-      log.debug('%s spanRunner %e', ao.lastEvent.Layer, ao.lastEvent)
+      gpDebug('%s spanRunner %e', ao.lastEvent.Layer, ao.lastEvent)
 
       // use taskId and layer name to verify that the correct context is maintained across calls
       const span = ao.lastEvent.Layer
@@ -171,7 +171,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
       // pool and forces 'generic-pool-2' to wait until a resource is freed before its
       // promise is resolved.
       pool.acquire().then(function (resource) {
-        log.debug('%s acquired(queue) %o for %e', span, resource, ao.lastEvent)
+        gpDebug('%s acquired(queue) %o for %e', span, resource, ao.lastEvent)
 
         should.exist(ao.lastEvent.Layer)
         ao.lastEvent.Layer.should.equal(span)
@@ -179,7 +179,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
 
         const t = setInterval(function () {
           if (okToRelease) {
-            log.debug('releasing %o by %e', resource, ao.lastEvent)
+            gpDebug('releasing %o by %e', resource, ao.lastEvent)
 
             should.exist(ao.lastEvent.Layer)
             ao.lastEvent.Layer.should.equal(span)
@@ -208,7 +208,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
       // the interval timer pops.
       //
       acquire().then(function (resource) {
-        log.debug('%s acquired %o for %e', span, resource, ao.lastEvent)
+        gpDebug('%s acquired %o for %e', span, resource, ao.lastEvent)
 
         should(ao.requestStore.get('key')).equal(span)
         should.exist(ao.lastEvent.Layer)
@@ -229,8 +229,8 @@ describe('probes/generic-pool ' + pkg.version, function () {
       }
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) {log.debug('gp-1'); bothDone(e)})
-    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) {log.debug('gp-2'); bothDone(e)})
+    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) {gpDebug('gp-1'); bothDone(e)})
+    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) {gpDebug('gp-2'); bothDone(e)})
 
     okToRelease = true
   })
