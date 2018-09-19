@@ -3,6 +3,7 @@ const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
 const ao = require('..')
+const debug = ao.debug
 const Span = ao.Span
 const Event = ao.Event
 
@@ -20,6 +21,7 @@ const Event = ao.Event
 //     |\__|| |\___/| |\___/| ||  \\||
 //     \____/  \___/   \___/  ||   \_|
 //
+
 const soon = global.setImmediate || process.nextTick
 
 // Without the native liboboe bindings present,
@@ -369,6 +371,11 @@ describe('custom', function () {
       function run () {}
       let count = 0
 
+      const logChecks = [
+        {level: 'warn', message: 'ao.runInstrument found no span name or builder'},
+      ]
+      helper.checkLogMessages(debug, logChecks)
+
       // Verify nothing bad happens when run function is missing
       ao.instrument(build)
       ao.startOrContinueTrace(null, build)
@@ -394,6 +401,12 @@ describe('custom', function () {
       function nope () { count++; throw err }
       function inc () { count++ }
       let count = 0
+
+      const logChecks = [
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+      ]
+      helper.checkLogMessages(debug, logChecks)
 
       // Verify errors thrown in builder do not propagate
       ao.instrument(nope, inc)
@@ -490,6 +503,7 @@ describe('custom', function () {
   // Verify startOrContinueTrace continues from provided trace id.
   it('should continue from previous trace id', function (done) {
     let last
+    let entry
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -518,19 +532,33 @@ describe('custom', function () {
       }
     ], done)
 
-    const previous = new Span('previous')
-    const entry = previous.events.entry
-    previous.async = true
-    previous.enter()
 
-    // Clear context
-    Span.last = Event.last = null
+    let outer
 
-    ao.startOrContinueTrace(entry.toString(), function (last) {
-      return last.descend('test')
-    }, function (cb) { cb() }, conf, function () {
-      previous.exit()
-    })
+    ao.startOrContinueTrace(
+      '',                           // no xtrace ID, start a trace
+      'previous',                   // span name
+      function (cb) {               // runner function, creates a new span
+        ao.startOrContinueTrace(
+          Span.last.events.entry.toString(),    // xtrace ID for last span
+          last => {                             // builder function
+            outer = last
+            entry = outer.events.entry
+            return last.descend('test')
+          },
+          function (cb) {cb()},                 // runner function, pseudo async
+          conf,                                 // config
+          function () {                         // done function
+            outer.exit()
+          }
+        )
+        cb()
+      },
+      conf,                         // config
+      function () {                 // done function
+        //done()
+      }
+    )
   })
 
   // Verify startOrContinueTrace continues from existing traces,
@@ -546,7 +574,7 @@ describe('custom', function () {
         prev = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Layer', 'continue-outer')
         msg.should.have.property('Label', 'entry')
         // SampleSource and SampleRate should NOT be here due to continuation
         msg.should.not.have.property('SampleSource')
@@ -569,7 +597,7 @@ describe('custom', function () {
         msg.should.have.property('Edge', sub)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Layer', 'continue-outer')
         msg.should.have.property('Label', 'exit')
         msg.should.have.property('Edge', outer)
       },
@@ -585,14 +613,25 @@ describe('custom', function () {
 
     previous.run(function (wrap) {
       // Verify ID-less calls continue
-      ao.startOrContinueTrace(null, 'outer', function (cb) {
-        soon(function () {
+      ao.startOrContinueTrace(
+        null,                 // no xtrace-id
+        'continue-outer',     // span name
+        function (cb) {       // runner
+          soon(function () {
           // Verify ID'd calls continue
-          ao.startOrContinueTrace(entry.toString(), 'inner', function (cb) {
-            cb()
-          }, conf, cb)
-        })
-      }, conf, wrap(function () {}))
+            ao.startOrContinueTrace(
+              entry.toString(),     // xtrace-id
+              'inner',              // span name
+              function (cb) {       // runner pseudo-async
+                cb()
+              },
+              conf,                 // config
+              cb                    // done
+            )
+          })
+        },
+        conf,                 // config
+        wrap(function () {})) // done (wrapped due to span.run)
     })
   })
 
@@ -600,33 +639,54 @@ describe('custom', function () {
   it('should sample properly', function (done) {
     const realSample = ao.sample
     let called = false
+
     ao.sample = function () {
       called = true
       return {sample: true, source: 0, rate: 0}
     }
 
-    helper.test(emitter, function (done) {
-      Span.last = Event.last = null
-      ao.startOrContinueTrace(null, 'test', setImmediate, conf, done)
-    }, [], function (err) {
-      called.should.equal(true)
-      ao.sample = realSample
-      done(err)
-    })
+    // because a span is created and entered then Span.last & Event.last
+    // are cleared ao.startOrContinueTrace creates a new context, so the
+    // next two errors should be generated.
+    const logChecks = [
+      {level: 'error', message: 'task IDs don\'t match'},
+      {level: 'error', message: 'outer:exit 2b:'},
+    ]
+    helper.checkLogMessages(debug, logChecks)
+
+    helper.test(
+      emitter,
+      function (done) {             // test function
+        Span.last = Event.last = null
+        ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done)
+      },
+      [],                           // checks
+      function (err) {
+        called.should.equal(true)
+        ao.sample = realSample
+        done(err)
+      }
+    )
   })
 
   // Verify traceId getter works correctly
   it('should get traceId when tracing and null when not', function () {
     should.not.exist(ao.traceId)
-    ao.startOrContinueTrace(null, 'test', function (cb) {
-      should.exist(ao.traceId)
-      cb()
-    }, function () {
-      should.exist(ao.traceId)
-    })
+    ao.startOrContinueTrace(
+      null,
+      'test',
+      function (cb) {
+        should.exist(ao.traceId)
+        cb()
+      },
+      function () {
+        should.exist(ao.traceId)
+      }
+    )
     should.not.exist(ao.traceId)
   })
 
+  // it should handle bad bind arguments gracefully and issue warnings.
   it('should bind functions to requestStore', function () {
     const bind = ao.requestStore.bind
     let threw = false
@@ -637,6 +697,12 @@ describe('custom', function () {
     }
 
     function noop () {}
+
+    const logChecks = [
+      {level: 'warn', message: 'ao.bind %s - no context', values: ['noop']},
+      {level: 'warn', message: 'ao.bind %s - not a function', values: [null]},
+    ]
+    helper.checkLogMessages(debug, logChecks)
 
     try {
       ao.bind(noop)
@@ -668,10 +734,18 @@ describe('custom', function () {
 
     const emitter = new Emitter()
 
+    // this is a little tricky - bind emitter errors are debounced so not every
+    // error results in a log message.
+    const logChecks = [
+      {level: 'warn', message: '[1]ao.bindEmitter - no context'},
+      {level: 'error', message: '[1]ao.bindEmitter - non-emitter'},
+    ]
+    helper.checkLogMessages(debug, logChecks)
+
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = new Span('test', 'entry')
+      const span = new Span('test')
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
