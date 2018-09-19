@@ -162,13 +162,18 @@ describe('probes.request', function () {
     //
     // Verify that a bad X-Trace header does not result in a continued trace
     //
-    it('should mot continue tracing when receiving a bad xtrace id header', function (done) {
+    it('should not continue tracing when receiving a bad xtrace id header', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
       const origin = new ao.Event('span-name', 'label-name', '')
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+
+      const logChecks = [
+        {level: 'warn', message: 'invalid X-Trace header received: %s', values: [xtrace]},
+      ]
+      helper.checkLogMessages(ao.debug, logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -527,9 +532,14 @@ describe('probes.request', function () {
     })
 
     it('should trace http using request.get.then', function (done) {
+      const options = {
+        method: 'get',
+        url: 'http://www.google.com',
+        resolveWithFullResponse: true,
+      }
       const server = http.createServer(function (req, res) {
 
-        requestpn.get('http://www.google.com')
+        requestpn(options)
           .then(function (response) {
             if (response.statusCode !== 200) {
               console.log('statusCode', response.statusCode)
