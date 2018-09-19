@@ -1,23 +1,23 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
+const helper = require('../helper')
+const ao = helper.ao
+const addon = ao.addon
 
-var request = require('request')
-var https = require('https')
+const request = require('request')
+const https = require('https')
 
 describe('probes.https', function () {
-  var ctx = { https: https }
-  var emitter
+  const ctx = {https: https}
+  let emitter
 
-  var options = {
-    key: "-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9\nKWso/+vHhkp6Cmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5Npzd\nQwNROKN8EPoKjlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQAB\nAoGBAJTD9/r1n5/JZ+0uTIzf7tx1kGJh7xW2xFtFvDIWhV0wAJDjfT/t10mrQNtA\n1oP5Fh2xy9YC+tZ/cCtw9kluD93Xhzg1Mz6n3h+ZnvnlMb9E0JCgyCznKSS6fCmb\naBz99pPJoR2JThUmcuVtbIYdasqxcHStYEXJH89Ehr85uqrBAkEA31JgRxeuR/OF\n96NJFeD95RYTDeN6JpxJv10k81TvRCxoOA28Bcv5PwDALFfi/LDya9AfZpeK3Nt3\nAW3+fqkYdQJBAMVV37vFQpfl0fmOIkMcZKFEIDx23KHTjE/ZPi9Wfcg4aeR4Y9vt\nm2f8LTaUs/buyrCLK5HzYcX0dGXdnFHgCaUCQDSc47HcEmNBLD67aWyOJULjgHm1\nLgIKsBU1jI8HY5dcHvGVysZS19XQB3Zq/j8qMPLVhZBWA5Ek41Si5WJR1EECQBru\nTUpi8WOpia51J1fhWBpqIbwevJ2ZMVz0WPg85Y2dpVX42Cf7lWnrkIASaz0X+bF+\nTMPuYzmQ0xHT3LGP0cECQQCqt4PLmzx5KtsooiXI5NVACW12GWP78/6uhY6FHUAF\nnJl51PB0Lz8F4HTuHhr+zUr+P7my7X3b00LPog2ixKiO\n-----END RSA PRIVATE KEY-----",
-    cert: "-----BEGIN CERTIFICATE-----\nMIICWDCCAcGgAwIBAgIJAPIHj8StWrbJMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTQwODI3MjM1MzUwWhcNMTQwOTI2MjM1MzUwWjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\nZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\ngQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9KWso/+vHhkp6\nCmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5NpzdQwNROKN8EPoK\njlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQABo1AwTjAdBgNV\nHQ4EFgQUTqL/t/yOtpAxKuC9zVm3PnFdRqAwHwYDVR0jBBgwFoAUTqL/t/yOtpAx\nKuC9zVm3PnFdRqAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQBn1XAm\nAsVdXKr3aiZIgOmw5q+F1lKNl/CHtAPCqwjgntPGhW08WG1ojhCQcNaCp1yfPzpm\niaUwFrgiz+JD+KvxvaBn4pb95A6A3yObADAaAE/ZfbEA397z0RxwTSVU+RFKxzvW\nyICDpugdtxRjkb7I715EjO9R7LkSe5WGzYDp/g==\n-----END CERTIFICATE-----"
+  const options = {
+    key: '-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9\nKWso/+vHhkp6Cmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5Npzd\nQwNROKN8EPoKjlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQAB\nAoGBAJTD9/r1n5/JZ+0uTIzf7tx1kGJh7xW2xFtFvDIWhV0wAJDjfT/t10mrQNtA\n1oP5Fh2xy9YC+tZ/cCtw9kluD93Xhzg1Mz6n3h+ZnvnlMb9E0JCgyCznKSS6fCmb\naBz99pPJoR2JThUmcuVtbIYdasqxcHStYEXJH89Ehr85uqrBAkEA31JgRxeuR/OF\n96NJFeD95RYTDeN6JpxJv10k81TvRCxoOA28Bcv5PwDALFfi/LDya9AfZpeK3Nt3\nAW3+fqkYdQJBAMVV37vFQpfl0fmOIkMcZKFEIDx23KHTjE/ZPi9Wfcg4aeR4Y9vt\nm2f8LTaUs/buyrCLK5HzYcX0dGXdnFHgCaUCQDSc47HcEmNBLD67aWyOJULjgHm1\nLgIKsBU1jI8HY5dcHvGVysZS19XQB3Zq/j8qMPLVhZBWA5Ek41Si5WJR1EECQBru\nTUpi8WOpia51J1fhWBpqIbwevJ2ZMVz0WPg85Y2dpVX42Cf7lWnrkIASaz0X+bF+\nTMPuYzmQ0xHT3LGP0cECQQCqt4PLmzx5KtsooiXI5NVACW12GWP78/6uhY6FHUAF\nnJl51PB0Lz8F4HTuHhr+zUr+P7my7X3b00LPog2ixKiO\n-----END RSA PRIVATE KEY-----',
+    cert: '-----BEGIN CERTIFICATE-----\nMIICWDCCAcGgAwIBAgIJAPIHj8StWrbJMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTQwODI3MjM1MzUwWhcNMTQwOTI2MjM1MzUwWjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\nZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\ngQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9KWso/+vHhkp6\nCmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5NpzdQwNROKN8EPoK\njlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQABo1AwTjAdBgNV\nHQ4EFgQUTqL/t/yOtpAxKuC9zVm3PnFdRqAwHwYDVR0jBBgwFoAUTqL/t/yOtpAx\nKuC9zVm3PnFdRqAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQBn1XAm\nAsVdXKr3aiZIgOmw5q+F1lKNl/CHtAPCqwjgntPGhW08WG1ojhCQcNaCp1yfPzpm\niaUwFrgiz+JD+KvxvaBn4pb95A6A3yObADAaAE/ZfbEA397z0RxwTSVU+RFKxzvW\nyICDpugdtxRjkb7I715EjO9R7LkSe5WGzYDp/g==\n-----END CERTIFICATE-----'
   }
 
-  var originalFlag
-  var realSampleTrace
+  let originalFlag
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -25,14 +25,14 @@ describe('probes.https', function () {
   before(function (done) {
     // Awful hack
     originalFlag = process.env.NODE_TLS_REJECT_UNAUTHORIZED
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
   })
   after(function (done) {
@@ -42,7 +42,7 @@ describe('probes.https', function () {
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     server: {
       entry: function (msg) {
         msg.should.have.property('Layer', 'nodejs')
@@ -78,28 +78,28 @@ describe('probes.https', function () {
   }
 
   describe('https-server', function () {
-    var conf = ao.probes.https
+    const conf = ao.probes.https
 
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
     it('UDP might lose a message running locally', function (done) {
       helper.test(emitter, function (done) {
-        ao.instrument('fake', function () { })
+        ao.instrument('fake', function () {})
         done()
       }, [
-          function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
-              msg.should.have.property('Layer', 'fake')
-          }
-        ], done)
+        function (msg) {
+          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Layer', 'fake')
+        }
+      ], done)
     })
 
     //
     // Test a simple res.end() call in an http server
     //
     it('should send traces for https routing and response spans', function (done) {
-      var port
-      var server = https.createServer(options, function (req, res) {
+      let port
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -131,11 +131,11 @@ describe('probes.https', function () {
     // Verify X-Trace header results in a continued trace
     //
     it('should continue tracing when receiving an xtrace id header', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
       })
 
-      var origin = new ao.Event()
+      const origin = new ao.Event('span-name', 'label-name', '')
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -150,7 +150,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request({
           url: 'https://localhost:' + port,
           headers: {
@@ -164,7 +164,7 @@ describe('probes.https', function () {
     // Verify always trace mode forwards sampling data
     //
     it('should forward sampling data in always trace mode', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -182,7 +182,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request({
           url: 'https://localhost:' + port
         })
@@ -193,7 +193,7 @@ describe('probes.https', function () {
     // Verify behaviour of asyncrony within a request
     //
     it('should trace correctly within asyncrony', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 10)
@@ -211,7 +211,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('https://localhost:' + port)
       })
     })
@@ -221,7 +221,7 @@ describe('probes.https', function () {
     //
     it('should support query param filtering', function (done) {
       conf.includeRemoteUrlParams = false
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -239,7 +239,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('https://localhost:' + port + '/foo?bar=baz')
       })
     })
@@ -247,7 +247,7 @@ describe('probes.https', function () {
     //
     // Validate the various headers that get passed through to the event
     //
-    var passthroughHeaders = {
+    const passthroughHeaders = {
       'X-Forwarded-For': 'Forwarded-For',
       'X-Forwarded-Host': 'Forwarded-Host',
       'X-Forwarded-Port': 'Forwarded-Port',
@@ -258,13 +258,13 @@ describe('probes.https', function () {
     }
 
     Object.keys(passthroughHeaders).forEach(function (key) {
-      var val = passthroughHeaders[key]
+      const val = passthroughHeaders[key]
 
-      var headers = {}
+      const headers = {}
       headers[key] = 'test'
 
       it('should map ' + key + ' header to event.' + val, function (done) {
-        var server = https.createServer(options, function (req, res) {
+        const server = https.createServer(options, function (req, res) {
           res.end('done')
         })
 
@@ -283,8 +283,8 @@ describe('probes.https', function () {
         })
 
         server.listen(function () {
-          var port = server.address().port
-          var options = {
+          const port = server.address().port
+          const options = {
             url: 'https://localhost:' + port,
             headers: headers
           }
@@ -297,9 +297,9 @@ describe('probes.https', function () {
     // Test errors emitted on http request object
     //
     it('should report request errors', function (done) {
-      var error = new Error('test')
-      var port
-      var server = https.createServer(options, function (req, res) {
+      const error = new Error('test')
+      let port
+      const server = https.createServer(options, function (req, res) {
         req.on('error', noop)
         req.emit('error', error)
         res.end('done')
@@ -332,9 +332,9 @@ describe('probes.https', function () {
     // Test errors emitted on http response object
     //
     it('should report response errors', function (done) {
-      var error = new Error('test')
-      var port
-      var server = https.createServer(options, function (req, res) {
+      const error = new Error('test')
+      let port
+      const server = https.createServer(options, function (req, res) {
         res.on('error', noop)
         res.emit('error', error)
         res.end('done')
@@ -367,14 +367,14 @@ describe('probes.https', function () {
     // Validate that server.setTimeout(...) exits correctly
     //
     function test_timeout (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 20)
       })
 
       // Set timeout
-      var reached = false
+      let reached = false
       server.setTimeout(10)
       server.on('timeout', function (res) {
         res._httpMessage.statusCode = 500
@@ -395,7 +395,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        var port = server.address().port
+        const port = server.address().port
         request('https://localhost:' + port)
       })
     }
@@ -408,17 +408,17 @@ describe('probes.https', function () {
   })
 
   describe('https-client', function () {
-    var conf = ao.probes['https-client']
+    const conf = ao.probes['https-client']
 
     it('should trace https request', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'https/client')
+        ctx.data = {port: server.address().port }
+        const mod = helper.run(ctx, 'https/client')
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -441,15 +441,15 @@ describe('probes.https', function () {
     })
 
     it('should support object-based requests', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var d = ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'https/client-object')
-        var url = 'https://' + d.hostname + ':' + d.port + d.path
+        const d = ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'https/client-object')
+        const url = 'https://' + d.hostname + ':' + d.port + d.path
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -472,14 +472,14 @@ describe('probes.https', function () {
     })
 
     it('should trace streaming https request', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'https/stream')
+        ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'https/stream')
 
         helper.test(emitter, mod, [
           function (msg) {
@@ -504,19 +504,19 @@ describe('probes.https', function () {
     it('should support query filtering', function (done) {
       conf.includeRemoteUrlParams = false
 
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        ctx.data = { port: server.address().port }
-        var mod = helper.run(ctx, 'https/query-filtering')
+        ctx.data = {port: server.address().port}
+        const mod = helper.run(ctx, 'https/query-filtering')
 
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
-            var url = ctx.data.url.replace(/\?.*/, '')
+            const url = ctx.data.url.replace(/\?.*/, '')
             msg.should.have.property('RemoteURL', url)
             msg.should.have.property('IsService', 'yes')
           },
@@ -536,18 +536,18 @@ describe('probes.https', function () {
     })
 
     it('should report request errors', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'https://localhost:' + port + '/?foo=bar'
-        var error = new Error('test')
+        const port = server.address().port
+        const url = 'https://localhost:' + port + '/?foo=bar'
+        const error = new Error('test')
 
         helper.test(emitter, function (done) {
-          var req = https.get(url, function (res) {
+          const req = https.get(url, function (res) {
             res.on('end', done)
             res.resume()
           })
@@ -580,15 +580,15 @@ describe('probes.https', function () {
     })
 
     it('should report response errors', function (done) {
-      var server = https.createServer(options, function (req, res) {
+      const server = https.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
 
       server.listen(function () {
-        var port = server.address().port
-        var url = 'https://localhost:' + port + '/?foo=bar'
-        var error = new Error('test')
+        const port = server.address().port
+        const url = 'https://localhost:' + port + '/?foo=bar'
+        const error = new Error('test')
 
         helper.test(emitter, function (done) {
           https.get(url, function (res) {
