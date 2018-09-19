@@ -12,6 +12,7 @@ const https = require('https')
 const http = require('http')
 const path = require('path')
 const assert = require('assert')
+const should = require('should')
 
 Error.stackTraceLimit = 25
 
@@ -412,8 +413,8 @@ function checkLogMessages (debug, checks) {
       assert(text.indexOf(check.message) === 0, 'found: "' + text + '" expected "' + check.message + '"')
       if (check.values) {
         for (let i = 0; i < check.values.length; i++) {
-          if (isNaN(check.values[i])) {
-            assert(isNaN(arguments[i + 1])), 'argument ' + i + ' should be NaN'
+          if (Number.isNaN(check.values[i])) {
+            assert(Number.isNaN(arguments[i + 1])), 'argument ' + i + ' should be NaN'
           } else {
             assert(check.values[i] === arguments[i + 1], 'argument ' + i + ' should be ', check.values[i])
           }
