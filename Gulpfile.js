@@ -3,12 +3,10 @@
 const fs = require('fs')
 const path = require('path')
 const gulp = require('gulp')
-const babel = require('gulp-babel')
 const mocha = require('gulp-mocha')
 const istanbul = require('gulp-istanbul')
 const spawn = require('child_process').spawn
 const mkdirp = require('mkdirp')
-const pkg = require('./package')
 
 // Ensure existence of dist and probe directories
 gulp.task('dist', function (cb) {
@@ -217,9 +215,6 @@ function makeBuildTask (name, files) {
   if (d === 'dist/**') d = 'dist'
   gulp.task(name, ['dist/probes'], function () {
     return gulp.src(p)
-      .pipe(babel({
-        presets: ['es2015-minus-generators']
-      }))
       .pipe(gulp.dest(d))
   })
 }
@@ -251,7 +246,7 @@ function makeCoverageTask (name, files, libs) {
       }))
       .pipe(istanbul.enforceThresholds({
         // TODO: 70% is kind of...bad.
-        thresholds: { global: 70 }
+        thresholds: {global: 70}
       }))
       .once('end', process.exit)
   })
