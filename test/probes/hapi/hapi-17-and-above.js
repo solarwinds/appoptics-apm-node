@@ -1,6 +1,5 @@
 'use strict'
 
-console.log('and the cwd is:', process.cwd())
 const base = process.cwd()
 const path = require('path')
 
@@ -12,26 +11,35 @@ const semver = require('semver')
 
 const request = require('request')
 
-// Don't even load hapi in 0.8. Bad stuff will happen.
+// This test can't even be compiled if JavaScript doesn't recognize async/await.
 const nodeVersion = process.version.slice(1)
-const hasES6 = semver.satisfies(nodeVersion, '> 4')
-const pkg = require('hapi/package.json')
-let hapi
-let vision
-let visionPkg
-if (semver.satisfies(nodeVersion, '> 0.8')) {
-  if (hasES6 || semver.satisfies(pkg.version, '< 13.6')) {
-    hapi = require('hapi')
-  }
+const hasAsyncAwait = semver.gte(nodeVersion, '8.0.0')
 
-  visionPkg = require('vision/package.json')
-  if (hasES6 || semver.satisfies(visionPkg.version, '<= 4.1.1')) {
-    vision = require('vision')
-  }
+if (!hasAsyncAwait) {
+  throw new Error('hapi@17 testing requires async/await')
 }
 
+const hapi = require('hapi')
+const vision = require('vision')
 
-describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function () {
+const pkg = require('hapi/package.json')
+const visionPkg = require('vision/package.json')
+
+if (semver.lt(pkg.version, '17.0.0')) {
+  throw new Error('hapi-17-and-above requires hapi version 17+')
+}
+
+let plugins
+let visionText
+if (semver.gte(visionPkg.version, '5.0.0')) {
+  plugins = {plugin: require('vision')}
+  visionText = ' vision ' + visionPkg.version
+} else {
+  plugins = {}
+  visionText = ' vision ' + visionPkg.version + ' not compatible (untested)'
+}
+
+describe('probes.hapi ' + pkg.version + visionText, function () {
   let emitter
   let port = 3000
 
@@ -73,54 +81,24 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     }
   }
 
-  // the promise in case it's not hapi v17
-  let p = Promise.resolve()
-
   //
   // Helpers
   //
-  function makeServer (config) {
+  async function makeServer (config) {
     config = config || {}
-    let server
 
-    if (semver.gte(pkg.version, '17.0.0')) {
-      server = new hapi.Server({port: ++port})
-      p = server.register({plugin: require('vision')})
-      p.then(() => {
-        if (config.views) {
-          server.views(config.views)
-        }
-      })
-    } else if (semver.satisfies(pkg.version, '>= 9.0.0')) {
-      server = new hapi.Server()
-      server.register(vision, function () {
-        if (config.views) {
-          server.views(config.views)
-        }
-      })
-      server.connection({
-        port: ++port
-      })
-    } else if (semver.satisfies(pkg.version, '>= 8.0.0')) {
-      server = new hapi.Server()
+    const server = new hapi.Server({port: ++port})
+    const p = server.register({plugin: require('vision')})
+
+    return p.then(() => {
       if (config.views) {
         server.views(config.views)
       }
-      server.connection({
-        port: ++port
-      })
-    } else if (semver.satisfies(pkg.version, '>= 1.10.0')) {
-      server = new hapi.Server(++port)
-      if (config.views) {
-        server.views(config.views)
-      }
-    } else {
-      server = new hapi.Server(++port, config)
-    }
-
-    return server
+      return server
+    })
   }
-  function viewServer () {
+
+  async function viewServer () {
     const config = {
       views: {
         path: __dirname,
@@ -130,14 +108,10 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       }
     }
 
-    // Avoid "not allowed" errors from pre-8.x versions
-    if (semver.gte(pkg.version, '8.0.0')) {
-      config.relativeTo = __dirname
-    }
-
     return makeServer(config)
   }
 
+  /* reply is not a thing in v17+
   function renderer (request, reply) {
     if (reply.view) {
       return reply.view.bind(reply)
@@ -147,20 +121,28 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     }
     return function () {}
   }
+  // */
 
   //
   // Tests
   //
   function controllerTest (method) {
-    return function (done) {
-      const server = makeServer()
+    return async function () {
+      const server = await makeServer()
 
       server.route({
         method: method.toUpperCase(),
         path: '/hello/{name}',
-        handler: function hello (request, reply) {
-          reply('Hello, ' + request.params.name + '!')
+        handler: function hello (request, h) {
+          return 'Hello, ' + request.params.name + '!'
         }
+      })
+
+      let _resolve, _reject
+      const p = new Promise(function (resolve, reject) {
+        // save the resolution functions
+        _resolve = resolve
+        _reject = reject
       })
 
       const validations = [
@@ -181,33 +163,35 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
         }
       ]
       helper.doChecks(emitter, validations, function () {
-        server.listener.close(function () {
-          done()
-        })
+        server.listener.close(_resolve)
       })
 
-      p.then(() => {
-        server.start(function () {
-          request({
-            method: method.toUpperCase(),
-            url: 'http://localhost:' + port + '/hello/world'
-          })
-        })
+      await server.start()
+
+      request({
+        method: method.toUpperCase(),
+        url: `http://localhost:${port}/hello/world`
       })
+
+      return p
     }
   }
 
-  function renderTest (done) {
-    const server = viewServer()
+  async function renderTest () {
+    const server = await viewServer()
 
     server.route({
       method: 'GET',
       path: '/hello/{name}',
-      handler: function hello (request, reply) {
-        renderer(request, reply)(helloDotEjs, {
-          name: request.params.name
-        })
+      handler: function hello (request, h) {
+        console.log('hello:', ao.requestStore)
+        return h.view(helloDotEjs, {name: request.params.name})
       }
+    })
+
+    let _resolve
+    const p = new Promise(function (resolve, reject) {
+      _resolve = resolve
     })
 
     const validations = [
@@ -237,28 +221,31 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      server.listener.close(done)
+      server.listener.close(_resolve)
     })
 
-    p.then(() => {
-      server.start(function () {
-        request('http://localhost:' + port + '/hello/world')
-      })
-    })
+    await server.start()
+
+    request(`http://localhost:${port}/hello/world`)
+
+    return p
   }
 
-  function disabledTest (done) {
+  async function disabledTest () {
     ao.probes.hapi.enabled = false
-    const server = viewServer()
+    const server = await viewServer()
 
     server.route({
       method: 'GET',
       path: '/hello/{name}',
-      handler: function hello (request, reply) {
-        renderer(request, reply)(helloDotEjs, {
-          name: request.params.name
-        })
+      handler: function hello (request, h) {
+        return h.view(helloDotEjs, {name: request.params.name})
       }
+    })
+
+    let _resolve
+    const p = new Promise(function (resolve, reject) {
+      _resolve = resolve
     })
 
     const validations = [
@@ -270,18 +257,15 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      server.listener.close(done)
       ao.probes.hapi.enabled = true
+      server.listener.close(_resolve)
     })
 
-    p.then(() => {
-      server.start(function () {
-        request({
-          method: 'GET',
-          url: 'http://localhost:' + port + '/hello/world'
-        })
-      })
-    })
+    await server.start()
+
+    request({method: 'GET', url: `http://localhost:${port}/hello/world`})
+
+    return p
   }
 
 
@@ -304,13 +288,13 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
-    it('should skip when disabled', disabledTest)
     it('should trace render span', renderTest)
+    it('should skip when disabled', disabledTest)
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
-    it.skip('should skip when disabled', disabledTest)
     it.skip('should trace render span', renderTest)
+    it.skip('should skip when disabled', disabledTest)
   }
 })

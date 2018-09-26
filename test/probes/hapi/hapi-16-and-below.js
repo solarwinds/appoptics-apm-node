@@ -1,6 +1,5 @@
 'use strict'
 
-console.log('and the cwd is:', process.cwd())
 const base = process.cwd()
 const path = require('path')
 
