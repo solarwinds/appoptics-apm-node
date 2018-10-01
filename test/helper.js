@@ -12,7 +12,6 @@ const https = require('https')
 const http = require('http')
 const path = require('path')
 const assert = require('assert')
-const should = require('should')
 
 Error.stackTraceLimit = 25
 
@@ -154,8 +153,12 @@ exports.doChecks = function (emitter, checks, done) {
     const check = checks.shift()
     if (check) {
       if (emitter.skipOnMatchFail) {
-        try { check(msg) }
-        catch (e) { checks.unshift(check) }
+        try {
+          check(msg)
+        }
+        catch (e) {
+          checks.unshift(check)
+        }
       } else {
         check(msg)
       }
