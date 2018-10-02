@@ -138,11 +138,10 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         }
       })
 
-      let _resolve, _reject
+      let _resolve
       const p = new Promise(function (resolve, reject) {
         // save the resolution functions
         _resolve = resolve
-        _reject = reject
       })
 
       const validations = [
@@ -200,16 +199,16 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       function (msg) {
         check['hapi-entry'](msg)
       },
-      /*
+      //*
       function (msg) {
         msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', 'hapi-render')
+        msg.should.have.property('Layer', 'vision')
         msg.should.have.property('TemplateLanguage', '.ejs')
         msg.should.have.property('TemplateFile', helloDotEjs)
       },
       function (msg) {
         msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', 'hapi-render')
+        msg.should.have.property('Layer', 'vision')
       },
       // */
       function (msg) {
@@ -233,7 +232,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   }
 
   async function disabledTest () {
-    ao.probes.hapi.enabled = false
+    ao.probes.vision.enabled = false
     const server = await viewServer()
 
     server.route({
@@ -254,11 +253,17 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         check['http-entry'](msg)
       },
       function (msg) {
+        check['hapi-entry'](msg)
+      },
+      function (msg) {
+        check['hapi-exit'](msg)
+      },
+      function (msg) {
         check['http-exit'](msg)
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      ao.probes.hapi.enabled = true
+      ao.probes.vision.enabled = true
       server.listener.close(_resolve)
     })
 
