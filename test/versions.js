@@ -20,8 +20,6 @@ test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
 
-//test('hapi', '>= 9.0.1')
-//test2('hapi', '>= 9.0.1')
 test2('hapi', {
   ranges: [
     {
@@ -54,6 +52,18 @@ test('raw-body')
 test('redis', '>= 0.8.0')
 test('restify', '>= 2.0.0 < 2.0.2 || >= 2.0.3')
 test('tedious', '>= 0.1.5')
+
+test2('vision', {
+  ranges: [
+    {
+      range: '>= 4.0.0 < 5.0.0',
+      dependencies: ['hapi@16']
+    }, {
+      range: '>= 5.0.0',
+      dependencies: ['hapi@17']
+    }
+  ]
+})
 
 
 //
