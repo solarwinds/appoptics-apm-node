@@ -436,8 +436,14 @@ function checkLogMessages (debug, checks) {
 
 exports.getLevelAndText = getLevelAndText
 function getLevelAndText (text) {
+  // if output is not a tty then 1) there is a timestamp and 2) colors aren't used.
+  // 2018-10-06T13:58:59.989Z
+  let match = text.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z ([^ ]+) (.+)/)
+  if (match) {
+    return [match[1], match[2]]
+  }
   // eslint-disable-next-line no-control-regex
-  const match = text.match(/\s*\u001b\[[0-9;]+m(.+) \u001b\[0m(.+)/)
+  match = text.match(/\s*\u001b\[[0-9;]+m(.+) \u001b\[0m(.+)/)
   if (match) {
     return [match[1], match[2]]
   }
