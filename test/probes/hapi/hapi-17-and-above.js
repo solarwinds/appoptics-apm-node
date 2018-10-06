@@ -330,7 +330,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       throw error
     }
     const logChecks = [
-      {level: 'error', message: 'express customNameFunc() error:', values: [error]},
+      {level: 'error', message: 'hapi customNameFunc() error:', values: [error]},
     ]
     helper.checkLogMessages(ao.debug, logChecks)
     return customTransactionNameTest(custom)()
