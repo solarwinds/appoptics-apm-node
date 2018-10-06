@@ -241,8 +241,14 @@ most commonly used when setting custom names for all or most routes.
 | Param | Type | Description |
 | --- | --- | --- |
 | probe | <code>string</code> | The probe to set the function for |
-| fn | <code>function</code> | A function that returns a string custom name or a                        falsey value indicating the default should be used.                        The calling signature of the function varies by the                        probe. Pass a falsey value for the function to clean. |
+| fn | <code>function</code> | A function that returns a string custom name or a                        falsey value indicating the default should be used.                        Pass a falsey value for the function to clear. |
 
+**Example**  
+```js
+// custom transaction function signatures for supported probes:
+express: customFunction (req, res)
+hapi: customFunction (request)
+```
 <a name="ao.sampling"></a>
 
 ### ao.sampling(item) ⇒ <code>boolean</code>
