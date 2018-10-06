@@ -8,6 +8,7 @@ const helloDotEjs = 'hello.ejs'
 const helper = require(path.join(base, 'test/helper'))
 const ao = helper.ao
 const semver = require('semver')
+const should = require('should')
 
 const request = require('request')
 
@@ -98,7 +99,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     })
   }
 
-  async function viewServer () {
+  async function makeViewServer () {
     const config = {
       views: {
         path: __dirname,
@@ -110,18 +111,6 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
 
     return makeServer(config)
   }
-
-  /* reply is not a thing in v17+
-  function renderer (request, reply) {
-    if (reply.view) {
-      return reply.view.bind(reply)
-    }
-    if (request.reply && request.reply.view) {
-      return request.reply.view.bind(request.reply)
-    }
-    return function () {}
-  }
-  // */
 
   //
   // Tests
@@ -140,7 +129,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
 
       let _resolve
       const p = new Promise(function (resolve, reject) {
-        // save the resolution functions
+        // save the resolution function
         _resolve = resolve
       })
 
@@ -157,8 +146,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         },
         function (msg) {
           check['http-exit'](msg)
-          msg.should.have.property('Controller', '/hello/{name}')
-          msg.should.have.property('Action', 'hello')
+          msg.should.have.property('Controller', 'hapi.hello')
+          msg.should.have.property('Action', method + '/hello/{name}')
         }
       ]
       helper.doChecks(emitter, validations, function () {
@@ -177,7 +166,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   }
 
   async function renderTest () {
-    const server = await viewServer()
+    const server = await makeViewServer()
 
     server.route({
       method: 'GET',
@@ -216,8 +205,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/{name}')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', 'hapi.hello')
+        msg.should.have.property('Action', 'get/hello/{name}')
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -233,7 +222,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
 
   async function disabledTest () {
     ao.probes.vision.enabled = false
-    const server = await viewServer()
+    const server = await makeViewServer()
 
     server.route({
       method: 'GET',
@@ -295,12 +284,207 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should trace render span', renderTest)
-    it('should skip when disabled', disabledTest)
+    it('should skip vision when disabled', disabledTest)
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should trace render span', renderTest)
-    it.skip('should skip when disabled', disabledTest)
+    it.skip('should skip vision when disabled', disabledTest)
+  }
+
+  //
+  // custom transaction names
+  //
+  it('should allow a custom TransactionName', function () {
+    // supply a simple custom function
+    function custom (request) {
+      const result = 'new-name.' + request.method + request.route.path
+      return result
+    }
+
+    const testFunction = customTransactionNameTest(custom)
+    return testFunction()
+  })
+
+  it('should allow a custom TransactionName with domain prefix', function () {
+    // simple custom function
+    function custom (request) {
+      const result = 'new-name.' + request.method + request.route.path
+      return result
+    }
+
+    ao.cfg.domainPrefix = true
+    let r
+    try {
+      r = customTransactionNameTest(custom)()
+    } finally {
+      ao.cfg.domainPrefix = false
+    }
+    return r
+  })
+
+  it('should handle an error in the custom name function', function () {
+    const error = new Error('I am a bad function')
+    function custom (request) {
+      throw error
+    }
+    const logChecks = [
+      {level: 'error', message: 'express customNameFunc() error:', values: [error]},
+    ]
+    helper.checkLogMessages(ao.debug, logChecks)
+    return customTransactionNameTest(custom)()
+  })
+
+  it('should handle a falsey return by the custom name function', function () {
+    function custom (request) {
+      return ''
+    }
+    return customTransactionNameTest(custom)()
+  })
+
+
+  //
+  // this executes setting the custom name and tests the results.
+  //
+  function customTransactionNameTest (custom, useView = false) {
+    const reqRoutePath = '/hello/{name}'
+    let customReq
+    let expected
+
+    return async function () {
+      // get a new server.
+      const server = await (useView ? makeViewServer : makeServer)()
+
+      server.route({
+        method: 'GET',
+        path: reqRoutePath,
+        handler: function hello (request, h) {
+          helper.clsCheck()
+          customReq = request
+          expected = makeExpected(request, hello)
+          if (useView) {
+            return h.view(helloDotEjs, {name: request.params.name})
+          } else {
+            return 'Hello, ' + request.params.name + '!'
+          }
+
+        }
+      })
+
+      ao.setCustomTxNameFunction('hapi', custom)
+
+      let _resolve
+      const p = new Promise(function (resolve, reject) {
+        // save the resolution function. this doesn't need reject because
+        // an error will cause the test to fail anyway.
+        _resolve = resolve
+      })
+
+      const validations = [
+        function (msg) {
+          check['http-entry'](msg)
+        },
+        function (msg) {
+          check['hapi-entry'](msg)
+          msg.should.not.have.property('Async')
+        },
+        function (msg) {
+          check['hapi-exit'](msg)
+        },
+        function (msg) {
+          check['http-exit'](msg)
+          let expectedCustom = expected('tx')
+          if (custom) {
+            try {
+              const expectedCustomName = custom(customReq)
+              if (expectedCustomName) {
+                expectedCustom = expectedCustomName
+              }
+            } catch (e) {
+              // do nothing
+            }
+          }
+          /*
+          if (custom && custom(customReq)) {
+            expectedCustom = custom(customReq)
+          } else {
+            expectedCustom = expected('tx')
+          }
+          // */
+          if (ao.cfg.domainPrefix) {
+            expectedCustom = customReq.headers.host + '/' + expectedCustom
+          }
+          msg.should.have.property('TransactionName', expectedCustom)
+          msg.should.have.property('Controller', expected('c'))
+          msg.should.have.property('Action', expected('a'))
+        }
+      ]
+      helper.doChecks(emitter, validations, function () {
+        server.listener.close(_resolve)
+      })
+
+      await server.start()
+
+      request({
+        method: 'GET',
+        url: `http://localhost:${port}/hello/world`
+      })
+
+      return p
+    }
+  }
+
+
+  //
+  // helper function to return a function that returns expected results for:
+  //   tx - transaction name
+  //   c - controller
+  //   a - action
+  //   p - profile
+  //
+  function makeExpected (request, func) {
+    // bind this when created. an error causes request.route
+    // to become undefined
+    const pathToUse = request.route.path
+
+    return function (what) {
+      let controller
+      let action
+      let result
+
+      if (ao.probes.hapi.legacyTxname) {
+        // old way of setting these
+        // Controller = request.route.path
+        // Action = func.name || '(anonymous)'
+        controller = pathToUse
+        action = func.name || '(anonymous)'
+      } else {
+        // new way
+        // Controller = 'hapi.' + (func.name || '(anonymous)')
+        // Action = request.method + request.route.path
+        controller = 'hapi.' + (func.name || '(anonymous)')
+        action = request.method + pathToUse
+      }
+
+      if (what === 'tx') {
+        result = controller + '.' + action
+      } else if (what === 'c') {
+        result = controller
+      } else if (what === 'a') {
+        result = action
+      } else if (what === 'p') {
+        result = controller + ' ' + action
+      }
+
+      if (ao.cfg.domainPrefix && what === 'tx') {
+        const prefix = ao.getDomainPrefix(request)
+        if (prefix) {
+          result = prefix + '/' + result
+        }
+      }
+
+      return result
+    }
   }
 })
