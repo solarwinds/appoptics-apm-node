@@ -1,6 +1,5 @@
 'use strict'
 
-const semver = require('semver')
 const packages = module.exports = []
 
 //
@@ -94,6 +93,7 @@ function test2 (name, options = {}) {
   } else if (Array.isArray(options.ranges)) {
     ranges = options.ranges
   } else {
+    // eslint-disable-next-line max-len
     throw new Error(`Unexpected range ${options.range} for package ${name} in versions file ${__filename}`)
   }
 
