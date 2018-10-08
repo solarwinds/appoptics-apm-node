@@ -11,7 +11,7 @@ const hosts = helper.Address.from(
 )
 
 if (helper.skipTest(module.filename)) {
-  return
+  describe = function () {}
 }
 
 //
@@ -78,14 +78,14 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     before(function (done) {
       const testClient = new cassandra.Client({
         contactPoints: hosts.map(function (v) { return v.host }),
-        protocolOptions: { port: hosts[0].port }
+        protocolOptions: {port: hosts[0].port}
       })
       testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
     })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
         contactPoints: hosts.map(function (v) { return v.host }),
-        protocolOptions: { port: hosts[0].port },
+        protocolOptions: {port: hosts[0].port},
         keyspace: 'test'
       })
     })

@@ -8,7 +8,7 @@ const addon = ao.addon
 const semver = require('semver')
 const mongodb = require('mongodb-core')
 
-const requirePatch = require('../../dist/require-patch')
+const requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
 const pkg = require('mongodb-core/package.json')
 requirePatch.enable()

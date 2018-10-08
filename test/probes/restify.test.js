@@ -1,14 +1,15 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+const helper = require('../helper')
+const ao = helper.ao
 
-var request = require('request')
+const should = require('should')  // eslint-disable-line no-unused-vars
+const semver = require('semver')
 
-var pkg = require('restify/package.json')
-var opts = {
+const request = require('request')
+
+const pkg = require('restify/package.json')
+const opts = {
   name: 'restify-test'
 }
 
@@ -16,10 +17,10 @@ if (!semver.satisfies(process.version, '>=4')) {
   describe('probes.restify', function () {
     it.skip('not supported for node version < 4', function () {})
   })
-  return
+  describe = function () {}
 }
 
-var restify = require('restify')
+const restify = require('restify')
 
 // restify does fs IO starting in node 8
 if (semver.satisfies(process.version, '>=8.0.0')) {
@@ -28,8 +29,8 @@ if (semver.satisfies(process.version, '>=8.0.0')) {
 }
 
 describe('probes.restify ' + pkg.version, function () {
-  var emitter
-  var fsState
+  let emitter
+  let fsState
 
   //
   // Intercept appoptics messages for analysis
@@ -47,7 +48,7 @@ describe('probes.restify ' + pkg.version, function () {
     ao.probes.fs.enabled = fsState
   })
 
-  var check = {
+  const check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
@@ -73,57 +74,57 @@ describe('probes.restify ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Tests
   //
   function testControllerAction (done) {
-    var app = restify.createServer(opts)
+    const app = restify.createServer(opts)
 
     app.get('/hello/:name', function hello (req, res) {
       res.send('done')
     })
 
-    var validations = [
-    function (msg) {
-      check['http-entry'](msg)
-    },
-    function (msg) {
-      check['restify-entry'](msg)
-    },
-    function (msg) {
-      msg.should.have.property('Label', 'profile_entry')
-    },
-    function (msg) {
-      msg.should.have.property('Label', 'profile_exit')
-    },
-    function (msg) {
-      check['restify-exit'](msg)
-    },
-    function (msg) {
-      check['http-exit'](msg)
-      msg.should.have.property('Controller', 'GET /hello/:name')
-      msg.should.have.property('Action', 'hello')
-    }
+    const validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['restify-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Label', 'profile_entry')
+      },
+      function (msg) {
+        msg.should.have.property('Label', 'profile_exit')
+      },
+      function (msg) {
+        check['restify-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+        msg.should.have.property('Controller', 'GET /hello/:name')
+        msg.should.have.property('Action', 'hello')
+      }
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   }
 
   function testMiddleware (done) {
-    var app = restify.createServer(opts)
+    const app = restify.createServer(opts)
 
     app.get('/hello/:name', function renamer (req, res, next) {
       req.name = req.params.name
@@ -132,50 +133,50 @@ describe('probes.restify ' + pkg.version, function () {
       res.send(req.name)
     })
 
-    var validations = [
-    function (msg) {
-      check['http-entry'](msg)
-    },
-    function (msg) {
-      check['restify-entry'](msg)
-    },
-    function (msg) {
-      msg.should.have.property('Language', 'nodejs')
-      msg.should.have.property('Label', 'profile_entry')
-      msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
-      msg.should.have.property('Controller', 'GET /hello/:name')
-      msg.should.have.property('Action', 'renamer')
-    },
-    function (msg) {
-      msg.should.have.property('Language', 'nodejs')
-      msg.should.have.property('Label', 'profile_exit')
-      msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
-    },
-    function (msg) {
-      msg.should.have.property('Language', 'nodejs')
-      msg.should.have.property('Label', 'profile_entry')
-      msg.should.have.property('ProfileName', 'GET /hello/:name responder')
-      msg.should.have.property('Controller', 'GET /hello/:name')
-      msg.should.have.property('Action', 'responder')
-    },
-    function (msg) {
-      msg.should.have.property('Language', 'nodejs')
-      msg.should.have.property('Label', 'profile_exit')
-      msg.should.have.property('ProfileName', 'GET /hello/:name responder')
-    },
-    function (msg) {
-      check['restify-exit'](msg)
-    },
-    function (msg) {
-      check['http-exit'](msg)
-    }
+    const validations = [
+      function (msg) {
+        check['http-entry'](msg)
+      },
+      function (msg) {
+        check['restify-entry'](msg)
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
+        msg.should.have.property('Controller', 'GET /hello/:name')
+        msg.should.have.property('Action', 'renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
+        msg.should.have.property('Controller', 'GET /hello/:name')
+        msg.should.have.property('Action', 'responder')
+      },
+      function (msg) {
+        msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
+      },
+      function (msg) {
+        check['restify-exit'](msg)
+      },
+      function (msg) {
+        check['http-exit'](msg)
+      }
     ]
     helper.doChecks(emitter, validations, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   }
