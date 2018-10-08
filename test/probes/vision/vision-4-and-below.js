@@ -175,8 +175,8 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
         },
         function (msg) {
           check['http-exit'](msg)
-          msg.should.have.property('Controller', '/hello/{name}')
-          msg.should.have.property('Action', 'hello')
+          msg.should.have.property('Controller', 'hapi.hello')
+          msg.should.have.property('Action', 'get/hello/{name}')
         }
       ]
       helper.doChecks(emitter, validations, function () {
@@ -231,8 +231,8 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/{name}')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', 'hapi.hello')
+        msg.should.have.property('Action', 'get/hello/{name}')
       }
     ]
     helper.doChecks(emitter, validations, function () {
