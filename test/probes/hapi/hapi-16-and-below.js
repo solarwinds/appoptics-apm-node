@@ -269,8 +269,8 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      server.listener.close(done)
       ao.probes.hapi.enabled = true
+      server.listener.close(done)
     })
 
     p.then(() => {
