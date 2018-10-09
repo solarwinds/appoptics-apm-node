@@ -106,8 +106,6 @@ Object.keys(tasks).forEach(function (name) {
   }
 })
 
-console.log(taskGroups)
-
 // Create coverage tasks
 //makeCoverageTask('coverage', 'test/**/*.test.js')
 //Object.keys(tasks).forEach(function (name) {
