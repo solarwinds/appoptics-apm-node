@@ -101,8 +101,11 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
         params: ['buz']
       }], done)
     })
+    // cleanup
     after(function (done) {
-      client.execute('TRUNCATE "foo";', done)
+      client.execute('TRUNCATE "foo";', function () {
+        client.shutdown(done)
+      })
     })
 
     beforeEach(function () {
