@@ -8,6 +8,7 @@ const helloDotEjs = 'hello.ejs'
 const helper = require(path.join(base, 'test/helper'))
 const ao = helper.ao
 const semver = require('semver')
+const should = require('should')
 
 const request = require('request')
 
@@ -22,24 +23,21 @@ if (!hasAsyncAwait) {
 const hapi = require('hapi')
 const vision = require('vision')
 
-const pkg = require('hapi/package.json')
-const visionPkg = require('vision/package.json')
+const pkg = require('vision/package.json')
+const hapiPkg = require('hapi/package.json')
 
-if (semver.lt(pkg.version, '17.0.0')) {
-  throw new Error('hapi-17-and-above requires hapi version 17+')
+if (semver.lt(hapiPkg.version, '17.0.0')) {
+  throw new Error('vision-5-and-above requires hapi version 17+')
 }
 
 let plugins
-let visionText
-if (semver.gte(visionPkg.version, '5.0.0')) {
+let hapiText
+if (semver.gte(pkg.version, '5.0.0')) {
   plugins = {plugin: require('vision')}
-  visionText = ' vision ' + visionPkg.version
-} else {
-  plugins = {}
-  visionText = ' vision ' + visionPkg.version + ' not compatible (untested)'
+  hapiText = ' hapi ' + hapiPkg.version
 }
 
-describe('probes.hapi ' + pkg.version + visionText, function () {
+describe('probes.vision ' + pkg.version + hapiText, function () {
   let emitter
   let port = 3000
 
@@ -98,7 +96,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     })
   }
 
-  async function viewServer () {
+  async function makeViewServer () {
     const config = {
       views: {
         path: __dirname,
@@ -157,8 +155,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         },
         function (msg) {
           check['http-exit'](msg)
-          msg.should.have.property('Controller', '/hello/{name}')
-          msg.should.have.property('Action', 'hello')
+          msg.should.have.property('Controller', 'hapi.hello')
+          msg.should.have.property('Action', method + '/hello/{name}')
         }
       ]
       helper.doChecks(emitter, validations, function () {
@@ -177,7 +175,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   }
 
   async function renderTest () {
-    const server = await viewServer()
+    const server = await makeViewServer()
 
     server.route({
       method: 'GET',
@@ -216,8 +214,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', '/hello/{name}')
-        msg.should.have.property('Action', 'hello')
+        msg.should.have.property('Controller', 'hapi.hello')
+        msg.should.have.property('Action', 'get/hello/{name}')
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -233,7 +231,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
 
   async function disabledTest () {
     ao.probes.vision.enabled = false
-    const server = await viewServer()
+    const server = await makeViewServer()
 
     server.route({
       method: 'GET',
