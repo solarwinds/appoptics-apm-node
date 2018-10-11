@@ -75,8 +75,8 @@ elif [[ "$ARG" = "bash" ]]; then
     # enable docker to run with different port
     export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
     # if different port then use default user/password settings
-    export AO_TEST_MYSQL_USERNAME=${AO_TEST_MYSQL_HOST_PORT:root}
-    export AO_TEST_MYSQL_PASSWORD=${AO_TEST_MYSQL_HOST_PORT+}
+    export AO_TEST_MYSQL_USERNAME=${AO_TEST_MYSQL_HOST_USERNAME:root}
+    export AO_TEST_MYSQL_PASSWORD=${AO_TEST_MYSQL_HOST_PASSWORD+}
     # this requires an entry in /etc/hosts because this
     # isn't run in a container it can't use docker names.
     # use the IP address from "docker inspect ao_oracle_1"
