@@ -132,7 +132,16 @@ describe('probes.fs', function () {
     {
       type: 'path',
       name: 'exists',
-      args: ['fs-output/foo.bar']
+      args: ['fs-output/foo.bar'],
+      subs: function () {
+        // node changed exists so it calls fs.access. It might have changed
+        // before 10 but we're only supported LTS versions.
+        if (semver.lt(process.version, '10.0.0')) {
+          return undefined
+        }
+
+        return [span('access')]
+      }
     },
     // fs.access
     {
@@ -378,7 +387,9 @@ describe('probes.fs', function () {
   describe('async', function () {
 
     calls.forEach(function (call) {
-      if (result(call.exclude)) return
+      if (result(call.exclude)) {
+        return
+      }
 
       it('should support ' + call.name, function (done) {
         const args = result(call.args)
