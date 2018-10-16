@@ -44,6 +44,7 @@ describe('probes.fs', function () {
   let realSampleTrace
 
   beforeEach(function (done) {
+    // wait a tenth of a second between tests.
     setTimeout(function () {
       done()
     }, 100)
@@ -333,7 +334,7 @@ describe('probes.fs', function () {
       type: 'fd',
       name: 'write',
       args: function () {
-        const buf = new Buffer('some data')
+        const buf = Buffer.from('some data')
         return [fd, buf, 0, 'some data'.length, 0]
       }
       // args: function () { return [fd, 'some data'] }
@@ -343,7 +344,7 @@ describe('probes.fs', function () {
       type: 'fd',
       name: 'read',
       args: function () {
-        const buf = new Buffer('some data'.length)
+        const buf = Buffer.alloc('some data'.length)
         return [fd, buf, 0, 'some data'.length, 0]
       }
     },
