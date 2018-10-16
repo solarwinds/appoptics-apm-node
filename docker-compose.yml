@@ -144,7 +144,7 @@ services:
       - "27018:27017"
 
   mongo_replset:
-    image: "traceqa/mongo:set"
+    image: "traceqa/mongo-set"
     build:
       context: test/docker/
       dockerfile: mongo_replset.yml
@@ -153,9 +153,9 @@ services:
         max-file: "1"
         max-size: 50m
     ports:
-      - "27020:27016"
-      - "27021:27017"
-      - "27022:27018"
+      - "30001:30001"
+      - "30002:30002"
+      - "30003:30003"
     environment:
       - "REPLSETMEMBERS=3"
 

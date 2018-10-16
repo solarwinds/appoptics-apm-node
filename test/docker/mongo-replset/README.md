@@ -1,34 +1,38 @@
 # Mongo Replica Set
 
+### What is this?
 
-### On Docker Hub
+The files in this directory are used to built the docker image `mongo-set` image which is published to Docker Hub as `traceqa/mongo-set`.
+
+
+### Where On Docker Hub
 
 This image is hosted on Docker Hub [here](https://hub.docker.com/r/traceqa/mongo-set/). It can be pulled using `# docker pull traceqa/mongo-set`.
 
 ### History
 
-This is derived from the previous version of these files on Docker Hub [here](https://hub.docker.com/r/traceqa/mongo/) which still can be pulled using `# docker pull traceqa/mongo:set`.
+This is derived from the previous version of these files on Docker Hub [here](https://hub.docker.com/r/traceqa/mongo/) which still can be pulled using `# docker pull traceqa/mongo:set`. It is unlikely that you will want to do that because the image doesn't work as configured.
 
-That version was derived from [nickstenning's github repo](https://github.com/nickstenning/dockerfiles/tree/master/mongodb).
+That version was originally derived from [nickstenning's github repo](https://github.com/nickstenning/dockerfiles/tree/master/mongodb).
 
 ### Modifications
 
 Current version `traceqa/mongo-set`
-* this is not yet integrated into the Jenkins startup for Docker Services, nor the doc files[here](https://github.com/librato/trace/blob/master/docs/archived/testing/Docker-Services.md) and [here](https://github.com/librato/trace/blob/master/docs/archived/testing/Supporting-Services-for-Testing.md).
-* I currently manually start this using the run command below.
-* It was built using `docker build . -t mongo-set`
+* It was built using `docker build . -t mongo-set` in this directory.
 * It was published using `docker push traceqa/mongo-set` with credentials that have access to the traceqa organization.
-
+* The `traceqa/mongo-set` image is used by the `docker-compose.yml` file in the root directory of this repository.
 
 Changes to `traceqa/mongo:set`:
 * Accepts env var REPLSETHOST for the host name (default `localhost`).
-* Uses ports 30001+ and requires that the correct number of ports are mapped in the `docker run` command.
+* Uses ports 30001+ and requires that the correct number of ports are mapped in the `docker run` command. `docker-compose.yml` handles the port mapping so explicit port mapping is only required to run the file manually.
   - `docker run -d -p 30001:30001 -p 30002:30002 -p 30003:30003 mongo-set`
 
-Between when the original changes were made and when I started testing there were apparently some changes to the way mongodb-core worked. The net is that both the client and the host must be able to access members of the replica set using the hostnames and ports provided in the `rs.initiate(config)` call. `traceqa/mongo:set` used `localhost` to build the containers but the client cannot access them using `localhost`. (Even though the client specifies the hosts as being `ec2-52-7-124-5.compute-1.amazonaws.com` once mongodb-core has opened the databases it tells the client the hostname `localhost` to use causing the client access to fail.)
+### Why Was mongo:set changed?
 
+Between when `mongo:set` was created and when I started testing there were apparently some changes to the way mongodb-core worked. The net is that both the client and the host must be able to access members of the replica set using the hostnames and ports provided in the `rs.initiate(config)` call. `traceqa/mongo:set` used `localhost` to build the containers but the client cannot access them using `localhost`. (Even though the client specifies the hosts as being `ec2-52-7-124-5.compute-1.amazonaws.com` once mongodb-core has opened the databases it tells the client the hostname `localhost` to use causing the client access to fail.)
 
-Changes to nickstenning's original version:
+### What changes were made to nickstenning's original version?
+
 * builds on ubuntu 14.04 rather than 12.04
 * installs mongo 3.07 rather than 2.6
 * removed unused code from start script and added comments
