@@ -1,0 +1,46 @@
+#!/bin/sh
+# does the following:
+# 1. create a supervisor config file for each mongod in the replica set
+# (default 3 members)
+# 2. create /tmp/init.js used to initiate the set via the mongo shell
+# 3. run supervisord which starts each mongod member and initiates the set
+# see /var/log/supervisor/ for supervised process log messages.
+
+set -e
+
+: ${REPLSETNAME:=default}
+: ${REPLSETMEMBERS:=3}
+: ${REPLSETHOST:=localhost}
+SUPERVISOR_CONF_D=/etc/supervisor/conf.d
+
+check_ports=
+
+echo "rs.initiate({_id: \"${REPLSETNAME}\", members: [" > /tmp/init.js
+
+for i in $(seq "$REPLSETMEMBERS"); do
+
+    PORT=$(expr 30000 + $i)
+    DBPATH="/var/lib/mongodb/${REPLSETNAME}-${i}"
+
+    mkdir -p "$DBPATH"
+    chown mongodb "$DBPATH"
+
+    cat >"${SUPERVISOR_CONF_D}/mongo-${i}.conf" <<EOM
+[program:mongo-${i}]
+user = mongodb
+command = /usr/bin/mongod --config /etc/mongodb.conf --replSet '${REPLSETNAME}' --port '${PORT}' --dbpath '${DBPATH}'
+priority = 100
+autorestart = true
+EOM
+
+    echo "{_id: ${i}, host: \"${REPLSETHOST}:${PORT}\" }," >> /tmp/init.js
+
+    check_ports="${check_ports} ${PORT}"
+done
+
+echo "]})" >> /tmp/init.js
+echo "rs.status()" >> /tmp/init.js
+
+export CHECK_PORTS="$check_ports"
+
+exec /usr/bin/supervisord
