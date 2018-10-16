@@ -735,7 +735,7 @@ describe('custom', function () {
     const emitter = new Emitter()
 
     // this is a little tricky - bind emitter errors are debounced so not every
-    // error results in a log message.
+    // error results in a log message. the count appears in brackets.
     const logChecks = [
       {level: 'warn', message: '[1]ao.bindEmitter - no context'},
       {level: 'error', message: '[1]ao.bindEmitter - non-emitter'},

@@ -2,19 +2,14 @@
   "name": "appoptics-apm",
   "version": "5.6.1",
   "description": "Agent for AppOptics APM",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "bin": {
     "node-ao": "./bin/node-ao"
   },
   "scripts": {
     "test": "gulp test",
     "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
-    "install-deps": "./deps.sh",
-    "coverage": "gulp coverage",
-    "support-matrix": "gulp support-matrix",
-    "watch": "gulp watch",
-    "prepublish": "gulp build",
-    "prepack": "gulp build"
+    "install-deps": "./deps.sh"
   },
   "author": "Bruce A. MacNaughton <bruce@solarwinds.cloud>",
   "contributors": [
@@ -50,31 +45,29 @@
     "es6-weak-map": "^2.0.1",
     "event-pre-handler": "^1.0.0",
     "glob": "^7.0.3",
-    "hapi": "^16.6.3",
     "methods": "~1.1.0",
     "minimist": "^1.2.0",
     "semver": "^5.0.1",
-    "shimmer": "^1.1.0",
-    "sliced": "^1.0.1"
+    "sliced": "^1.0.1",
+    "ximmer": "^1.2.1"
   },
   "devDependencies": {
     "amqp": "^0.2.6",
     "amqplib": "^0.4.2",
-    "babel-preset-es2015-minus-generators": "^6.6.0",
     "bcrypt": "^3.0.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",
     "bson": "^0.4.11",
-    "cassandra-driver": "^3.3.0",
+    "cassandra-driver": "^3.5.0",
     "co-render": "^1.1.0",
     "co-views": "^2.1.0",
     "concat-stream": "^1.5.0",
     "director": "^1.2.8",
     "ejs": "^2.4.1",
+    "eslint": "^5.6.1",
     "express": "^4.16.3",
     "generic-pool": "^3.4.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
     "gulp-istanbul": "^0.10.0",
     "gulp-mocha": "^3.0.1",
     "hapi": "^13.5.3",
@@ -102,7 +95,7 @@
     "should": "^8.3.1",
     "supertest": "^3.0.0",
     "tedious": "^2.3.1",
-    "testeachversion": "^7.0.0",
+    "testeachversion": "^7.1.4",
     "vision": "^4.1.0"
   },
   "optionalDependencies": {

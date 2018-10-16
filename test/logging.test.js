@@ -1,5 +1,6 @@
 'use strict'
 
+const helper = require('./helper')
 const should = require('should') // eslint-disable-line no-unused-vars
 const ao = require('..')
 const debug = ao.loggers._debug
@@ -11,15 +12,7 @@ const debug = ao.loggers._debug
 // multiple packages that use debug. rather than continue figuring out
 // debug it's easier just to use regex to skip over the color manipulation.
 //
-function getLevelAndText (text) {
-  // eslint-disable-next-line no-control-regex
-  const match = text.match(/\s*\u001b\[[0-9;]+m(.+) \u001b\[0m(.+)/)
-  if (match) {
-    return [match[1], match[2]]
-  }
-  return ['', '']
-}
-
+const getLevelAndText = helper.getLevelAndText
 
 describe('logging', function () {
   const levels = ao.logLevel
@@ -100,6 +93,7 @@ describe('logging', function () {
   })
 
   it('should debounce repetitive logging by time', function (done) {
+    this.timeout(5000)
     const msg = 'test logging'
     const aolevel = 'error'
     const options = {
@@ -120,8 +114,6 @@ describe('logging', function () {
     let i = 0
 
     const id = setInterval(function () {
-      calls += 1
-      debounced.log(msg)
       i += 1
       if (i >= 4) {
         clearInterval(id)

@@ -7,7 +7,7 @@ if (!process.env.AO_TEST_SQLSERVER_EX) {
     it.skip('should support parameters', noop)
     it.skip('should support sanitization', noop)
   })
-  return
+  describe = function () {}
 }
 
 const helper = require('../helper')

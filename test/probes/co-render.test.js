@@ -2,6 +2,8 @@
 
 const helper = require('../helper')
 const ao = helper.ao
+// eslint-disable-next-line no-unused-vars
+const should = require('should')
 
 let pkg
 try {

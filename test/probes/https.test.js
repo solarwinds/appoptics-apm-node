@@ -417,7 +417,7 @@ describe('probes.https', function () {
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port }
+        ctx.data = {port: server.address().port}
         const mod = helper.run(ctx, 'https/client')
 
         helper.test(emitter, mod, [
