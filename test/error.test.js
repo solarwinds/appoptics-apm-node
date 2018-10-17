@@ -3,6 +3,7 @@ const helper = require('./helper')
 const ao = require('..')
 const Span = ao.Span
 const Event = ao.Event
+const should = require('should') // eslint-disable-line no-unused-vars
 
 describe('error', function () {
   const conf = {enabled: true}
@@ -99,18 +100,77 @@ describe('error', function () {
     }, done)
   })
 
+  it('should report errors in async calls', function (complete) {
+    handleErrorTest(function (done) {
+      try {
+        ao.instrument(
+          testSpan,
+          function (cb) {
+            setTimeout(function () {
+              cb(error)
+            }, 20)
+          },
+          conf,
+          function () {
+            done()
+          }
+        )
+      } catch (e) {
+        ao.loggers.debug('Got error instrumenting', e)
+        complete(e)
+      }
+    }, complete)
+  })
+
+  it('should report custom errors in async calls', function (complete) {
+    class CustomError extends Error {}
+    const error = new CustomError('test')
+    helper.test(emitter, function (done) {
+      ao.instrument(
+        testSpan,
+        function (cb) {
+          setTimeout(function () {
+            cb(error)
+          }, 20)
+        },
+        conf,
+        function () {
+          done()
+        }
+      )
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Label', 'exit')
+        msg.should.have.property('ErrorClass', 'CustomError')
+        msg.should.have.property('ErrorMsg', error.message)
+        msg.should.have.property('Backtrace', error.stack)
+      }
+    ], complete)
+  })
+
   it('should report errors in error-first callbacks', function (done) {
     handleErrorTest(function (done) {
-      ao.instrument(testSpan, function (callback) {
-        callback(error)
-      }, conf, function () {
-        done()
-      })
+      ao.instrument(
+        testSpan,
+        function (callback) {
+          callback(error)
+        },
+        conf,
+        function () {
+          done()
+        }
+      )
     }, done)
   })
 
-  it('should report custom errors', function (done) {
-    const error = new Error('test')
+  it('should report custom errors with the class name', function (done) {
+    class CustomError extends Error {}
+    const error = new CustomError('test')
     helper.test(emitter, function (done) {
       ao.reportError(error)
       done()
@@ -118,7 +178,7 @@ describe('error', function () {
       function (msg) {
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'error')
-        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('ErrorClass', 'CustomError')
         msg.should.have.property('ErrorMsg', error.message)
         msg.should.have.property('Backtrace', error.stack)
       }
