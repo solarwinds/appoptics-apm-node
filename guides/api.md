@@ -19,7 +19,7 @@
 <a name="ao"></a>
 
 ## ao
-**Kind**: global class
+**Kind**: global class  
 
 * [ao](#ao)
     * [.logLevel](#ao.logLevel)
@@ -48,25 +48,25 @@
 <a name="ao.logLevel"></a>
 
 ### ao.logLevel
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
 | --- | --- |
 | <code>string</code> | comma separated list of log settings |
 
-**Example** *(Sets the log settings)*
+**Example** *(Sets the log settings)*  
 ```js
 ao.logLevel = 'warn,error'
 ```
-**Example** *(Get the log settings)*
+**Example** *(Get the log settings)*  
 ```js
 var settings = ao.logLevel
 ```
 <a name="ao.serviceKey"></a>
 
 ### ao.serviceKey
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -78,7 +78,7 @@ var settings = ao.logLevel
 ### ao.sampleMode
 Get and set the sample mode
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -91,7 +91,7 @@ Get and set the sample mode
 Get and set the sample mode. This is an alias for 'sampleMode' and
 is for consistency with other agents and history.
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -104,7 +104,7 @@ is for consistency with other agents and history.
 Get and set the sample rate. The number is parts of 1,000,000
 so 100,000 represents a 10% sample rate.
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -116,21 +116,21 @@ so 100,000 represents a 10% sample rate.
 ### ao.tracing
 Return whether or not the current code path is being traced.
 
-**Kind**: static property of [<code>ao</code>](#ao)
-**Read only**: true
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Read only**: true  
 **Properties**
 
 | Type |
 | --- |
-| <code>boolean</code> |
+| <code>boolean</code> | 
 
 <a name="ao.traceId"></a>
 
 ### ao.traceId
 Get X-Trace ID of the last event
 
-**Kind**: static property of [<code>ao</code>](#ao)
-**Read only**: true
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Read only**: true  
 **Properties**
 
 | Type | Description |
@@ -143,7 +143,7 @@ Get X-Trace ID of the last event
 Expose debug logging global and create a function to turn
 logging on/off.
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -155,14 +155,14 @@ logging on/off.
 ### ao.logLevelAdd(levels) ⇒ <code>string</code> \| <code>undefined</code>
 Add log levels to the existing set of log levels.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>string</code> \| <code>undefined</code> - - the current log levels or undefined if an error
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> \| <code>undefined</code> - - the current log levels or undefined if an error  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | levels | <code>string</code> | comma separated list of levels to add |
 
-**Example**
+**Example**  
 ```js
 ao.logLevelAdd('warn,debug')
 ```
@@ -171,15 +171,15 @@ ao.logLevelAdd('warn,debug')
 ### ao.logLevelRemove(levels) ⇒ <code>string</code> \| <code>undefined</code>
 Remove log levels from the current set.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>string</code> \| <code>undefined</code> - - log levels after removals or undefined if an
-                             error.
+                             error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | levels | <code>string</code> | comma separated list of levels to remove |
 
-**Example**
+**Example**  
 ```js
 var previousLogLevel = ao.logLevel
 ao.logLevelAdd('debug')
@@ -191,8 +191,8 @@ ao.logLevelRemove(previousLogLevel)
 Check whether the appoptics agent is ready to sample. It will wait up to
 the specified number of milliseconds before returning.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>boolean</code> - - true if ready to sample; false if not
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - - true if ready to sample; false if not  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -204,9 +204,9 @@ the specified number of milliseconds before returning.
 ### ao.bind(fn) ⇒ <code>function</code>
 Bind a function to the CLS context if tracing.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>function</code> - The bound function or the unmodified argument if it can't
-  be bound.
+  be bound.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -217,8 +217,8 @@ Bind a function to the CLS context if tracing.
 ### ao.bindEmitter(em) ⇒ <code>EventEmitter</code>
 Bind an emitter, if tracing
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -229,21 +229,21 @@ Bind an emitter, if tracing
 ### ao.backtrace()
 Generate a backtrace string
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 <a name="ao.setCustomTxNameFunction"></a>
 
 ### ao.setCustomTxNameFunction(probe, fn)
 Set a custom transaction name function for a specific probe. This is
 most commonly used when setting custom names for all or most routes.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | probe | <code>string</code> | The probe to set the function for |
 | fn | <code>function</code> | A function that returns a string custom name or a                        falsey value indicating the default should be used.                        Pass a falsey value for the function to clear. |
 
-**Example**
+**Example**  
 ```js
 // custom transaction function signatures for supported probes:
 express: customFunction (req, res)
@@ -255,8 +255,8 @@ hapi: customFunction (request)
 Determine if the sample flag is set for the various forms of
 metadata.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>boolean</code> - - true if the sample flag is set else false.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - - true if the sample flag is set else false.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -267,9 +267,9 @@ metadata.
 ### ao.stringToMetadata(metadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
 Convert an xtrace ID to a metadata object.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>bindings.Metadata</code> \| <code>undefined</code> - - bindings.Metadata object if
-                                        successful.
+                                        successful.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -280,7 +280,7 @@ Convert an xtrace ID to a metadata object.
 ### ao.instrumentHttp(build, run, [options], res)
 Instrument HTTP request/response
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -296,35 +296,52 @@ Instrument HTTP request/response
 ### ao.instrument(build, run, [options], [callback])
 Apply custom instrumentation to a function.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| build | <code>string</code> \| <code>function</code> |  | span name or builder function |
-| run | <code>function</code> |  | code to instrument and run |
+| build | <code>string</code> \| <code>function</code> |  | span name or builder function     If `build` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must generate a     a span. |
+| run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error appoptics will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     AppOptics know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
 | [options] | <code>object</code> |  | options |
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
-| [callback] | <code>function</code> |  | callback, if async |
+| [callback] | <code>function</code> |  | optional callback, if async |
 
-**Example**
+**Example**  
 ```js
 //
-// A `build` function is run only when tracing; it is used to generate
-// a span. It can include custom key value pairs, but the values must be
-// strings or numbers; the cannot be nested objects.
+// A synchronous `run` function.
 //
-// The `run` function runs the function which you wish to instrument.
-// Rather than giving it a callback directly, you give the done argument.
+//   If the run function is synchronous the signature does not include
+//   a callback, e.g., `function run () {...}`.
+//
+
+function build (last) {
+  return last.descend('custom', {Foo: 'bar'})
+}
+
+function run () {
+  const contents = fs.readFileSync('some-file', 'utf8')
+  // do things with contents
+}
+
+ao.instrument(build, run)
+```
+**Example**  
+```js
+//
+// An asynchronous `run` function.
+//
+// Rather than callback directly, you give the done argument.
 // This tells AppOptics when your instrumented code is done running.
 //
 // The `callback` function is the callback you normally would have given
 // directly to the code you want to instrument. It receives the same
 // arguments as were received by the `done` callback for the `run` function
 // and the same `this` context is also applied to it.
-//
+
 function build (last) {
-  return last.descend('custom', { Foo: 'bar' })
+  return last.descend('custom', {Foo: 'bar'})
 }
 
 function run (done) {
@@ -344,7 +361,7 @@ Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -357,7 +374,7 @@ HTTP headers or message queue headers.
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 | [callback] | <code>function</code> |  | Callback, if async |
 
-**Example**
+**Example**  
 ```js
 ao.startOrContinueTrace(
   null,
@@ -366,7 +383,7 @@ ao.startOrContinueTrace(
   {customTxName: 'special-span-name'}
 )
 ```
-**Example**
+**Example**  
 ```js
 ao.startOrContinueTrace(
   null,
@@ -377,7 +394,7 @@ ao.startOrContinueTrace(
   {customTxName: customNameFunction}
 )
 ```
-**Example**
+**Example**  
 ```js
 // this is the function that should be instrumented
 request('https://www.google.com', function realCallback (err, res, body) {...})
@@ -401,7 +418,7 @@ ao.startOrContinueTrace(
 ### ao.reportError(error)
 Report an error event in the current trace.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -412,7 +429,7 @@ Report an error event in the current trace.
 ### ao.reportInfo(data)
 Report an info event in the current trace.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -421,7 +438,7 @@ Report an info event in the current trace.
 <a name="Span"></a>
 
 ## Span
-**Kind**: global class
+**Kind**: global class  
 
 * [Span](#Span)
     * [new Span(name, parent, [data])](#new_Span_new)
@@ -448,7 +465,7 @@ Create an execution span.
 | parent | <code>string</code> \| [<code>Event</code>](#Event) | Context to continue from |
 | [data] | <code>object</code> | Key/Value pairs of info to add to event |
 
-**Example**
+**Example**  
 ```js
 var span = new Span('fs', Event.last, {
   File: file
@@ -459,14 +476,14 @@ var span = new Span('fs', Event.last, {
 ### span.descend(name, data)
 Create a new span descending from the current span
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>string</code> | Span name |
 | data | <code>object</code> | Key/Value pairs of info to add to the entry event |
 
-**Example**
+**Example**  
 ```js
 var inner = outer.descend('fs', {
   File: file
@@ -478,19 +495,19 @@ var inner = outer.descend('fs', {
 Run a function within the context of this span. Similar to mocha, this
 identifies asynchronicity by function arity and invokes runSync or runAsync
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | function to run within the span context |
 
-**Example**
+**Example**  
 ```js
 span.run(function () {
   syncCallToTrace()
 })
 ```
-**Example**
+**Example**  
 ```js
 span.run(function (wrap) {
   asyncCallToTrace(wrap(callback))
@@ -501,7 +518,7 @@ span.run(function (wrap) {
 ### span.runAsync(fn, [rootOpts])
 Run an async function within the context of this span.
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -510,7 +527,7 @@ Run an async function within the context of this span.
 | [rootOpts.defaultTxName] | <code>string</code> | default transaction name to use |
 | [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
-**Example**
+**Example**  
 ```js
 span.runAsync(function (wrap) {
   asyncCallToTrace(wrap(callback))
@@ -521,7 +538,7 @@ span.runAsync(function (wrap) {
 ### span.runSync(fn, [rootOpts])
 Run a sync function within the context of this span.
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -530,7 +547,7 @@ Run a sync function within the context of this span.
 | [rootOpts.defaultTxName] | <code>string</code> | the default transaction name |
 | [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
-**Example**
+**Example**  
 ```js
 span.runSync(function () {
   syncCallToTrace()
@@ -541,19 +558,19 @@ span.runSync(function () {
 ### span.enter(data)
 Send the enter event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | Key/Value pairs of info to add to event |
 
-**Example**
+**Example**  
 ```js
 span.enter()
 syncCallToTrace()
 span.exit()
 ```
-**Example**
+**Example**  
 ```js
 // If using enter/exit to trace async calls, you must flag it as async
 // manually and bind the callback to maintain the trace context
@@ -569,7 +586,7 @@ asyncCallToTrace(ao.bind(function (err, res) {
 ### span.exit(data)
 Send the exit event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -580,7 +597,7 @@ Send the exit event
 ### span.exitWithError(err, data)
 Send the exit event with an error status
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -592,7 +609,7 @@ Send the exit event with an error status
 ### span.setExitError(err)
 Set an error to be sent with the exit event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -603,13 +620,13 @@ Set an error to be sent with the exit event
 ### span.info(data)
 Create and send an info event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | key-value pairs to add to event |
 
-**Example**
+**Example**  
 ```js
 span.info({Foo: 'bar'})
 ```
@@ -618,20 +635,20 @@ span.info({Foo: 'bar'})
 ### span.error(data)
 Create and send an error event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | Key/Value pairs to add to event |
 
-**Example**
+**Example**  
 ```js
 span.error(error)
 ```
 <a name="Event"></a>
 
 ## Event
-**Kind**: global class
+**Kind**: global class  
 
 * [Event](#Event)
     * [new Event(span, label, parent)](#new_Event_new)
@@ -657,7 +674,7 @@ Create an event
 ### event.set(data)
 Set key-value pairs on this event
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -668,19 +685,19 @@ Set key-value pairs on this event
 ### event.enter()
 Enter the context of this event
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 <a name="Event+toString"></a>
 
 ### event.toString()
 Get the X-Trace ID string of the event
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 <a name="Event+sendReport"></a>
 
 ### event.sendReport(data)
 Send this event to the reporter
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -689,7 +706,7 @@ Send this event to the reporter
 <a name="SampleInfo"></a>
 
 ## SampleInfo : <code>object</code>
-**Kind**: global typedef
+**Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
