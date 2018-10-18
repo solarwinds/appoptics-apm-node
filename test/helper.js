@@ -400,16 +400,17 @@ function checkData (data, fn) {
   }
 }
 
+let counter
 exports.checkLogMessages = checkLogMessages
 function checkLogMessages (debug, checks) {
   const defaultLogger = debug.log
-  let count = 0
+  counter = 0
 
   // log is called before substitutions are done, so don't check for the final
   // message as output.
   debug.log = function (output) {
     const [level, text] = getLevelAndText(output)
-    const check = checks[count++]
+    const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
       assert('appoptics:' + check.level === level, 'message level should be ' + check.level)
@@ -428,10 +429,14 @@ function checkLogMessages (debug, checks) {
       throw e
     }
     // restore the default logger when out of messages to check too.
-    if (count >= checks.length) {
+    if (counter >= checks.length) {
       debug.log = defaultLogger
     }
   }
+}
+
+exports.getLogMessagesChecked = function () {
+  return counter
 }
 
 exports.getLevelAndText = getLevelAndText

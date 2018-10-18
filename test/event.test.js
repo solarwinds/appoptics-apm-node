@@ -3,6 +3,7 @@ const helper = require('./helper')
 const ao = require('..')
 const should = require('should')    // eslint-disable-line no-unused-vars
 const addon = ao.addon
+const debug = ao.debug
 const Event = ao.Event
 
 describe('event', function () {
@@ -80,6 +81,20 @@ describe('event', function () {
     ao.requestStore.run(function () {
       event2.sendReport()
     })
+  })
+
+  it('should not allow setting a NaN value', function () {
+    const event2 = new Event('test', 'exit', event.event)
+
+    const logChecks = [
+      {level: 'error', message: 'Invalid type for KV %s: %s', values: ['Nan', 'NaN']},
+      // there is a stack trace here but issuing the error is enough.
+    ]
+    helper.checkLogMessages(debug, logChecks)
+
+    event2.set({Nan: NaN})
+
+    helper.getLogMessagesChecked().should.equal(1, 'incorrect log message count')
   })
 
   it('should support set function', function () {
