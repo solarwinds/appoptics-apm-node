@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const addon = ao.addon
 
 const request = require('request')
@@ -23,6 +24,7 @@ describe('probes.http', function () {
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
     }
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace

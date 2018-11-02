@@ -1,13 +1,12 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var log = ao.loggers
+const helper = require('../helper')
+const {ao} = require('../1.test-common')
 
-var should = require('should')
+const log = ao.loggers
 
-var oracledb
-var pkg = {version: '0.0.0'}
+let oracledb
+let pkg = {version: '0.0.0'}
 try {
   oracledb = require('oracledb')
   pkg = require('oracledb/package')
@@ -15,9 +14,9 @@ try {
   log.debug('cannot load oracledb', e)
 }
 
-var host = process.env.AO_TEST_ORACLE || 'oracle'
-var database = process.env.AO_TEST_ORACLE_DBNAME || 'xe'
-var config = {
+const host = process.env.AO_TEST_ORACLE || 'oracle'
+const database = process.env.AO_TEST_ORACLE_DBNAME || 'xe'
+const config = {
   user: process.env.AO_TEST_ORACLE_USERNAME || 'system',
   password: process.env.AO_TEST_ORACLE_PASSWORD || 'oracle',
   connectString: host + '/' + database,
@@ -26,12 +25,8 @@ var config = {
 ao.debugLogging(true)
 
 describe('probes.oracledb ' + pkg.version, function () {
-  var emitter
-  var ctx = {}
-  var cluster
-  var pool
-  var db
-  var realSampleTrace
+  let emitter
+  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -40,10 +35,13 @@ describe('probes.oracledb ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
+      return {sample: true, source: 6, rate: ao.sampleRate}
     }
+
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace
@@ -55,14 +53,14 @@ describe('probes.oracledb ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
-  var checks = {
+  const checks = {
     'oracle-entry': function (msg) {
       msg.should.have.property('Layer', 'oracle')
       msg.should.have.property('Label', 'entry')
@@ -81,12 +79,14 @@ describe('probes.oracledb ' + pkg.version, function () {
     it('should trace execute calls in pool', test_pool)
     it('should include correct isAutoCommit value', test_commit)
   } else {
-    var missing = {oracledb, host, database, user: config.user, password: config.password}
-    for (var k in missing) {
+    let missing = {
+      oracledb, host, database, user: config.user, password: config.password
+    }
+    for (const k in missing) {
       if (missing[k]) delete missing[k]
     }
     missing = Object.keys(missing)
-    describe('skipping probes due to missing: ' + missing.join(', '), function() {
+    describe('skipping probes due to missing: ' + missing.join(', '), function () {
       it.skip('should trace execute calls', test_basic)
       it.skip('should trace execute calls in pool', test_pool)
       it.skip('should include correct isAutoCommit value', test_commit)
@@ -142,7 +142,7 @@ describe('probes.oracledb ' + pkg.version, function () {
       oracledb.isAutoCommit = false
       oracledb.getConnection(config, function (err, connection) {
         function query (isAutoCommit, done) {
-          var options = {
+          const options = {
             isAutoCommit: isAutoCommit
           }
 
@@ -152,7 +152,7 @@ describe('probes.oracledb ' + pkg.version, function () {
           }
         }
 
-        var fn = query(
+        const fn = query(
           undefined,
           query(
             true,

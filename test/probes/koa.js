@@ -8,7 +8,7 @@ const koa = require('koa')
 const helper = require('../helper')
 const request = require('request')
 
-const ao = require('../..')
+const {ao} = require('../1.test-common')
 
 const views = require('co-views')
 

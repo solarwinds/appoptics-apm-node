@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common.js')
 const noop = helper.noop
 
 const concat = require('concat-stream')

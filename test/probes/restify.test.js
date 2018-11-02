@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
 
 const should = require('should')  // eslint-disable-line no-unused-vars
 const semver = require('semver')
@@ -42,6 +42,7 @@ describe('probes.restify ' + pkg.version, function () {
     // restify newer versions of restify use negotiator which does file io
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
+    ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)

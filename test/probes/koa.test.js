@@ -1,7 +1,9 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+ao.g.testing(__filename)
+
 const assert = require('assert')
 
 const koa = require('koa')

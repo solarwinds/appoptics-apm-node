@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const noop = helper.noop
 
 const semver = require('semver')
@@ -19,6 +20,7 @@ describe('probes.fs once', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     emitter = helper.appoptics(done)
+    ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)
@@ -523,12 +525,13 @@ describe('probes.fs', function () {
         })
       })
     })
-
   })
 
   it('should fail sync calls gracefully', function (done) {
     helper.test(emitter, function (done) {
-      try { fs.openSync('does-not-exist', 'r') }
+      try {
+        fs.openSync('does-not-exist', 'r')
+      }
       catch (e) {}
       process.nextTick(done)
     }, [

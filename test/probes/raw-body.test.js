@@ -1,19 +1,19 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+const helper = require('../helper')
+const {ao} = require('../1.test-common')
 
-var request = require('request')
-var express = require('express')
-var body = require('body-parser')
-var rawBody = require('raw-body')
-var pkg = require('raw-body/package.json')
-var ReadableStream = require('stream').Readable
+const semver = require('semver')
+
+const request = require('request')
+const express = require('express')
+const body = require('body-parser')
+const rawBody = require('raw-body')
+const pkg = require('raw-body/package.json')
+const ReadableStream = require('stream').Readable
 
 describe('probes.raw-body ' + pkg.version, function () {
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -25,13 +25,14 @@ describe('probes.raw-body ' + pkg.version, function () {
     ao.probes.fs.enabled = false
     ao.Span.last = null
     ao.Event.last = null
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
@@ -57,28 +58,28 @@ describe('probes.raw-body ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Tests
   //
   it('should support body-parser span', function (done) {
-    var app = express()
+    const app = express()
 
     // Attach body parsers
-    app.use(body.urlencoded({ extended: false }))
+    app.use(body.urlencoded({extended: false}))
     app.use(body.json())
 
     app.use(function (req, res) {
       res.send('done')
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -105,8 +106,8 @@ describe('probes.raw-body ' + pkg.version, function () {
       server.close(done)
     })
 
-    var server = app.listen(function () {
-      var port = server.address().port
+    const server = app.listen(function () {
+      const port = server.address().port
       request.post('http://localhost:' + port, {
         form: {
           key: 'value'
@@ -134,7 +135,7 @@ describe('probes.raw-body ' + pkg.version, function () {
   }
 
   function testStyle (done, runner) {
-    var validations = [
+    const validations = [
       function (msg) {
         msg.should.have.property('Layer', 'body-parser')
         msg.should.have.property('Label', 'entry')

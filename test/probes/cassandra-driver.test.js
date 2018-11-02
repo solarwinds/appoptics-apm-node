@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao, startTest, endTest} = require('../1.test-common')
+
 const noop = helper.noop
 const conf = ao.probes['cassandra-driver']
 
@@ -32,6 +33,13 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
   let emitter
   let client
   let prevDebug
+
+  before(function () {
+    startTest(__filename)
+  })
+  after(function () {
+    endTest()
+  })
 
   //
   // Define some general message checks
@@ -64,6 +72,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
       emitter = helper.appoptics(done)
       ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
       ao.sampleMode = 'always'
+      ao.g.testing(__filename)
     })
     after(function (done) {
       emitter.close(done)
@@ -77,14 +86,14 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     //select release_version from system.local;
     before(function (done) {
       const testClient = new cassandra.Client({
-        contactPoints: hosts.map(function (v) { return v.host }),
+        contactPoints: hosts.map(function (v) {return v.host}),
         protocolOptions: {port: hosts[0].port}
       })
       testClient.execute("CREATE KEYSPACE IF NOT EXISTS test WITH replication = {'class':'SimpleStrategy','replication_factor':1};", done)
     })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
-        contactPoints: hosts.map(function (v) { return v.host }),
+        contactPoints: hosts.map(function (v) {return v.host}),
         protocolOptions: {port: hosts[0].port},
         keyspace: 'test'
       })

@@ -1,10 +1,12 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
-var pkg = require('koa-route/package')
+'use strict'
+
+const helper = require('../helper')
+const {ao} = require('../1.test-common')
+
+const pkg = require('koa-route/package')
 
 
-var canGenerator = false
+let canGenerator = false
 try {
   eval('(function* () {})()')
   canGenerator = true
@@ -14,8 +16,8 @@ try {
 function noop () {}
 
 describe('probes/koa-route ' + pkg.version, function () {
-  var emitter
-  var tests = canGenerator && require('./koa')
+  let emitter
+  const tests = canGenerator && require('./koa')
 
   //
   // Intercept appoptics messages for analysis
@@ -25,6 +27,7 @@ describe('probes/koa-route ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
@@ -38,17 +41,17 @@ describe('probes/koa-route ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
   // Tests
   //
-  if ( ! canGenerator) {
+  if (!canGenerator) {
     it.skip('should support koa-route controllers', noop)
     it.skip('should skip when disabled', noop)
   } else {

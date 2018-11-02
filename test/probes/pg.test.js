@@ -2,7 +2,8 @@
 
 const extend = require('util')._extend
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const noop = helper.noop
 const conf = ao.probes.pg
 
@@ -50,10 +51,13 @@ describe('probes.postgres ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     ao.probes.fs.enabled = false
+
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
     }
+
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace

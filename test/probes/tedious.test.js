@@ -11,7 +11,8 @@ if (!process.env.AO_TEST_SQLSERVER_EX) {
 }
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const conf = ao.probes.tedious
 
 const pkg = require('tedious/package.json')
@@ -49,6 +50,7 @@ describe('probes.tedious ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
