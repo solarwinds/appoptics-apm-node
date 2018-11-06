@@ -40,6 +40,8 @@ describe('probes.amqplib ' + pkg.version, function () {
     }
   }
 
+  const xpat = /2B[A-F0-9]{56}0(0|1)/
+
   //
   // Intercept appoptics messages for analysis
   //
@@ -97,7 +99,7 @@ describe('probes.amqplib ' + pkg.version, function () {
           checks.job(msg)
           msg.should.have.property('Queue', queue)
           msg.should.have.property('RoutingKey', queue)
-          msg.should.have.property('SourceTrace').and.be.an.instanceOf(String)
+          msg.should.have.property('SourceTrace').and.match(xpat)
         },
         function (msg) {
           checks.exit(msg)
@@ -149,7 +151,7 @@ describe('probes.amqplib ' + pkg.version, function () {
           checks.job(msg)
           msg.should.have.property('Queue', queue)
           msg.should.have.property('RoutingKey', queue)
-          msg.should.have.property('SourceTrace').and.be.an.instanceOf(String)
+          msg.should.have.property('SourceTrace').and.match(xpat)
         },
         function (msg) {
           checks.exit(msg)
