@@ -229,14 +229,14 @@ describe('custom', function () {
       // Outer entry
       function (msg) {
         msg.should.have.property('X-Trace', outer.events.entry.toString())
-        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Layer', 'link-test')
         msg.should.have.property('Label', 'entry')
       },
       // Inner entry #1 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[0].events.entry.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
-        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Layer', 'inner-0')
         msg.should.have.property('Label', 'entry')
       },
       // Inner info #1 (async)
@@ -259,7 +259,7 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('X-Trace', inner[1].events.entry.toString())
         msg.should.have.property('Edge', outer.events.internal[0].opId)
-        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'entry')
       },
       // Inner info #2 (async)
@@ -274,28 +274,38 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('X-Trace', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.internal[0].opId)
-        msg.should.have.property('Layer', 'outer')
+        msg.should.have.property('Layer', 'link-test')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #1 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[0].events.exit.toString())
         msg.should.have.property('Edge', inner[0].events.internal[0].opId)
-        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Layer', 'inner-0')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #2 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[1].events.exit.toString())
         msg.should.have.property('Edge', inner[1].events.internal[0].opId)
-        msg.should.have.property('Layer', 'inner')
+        msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'exit')
       },
     ]
 
+    function after (n, cb) {
+      return function () {
+        if (--n <= 0) {
+          cb()
+        }
+      }
+    }
+
     helper.test(emitter, function (done) {
+
       function makeInner (data, done) {
-        const span = Span.last.descend('inner')
+        const name = 'inner-' + data.Index
+        const span = Span.last.descend(name)
         inner.push(span)
         span.run(function (wrap) {
           const delayed = wrap(done)
@@ -306,7 +316,7 @@ describe('custom', function () {
         })
       }
 
-      outer = Span.last.descend('outer')
+      outer = Span.last.descend('link-test')
       outer.run(function () {
         const cb = after(2, done)
         makeInner({
@@ -792,8 +802,3 @@ describe('custom', function () {
 
 })
 
-function after (n, cb) {
-  return function () {
-    --n || cb()
-  }
-}
