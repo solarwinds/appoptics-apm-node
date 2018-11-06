@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.common.js')
+const {ao} = require('../1.test-common.js')
 
 const pkg = require('koa-router/package')
 
