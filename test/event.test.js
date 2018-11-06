@@ -1,6 +1,6 @@
 'use strict'
 const helper = require('./helper')
-const ao = require('..')
+const ao = helper.ao
 const should = require('should')    // eslint-disable-line no-unused-vars
 const addon = ao.addon
 const debug = ao.debug
@@ -83,7 +83,8 @@ describe('event', function () {
     })
   })
 
-  it('should not allow setting a NaN value', function () {
+  const ifShow = 'AO_TEST_SHOW_LOGS' in process.env ? it : it.skip
+  ifShow('should not allow setting a NaN value', function () {
     const event2 = new Event('test', 'exit', event.event)
 
     const logChecks = [
