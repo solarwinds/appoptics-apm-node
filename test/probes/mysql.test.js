@@ -75,7 +75,6 @@ describe('probes.mysql ' + pkg.version, function () {
   beforeEach(function () {
     if (this.currentTest.title === 'should trace a streaming query') {
       prevll = ao.logLevel
-      ao.logLevelAdd('test:message,span')
     }
   })
 
