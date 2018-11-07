@@ -12,7 +12,7 @@ describe('probes/bcrypt ' + pkg.version, function () {
   before(function () {
     startTest(__filename, {customFormatter: 'terse'})
     prevll = ao.logLevel
-    ao.logLevelAdd('span')
+    //ao.logLevelAdd('span')
   })
   after(function () {
     //ao.requestStore.dumpCtx()
