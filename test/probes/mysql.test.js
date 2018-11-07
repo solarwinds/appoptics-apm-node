@@ -35,6 +35,8 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 
 const soon = global.setImmediate || process.nextTick
 
+let dbExists = false
+
 describe('probes.mysql ' + pkg.version, function () {
   this.timeout(10000)
   const ctx = {
@@ -199,7 +201,37 @@ describe('probes.mysql ' + pkg.version, function () {
     ], done)
   })
 
+
+  it('should see if a database exists', function (done) {
+    const db = makeDb({
+      host: addr.host,
+      port: addr.port,
+      user: user,
+      password: pass
+    }, function (err) {
+      if (err) {
+        return done(err)
+      }
+      //db.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \'test\';', function (err, data) {
+      db.query('show databases like \'test\';', function (err, data) {
+        if (err) {
+          ao.loggers.debug(err)
+          return done(err)
+        }
+        if (data.length) {
+          dbExists = true
+        }
+        db.end(done)
+      })
+    })
+  })
+
   it('should create a database if it doesn\'t exist', function (done) {
+    if (dbExists) {
+      done()
+      return
+    }
+
     const db = makeDb({
       host: addr.host,
       port: addr.port,
