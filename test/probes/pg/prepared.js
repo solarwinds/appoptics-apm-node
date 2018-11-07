@@ -1,3 +1,5 @@
+'use strict'
+
 exports.run = function (ctx, done) {
   ctx.pg.connect(ctx.pg.address, function (err, client, free) {
     if (err) {

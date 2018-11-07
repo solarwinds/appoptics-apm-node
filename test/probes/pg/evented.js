@@ -1,4 +1,5 @@
 'use strict'
+
 exports.run = function (ctx, done) {
   ctx.pg.connect(ctx.pg.address, function (err, client, free) {
     if (err) {
@@ -7,7 +8,7 @@ exports.run = function (ctx, done) {
       return
     }
 
-    const q = client.query('select * from "test" where "foo" = \'bar\'')
+    const q = client.query(`select * from "${ctx.tName}" where "foo" = 'bar'`)
     q.on('end', function (arg) {
       done(null, arg)
     })

@@ -14,6 +14,8 @@ const addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
 // using a null password is valid.
 const password = 'AO_TEST_POSTGRES_PASSWORD' in env ? env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
 
+const tName = 'tbl' + (env.AO_IX ? env.AO_IX : '')
+
 const auth = {
   host: addr.host,
   port: addr.port,
@@ -102,7 +104,7 @@ describe('probes.postgres ' + pkg.version, function () {
   // Test against both native and js postgres drivers
   //
   Object.keys(drivers).forEach(function (type) {
-    const ctx = {ao}
+    const ctx = {ao, tName}
     let pg
     let db
 
@@ -142,7 +144,7 @@ describe('probes.postgres ' + pkg.version, function () {
       })
 
       before(function (done) {
-        pg.db.query('CREATE TABLE IF NOT EXISTS test (foo TEXT)', done)
+        pg.db.query(`CREATE TABLE IF NOT EXISTS ${tName} (foo TEXT)`, done)
       })
 
       after(function () {
@@ -213,7 +215,7 @@ describe('probes.postgres ' + pkg.version, function () {
         helper.test(emitter, helper.run(ctx, 'pg/sanitize'), [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Query', 'select * from "test" where "key" = \'?\'')
+            msg.should.have.property('Query', `select * from "${tName}" where "key" = '?'`)
           },
           function (msg) {
             checks.exit(msg)
@@ -225,7 +227,7 @@ describe('probes.postgres ' + pkg.version, function () {
         helper.test(emitter, helper.run(ctx, 'pg/evented'), [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Query', 'select * from "test" where "foo" = \'bar\'')
+            msg.should.have.property('Query', `select * from "${tName}" where "foo" = 'bar'`)
           },
           function (msg) {
             checks.exit(msg)
