@@ -1,3 +1,5 @@
+'use strict'
+
 exports.run = function (ctx, done) {
   ctx.redis.multi()
     .set('foo', 'bar')
