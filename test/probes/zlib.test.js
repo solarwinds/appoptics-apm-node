@@ -263,10 +263,7 @@ describe('probes.zlib', function () {
 
   it('should support report errors', function (done) {
     helper.test(emitter, function (done) {
-      let count = 0
       function after () {
-        count += 1
-        ao.clsCheck(`in after ${count}`)
         done()
       }
 
