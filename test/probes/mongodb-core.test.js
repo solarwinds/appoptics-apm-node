@@ -37,6 +37,12 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   }
 }
 
+// use AO_IX if present. It provides a unique ID to prevent collisions
+// during matrix testing. It's not needed when testing only one instance
+// at a time locally.
+
+const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
+
 describe('probes.mongodb-core UDP', function () {
   let emitter
 
@@ -152,7 +158,7 @@ function makeTests (db_host, host, isReplicaSet) {
       done()
       return
     }
-    db.command('test.$cmd', {
+    db.command(`${dbn}.$cmd`, {
       dropDatabase: 1
     }, done)
   })
@@ -170,7 +176,7 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.RemoteHost.should.match(/:\d*$/)
     },
     common: function (msg) {
-      msg.should.have.property('Database', 'test')
+      msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
       msg.should.have.property('Layer', 'mongodb-core')
@@ -209,7 +215,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {dropDatabase: 1}, done)
+          db.command(`${dbn}.$cmd`, {dropDatabase: 1}, done)
         }, steps, done)
       })
     },
@@ -220,7 +226,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.entry(msg)
           check.common(msg)
           msg.should.have.property('QueryOp', 'create_collection')
-          msg.should.have.property('New_Collection_Name', 'test')
+          msg.should.have.property('New_Collection_Name', `${dbn}`)
         }
 
         function exit (msg) {
@@ -237,7 +243,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {create: 'test'}, done)
+          db.command(`${dbn}.$cmd`, {create: 'test'}, done)
         }, steps, done)
       })
 
@@ -263,8 +269,8 @@ function makeTests (db_host, host, isReplicaSet) {
 
         helper.test(emitter, function (done) {
           db.command('admin.$cmd', {
-            renameCollection: 'test.test',
-            to: 'test.test2',
+            renameCollection: `${dbn}.test`,
+            to: `${dbn}.test2`,
             dropTarget: true
           }, done)
         }, steps, done)
@@ -291,7 +297,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {drop: 'test2'}, done)
+          db.command(`${dbn}.$cmd`, {drop: 'test2'}, done)
         }, steps, done)
       })
     },
@@ -318,7 +324,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.insert('test.data', [{a: 1}, {a: 2}], options, done)
+          db.insert(`${dbn}.data`, [{a: 1}, {a: 2}], options, done)
         }, steps, done)
       })
 
@@ -350,7 +356,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.update('test.data', [{
+          db.update(`${dbn}.data`, [{
             q: query,
             u: update
           }], options, done)
@@ -383,8 +389,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.data', {
-            findAndModify: 'test.data',
+          db.command(`${dbn}.data`, {
+            findAndModify: `${dbn}.data`,
             query: query,
             update: update,
             new: true
@@ -418,8 +424,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            distinct: 'test.data',
+          db.command(`${dbn}.$cmd`, {
+            distinct: `${dbn}.data`,
             key: key,
             q: query
           }, options, done)
@@ -450,8 +456,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            count: 'test.data',
+          db.command(`${dbn}.$cmd`, {
+            count: `${dbn}.data`,
             q: query
           }, options, done)
         }, steps, done)
@@ -481,7 +487,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.remove('test.data', [{
+          db.remove(`${dbn}.data`, [{
             q: query,
             limit: 1
           }], options, done)
@@ -524,8 +530,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            createIndexes: 'test.data',
+          db.command(`${dbn}.$cmd`, {
+            createIndexes: `${dbn}.data`,
             indexes: [ index ]
           }, options, done)
         }, steps, done)
@@ -552,8 +558,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            reIndex: 'test.data'
+          db.command(`${dbn}.$cmd`, {
+            reIndex: `${dbn}.data`
           }, options, done)
         }, steps, done)
       })
@@ -582,8 +588,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            deleteIndexes: 'test.data',
+          db.command(`${dbn}.$cmd`, {
+            deleteIndexes: `${dbn}.data`,
             index: index
           }, options, done)
         }, steps, done)
@@ -593,8 +599,8 @@ function makeTests (db_host, host, isReplicaSet) {
     cursors: function () {
       it('should find', function (done) {
         helper.test(emitter, function (done) {
-          const cursor = db.cursor('test.data', {
-            find: 'test.data',
+          const cursor = db.cursor(`${dbn}.data`, {
+            find: `${dbn}.data`,
             query: {a: 1}
           }, options)
           cursor.next(done)
@@ -612,7 +618,7 @@ function makeTests (db_host, host, isReplicaSet) {
     aggregations: function () {
       it('should group', function (done) {
         const group = {
-          ns: 'test.data',
+          ns: `${dbn}.data`,
           key: {},
           initial: {count: 0},
           $reduce: function (doc, out) {out.count++}.toString(),
@@ -644,7 +650,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
+          db.command(`${dbn}.$cmd`, {
             group: group
           }, done)
         }, steps, done)
@@ -681,8 +687,8 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('test.$cmd', {
-            mapreduce: 'test.data',
+          db.command(`${dbn}.$cmd`, {
+            mapreduce: `${dbn}.data`,
             map: map.toString(),
             reduce: reduce.toString(),
             out: 'inline'
