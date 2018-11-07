@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common.js')
+
 const noop = helper.noop
 const addon = ao.addon
 
@@ -53,6 +54,8 @@ describe('probes.mongodb-core UDP', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
+    global[Symbol.for('lingering-cls')] = true
   })
   after(function (done) {
     emitter.close(done)

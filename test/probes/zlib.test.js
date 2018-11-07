@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common.js')
 const noop = helper.noop
 
 const concat = require('concat-stream')
@@ -263,10 +263,7 @@ describe('probes.zlib', function () {
 
   it('should support report errors', function (done) {
     helper.test(emitter, function (done) {
-      let count = 0
       function after () {
-        count += 1
-        ao.clsCheck(`in after ${count}`)
         done()
       }
 

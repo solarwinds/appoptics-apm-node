@@ -1,12 +1,13 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var crypto = require('crypto')
-var fs = require('fs')
+const helper = require('../helper')
+const {ao} = require('../1.test-common')
+
+
+const crypto = require('crypto')
 
 describe('probes.crypto', function () {
-  var emitter
+  let emitter
 
   beforeEach(function (done) {
     setTimeout(function () {
@@ -17,7 +18,7 @@ describe('probes.crypto', function () {
   //
   // Define some general message checks
   //
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'crypto')
       msg.should.have.property('Label', 'entry')
@@ -35,6 +36,7 @@ describe('probes.crypto', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)
@@ -47,11 +49,11 @@ describe('probes.crypto', function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
@@ -100,7 +102,7 @@ describe('probes.crypto', function () {
     })
   }
 
-  var methods = [
+  const methods = [
     'publicEncrypt',
     'privateEncrypt',
     'publicDecrypt',
@@ -108,7 +110,7 @@ describe('probes.crypto', function () {
   ]
 
   methods.forEach(function (method) {
-    if ( ! crypto[method]) return
+    if (!crypto[method]) return
 
     it('should support ' + method, function (done) {
       helper.test(emitter, function (done) {
@@ -131,7 +133,7 @@ describe('probes.crypto', function () {
   if (crypto.createDiffieHellman) {
     it('should support computeSecret for DiffieHellman', function (done) {
       helper.test(emitter, function (done) {
-        var a = crypto.createDiffieHellman(512)
+        const a = crypto.createDiffieHellman(512)
         a.generateKeys()
         a.computeSecret(a.getPublicKey())
         done()
@@ -151,7 +153,7 @@ describe('probes.crypto', function () {
   if (crypto.createECDH) {
     it('should support computeSecret for ECDH', function (done) {
       helper.test(emitter, function (done) {
-        var a = crypto.createECDH('secp521r1')
+        const a = crypto.createECDH('secp521r1')
         a.generateKeys()
         a.computeSecret(a.getPublicKey())
         done()

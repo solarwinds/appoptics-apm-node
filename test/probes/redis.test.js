@@ -2,7 +2,8 @@
 
 const helper = require('../helper')
 const Address = helper.Address
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const noop = helper.noop
 const addon = ao.addon
 
@@ -27,10 +28,13 @@ describe('probes.redis ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
     }
+
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace

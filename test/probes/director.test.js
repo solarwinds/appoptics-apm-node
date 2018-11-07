@@ -1,17 +1,16 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
-var request = require('request')
-var http = require('http')
+const helper = require('../helper')
+const {ao} = require('../1.test-common')
 
-var director = require('director')
-var pkg = require('director/package.json')
+const request = require('request')
+const http = require('http')
+
+const director = require('director')
+const pkg = require('director/package.json')
 
 describe('probes.director ' + pkg.version, function () {
-  var emitter
+  let emitter
 
   //
   // Intercept appoptics messages for analysis
@@ -21,13 +20,14 @@ describe('probes.director ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
-  var check = {
+  const check = {
     'http-entry': function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
@@ -53,11 +53,11 @@ describe('probes.director ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
@@ -65,15 +65,15 @@ describe('probes.director ' + pkg.version, function () {
   //
   it('should include director span and profiles', function (done) {
     function hello (name) {
-      this.res.writeHead(200, { 'Content-Type': 'text/plain' })
+      this.res.writeHead(200, {'Content-Type': 'text/plain'})
       this.res.end('Hello, ' + name + '!')
     }
 
-    var router = new director.http.Router({
-      '/hello/:name': { get: hello }
+    const router = new director.http.Router({
+      '/hello/:name': {get: hello}
     })
 
-    var server = http.createServer(function (req, res) {
+    const server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
         if (err) {
           res.writeHead(404)
@@ -82,7 +82,7 @@ describe('probes.director ' + pkg.version, function () {
       })
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -113,7 +113,7 @@ describe('probes.director ' + pkg.version, function () {
     })
 
     server.listen(function () {
-      var port = server.address().port
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })
@@ -121,15 +121,15 @@ describe('probes.director ' + pkg.version, function () {
   it('should skip when disabled', function (done) {
     ao.probes.director.enabled = false
     function hello (name) {
-      this.res.writeHead(200, { 'Content-Type': 'text/plain' })
+      this.res.writeHead(200, {'Content-Type': 'text/plain'})
       this.res.end('Hello, ' + name + '!')
     }
 
-    var router = new director.http.Router({
-      '/hello/:name': { get: hello }
+    const router = new director.http.Router({
+      '/hello/:name': {get: hello}
     })
 
-    var server = http.createServer(function (req, res) {
+    const server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
         if (err) {
           res.writeHead(404)
@@ -138,7 +138,7 @@ describe('probes.director ' + pkg.version, function () {
       })
     })
 
-    var validations = [
+    const validations = [
       function (msg) {
         check['http-entry'](msg)
       },
@@ -154,7 +154,7 @@ describe('probes.director ' + pkg.version, function () {
     })
 
     server.listen(function () {
-      var port = server.address().port
+      const port = server.address().port
       request('http://localhost:' + port + '/hello/world')
     })
   })

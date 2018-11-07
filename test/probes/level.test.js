@@ -1,10 +1,10 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
 
-// NOTE: requiring leveldown is necessary as the one that works with
-// node 0.11 does not match the one in the devDependencies of levelup.
+// require level in order to test levelup/leveldown because level
+// assures that compatible versions of both are loaded.
 const level = require('level')
 const db = level('../test-db')
 
@@ -20,6 +20,7 @@ describe('probes.level ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)

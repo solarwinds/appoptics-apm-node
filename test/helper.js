@@ -1,6 +1,7 @@
 'use strict'
 
-const ao = exports.ao = require('..')
+const {ao} = require('./1.test-common')
+exports.ao = ao
 const realPort = ao.port
 ao.skipSample = true
 
@@ -16,11 +17,6 @@ const assert = require('assert')
 Error.stackTraceLimit = 25
 
 const log = ao.loggers
-
-log.addGroup({
-  groupName: 'test',
-  subNames: ['info', 'mock-port', 'message', 'span']
-})
 
 exports.clsCheck = function () {
   const c = ao.requestStore

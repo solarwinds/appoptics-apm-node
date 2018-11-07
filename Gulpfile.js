@@ -1,22 +1,10 @@
 'use strict'
 
 const fs = require('fs')
-const path = require('path')
 const gulp = require('gulp')
 const mocha = require('gulp-mocha')
-const istanbul = require('gulp-istanbul')
-const spawn = require('child_process').spawn
-const mkdirp = require('mkdirp')
+//const istanbul = require('gulp-istanbul')
 
-// Ensure existence of dist and probe directories
-/*
-gulp.task('dist', function (cb) {
-  mkdirp('dist', cb)
-})
-gulp.task('dist/probes', ['dist'], function (cb) {
-  mkdirp('dist/probes', cb)
-})
-// */
 
 // Describe basic tasks and their associated files
 const tasks = {
@@ -32,6 +20,10 @@ const tasks = {
   },
   composite: {
     test: 'test/composite/*.test.js'
+  },
+  // special test for debugging testing and experimentation.
+  linger: {
+    test: 'test/linger/*.test.js'
   }
 }
 
@@ -122,78 +114,6 @@ Object.keys(tasks).forEach(function (name) {
 //})
 
 
-// Create support-matrix tasks
-//require('./test/versions')
-//  .map(function (mod) {return mod.name})
-//  .forEach(makeMatrixTask)
-
-//gulp.task('support-matrix', function () {
-//  return spawn('alltheversions', ['--verbose'], {
-//    stdio: 'inherit'
-//  })
-//})
-
-// Create watcher task
-//gulp.task('watch', function () {
-//  Object.keys(tasks).forEach(function (name) {
-//    if (name === 'probes') return
-//    const task = tasks[name]
-//
-//    const shouldBench = task.bench && !process.env.SKIP_BENCH
-//
-//    // These spawns tasks in a child processes. This is useful for
-//    // preventing state persistence between runs in a watcher and
-//    // for preventing crashes or exits from ending the watcher.
-//    function coverage () {
-//      return spawn('gulp', ['coverage:' + name], {
-//        stdio: 'inherit'
-//      })
-//    }
-//
-//    function bench () {
-//      return spawn('gulp', ['bench:' + name], {
-//        stdio: 'inherit'
-//      })
-//    }
-//
-//    function sequence (steps) {
-//      function next () {
-//        const step = steps.shift()
-//        const v = step()
-//        if (steps.length) {
-//          v.on('close', next)
-//        }
-//        return v
-//      }
-//      return next()
-//    }
-//
-//
-//    gulp.watch([ task.lib.replace(/^dist/, 'lib') ], [
-//      'build:' + name
-//    ])
-//
-//    gulp.watch([ task.lib ], function () {
-//      const steps = []
-//      if (task.test) steps.push(coverage)
-//      if (shouldBench) steps.push(bench)
-//      return sequence(steps)
-//    })
-//
-//    if (task.test) {
-//      gulp.watch([ task.test ], coverage)
-//    }
-//
-//    if (shouldBench) {
-//      gulp.watch([ task.bench ], bench)
-//    }
-//  })
-//})
-
-// Set default task to run the watcher
-//gulp.task('default', [
-//  'watch'
-//])
 gulp.task('default', ['test'])
 //
 // Helpers
@@ -212,15 +132,16 @@ function tester () {
   })
 }
 
-function makeBuildTask (name, files) {
-  const p = files.replace(/^dist/, 'lib')
-  let d = files.slice(0, files.length - path.basename(files).length - 1)
-  if (d === 'dist/**') d = 'dist'
-  gulp.task(name, [/*'dist/probes'*/], function () {
-    return gulp.src(p)
-      //.pipe(gulp.dest(d))
-  })
-}
+
+//function makeBuildTask (name, files) {
+//  const p = files.replace(/^dist/, 'lib')
+//  let d = files.slice(0, files.length - path.basename(files).length - 1)
+//  if (d === 'dist/**') d = 'dist'
+//  gulp.task(name, [/*'dist/probes'*/], function () {
+//    return gulp.src(p)
+//      //.pipe(gulp.dest(d))
+//  })
+//}
 
 function makeTestTask (name, files) {
   gulp.task(name, [/*'build'*/], function () {
@@ -252,17 +173,5 @@ function makeTestTask (name, files) {
 //        thresholds: {global: 70}
 //      }))
 //      .once('end', process.exit)
-//  })
-//}
-
-//function makeMatrixTask (name) {
-//  gulp.task('support-matrix:' + name, function () {
-//    return spawn('testeachversion', [
-//      '--package', name,
-//      '--verbose',
-//      '--suppress', 'false'
-//    ], {
-//      stdio: 'inherit'
-//    })
 //  })
 //}

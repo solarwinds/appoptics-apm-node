@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const legacy = ao.probes.express.legacyTxname
 
 const semver = require('semver')
@@ -85,6 +86,7 @@ describe('probes.express ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     emitter = helper.appoptics(done)
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
