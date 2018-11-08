@@ -83,8 +83,7 @@ describe('event', function () {
     })
   })
 
-  const ifShow = 'AO_TEST_SHOW_LOGS' in process.env ? it : it.skip
-  ifShow('should not allow setting a NaN value', function () {
+  it('should not allow setting a NaN value', function () {
     const event2 = new Event('test', 'exit', event.event)
 
     const logChecks = [
