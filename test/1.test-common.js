@@ -43,9 +43,15 @@ const debugOptions = {
 }
 
 function applyOptions (options) {
+  // work when using standard cls-hooked.
+  if (!ao.requestStore.setDebugOptions) {
+    return
+  }
   // don't modify the caller's options object
   let opts = Object.assign({}, options)
 
+  // handle different name
+  // TODO BAM coalesce.
   if (opts.customFormatter) {
     opts.ctxFmtter = formatters[opts.customFormatter]
     delete opts.customFormatter

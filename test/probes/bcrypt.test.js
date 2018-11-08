@@ -5,12 +5,10 @@ const {ao, startTest, endTest} = require('../1.test-common.js')
 const bcrypt = require('bcrypt')
 const pkg = require('bcrypt/package')
 
-ao.requestStore.setDebugOptions({enable: false})
-
 describe('probes/bcrypt ' + pkg.version, function () {
   let prevll
   before(function () {
-    startTest(__filename, {customFormatter: 'terse'})
+    startTest(__filename, {enable: false, customFormatter: 'terse'})
     prevll = ao.logLevel
     //ao.logLevelAdd('span')
   })
