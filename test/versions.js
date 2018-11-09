@@ -10,11 +10,11 @@ const packages = module.exports = []
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', '>= 0.8.6')
-test('bluebird')
+test('bluebird', '>= 2.0.0')
 
 test('cassandra-driver', '>= 3.3.0')
 test('co-render')
-test('director', '>= 1.1.10')
+test('director', '>= 1.2.0')
 test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
@@ -22,7 +22,7 @@ test('generic-pool', '>= 2.4.0')
 test2('hapi', {
   ranges: [
     {
-      range: '>= 9.0.1 < 17.0.0',
+      range: '>= 13.0.0 < 17.0.0',
       dependencies: ['vision@4'],
     }, {
       range: '>= 17.0.0',
@@ -31,21 +31,22 @@ test2('hapi', {
   ]
 })
 
+test('koa', '>= 1.0.0')
 test('koa-resource-router')
 test('koa-route', '>= 1.0.1')
-test('koa-router', '>= 1.6.0')
-test('koa')
-test('level', '>= 1.0.0')
+test('koa-router', '>= 3.0.0')
+
+test('level', '>= 1.3.0')
 test('memcached', '>= 2.2.0')
 
 test('mongodb-core', '>= 2.0.0')
 
-test('mongoose', '>= 2.2.1 < 4.2 || >= 4.2.2')
+test('mongoose', '>= 3.8.26 < 4.2 || >= 4.2.2')
 
-test('mysql', '>= 2.0.0')
-test('oracledb', '>=2.0.0')
+test('mysql', '>= 2.1.0')
+test('oracledb', '>= 2.0.14')
 
-test('pg', '>= 2.8.4')
+test('pg', '>= 4.5.5')
 test('q', '>= 0.9.0')
 test('raw-body')
 test('redis', '>= 0.8.0')
