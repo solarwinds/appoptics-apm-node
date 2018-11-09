@@ -229,7 +229,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.entry(msg)
           check.common(msg)
           msg.should.have.property('QueryOp', 'create_collection')
-          msg.should.have.property('New_Collection_Name', `${dbn}`)
+          msg.should.have.property('New_Collection_Name', 'test-coll')
         }
 
         function exit (msg) {
@@ -246,7 +246,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {create: 'test'}, done)
+          db.command(`${dbn}.$cmd`, {create: 'test-coll'}, done)
         }, steps, done)
       })
 
@@ -272,7 +272,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         helper.test(emitter, function (done) {
           db.command('admin.$cmd', {
-            renameCollection: `${dbn}.test`,
+            renameCollection: `${dbn}.test-coll`,
             to: `${dbn}.test2`,
             dropTarget: true
           }, done)
