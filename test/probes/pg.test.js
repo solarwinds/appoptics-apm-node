@@ -36,7 +36,7 @@ if (canNative) {
   }
 }
 
-describe('probes.postgres ' + pkg.version, function () {
+describe('probes.pg ' + pkg.version, function () {
   let emitter
   let realSampleTrace
 
