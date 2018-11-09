@@ -65,12 +65,10 @@ describe('probes.mysql ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     ao.probes.fs.enabled = false
-    global[Symbol.for('lingering-cls')] = true
   })
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
-    delete global[Symbol.for('lingering-cls')]
   })
 
   let prevll
