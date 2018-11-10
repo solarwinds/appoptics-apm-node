@@ -80,7 +80,7 @@ elif [[ "$ARG" = "bash" ]]; then
     # this requires an entry in /etc/hosts because this
     # isn't run in a container it can't use docker names.
     # use the IP address from "docker inspect ao_oracle_1"
-    export AO_TEST_ORACLE=oracledb.com
+    export AO_TEST_ORACLE=localhost:1521
     export AO_TEST_ORACLE_USERNAME=system
     export AO_TEST_ORACLE_PASSWORD=oracle
     # defaults should be fine.
