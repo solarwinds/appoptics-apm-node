@@ -1,7 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 // eslint-disable-next-line no-unused-vars
 const should = require('should')
 
@@ -35,6 +36,7 @@ describe('probes/co-render ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true

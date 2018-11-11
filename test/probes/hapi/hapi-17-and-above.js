@@ -6,9 +6,9 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const ao = helper.ao
+const {ao} = require('../../1.test-common')
+
 const semver = require('semver')
-const should = require('should')
 
 const request = require('request')
 
@@ -53,6 +53,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true

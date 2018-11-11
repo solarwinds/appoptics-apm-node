@@ -1,28 +1,24 @@
-var helper = require('../helper')
-var ao = helper.ao
-var addon = ao.addon
+'use strict'
 
-var Promise = require('bluebird')
-var should = require('should')
-var pkg = require('amqplib/package')
+const helper = require('../helper')
+const {ao} = require('../1.test-common.js')
 
-var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
+const pkg = require('amqplib/package')
+
+const mq_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 describe('probes.amqplib ' + pkg.version, function () {
-  var emitter
-  var ctx = {}
-  var client
-  var db
+  let emitter
 
   //
   // Define some general message checks
   //
-  var checks = {
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'amqplib')
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Flavor', 'amqp')
-      msg.should.have.property('RemoteHost', db_host)
+      msg.should.have.property('RemoteHost', mq_host)
     },
     exit: function (msg) {
       msg.should.have.property('Layer', 'amqplib')
@@ -44,6 +40,8 @@ describe('probes.amqplib ' + pkg.version, function () {
     }
   }
 
+  const xpat = /2B[A-F0-9]{56}0(0|1)/
+
   //
   // Intercept appoptics messages for analysis
   //
@@ -51,6 +49,7 @@ describe('probes.amqplib ' + pkg.version, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
+    ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)
@@ -63,15 +62,15 @@ describe('probes.amqplib ' + pkg.version, function () {
       ao.instrument('fake', function () { })
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   function makeTests (context) {
-    var queue
+    let queue
 
     // Ensure queue exists
     beforeEach(function () {
@@ -100,7 +99,7 @@ describe('probes.amqplib ' + pkg.version, function () {
           checks.job(msg)
           msg.should.have.property('Queue', queue)
           msg.should.have.property('RoutingKey', queue)
-          msg.should.have.property('SourceTrace').and.be.an.instanceOf(String)
+          msg.should.have.property('SourceTrace').and.match(xpat)
         },
         function (msg) {
           checks.exit(msg)
@@ -128,7 +127,7 @@ describe('probes.amqplib ' + pkg.version, function () {
     })
 
     it('should include SourceTrace in consume external to traced publish', function (done) {
-      var innerDone
+      let innerDone
 
       context.channel.consume(queue, function (msg) {
         context.channel.ack(msg)
@@ -152,7 +151,7 @@ describe('probes.amqplib ' + pkg.version, function () {
           checks.job(msg)
           msg.should.have.property('Queue', queue)
           msg.should.have.property('RoutingKey', queue)
-          msg.should.have.property('SourceTrace').and.be.an.instanceOf(String)
+          msg.should.have.property('SourceTrace').and.match(xpat)
         },
         function (msg) {
           checks.exit(msg)
@@ -163,12 +162,12 @@ describe('probes.amqplib ' + pkg.version, function () {
   }
 
   describe('promises', function () {
-    var amqp = require('amqplib')
-    var context = {}
-    var client
+    const amqp = require('amqplib')
+    const context = {}
+    let client
 
     before(function () {
-      return amqp.connect('amqp://' + db_host)
+      return amqp.connect('amqp://' + mq_host)
         .then(function (conn) {
           client = conn
           return client.createChannel()
@@ -192,12 +191,12 @@ describe('probes.amqplib ' + pkg.version, function () {
   })
 
   describe('callbacks', function () {
-    var amqp = require('amqplib/callback_api')
-    var context = {}
-    var client
+    const amqp = require('amqplib/callback_api')
+    const context = {}
+    let client
 
     before(function (done) {
-      amqp.connect('amqp://' + db_host, function (err, conn) {
+      amqp.connect('amqp://' + mq_host, function (err, conn) {
         if (err) return done(err)
         client = conn
         client.createChannel(function (err, ch) {

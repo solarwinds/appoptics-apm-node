@@ -1,8 +1,13 @@
-var helper = require('../helper')
-var ao = helper.ao
+'use strict'
 
-var pkg = require('q/package')
+const {ao} = require('../1.test-common')
+
+const pkg = require('q/package')
 
 describe('probes/q ' + pkg.version, function () {
+
+  before(function () {
+    ao.g.testing(__filename)
+  })
   require('./promises')(require('q'))
 })

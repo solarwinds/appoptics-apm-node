@@ -3,7 +3,8 @@
 const helper = require('../helper')
 const semver = require('semver')
 const should = require('should')
-const ao = helper.ao
+const {ao} = require('../1.test-common')
+
 const gpDebug = ao.debug('appoptics:probe:generic-pool')
 
 const gp = require('generic-pool')
@@ -61,6 +62,11 @@ if (!v3) {
 
 
 describe('probes/generic-pool ' + pkg.version, function () {
+
+  before(function () {
+    ao.g.testing(__filename)
+  })
+
   ifv2('should trace through generic-pool acquire for versions < 3', function (done) {
     //
     // v2 uses callbacks

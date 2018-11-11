@@ -5,7 +5,8 @@ const util = require('util')
 
 // require should so that individual tests can be debugged using
 // "mocha --inspect-brk test/test-file.js". if should is not included
-// here then it's not included by the gulpfile so is undefined.
+// here then it's not included by the gulpfile (because it's not run)
+// so it will be undefined.
 const should = require('should') // eslint-disable-line
 
 const env = process.env
@@ -42,9 +43,15 @@ const debugOptions = {
 }
 
 function applyOptions (options) {
+  // work when using standard cls-hooked.
+  if (!ao.requestStore.setDebugOptions) {
+    return
+  }
   // don't modify the caller's options object
   let opts = Object.assign({}, options)
 
+  // handle different name
+  // TODO BAM coalesce.
   if (opts.customFormatter) {
     opts.ctxFmtter = formatters[opts.customFormatter]
     delete opts.customFormatter
@@ -99,6 +106,11 @@ function clsFormatAbbrev (active) {
   })
   return util.inspect(abbrev, utilOptions)
 }
+
+// make function available without explicit imports
+ao.g.testing = startTest     // replace no-op
+ao.g.startTest = startTest
+ao.g.endTest = endTest
 
 exports.ao = ao
 exports.startTest = startTest

@@ -1,6 +1,7 @@
 'use strict'
 
-const ao = exports.ao = require('..')
+const {ao} = require('./1.test-common')
+exports.ao = ao
 const realPort = ao.port
 ao.skipSample = true
 
@@ -16,11 +17,6 @@ const assert = require('assert')
 Error.stackTraceLimit = 25
 
 const log = ao.loggers
-
-log.addGroup({
-  groupName: 'test',
-  subNames: ['info', 'mock-port', 'message', 'span']
-})
 
 exports.clsCheck = function () {
   const c = ao.requestStore
@@ -53,8 +49,12 @@ const addon = ao.addon
 const oboeVersion = addon ? addon.Config.getVersionString() : '<not loaded>'
 log.debug('Using oboe version %s', oboeVersion)
 
-// if not specifically turning on error and warning debugging, turn it off
-if (!('AO_TEST_SHOW_LOGS' in process.env)) {
+const env = process.env
+
+// turn off logging if requested. pretty much any falsey string except '' does
+// it. don't accept '' because that used to turn on showing logs, but the
+// default has inverted.
+if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
   log.debug('AO_TEST_SHOW_LOGS not set, turning off logging')
   let logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {

@@ -1,21 +1,30 @@
-var helper = require('../helper')
-var Address = helper.Address
-var ao = helper.ao
-var noop = helper.noop
-var addon = ao.addon
+'use strict'
 
-var should = require('should')
-var semver = require('semver')
+// note to self
+// there was leftover context when running via gulp test (i.e., previous tests were run) so instrument
+// would find a span and proceed to runInstrument. that causes the probe to try to work with the CREATE
+// query that has no DB entry.
+//
+// when run via gulp test:probe:mysql there was no context so instrument would not find a span, and would
+// just call the runner function without instrumenting it. in this case the probe causes a CLS NOT ACTIVE
+// log entry when it attempts to bind the callback.
+//
+// SEE WHAT THE PRE-EXISTING CONTEXT IS!!!!
 
-var request = require('request')
-var http = require('http')
+const helper = require('../helper')
+const Address = helper.Address
+const {ao} = require('../1.test-common.js')
+const noop = helper.noop
 
-var pkg = require('mysql/package.json')
-var mysql = require('mysql')
+const should = require('should') // eslint-disable-line no-unused-vars
+const semver = require('semver')
 
-var addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
-var user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
-var pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || 'admin'
+const pkg = require('mysql/package.json')
+const mysql = require('mysql')
+
+let addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
+let user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
+let pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || 'admin'
 
 // hardcode travis settings.
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
@@ -24,21 +33,28 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   pass = ''
 }
 
-var soon = global.setImmediate || process.nextTick
+const soon = global.setImmediate || process.nextTick
+
+let dbExists = false
 
 describe('probes.mysql ' + pkg.version, function () {
   this.timeout(10000)
-  var emitter
-  var ctx = {}
-  var cluster
-  var pool
-  var db
+  const ctx = {
+    // set AO_IX in matrix containers to avoid multi-access conflicts. Use it
+    // to construct a unique table name for each container executing in parallel.
+    t: 'test' + (process.env.AO_IX || '')
+  }
+  let emitter
+  let cluster
+  let pool
+  let db
 
   //
   beforeEach(function (done) {
     setTimeout(function () {
       done()
     }, 100)
+    ao.g.testing(__filename)
   })
 
   //
@@ -55,7 +71,20 @@ describe('probes.mysql ' + pkg.version, function () {
     emitter.close(done)
   })
 
-  var checks = {
+  let prevll
+  beforeEach(function () {
+    if (this.currentTest.title === 'should trace a streaming query') {
+      prevll = ao.logLevel
+    }
+  })
+
+  afterEach(function () {
+    if (this.currentTest.title === 'should trace a streaming query') {
+      ao.logLevel = prevll
+    }
+  })
+
+  const checks = {
     entry: function (msg) {
       msg.should.have.property('Layer', 'mysql')
       msg.should.have.property('Label', 'entry')
@@ -74,7 +103,7 @@ describe('probes.mysql ' + pkg.version, function () {
   }
 
   function makeDb (conf, done) {
-    var db
+    let db
     if (semver.satisfies(pkg.version, '>= 2.0.0')) {
       db = mysql.createConnection(conf)
       db.connect(done)
@@ -89,9 +118,14 @@ describe('probes.mysql ' + pkg.version, function () {
     return db
   }
 
+  /*
+  function xbefore () {
+
+  }
+
   // Ensure database/table existence
-  before(function (done) {
-    var db = makeDb({
+  xbefore(function (done) {
+    const db = makeDb({
       host: addr.host,
       port: addr.port,
       user: user,
@@ -106,7 +140,7 @@ describe('probes.mysql ' + pkg.version, function () {
   })
 
   // Make connection
-  before(function (done) {
+  xbefore(function (done) {
     db = ctx.mysql = makeDb({
       host: addr.host,
       port: addr.port,
@@ -114,13 +148,15 @@ describe('probes.mysql ' + pkg.version, function () {
       user: user,
       password: pass
     }, function (err) {
-      if (err) return done(err)
+      if (err) {
+        return done(err)
+      }
       db.query('CREATE TABLE IF NOT EXISTS test (foo varchar(255));', done)
     })
 
     if (semver.satisfies(pkg.version, '>= 2.0.0')) {
       // Set pool and pool cluster
-      var poolConfig = {
+      const poolConfig = {
         connectionLimit: 10,
         host: addr.host,
         port: addr.port,
@@ -134,10 +170,11 @@ describe('probes.mysql ' + pkg.version, function () {
       cluster.add(poolConfig)
     }
   })
+  // */
 
   if (semver.satisfies(pkg.version, '>= 2.6.0')) {
     after(function (done) {
-      var fn = helper.after(3, done)
+      const fn = helper.after(3, done)
       cluster.end(fn)
       pool.end(fn)
       db.end(fn)
@@ -155,12 +192,87 @@ describe('probes.mysql ' + pkg.version, function () {
       ao.instrument('fake', noop)
       done()
     }, [
-        function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-            msg.should.have.property('Layer', 'fake')
-        }
-      ], done)
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
+
+
+  it('should see if a database exists', function (done) {
+    const db = makeDb({
+      host: addr.host,
+      port: addr.port,
+      user: user,
+      password: pass
+    }, function (err) {
+      if (err) {
+        return done(err)
+      }
+      //db.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \'test\';', function (err, data) {
+      db.query('show databases like \'test\';', function (err, data) {
+        if (err) {
+          ao.loggers.debug(err)
+          return done(err)
+        }
+        if (data.length) {
+          dbExists = true
+        }
+        db.end(done)
+      })
+    })
+  })
+
+  it('should create a database if it doesn\'t exist', function (done) {
+    if (dbExists) {
+      done()
+      return
+    }
+
+    const db = makeDb({
+      host: addr.host,
+      port: addr.port,
+      user: user,
+      password: pass
+    }, function (err) {
+      if (err) return done(err)
+      db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
+        if (err) return done(err)
+        db.end(done)
+      })
+    })
+  })
+
+  it('should create a table if it doesn\'t exist', function (done) {
+    db = ctx.mysql = makeDb({
+      host: addr.host,
+      port: addr.port,
+      database: 'test',
+      user: user,
+      password: pass
+    }, function (err) {
+      if (err) return done(err)
+      db.query(`CREATE TABLE IF NOT EXISTS ${ctx.t} (foo varchar(255));`, done)
+    })
+  })
+
+  if (semver.gte(pkg.version, '2.0.0')) {
+    it('should create a pool and pool cluster', function () {
+      const poolConfig = {
+        connectionLimit: 10,
+        host: addr.host,
+        port: addr.port,
+        database: 'test',
+        user: user,
+        password: pass
+      }
+
+      pool = db.pool = mysql.createPool(poolConfig)
+      cluster = db.cluster = mysql.createPoolCluster()
+      cluster.add(poolConfig)
+    })
+  }
 
   it('should sanitize SQL by default', function () {
     ao.probes.mysql.should.have.property('sanitizeSql', true)
@@ -222,7 +334,7 @@ describe('probes.mysql ' + pkg.version, function () {
     helper.test(emitter, helper.run(ctx, 'mysql/object'), [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', 'INSERT INTO test SET ?')
+        msg.should.have.property('Query', `INSERT INTO ${ctx.t} SET ?`)
         msg.should.have.property('QueryArgs', '{"foo":"bar"}')
       },
       function (msg) {
@@ -271,7 +383,7 @@ describe('probes.mysql ' + pkg.version, function () {
     helper.test(emitter, helper.run(ctx, 'mysql/sanitize'), [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', 'SELECT * FROM test WHERE "foo" = \'?\'')
+        msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = '?'`)
       },
       function (msg) {
         checks.exit(msg)
@@ -281,11 +393,11 @@ describe('probes.mysql ' + pkg.version, function () {
 
   function test_long_query (done) {
     helper.test(emitter, function (done) {
-      var query = 'SELECT '
-      for (var i = 0; i < 3000; i++) {
+      let query = 'SELECT '
+      for (let i = 0; i < 3000; i++) {
         query += '1'
       }
-    	ctx.mysql.query(query, done)
+      ctx.mysql.query(query, done)
     }, [
       function (msg) {
         checks.entry(msg)

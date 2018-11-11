@@ -1,6 +1,6 @@
 'use strict'
 const helper = require('./helper')
-const ao = require('..')
+const ao = helper.ao
 const should = require('should')    // eslint-disable-line no-unused-vars
 const addon = ao.addon
 const debug = ao.debug

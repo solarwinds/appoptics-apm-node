@@ -1,49 +1,50 @@
 'use strict'
-var helper = require('../helper')
-var should = require('should')
-var ao = helper.ao
-var Span = ao.Span
 
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+const should = require('should')
+const {ao} = require('../1.test-common.js')
 
-var pkg = require('mongoose/package')
+const Span = ao.Span
+
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+const pkg = require('mongoose/package')
 
 // use built-in Promise, replaceing mongoose's own implementation (deprecated)
 mongoose.Promise = Promise
 
-var host = process.env.AO_TEST_MONGODB_2_4 || 'localhost:27017'
+let host = process.env.AO_TEST_MONGODB_2_4 || 'localhost:27017'
 
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   host = process.env.AO_TEST_MONGODB_3 || 'localhost:27017'
 }
 
 describe('probes/mongoose ' + pkg.version, function () {
-  var Cat = mongoose.model('test', new Schema({
+  const Cat = mongoose.model('test', new Schema({
     name: String
   }))
-  var mOpts = {useMongoClient: true}
+  const mOpts = {useMongoClient: true}
 
   before(function (done) {
+    ao.g.testing(__filename)
     mongoose.connect('mongodb://' + host + '/test', mOpts, done)
   })
-  after(function() {
+  after(function () {
     mongoose.disconnect()
   })
 
-  var savedCat
+  let savedCat
 
   it('should trace through mongoose adding an object', function (done) {
-    var span = new Span('outer', {})
+    const span = new Span('outer', {})
     span.run(function () {
-      var data = {
+      const data = {
         name: 'Sargeant Cuddlesby'
       }
 
-      var password = 'this is a test'
       ao.requestStore.set('name', data.name)
 
-      var kitty = new Cat(data)
+      const kitty = new Cat(data)
       kitty.save(function (err, item, rows) {
         let name = ao.requestStore.get('name')
         should.equal(name, data.name)
@@ -58,7 +59,7 @@ describe('probes/mongoose ' + pkg.version, function () {
   })
 
   it('should trace through mongoose deleting an object', function (done) {
-    var span = new Span('outer', {})
+    const span = new Span('outer', {})
     span.run(function () {
 
       ao.requestStore.set('cat', 'Mimi')
