@@ -23,8 +23,7 @@ The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-a
 
 ### Setup
 
-The primary environment for testing is Docker. Unit tests can be run without docker but probe testing requires databases and servers to test against. `docker-compose.yml` defines a complete environment for testing. It depends on `collectors` that are defined in a directory parallel to to this directory. For example, if this (the
-appoptics-apm-node directory) is `/solarwinds/ao` then the oboe-test repository must be cloned into `/solarwinds/oboe-test/` because `docker-compose.yml` references those docker files via `../oboe-test/`
+The primary environment for testing is Docker. Unit tests can be run without docker but probe testing requires databases and servers to test against. `docker-compose.yml` defines a complete environment for testing.
 
 `env.sh` is desiged to be sourced,
 

@@ -1,57 +1,60 @@
-# supporting backends for node-appoptics testing
 #
-# requires copying ../oboe-test/collectors/<collector-name>/<name>.crt
-# to test/certs/<collector-name>.crt
+# supporting backends for node-appoptics testing
 #
 version: '2.1'
 
 services:
-  main:
-    container_name: main
-    image: main
-    build:
-      context: test/docker
-      dockerfile: main.yml
-      args:
-        # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
-        # bindings installation will attempt to download the HEAD of the
-        # master branch from the public repository.
-        #
-        # expect librato/node-appoptics-bindings#new-liboboe while private
-        - AO_TEST_PACKAGE
-        # expect a git auth token (or extend Dockerfile with user and password)
-        - AO_TEST_GITAUTH
-        # - AO_TEST_GITUSER
-        # - AO_TEST_GITPASS
-        # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/scribe-collector.crt}
-        - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/java-collector.crt}
-        # - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
-        - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
-        # the next two set liboboe to send to the mock collector
-        # for testing. these should be set to run the test suite.
-        - AO_TEST_REPORTER=udp
-        - AO_TEST_REPORTER_UDP=localhost:7832
-    volumes:
-      # map the directory this file is in to the /appoptics/ directory
-      - "${PWD}:/appoptics/"
+#  main:
+#    container_name: main
+#    image: main
+#    build:
+#      context: test/docker
+#      dockerfile: main.yml
+#      args:
+#        # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
+#        # bindings installation will attempt to download the HEAD of the
+#        # master branch from the public repository.
+#        #
+#        # expect librato/node-appoptics-bindings#new-liboboe while private
+#        - AO_TEST_PACKAGE
+#        # expect a git auth token (or extend Dockerfile with user and password)
+#        - AO_TEST_GITAUTH
+#        # - AO_TEST_GITUSER
+#        # - AO_TEST_GITPASS
+#        # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/scribe-collector.crt}
+#        - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/java-collector.crt}
+#        # - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
+#        - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
+#        # the next two set liboboe to send to the mock collector
+#        # for testing. these should be set to run the test suite.
+#        - AO_TEST_REPORTER=udp
+#        - AO_TEST_REPORTER_UDP=localhost:7832
 #    volumes:
-#      - type: volume
-    logging:
-      options:
-        max-file: "1"
-        max-size: 50m
-    #
-    # wait for the dependencies. (this container doesn't really do anything unless
-    # running the tests in this context. in that case it is easy enough to invoke
-    # env.sh manually as that is the way the tests are run.)
-    #
-    depends_on:
-      - wait
-    links:
-      - wait
+#      # map the directory this file is in to the /appoptics/ directory
+#      - "${PWD}:/appoptics/"
+##    volumes:
+##      - type: volume
+#    logging:
+#      options:
+#        max-file: "1"
+#        max-size: 50m
+#    #
+#    # wait for the dependencies. (this container doesn't really do anything unless
+#    # running the tests in this context. in that case it is easy enough to invoke
+#    # env.sh manually as that is the way the tests are run.)
+#    #
+#    depends_on:
+#      - wait
+#    links:
+#      - wait
+
   #
   # extend the collector services into this composition.
   # NOTE: extend goes away in version 3.0 of docker-compose.yml
+  #
+  # undocumented low-level internal testing tools
+  # requires copying ../oboe-test/collectors/<collector-name>/<name>.crt
+  # to test/certs/<collector-name>.crt
   #
   #scribe-collector:
   #  extends:
@@ -76,8 +79,8 @@ services:
 
 
   #
-  # Containers required for testing various probes. Each
-  # must have a dockerfile in test/docker/ that specifies
+  # Containers required for testing supported probes. Each
+  # depends on a dockerfile in test/docker/ that specifies
   # the correct image.
   #
   cassandra:
@@ -234,31 +237,31 @@ services:
     ports:
       - "6379:6379"
 
-  wait:
-    container_name: wait
-    image: waisbrot/wait
-    depends_on:
-      - cassandra
-      - memcached
-      - mongo_2_4
-      - mongo_2_6
-      - mongo_3_0
-      - mssql
-      - mysql
-      - postgres
-      - rabbitmq
-      - redis
-    links:
-      - cassandra
-      - memcached
-      - mongo_2_4
-      - mongo_2_6
-      - mongo_3_0
-      - mssql
-      - mysql
-      - postgres
-      - rabbitmq
-      - redis
-    environment:
-      - TARGETS=cassandra:9042;memcached:11211;mongo:27017;mssql:1433;mysql:3306;postgres:5432;rabbitmq:5672;redis:6379
-
+#  wait:
+#    container_name: wait
+#    image: waisbrot/wait
+#    depends_on:
+#      - cassandra
+#      - memcached
+#      - mongo_2_4
+#      - mongo_2_6
+#      - mongo_3_0
+#      - mssql
+#      - mysql
+#      - postgres
+#      - rabbitmq
+#      - redis
+#    links:
+#      - cassandra
+#      - memcached
+#      - mongo_2_4
+#      - mongo_2_6
+#      - mongo_3_0
+#      - mssql
+#      - mysql
+#      - postgres
+#      - rabbitmq
+#      - redis
+#    environment:
+#      - TARGETS=cassandra:9042;memcached:11211;mongo:27017;mssql:1433;mysql:3306;postgres:5432;rabbitmq:5672;redis:6379
+#
