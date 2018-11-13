@@ -129,6 +129,9 @@ function makeTests (db_host, host, isReplicaSet) {
       }
     })
 
+    ao.logLevel = 'error,warn,debug,patching'
+    ao.loggers.debug(`using AO_IX=${process.env.AO_IX}`)
+
     let server
     if (hosts.length > 1) {
       const options = {
@@ -217,11 +220,18 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {dropDatabase: 1}, done)
+          db.command(
+            `${dbn}.$cmd`,
+            {dropDatabase: 1},
+            done
+          )
         }, steps, done)
       })
     },
 
+    //
+    // collections tests
+    //
     collections: function () {
       it('should create', function (done) {
         function entry (msg) {
@@ -235,7 +245,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
+        const steps = [entry]
 
         if (isReplicaSet) {
           steps.push(entry)
@@ -245,7 +255,16 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {create: `coll-${dbn}`}, done)
+          db.command(`${dbn}.$cmd`, {create: `coll-${dbn}`},
+            function (e, data) {
+              if (e) {
+                ao.loggers.debug(`error creating "coll-${dbn}`, e)
+                done(e)
+                return
+              }
+              done()
+            }
+          )
         }, steps, done)
       })
 
@@ -270,11 +289,22 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command('admin.$cmd', {
-            renameCollection: `${dbn}.coll-${dbn}`,
-            to: `${dbn}.coll2-${dbn}`,
-            dropTarget: true
-          }, done)
+          db.command(
+            'admin.$cmd',
+            {
+              renameCollection: `${dbn}.coll-${dbn}`,
+              to: `${dbn}.coll2-${dbn}`,
+              dropTarget: true
+            },
+            function (e, data) {
+              if (e) {
+                ao.loggers.debug(`error renaming "coll-${dbn} to ${dbn}.coll2-${dbn}`, e)
+                done(e)
+                return
+              }
+              done()
+            }
+          )
         }, steps, done)
       })
 
@@ -299,11 +329,23 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {drop: `coll2-${dbn}`}, done)
+          db.command(`${dbn}.$cmd`, {drop: `coll2-${dbn}`},
+            function (e, data) {
+              if (e) {
+                ao.loggers.debug(`error dropping "coll2-${dbn}`, e)
+                done(e)
+                return
+              }
+              done()
+            }
+          )
         }, steps, done)
       })
     },
 
+    //
+    // query tests
+    //
     queries: function () {
       it('should insert', function (done) {
         function entry (msg) {
