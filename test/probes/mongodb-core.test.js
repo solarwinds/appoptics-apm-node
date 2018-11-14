@@ -130,7 +130,6 @@ function makeTests (db_host, host, isReplicaSet) {
     })
 
     ao.logLevel = 'error,warn,debug,patching'
-    ao.loggers.debug(`using AO_IX=${process.env.AO_IX}`)
 
     let server
     if (hosts.length > 1) {
