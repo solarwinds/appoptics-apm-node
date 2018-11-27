@@ -449,7 +449,7 @@ describe('probes.https', function () {
         res.end('done')
         server.close()
       })
-
+      global.xyzzy = true
       server.listen(function () {
         const d = ctx.data = {port: server.address().port}
         const mod = helper.run(ctx, 'https/client-object')
@@ -538,6 +538,166 @@ describe('probes.https', function () {
         ], done)
       })
     })
+
+    it('should handle client.request with string URL', function (done) {
+      const server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        const url = 'https://localhost:' + port + '/?foo=bar'
+
+        helper.test(emitter, function (done) {
+          const req = https.request(url, function (res) {
+            res.on('end', done)
+            res.resume()
+          })
+          req.end()
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', url)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ],
+        done)
+      })
+    })
+
+    it('should handle client.request with URL object', function (done) {
+      const url = require('url')
+      const server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        const urlObject = new url.URL('https://localhost:' + port + '/?foo=bar')
+
+        helper.test(emitter, function (done) {
+          const req = https.request(urlObject, function (res) {
+            res.on('end', done)
+            res.resume()
+          })
+          req.end()
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', urlObject.toString())
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ],
+        done)
+      })
+    })
+
+    it('should handle client.request with URL object and options', function (done) {
+      const url = require('url')
+      const server = https.createServer(options, function (req, res) {
+        req.headers.should.have.property('xyzzy', 'plover egg')
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        const urlObject = new url.URL('https://localhost:' + port + '/?foo=bar')
+        const options = {headers: {XYZZY: 'plover egg'}}
+
+        helper.test(emitter, function (done) {
+          const req = https.request(urlObject, options, function (res) {
+            res.on('end', done)
+            res.resume()
+          })
+          req.end()
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', urlObject.toString())
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ],
+        done)
+      })
+    })
+
+    it('should handle client.request with only options', function (done) {
+      const server = https.createServer(options, function (req, res) {
+        res.end('done')
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        const options = {
+          protocol: 'https:',
+          host: 'localhost',
+          port: port,
+          method: 'get',
+          path: '/?foo=bar'
+        }
+        const urlString = 'https://localhost/?foo=bar'
+
+        helper.test(emitter, function (done) {
+          const req = https.request(options, function (res) {
+            res.on('end', done)
+            res.resume()
+          })
+          req.end()
+        }, [
+          function (msg) {
+            check.client.entry(msg)
+            msg.should.have.property('RemoteURL', urlString)
+            msg.should.have.property('IsService', 'yes')
+          },
+          function (msg) {
+            check.server.entry(msg)
+          },
+          function (msg) {
+            check.server.exit(msg)
+          },
+          function (msg) {
+            check.client.exit(msg)
+            msg.should.have.property('HTTPStatus', 200)
+          }
+        ],
+        done)
+      })
+    })
+
 
     it('should report request errors', function (done) {
       const server = https.createServer(options, function (req, res) {
