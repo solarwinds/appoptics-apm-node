@@ -161,7 +161,7 @@ describe('probes.http', function () {
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        {level: 'warn', message: 'invalid X-Trace header received: %s', values: [xtrace]},
+        {level: 'warn', message: `invalid X-Trace header received ${xtrace}`},
       ]
       helper.checkLogMessages(ao.debug, logChecks)
 
