@@ -268,7 +268,10 @@ exports.httpsTest = function (emitter, options, test, validations, done) {
 
 exports.run = function (context, path) {
   context.data = context.data || {}
+  const previous = ao.probes.fs.enabled
+  ao.probes.fs.enabled = false
   const mod = require('./probes/' + path)
+  ao.probes.fs.enabled = previous
 
   if (mod.data) {
     let data = mod.data
