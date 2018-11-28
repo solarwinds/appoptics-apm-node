@@ -1,6 +1,16 @@
 'use strict'
 
+const {VersionSpec} = require('testeachversion')
+
 const packages = module.exports = []
+
+// node builtin modules
+test('crypto')
+test('fs')
+test('http')
+test('https')
+test('zlib')
+
 
 //
 // using a minimum version can avoid testing versions
@@ -19,7 +29,7 @@ test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
 
-test2('hapi', {
+test('hapi', {
   ranges: [
     {
       range: '>= 13.0.0 < 17.0.0',
@@ -53,7 +63,7 @@ test('redis', '>= 0.8.0')
 test('restify', '>= 2.0.0 < 2.0.2 || >= 2.0.3')
 test('tedious', '>= 0.1.5')
 
-test2('vision', {
+test('vision', {
   ranges: [
     {
       range: '>= 4.0.0 < 5.0.0',
@@ -67,49 +77,16 @@ test2('vision', {
 
 
 //
-// Helpers
+// Helper
 //
 
-function test (name, range, task) {
-  packages.push({
-    version: 1,
-    name: name,
-    task: task || './node_modules/gulp/bin/gulp.js test:probe:' + name,
-    range: range || '*',
-    timeout: 1000 * 60
-  })
-}
-
-function test2 (name, options = {}) {
-  const task = options.task || './node_modules/gulp/bin/gulp.js test:probe:' + name
-  const timeout = options.timeout || 1000 * 60
-
-  let ranges
-  if (typeof options === 'string') {
-    ranges = [{range: options}]
-  } else if (!options.ranges) {
-    ranges = [{range: '*'}]
-  } else if (typeof options.ranges === 'string') {
-    ranges = [{range: options.ranges}]
-  } else if (Array.isArray(options.ranges)) {
-    ranges = options.ranges
-  } else {
-    // eslint-disable-next-line max-len
-    throw new Error(`Unexpected range ${options.range} for package ${name} in versions file ${__filename}`)
+function test (name, ranges) {
+  const options = {}
+  if (typeof ranges === 'string') {
+    options.ranges = ranges
+  } else if (typeof ranges === 'object') {
+    options.ranges = ranges.ranges
   }
-
-  // consider checking whether ranges overlap or are out of order.
-  /*
-  for (let i = 0; i < ranges.length - 1; i++) {
-
-  }
-  // */
-
-  packages.push({
-    version: 2,
-    name,
-    task,
-    ranges,
-    timeout,
-  })
+  options.task = './node_modules/gulp/bin/gulp.js test:probe:' + name
+  packages.push(new VersionSpec(name, options))
 }
