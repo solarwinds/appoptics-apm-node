@@ -83,6 +83,7 @@ describe('probes.https', function () {
 
   describe('https-server', function () {
     const conf = ao.probes.https
+    conf.collectBacktraces = false
 
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
@@ -211,12 +212,15 @@ describe('probes.https', function () {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
         const port = server.address().port
         request('https://localhost:' + port)
+          .on('response', function (res) {
+            done()
+          })
       })
     })
 
@@ -239,12 +243,16 @@ describe('probes.https', function () {
         }
       ], function (err) {
         conf.includeRemoteUrlParams = true
-        server.close(done.bind(null, err))
+        //server.close(done.bind(null, err))
+        server.close()
       })
 
       server.listen(function () {
         const port = server.address().port
         request('https://localhost:' + port + '/foo?bar=baz')
+          .on('response', function (res) {
+            done()
+          })
       })
     })
 
@@ -411,8 +419,13 @@ describe('probes.https', function () {
     }
   })
 
+  //===================
+  // https client tests
+  //===================
+
   describe('https-client', function () {
     const conf = ao.probes['https-client']
+    conf.collectBacktraces = false
 
     it('should trace https request', function (done) {
       const server = https.createServer(options, function (req, res) {
@@ -449,7 +462,6 @@ describe('probes.https', function () {
         res.end('done')
         server.close()
       })
-      global.xyzzy = true
       server.listen(function () {
         const d = ctx.data = {port: server.address().port}
         const mod = helper.run(ctx, 'https/client-object')
