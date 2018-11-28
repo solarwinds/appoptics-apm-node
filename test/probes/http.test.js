@@ -427,9 +427,12 @@ describe('probes.http', function () {
     })
   })
 
+  //
+  // http client tests
+  //
+
   describe('http-client', function () {
     const conf = ao.probes['http-client']
-
     it('should trace http request', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
@@ -438,9 +441,9 @@ describe('probes.http', function () {
 
       server.listen(function () {
         ctx.data = {port: server.address().port}
-        const mod = helper.run(ctx, 'http/client')
+        const testFunction = helper.run(ctx, 'http/client')
 
-        helper.test(emitter, mod, [
+        helper.test(emitter, testFunction, [
           function (msg) {
             check.client.entry(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
