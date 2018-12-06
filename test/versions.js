@@ -56,7 +56,8 @@ test('mongoose', '>= 3.8.26 < 4.2 || >= 4.2.2')
 test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
 
-//test('pg', '>= 4.5.5')
+test('pg', '>= 4.5.5')
+/*
 test('pg', {
   ranges: [
     {
@@ -68,6 +69,7 @@ test('pg', {
     }
   ]
 })
+// */
 
 test('q', '>= 0.9.0')
 test('raw-body')
