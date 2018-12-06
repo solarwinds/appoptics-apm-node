@@ -11,13 +11,7 @@
 }
 
 {
-    npm install pg@4.5.7
-} || {
-    echo "unable to install optional pg package"
-}
-
-{
-    npm install pg-native@1.10.0
+    npm install pg-native@2.2.0
 } || {
     echo "unable to install optional pg-native package"
 }
