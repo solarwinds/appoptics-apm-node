@@ -289,7 +289,6 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
             if (client1 && client2) {
               ctx._pool.totalCount.should.equal(2)
               ctx._pool.idleCount.should.equal(0)
-              //console.log(ctx.pool.totalCount, ctx.pool.idleCount, ctx.pool.waitingCount)
               done()
             }
           }
