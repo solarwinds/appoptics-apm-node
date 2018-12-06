@@ -10,6 +10,9 @@
     echo "unable to install optional oracledb package"
 }
 
+# pg-native doesn't build on alpine so don't try
+[ "$OS_SPEC" = "alpine" ] && exit 0
+
 {
     npm install pg-native@2.2.0
 } || {
