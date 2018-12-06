@@ -27,16 +27,18 @@ const auth = {
 }
 
 let hasNative = false
+let nativeVer = '0.0.0'
 
 try {
   require('pg/lib/native')
+  nativeVer = require('pg-native/package').version
   hasNative = true
 } catch (e) {
   ao.loggers.test.info('test/probes/pg 6+ failed to load pg native')
   hasNative = false
 }
 
-describe(`probes.pg ${pkg.version} (pg v6+)`, function () {
+describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   let emitter
   let realSampleTrace
   const ctx = {ao, tName, addr}
@@ -79,72 +81,6 @@ describe(`probes.pg ${pkg.version} (pg v6+)`, function () {
   // database cleanup at end
   //
 
-  //
-  // create a client, connect to the server, and create the db if needed
-  //
-  it('should create the pg testing context', function (done) {
-    this.timeout(10000)
-    const tmpAuth = extend(extend({}, auth), {database: 'postgres'})
-    let client = new postgres.Client(tmpAuth)
-    let pool
-
-    client.connect()
-      .then(() => {
-        // delete the database so i can see what error occurs on the query
-        //return client.query('drop database if exists test;')
-      })
-      .then(() => {
-        return client.query('select datname from pg_catalog.pg_database where datname = \'test\';')
-      })
-      .then(results => {
-        if (results.rowCount === 1) {
-          return results
-        }
-        // 'test' doesn't exist so create it.
-        return client.query('create database test;')
-      })
-      .then(results => {
-        return client.end()
-      })
-      .then(results => {
-        client = new postgres.Client(auth)
-        return client.connect()
-      })
-      .then(results => {
-        return client.query(`CREATE TABLE IF NOT EXISTS ${tName} (foo TEXT)`)
-      })
-      .catch(err => {
-        done(err)
-      })
-      .then(results => {
-        // get our client
-        ctx._client = client
-      })
-      .then(results => {
-        pool = new postgres.Pool(Object.assign({max: 2}, auth))
-      })
-      .catch(err => {
-        done(err)
-      })
-      .then(results => {
-        // get our pool
-        ctx._pool = pool
-        // make getClient return client (reset when delayed pools are tested)
-        // no release is the same because the client is never actually released
-        ctx.client = {
-          get: () => ctx._client,
-          getNoRelease: function (...args) {
-            if (typeof args[args.length - 1] === 'function') {
-              return args[args.length - 1](null, ctx._client)
-            } else {
-              return Promise.resolve(ctx._client)
-            }
-          },
-          release: function () {}
-        }
-        done()
-      })
-  })
 
   //
   // Yes, this is super janky. But necessary because switching to
@@ -158,13 +94,15 @@ describe(`probes.pg ${pkg.version} (pg v6+)`, function () {
       skip: false,
       get: function () {
         return postgres
-      }
+      },
+      description: `javascript ${pkg.version}`
     },
     native: {
       skip: !hasNative,
       get: function () {
         return postgres.native
-      }
+      },
+      description: `native ${nativeVer}`
     }
   }
 
@@ -177,22 +115,21 @@ describe(`probes.pg ${pkg.version} (pg v6+)`, function () {
 
     const driver = drivers[type]
     if (driver.skip) {
-      describe.skip(type, test)
+      describe.skip(driver.description, test)
     } else {
-      describe(type, test)
+      describe(driver.description, test)
     }
 
     function test (done) {
 
       after(function (done) {
         const p1 = ctx._client ? ctx._client.end() : Promise.resolve()
-        //const p2 = (ctx.pool && ctx.pool.idleCount === 2) ? ctx.pool.end() : Promise.resolve()
+        // the pool waits for the delayed releases to finish
         let p2
         if (!ctx._pool) {
           p2 = Promise.resolve()
         } else {
           p2 = new Promise(function (resolve, reject) {
-            // wait for the final delayed releases.
             const int = setInterval(function () {
               if (ctx._pool.idleCount === 2) {
                 ctx._pool.end()
@@ -221,6 +158,73 @@ describe(`probes.pg ${pkg.version} (pg v6+)`, function () {
             msg.should.have.property('Layer', 'fake')
           }
         ], done)
+      })
+
+      //
+      // create a client, connect to the server, and create the db if needed
+      //
+      it('should create the pg testing context', function (done) {
+        this.timeout(10000)
+        const tmpAuth = extend(extend({}, auth), {database: 'postgres'})
+        let client = new postgres.Client(tmpAuth)
+        let pool
+
+        client.connect()
+          .then(() => {
+            // delete the database so i can see what error occurs on the query
+            //return client.query('drop database if exists test;')
+          })
+          .then(() => {
+            return client.query('select datname from pg_catalog.pg_database where datname = \'test\';')
+          })
+          .then(results => {
+            if (results.rowCount === 1) {
+              return results
+            }
+            // 'test' doesn't exist so create it.
+            return client.query('create database test;')
+          })
+          .then(results => {
+            return client.end()
+          })
+          .then(results => {
+            client = new postgres.Client(auth)
+            return client.connect()
+          })
+          .then(results => {
+            return client.query(`CREATE TABLE IF NOT EXISTS ${tName} (foo TEXT)`)
+          })
+          .catch(err => {
+            done(err)
+          })
+          .then(results => {
+            // get our client
+            ctx._client = client
+          })
+          .then(results => {
+            pool = new postgres.Pool(Object.assign({max: 2}, auth))
+          })
+          .catch(err => {
+            done(err)
+          })
+          .then(results => {
+            // get our pool
+            ctx._pool = pool
+            // make getClient return client (reset when delayed pools are tested)
+            // no release is the same because the client is never actually released
+            ctx.client = {
+              get: () => ctx._client,
+              getNoRelease: function (...args) {
+                if (typeof args[args.length - 1] === 'function') {
+                  return args[args.length - 1](null, ctx._client)
+                } else {
+                  return Promise.resolve(ctx._client)
+                }
+              },
+              release: function () {}
+            }
+            done()
+          })
       })
 
       //
