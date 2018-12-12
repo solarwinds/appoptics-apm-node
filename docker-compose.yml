@@ -3,50 +3,66 @@
 #
 version: '2.1'
 
+# run with:
+# > docker-compose run --service-ports --rm --name node_main node_main /bin/bash
+
 services:
-#  main:
-#    container_name: main
-#    image: main
-#    build:
-#      context: test/docker
-#      dockerfile: main.yml
-#      args:
-#        # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
-#        # bindings installation will attempt to download the HEAD of the
-#        # master branch from the public repository.
-#        #
-#        # expect librato/node-appoptics-bindings#new-liboboe while private
-#        - AO_TEST_PACKAGE
-#        # expect a git auth token (or extend Dockerfile with user and password)
-#        - AO_TEST_GITAUTH
-#        # - AO_TEST_GITUSER
-#        # - AO_TEST_GITPASS
-#        # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/scribe-collector.crt}
-#        - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/java-collector.crt}
-#        # - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
-#        - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
-#        # the next two set liboboe to send to the mock collector
-#        # for testing. these should be set to run the test suite.
-#        - AO_TEST_REPORTER=udp
-#        - AO_TEST_REPORTER_UDP=localhost:7832
-#    volumes:
-#      # map the directory this file is in to the /appoptics/ directory
-#      - "${PWD}:/appoptics/"
-##    volumes:
-##      - type: volume
-#    logging:
-#      options:
-#        max-file: "1"
-#        max-size: 50m
+  node_main:
+    container_name: node_main
+    image: node_main
+    build:
+      context: test/docker
+      dockerfile: main.yml
+      args:
+        # if AO_TEST_PACKAGE and AO_TEST_GITAUTH are not set then the
+        # bindings installation will attempt to download the HEAD of the
+        # master branch from the public repository.
+        #
+        # expect librato/node-appoptics-bindings#new-liboboe while private
+        - AO_TEST_PACKAGE
+        # expect a git auth token (or extend Dockerfile with user and password)
+        - AO_TEST_GITAUTH
+        # - AO_TEST_GITUSER
+        # - AO_TEST_GITPASS
+        # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/scribe-collector.crt}
+        - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/java-collector.crt}
+        # - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
+        - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
+        # the next two set liboboe to send to the mock collector
+        # for testing. these should be set to run the test suite.
+        - AO_TEST_REPORTER=udp
+        - AO_TEST_REPORTER_UDP=localhost:7832
+    volumes:
+      # map the directory this file is in to the /appoptics/ directory
+      - "${PWD}:/appoptics/"
+    working_dir: /appoptics
+    environment:
+      APPOPTICS_SERVICE_KEY: ${APPOPTICS_SERVICE_KEY}
+      AO_TEST_CASSANDRA_2_2: cassandra:9042
+      AO_TEST_MEMCACHED_1_4: memcached:11211
+      AO_TEST_MONGODB_2_4: mongo_2_4:27017
+      AO_TEST_MONGODB_2_6: mongo_2_6:27017
+      AO_TEST_MONGODB_3: mongo_3_0:27017
+      AO_TEST_MYSQL: mysql:3306
+      AO_TEST_POSTGRES: postgres:5432
+      AO_TEST_SQLSERVER_EX: mssql:1433
+      AO_TEST_RABBITMQ_3_5: rabbitmq:5672
+      AO_TEST_REDIS_3_0: redis:6379
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "9229:9229"
 #    #
 #    # wait for the dependencies. (this container doesn't really do anything unless
 #    # running the tests in this context. in that case it is easy enough to invoke
 #    # env.sh manually as that is the way the tests are run.)
 #    #
-#    depends_on:
-#      - wait
-#    links:
-#      - wait
+    depends_on:
+      - wait
+    links:
+      - wait
 
   #
   # extend the collector services into this composition.
@@ -84,6 +100,7 @@ services:
   # the correct image.
   #
   cassandra:
+    container_name: "node_cassandra"
     image: "cassandra"
     build:
       context: test/docker/
@@ -97,6 +114,7 @@ services:
       - "9042:9042"
 
   memcached:
+    container_name: "node_memcached"
     image: "memcached"
     build:
       context: test/docker/
@@ -110,6 +128,7 @@ services:
 
 
   mongo_2_4:
+    container_name: "node_mongo_2_4"
     image: "mongo_2_4"
     build:
       context: test/docker/
@@ -123,6 +142,7 @@ services:
       - "27016:27017"
 
   mongo_2_6:
+    container_name: "node_mongo_2_6"
     image: "mongo_2_6"
     build:
       context: test/docker/
@@ -135,6 +155,7 @@ services:
       - "${AO_TEST_MONGO_2_6_HOST_PORT:-27017}:27017"
 
   mongo_3_0:
+    container_name: "node_mongo_3_0"
     image: "mongo_3_0"
     build:
       context: test/docker/
@@ -147,6 +168,7 @@ services:
       - "27018:27017"
 
   mongo_replset:
+    container_name: "traceqa/mongo-set"
     image: "traceqa/mongo-set"
     build:
       context: test/docker/
@@ -164,14 +186,15 @@ services:
       - "REPLSETHOST=localhost"
 
   mysql:
-    #container_name: mysql
+    container_name: "node_mysql_5_7"
     image: "mysql:5.7.13"
-    ports:
-      - "${AO_TEST_MYSQL_HOST_PORT:-3306}:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=admin
+    ports:
+      - "${AO_TEST_MYSQL_HOST_PORT:-3306}:3306"
 
   mssql:
+    container_name: "node_mssql"
     image: "mssql"
     build:
       context: test/docker/
@@ -184,10 +207,8 @@ services:
       - "1433:1433"
 
   oracle:
+    container_name: "node_oracle"
     image: "oracle"
-    build:
-      context: test/docker/
-      dockerfile: oracle.yml
     build:
       context: test/docker/
       dockerfile: oracle.yml
@@ -199,6 +220,7 @@ services:
       - "1521:1521"
 
   postgres:
+    container_name: "node_postgres"
     image: "postgres"
     build:
       context: test/docker/
@@ -214,18 +236,18 @@ services:
       - POSTGRES_PASSWORD=xyzzy
 
   rabbitmq:
-    image: "rabbitmq"
-    build:
-      context: test/docker/
-      dockerfile: rabbitmq.yml
+    container_name: "node_rabbitmq"
+    image: rabbitmq:3-management
     logging:
       options:
         max-file: "1"
         max-size: 50m
     ports:
       - "5672:5672"
+      - "5671:5671"
 
   redis:
+    container_name: "node_redis"
     image: "redis"
     build:
       context: test/docker/
@@ -237,31 +259,31 @@ services:
     ports:
       - "6379:6379"
 
-#  wait:
-#    container_name: wait
-#    image: waisbrot/wait
-#    depends_on:
-#      - cassandra
-#      - memcached
-#      - mongo_2_4
-#      - mongo_2_6
-#      - mongo_3_0
-#      - mssql
-#      - mysql
-#      - postgres
-#      - rabbitmq
-#      - redis
-#    links:
-#      - cassandra
-#      - memcached
-#      - mongo_2_4
-#      - mongo_2_6
-#      - mongo_3_0
-#      - mssql
-#      - mysql
-#      - postgres
-#      - rabbitmq
-#      - redis
-#    environment:
-#      - TARGETS=cassandra:9042;memcached:11211;mongo:27017;mssql:1433;mysql:3306;postgres:5432;rabbitmq:5672;redis:6379
-#
+  wait:
+    container_name: "node_wait"
+    image: waisbrot/wait
+    depends_on:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3_0
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+    links:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3_0
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+    environment:
+      - TARGETS=cassandra:9042;memcached:11211;mongo:27017;mssql:1433;mysql:3306;postgres:5432;rabbitmq:5672;redis:6379
+
