@@ -52,6 +52,11 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
+    const c = ao.requestStore.active ? ao.requestStore.active.id : null
+    if (c) {
+      ao.loggers.debug(`id ${c} event.last at startup %e`, ao.lastEvent)
+    }
+
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
