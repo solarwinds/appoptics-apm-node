@@ -37,7 +37,8 @@ services:
       - "${PWD}:/appoptics/"
     working_dir: /appoptics
     environment:
-      APPOPTICS_SERVICE_KEY: ${APPOPTICS_SERVICE_KEY}
+      AO_TOKEN_STG: ${AO_TOKEN_STG}
+      AO_SERVICE_NAME: ${AO_SERVICE_NAME}
       AO_TEST_CASSANDRA_2_2: cassandra:9042
       AO_TEST_MEMCACHED_1_4: memcached:11211
       AO_TEST_MONGODB_2_4: mongo_2_4:27017
@@ -167,23 +168,22 @@ services:
     ports:
       - "27018:27017"
 
-  mongo_replset:
-    container_name: "traceqa/mongo-set"
-    image: "traceqa/mongo-set"
-    build:
-      context: test/docker/
-      dockerfile: mongo_replset.yml
-    logging:
-      options:
-        max-file: "1"
-        max-size: 50m
-    ports:
-      - "30001:30001"
-      - "30002:30002"
-      - "30003:30003"
-    environment:
-      - "REPLSETMEMBERS=3"
-      - "REPLSETHOST=localhost"
+#  mongo_replset:
+#    image: "traceqa/mongo-set"
+#    build:
+#      context: test/docker/
+#      dockerfile: mongo_replset.yml
+#    logging:
+#      options:
+#        max-file: "1"
+#        max-size: 50m
+#    ports:
+#      - "30001:30001"
+#      - "30002:30002"
+#      - "30003:30003"
+#    environment:
+#      - "REPLSETMEMBERS=3"
+#      - "REPLSETHOST=localhost"
 
   mysql:
     container_name: "node_mysql_5_7"

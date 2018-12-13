@@ -7,8 +7,8 @@ if [[ -z "$AO_TOKEN_STG" ]]; then
 fi
 
 if [[ -z "$ARG" ]]; then
-    echo "source this script with an argument of docker, docker-scribe, bash,"
-    echo "bash-testing, or travis\n"
+    echo "source this script with an argument of docker, docker-java, "
+    echo "docker-scribe, bash, bash-testing, or travis\n"
     echo "docker defines variables for running tests in the docker environment."
     echo "docker-scribe does the same but with the scribe collector instead of java"
     echo "  collector."
@@ -31,6 +31,30 @@ elif [[ "$ARG" = "key" ]]; then
 elif [[ "$ARG" = "add-bin" ]]; then
     # add ./node_modules/.bin to PATH
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
+elif [[ "$ARG" = "docker" ]]; then
+    npm install
+    # this is used primarily for manual interactive testing.
+    [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
+
+    # these are generally the right settings unless a collector
+    # is required.
+    export APPOPTICS_REPORTER_UDP=localhost:7832
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:${AO_SERVICE_NAME}
+    export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    # set this to ssl in order to use APPOPTICS_COLLECTOR
+    export APPOPTICS_REPORTER=udp
+
+    # and the buckets need to be adjusted if using UDP because the defaults
+    # result in lost messages without notification.
+    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    export APPOPTICS_TOKEN_BUCKET_RATE=1000
+
+    # the following are used primarily to run the full appoptics-apm test suite.
+    # presumes docker containers are running and their ports are addressable
+    # as localhost.
+    export AO_TEST_MYSQL_PASSWORD=${AO_TEST_MYSQL_HOST_PASSWORD+}
+    export AO_TEST_ORACLE_USERNAME=system
+    export AO_TEST_ORACLE_PASSWORD=oracle
 elif [[ "$ARG" = "docker-java" ]]; then
     export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
@@ -149,7 +173,3 @@ else
 fi
 
 return
-
-
-
-
