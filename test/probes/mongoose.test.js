@@ -31,6 +31,10 @@ describe('probes/mongoose ' + pkg.version, function () {
   })
   after(function () {
     mongoose.disconnect()
+    const context = ao.requestStore.active
+    if (context) {
+      ao.resetRequestStore()
+    }
   })
 
   let savedCat

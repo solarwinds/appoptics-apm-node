@@ -171,7 +171,7 @@ exports.doChecks = function (emitter, checks, done) {
     log.test.info(checks.length + ' checks left')
     if (!checks.length) {
       // NOTE: This is only needed because some
-      // tests have less checks than messages
+      // tests have fewer checks than messages
       emitter.removeListener('message', onMessage)
       done()
     }
@@ -196,6 +196,16 @@ const check = {
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
   // noops skip testing the 'outer' span.
+  function outerEntry (msg) {
+    msg.should.have.property('Layer', 'outer')
+    msg.should.have.property('Label', 'entry')
+  }
+  function outerExit (msg) {
+    msg.should.have.property('Layer', 'outer')
+    msg.should.have.property('Label', 'exit')
+  }
+  // copy the caller's array so we can change it without creating surprises.
+  validations = validations.map(e => e)
   validations.unshift(noop)
   validations.push(noop)
   exports.doChecks(emitter, validations, done)
@@ -203,10 +213,10 @@ exports.test = function (emitter, test, validations, done) {
   ao.requestStore.run(function () {
     const span = new ao.Span('outer')
     // span.async = true
-    span.enter()
     log.test.span('helper.test outer: %l', span)
+    log.test.info('test starting')
 
-    log.test.info('test started')
+    span.enter()
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) return done(err)

@@ -57,6 +57,20 @@ test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
 
 test('pg', '>= 4.5.5')
+/*
+test('pg', {
+  ranges: [
+    {
+      range: '>= 4.5.5 < 7.0.0',
+      dependencies: ['pg-native@1.7']
+    }, {
+      range: '>= 7.0.0',
+      dependencies: ['pg-native@2']
+    }
+  ]
+})
+// */
+
 test('q', '>= 0.9.0')
 test('raw-body')
 test('redis', '>= 0.8.0')
