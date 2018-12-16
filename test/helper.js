@@ -204,7 +204,8 @@ exports.test = function (emitter, test, validations, done) {
     msg.should.have.property('Layer', 'outer')
     msg.should.have.property('Label', 'exit')
   }
-  // copy the caller's array so we can change it without creating surprises.
+  // copy the caller's array so we can modify it without surprising
+  // the caller.
   validations = validations.map(e => e)
   validations.unshift(noop)
   validations.push(noop)
@@ -219,7 +220,9 @@ exports.test = function (emitter, test, validations, done) {
     span.enter()
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
-      if (err) return done(err)
+      if (err) {
+        return done(err)
+      }
       data // suppress the eslint error.
       span.exit()
     })
