@@ -193,6 +193,36 @@ const check = {
   }
 }
 
+const aoAggregate = Symbol('ao.test.aggregate')
+
+exports.setAggregate = function (emitter) {
+  emitter[aoAggregate] = true
+  return emitter
+}
+
+exports.clearAggregate = function (emitter) {
+  delete emitter[aoAggregate]
+  return emitter
+}
+
+exports.aggregate = function (emitter, messages, done) {
+  const addr = emitter.server.address()
+  emitter.removeAllListeners('message')
+
+  log.test.info(`helper.aggregate() invoked - server address ${addr.address}:${addr.port}`)
+
+  let i = 0
+  function onMessage (msg) {
+    messages[i++] = msg
+    if (i === messages.length) {
+      done(null, messages)
+    }
+  }
+
+  emitter.on('message', onMessage)
+}
+
+
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
   // noops skip testing the 'outer' span.
@@ -209,7 +239,14 @@ exports.test = function (emitter, test, validations, done) {
   validations = validations.map(e => e)
   validations.unshift(noop)
   validations.push(noop)
-  exports.doChecks(emitter, validations, done)
+  //
+  const messages = validations.map(e => null)
+
+  if (!emitter[aoAggregate]) {
+    exports.doChecks(emitter, validations, done)
+  } else {
+    exports.aggregate(emitter, messages, done)
+  }
 
   ao.requestStore.run(function () {
     const span = new ao.Span('outer')
@@ -221,10 +258,11 @@ exports.test = function (emitter, test, validations, done) {
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) {
-        return done(err)
+        return done(err, messages)
       }
       data // suppress the eslint error.
       span.exit()
+      done
     })
   })
 }
