@@ -65,6 +65,15 @@ describe('probes/mongoose ' + pkg.version, function () {
     emitter.close(done)
   })
 
+  beforeEach(function () {
+    if (this.currentTest.title.indexOf('should connect and queue queries using a') === 0) {
+      //ao.logLevelAdd('test:message')
+    }
+  })
+
+  afterEach(function () {
+    ao.logLevelRemove('test:message')
+  })
   //
   // define common checks
   //
@@ -288,22 +297,36 @@ describe('probes/mongoose ' + pkg.version, function () {
           ao.loggers.debug('addQueue - connected')
         })
 
-      function entry1 (msg) {
+      function makeInsertEntry (cat) {
+        return function (msg) {
+          check.entry(msg)
+          check.common(msg)
+          expect(msg).to.include({QueryOp: 'insert'})
+          expect(msg.Insert_Document).to.be.a('String')
+
+          const q = JSON.parse(msg.Insert_Document)
+          expect(q).to.be.an('Array')
+          expect(q[0]).to.be.an('Object')
+          expect(q[0]).to.include(cat)
+        }
+      }
+
+      function findEntry (msg) {
         check.entry(msg)
         check.common(msg)
-        expect(msg).to.include({QueryOp: 'insert'})
-        expect(msg.Insert_Document).to.be.a('String')
-
-        const q = JSON.parse(msg.Insert_Document)
-        expect(q).to.be.an('Array')
-        expect(q[0]).to.be.an('Object')
-        expect(q[0]).to.include(cat1)
+        expect(msg).to.include({QueryOp: 'find'})
+        expect(msg).to.include({Query: JSON.stringify(cat1)})
       }
-      function exit1 (msg) {
+
+      const entry1 = makeInsertEntry(cat1)
+      const entry2 = makeInsertEntry(cat2)
+      const entry3 = makeInsertEntry(cat3)
+
+      function exit (msg) {
         check.exit(msg)
       }
       function noop () {}
-      const steps = [entry1, noop, noop, exit1, noop, noop]
+      const steps = [entry1, entry2, entry3, exit, exit, exit]
 
       ao.g.stop = true
 
@@ -321,19 +344,71 @@ describe('probes/mongoose ' + pkg.version, function () {
           makeAddFunction(cat1)(three)
           makeAddFunction(cat2)(three)
           makeAddFunction(cat3)(three)
+          // leave commented out until the reordering is understood.
           //makeFindFunction(cat1)(three)
           //makeDeleteFunction(cat1)(three)
         },
         steps,
-        function testOver (err, messages) {
+        function testDone (err, messages) {
           expect(messages.length).to.equal(steps.length + 2)
           helper.clearAggregate(emitter)
-          debugger
+
+          //messages.forEach(showMessage)
+          checkMessages(steps, messages)
           done()
         }
       )
     })
 
   })
+
+  function ids (x) {return [x.substr(2, 40), x.substr(42, 16)]}
+
+  function showMessage (m) {
+    const text = [`${m.Layer}:${m.Label} ${ids(m['X-Trace']).join(':')}`]
+    if (m.Edge) {
+      text.push(`\n  ${m.Edge}`)
+    }
+    if (m.Layer === 'mongodb-core' && m.Label === 'entry') {
+      text.push(`\n  ${m.Spec} - ${m.QueryOp}`)
+      if (m.QueryOp === 'insert') {
+        const match = m.Insert_Document.match(/"name":".+?"/)
+        text.push(`${match[0]}`)
+      }
+    }
+
+    console.log(text.join(' '))
+  }
+
+  function checkMessages (steps, messages) {
+    const m0 = messages.shift()
+    const [m0tid, m0oid] = ids(m0['X-Trace'])
+    const entries = {}
+
+    for (let i = 0; i < steps.length; i++) {
+      steps[i](messages[i])
+      const [tid, oid] = ids(messages[i]['X-Trace'])
+      // make sure task ID is the same
+      expect(tid).to.equal(m0tid)
+
+      if (messages[i].Label === 'entry') {
+        // entries should edge back to the outer entry
+        expect(messages[i]).to.include({Edge: m0oid})
+        entries[oid] = messages[i]
+      } else if (messages[i].Label === 'exit') {
+        // should edge back to one of the entries
+        expect(messages[i].Edge).to.be.oneOf(Object.keys(entries))
+        delete entries[messages[i].Edge]
+      } else {
+        throw new Error(`unexpected layer found ${messages[i].Layer}`)
+      }
+    }
+
+    // make sure outer exit is good too.
+    const mx = messages[messages.length - 1]
+    const [mxtid, mxoid] = ids(mx['X-Trace'])
+    expect(mxtid).to.equal(m0tid)
+    expect(mx.Edge).to.equal(m0oid)
+  }
 
 })
