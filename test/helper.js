@@ -13,6 +13,7 @@ const https = require('https')
 const http = require('http')
 const path = require('path')
 const assert = require('assert')
+const util = require('util')
 
 Error.stackTraceLimit = 25
 
@@ -24,6 +25,8 @@ exports.clsCheck = function () {
     throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
   }
 }
+function ids (x) {return [x.substr(2, 40), x.substr(42, 16)]}
+exports.ids = ids
 
 exports.noop = function () {}
 
@@ -101,7 +104,7 @@ exports.appoptics = function (done) {
   server.on('message', function (msg) {
     const port = server.address().port
     const parsed = BSON.deserialize(msg)
-    log.test.message('mock appoptics (port ' + port + ') received', parsed)
+    log.test.messages('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)
     }
@@ -148,7 +151,7 @@ exports.doChecks = function (emitter, checks, done) {
 
   function onMessage (msg) {
     if (!emitter.__aoActive) {
-      log.test.message('mock (' + addr.port + ') received message', msg)
+      log.test.messages('mock (' + addr.port + ') received message', msg)
     }
     const check = checks.shift()
     if (check) {
@@ -195,8 +198,10 @@ const check = {
 
 const aoAggregate = Symbol('ao.test.aggregate')
 
-exports.setAggregate = function (emitter) {
-  emitter[aoAggregate] = true
+exports.setAggregate = function (emitter, agConfig) {
+  // set the property on the emitter. add messages and opIdMap if not
+  // present.
+  emitter[aoAggregate] = Object.assign({messages: [], opIdMap: {}}, agConfig)
   return emitter
 }
 
@@ -205,17 +210,35 @@ exports.clearAggregate = function (emitter) {
   return emitter
 }
 
-exports.aggregate = function (emitter, messages, done) {
+//
+// the config object has the following properties
+// n - the number of non-ignored messages to expect
+// ignore - function that returns true if message should be ignored
+// messages - array in which the non-ignored messages are stored
+// opIdMap - object in which opId => message pairs are stored for non-ignored messages
+//
+exports.aggregate = function (emitter, config, done) {
   const addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
   log.test.info(`helper.aggregate() invoked - server address ${addr.address}:${addr.port}`)
 
   let i = 0
+  let ignoreCount = 0
   function onMessage (msg) {
-    messages[i++] = msg
-    if (i === messages.length) {
-      done(null, messages)
+    // call ignore with config as this.
+    if (!config.ignore(msg)) {
+      config.messages.push(msg)
+      const [, oid] = ids(msg['X-Trace'])
+      config.opIdMap[oid] = msg
+      ao.loggers.test.debug(`=========> count ${i + 1}`)
+      // expected messages (+ 2 for the outer span)
+      if (++i >= config.n + 2) {
+        done(null, config)
+      }
+    } else {
+      ignoreCount += 1
+      ao.loggers.test.debug(`=========>${ignoreCount} ignoring ${util.inspect(msg)}`)
     }
   }
 
@@ -242,10 +265,14 @@ exports.test = function (emitter, test, validations, done) {
   //
   const messages = validations.map(e => null)
 
-  if (!emitter[aoAggregate]) {
-    exports.doChecks(emitter, validations, done)
+  if (emitter[aoAggregate]) {
+    // if an aggregate object has been set the aggregate messages using
+    // the aggregate configuration in emitter[aoAggregate].
+    exports.aggregate(emitter, emitter[aoAggregate], done)
+    delete emitter[aoAggregate]
   } else {
-    exports.aggregate(emitter, messages, done)
+    // check messages as the occur using the validations array.
+    exports.doChecks(emitter, validations, done)
   }
 
   ao.requestStore.run(function () {
