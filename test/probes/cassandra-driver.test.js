@@ -125,7 +125,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     beforeEach(function () {
       prevDebug = ao.logLevel
       if (this.currentTest.title === 'should trace a prepared query') {
-        //ao.logLevel += ',test:message'
+        //ao.logLevel += ',test:messages'
       }
     })
 
