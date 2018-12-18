@@ -67,13 +67,13 @@ describe('probes/mongoose ' + pkg.version, function () {
 
   beforeEach(function () {
     if (this.currentTest.title.indexOf('should connect and queue queries using a') === 0) {
-      //ao.logLevelAdd('test:message')
+      //ao.logLevelAdd('test:messages')
     }
   })
-
   afterEach(function () {
-    ao.logLevelRemove('test:message')
+    //ao.logLevelRemove('test:messages')
   })
+
   //
   // define common checks
   //
@@ -291,10 +291,24 @@ describe('probes/mongoose ' + pkg.version, function () {
     //
     // force addQueue by not waiting for connect() to complete.
     //
-    it(`should connect and queue queries using a ${type}`, function (done) {
+    // this is a rather convoluted test.
+    // 1. issue a connect but don't wait for it to complete
+    // 2. issue multiple inserts that must be queued because the connection is pending
+    // 3. wait for all inserts to complete before issuing the done.
+    //
+    it(`should connect and queue queries using a ${type}`, function (realDone) {
+      const doneCalls = []
+      function done (err) {
+        doneCalls.push(new Error('done call'))
+        if (doneCalls.length > 1) {
+          console.log(doneCalls)
+        }
+        realDone(err)
+      }
+
       mongoose.connect(`mongodb://${host}/${dbn}`, mongoOpts)
         .then(r => {
-          ao.loggers.debug('addQueue - connected')
+          ao.loggers.test.debug('addQueue - connected')
         })
 
       function makeInsertEntry (cat) {
@@ -311,6 +325,9 @@ describe('probes/mongoose ' + pkg.version, function () {
         }
       }
 
+      // used only if the find function is added back to this test. it's not included
+      // now because it gets executed first and it's not clear why at this time.
+      // eslint-disable-next-line
       function findEntry (msg) {
         check.entry(msg)
         check.common(msg)
@@ -325,20 +342,58 @@ describe('probes/mongoose ' + pkg.version, function () {
       function exit (msg) {
         check.exit(msg)
       }
-      function noop () {}
+
+      // steps are for the old-style checking of each message as it occurs. that creates
+      // problems with this test because various versions of mongoose generate unexpected
+      // queries against the admin database. left here for historical comparison.
       const steps = [entry1, entry2, entry3, exit, exit, exit]
+
+      //
+      // this is the new-style checking, still a work in progress but shaping up. it is
+      // set by calling helper.setAggregate() on the emitter with the following settings.
+      // the settings are only active for the current test and are cleared after being
+      // acquired.
+      //
+      const aggregateSettings = {
+        // how many messages are expected. helper.test() will take the automatically
+        // generated outer layer into account by adding them; they will appear in the
+        // messages array. if not supplied helper will add to aggregateSettings two
+        // properties {messages: [], opIdMap: {}} when it does a shallow clone of the
+        // settings.
+        n: 6,
+        // the ignore function is called via aggregateSettings.ignore() so this is the
+        // shallow-cloned aggregateSettings object.
+        //
+        // ok, enough about the mechanics, ignore() exists so accesses to the admin database
+        // can be ignored. those messages appear in some versions of mongoose but don't appear
+        // in other versions, so we cannot expect them. the map is created as messages are
+        // added. if a message is not ignored it is stored in opIdMap using the the opId as
+        // the key.
+        // so this ignores admin database access and exits that edge back to database accesses.
+        ignore: function (m) {
+          if (m.Layer === 'mongodb-core' && m.Database === 'admin' && m.Collection === '$cmd') {
+            return true
+          }
+          if (m.Layer === 'mongodb-core' && m.Label === 'exit') {
+            return !(m.Edge in this.opIdMap)
+          }
+          return false
+        }
+      }
 
       ao.g.stop = true
 
       helper.test(
-        helper.setAggregate(emitter),
+        helper.setAggregate(emitter, aggregateSettings),
         function (done) {
           let n = 0
           function three () {
-            ao.loggers.debug('addQueue - three() %d', n + 1)
+            ao.loggers.test.debug('addQueue - three() %d', n + 1)
             if (++n >= 3) {
-              //mongoose.disconnect().then(r => done())
-              done()
+              mongoose.disconnect().then(r => {
+                ao.loggers.test.debug('disconnected')
+                done()
+              })
             }
           }
           makeAddFunction(cat1)(three)
@@ -349,12 +404,11 @@ describe('probes/mongoose ' + pkg.version, function () {
           //makeDeleteFunction(cat1)(three)
         },
         steps,
-        function testDone (err, messages) {
-          expect(messages.length).to.equal(steps.length + 2)
-          helper.clearAggregate(emitter)
-
-          //messages.forEach(showMessage)
-          checkMessages(steps, messages)
+        function testDone (err, config) {
+          if (ao.loggers.test.debug.enabled) {
+            config.messages.forEach(showMessage)
+          }
+          checkMessages(steps, config)
           done()
         }
       )
@@ -380,35 +434,42 @@ describe('probes/mongoose ' + pkg.version, function () {
     console.log(text.join(' '))
   }
 
-  function checkMessages (steps, messages) {
-    const m0 = messages.shift()
-    const [m0tid, m0oid] = ids(m0['X-Trace'])
+  function checkMessages (steps, config) {
+    const messages = config.messages
+    const m0 = messages[0]
+    // verify that the first entry is outer:entry
+    expect(m0).to.include({Layer: 'outer', Label: 'entry'})
+    const [m0tid, m0oid] = helper.ids(m0['X-Trace'])
     const entries = {}
 
-    for (let i = 0; i < steps.length; i++) {
-      steps[i](messages[i])
-      const [tid, oid] = ids(messages[i]['X-Trace'])
+    // stop before the last message because it should be the outer exit.
+    for (let i = 1; i < messages.length - 1; i++) {
+      const m = messages[i]
+
+      // invoke the checking function for this step
+      steps[i - 1](m)
+      const [tid, oid] = helper.ids(m['X-Trace'])
       // make sure task ID is the same
       expect(tid).to.equal(m0tid)
 
-      if (messages[i].Label === 'entry') {
+      if (m.Label === 'entry') {
         // entries should edge back to the outer entry
-        expect(messages[i]).to.include({Edge: m0oid})
-        entries[oid] = messages[i]
-      } else if (messages[i].Label === 'exit') {
-        // should edge back to one of the entries
-        expect(messages[i].Edge).to.be.oneOf(Object.keys(entries))
-        delete entries[messages[i].Edge]
+        expect(m).to.include({Edge: m0oid})
+        entries[oid] = m
+      } else if (m.Label === 'exit') {
+        // should edge back to one of the entries (specific one?)
+        expect(m.Edge).to.be.oneOf(Object.keys(entries))
       } else {
-        throw new Error(`unexpected layer found ${messages[i].Layer}`)
+        throw new Error(`unexpected layer found ${m.Layer}`)
       }
     }
 
     // make sure outer exit is good too.
     const mx = messages[messages.length - 1]
-    const [mxtid, mxoid] = ids(mx['X-Trace'])
+    const [mxtid] = ids(mx['X-Trace'])
     expect(mxtid).to.equal(m0tid)
-    expect(mx.Edge).to.equal(m0oid)
+    const opids = [m0oid].concat(Object.keys(entries))
+    expect(mx.Edge).to.be.oneOf(opids)
   }
 
 })
