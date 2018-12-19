@@ -17,7 +17,7 @@ if (env.APPOPTICS_REPORTER === 'udp' && !env.APPOPTICS_TOKEN_BUCKET_CAPACITY) {
 
 ao.loggers.addGroup({
   groupName: 'test',
-  subNames: ['info', 'mock-port', 'message', 'span', 'cls']
+  subNames: ['info', 'mock-port', 'messages', 'span', 'cls', 'debug']
 })
 
 if (!ao.g.taskDict) {

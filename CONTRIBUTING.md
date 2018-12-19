@@ -37,8 +37,6 @@ It's typically easiest to work at the bash shell and test against docker contain
 
 In order to run the full test suite various databases are required so that instrumentation for the database drivers can be tested. The test environment is created by first executing the bash command `source env.sh bash` and then executing `docker-compose up -d`. This two steps will set environment variables and bring up docker containers that provide services (mostly databases) needed by the test suite.
 
-beta note: `docker-compose.yml` references docker via `../oboe-test/` that are not available yet. The `java-collector` and `scribe-collector` containers will not be found.
-
 With that in place, the full suite of tests can be run using `npm test`. It is also possible to run subsets of the tests by directly invoking gulp, e.g., `gulp test:unit` to run only the unit tests or `gulp test:probes` to run just the probes. More useful is the ability to test only one probe, `gulp test:probe:mysql`. N.B. `gulp` is directly referenceable because `./node_modules/.bin` was added to `PATH` by `source env.sh bash`.
 
 There is also a `main` container created that can be used as a clean-room environment for testing. So if we have put the `appoptics-apm-node` code in the `ao` directory (because it is short and concise) docker will create the container `ao_main_1` as a default name. To use that, presuming the `docker-compose up -d` command has already been executed:
