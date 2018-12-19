@@ -129,7 +129,7 @@ function makeTests (db_host, host, isReplicaSet) {
       }
     })
 
-    ao.logLevel = 'error,warn,debug,patching,test:debug'
+    ao.logLevel = 'error,warn,debug,patching'
 
     ao.loggers.test.debug(`using dbn ${dbn}`)
 
