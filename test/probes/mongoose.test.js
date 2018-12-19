@@ -289,7 +289,7 @@ describe('probes/mongoose ' + pkg.version, function () {
     })
 
     //
-    // force addQueue by not waiting for connect() to complete.
+    // force addQueue to be called by not waiting for connect() to complete.
     //
     // this is a rather convoluted test.
     // 1. issue a connect but don't wait for it to complete
@@ -405,11 +405,13 @@ describe('probes/mongoose ' + pkg.version, function () {
         },
         steps,
         function testDone (err, config) {
-          if (ao.loggers.test.debug.enabled) {
-            config.messages.forEach(showMessage)
+          if (!err) {
+            if (ao.loggers.test.debug.enabled) {
+              config.messages.forEach(showMessage)
+            }
+            checkMessages(steps, config)
           }
-          checkMessages(steps, config)
-          done()
+          done(err)
         }
       )
     })
