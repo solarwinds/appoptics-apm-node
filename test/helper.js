@@ -262,8 +262,6 @@ exports.test = function (emitter, test, validations, done) {
   validations = validations.map(e => e)
   validations.unshift(noop)
   validations.push(noop)
-  //
-  const messages = validations.map(e => null)
 
   if (emitter[aoAggregate]) {
     // if an aggregate object has been set the aggregate messages using
@@ -285,7 +283,7 @@ exports.test = function (emitter, test, validations, done) {
     test(function (err, data) {
       log.test.info('test ended: ' + (err ? 'failed' : 'passed'))
       if (err) {
-        return done(err, messages)
+        return done(err)
       }
       data // suppress the eslint error.
       span.exit()
