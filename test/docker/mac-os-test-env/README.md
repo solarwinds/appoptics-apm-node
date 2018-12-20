@@ -37,7 +37,7 @@ run tests.
 In the shell in `node_main` type `debug` or `debug <path-to-test-file>` to 
 start tests in debug mode. Then go to a Chrome browser window and open 
 `chrome://inspect` to access the debugging tools.
-Breakpoints can be set in Chrome or by adding a line `debugging` in the code.
+Breakpoints can be set in Chrome or by adding a line `debugger` in the code.
 
 ##Other `./dc.sh` commands
 `./dc.sh config`  shows the whole docker-compose configuration
