@@ -22,7 +22,7 @@ let hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
   '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
   '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
-  //'replica set': process.env.AO_TEST_MONGODB_SET
+  'replica set': process.env.AO_TEST_MONGODB_SET
 }
 
 // version 3 of mongodb-core removed the 2.4 protocol driver.
@@ -154,7 +154,30 @@ function makeTests (db_host, host, isReplicaSet) {
       const options = {
         setName: 'default'
       }
-      server = new mongodb.ReplSet(hosts, options)
+      const servers = []
+      hosts.forEach(function (host) {
+        servers.push(new mongodb.Server(host.host, host.port))
+      })
+      server = new mongodb.ReplSet(servers, options)
+      const mongoClient = new MongoClient(server, {})
+
+      mongoClient.connect((err, _client) => {
+        ao.loggers.test.debug('mongoClient() connect callback', err)
+        if (err) {
+          console.log('error connecting', err)
+          return done(err)
+        }
+        ctx.server = server
+        ctx.client = _client
+        ctx.mongo = db = _client.db(dbn)
+        ctx.collection = db.collection(cn)
+
+        db.command({dropDatabase: 1}, function (err) {
+          ao.loggers.test.debug('before() dropDatabase callback', err)
+          done()
+        })
+      })
+
     } else {
       const host = hosts[0]
       const mongoOptions = {}
@@ -553,10 +576,12 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
+        /*
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
+        // */
         steps.push(exit)
 
         helper.test(emitter, function (done) {

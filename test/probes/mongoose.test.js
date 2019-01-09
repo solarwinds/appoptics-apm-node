@@ -130,8 +130,7 @@ describe('probes/mongoose ' + pkg.version, function () {
   // mongoose api. that's what the mongoose probe does.
   //
 
-  ['callback', 'promise'].forEach(type => {
-
+  function runTests (type) {
     //
     // connect
     //
@@ -416,6 +415,14 @@ describe('probes/mongoose ' + pkg.version, function () {
       )
     })
 
+  }
+
+  describe('promises', function () {
+    runTests('promise')
+  })
+
+  describe('callbacks', function () {
+    runTests('callback')
   })
 
   function ids (x) {return [x.substr(2, 40), x.substr(42, 16)]}
