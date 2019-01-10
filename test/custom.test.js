@@ -709,8 +709,8 @@ describe('custom', function () {
     function noop () {}
 
     const logChecks = [
-      {level: 'warn', message: 'ao.bind %s - no context', values: ['noop']},
-      {level: 'warn', message: 'ao.bind %s - not a function', values: [null]},
+      {level: 'warn', message: 'ao.bind(%s) - no context', values: ['noop']},
+      {level: 'warn', message: 'ao.bind(%s) - not a function', values: [null]},
     ]
     helper.checkLogMessages(debug, logChecks)
 
