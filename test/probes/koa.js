@@ -163,16 +163,18 @@ exports.route_disabled = function (emitter, done) {
 exports.router = function (emitter, done) {
   const app = koa()
 
-  function* hello () {
-    this.body = 'done'
-  }
-
   // Mount router
   const r = router(app)
   if (typeof r.routes === 'function') {
-    app.use(r.routes())
+    const hello = (ctx) => {
+      ctx.body = 'done'
+    }
     r.get('/hello/:name', hello)
+    app.use(r.routes())
   } else {
+    function* hello () {
+      this.body = 'done'
+    }
     app.use(r)
     app.get('/hello/:name', hello)
   }
