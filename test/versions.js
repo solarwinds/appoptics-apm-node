@@ -41,10 +41,34 @@ test('hapi', {
   ]
 })
 
-test('koa', '>= 1.0.0')
+// koa has so many parts and pieces this can get complicated
+test('koa', {
+  ranges: [
+    {
+      range: '>= 1.0.0 < 2.0.0',
+      dependencies: ['koa-router@5']
+    }, {
+      range: '>= 2.0.0',
+      dependencies: ['koa-router@7']
+    }
+  ]
+})
+
 test('koa-resource-router')
 test('koa-route', '>= 1.0.1')
-test('koa-router', '>= 3.0.0')
+
+test('koa-router', {
+  ranges: [
+    {
+      range: '>= 5.4.2 < 6.0.0',
+      dependencies: ['koa@1']
+    }, {
+      range: '>= 6.0.0',
+      dependencies: ['koa@2']
+    }
+  ]
+})
+//test('koa-router', '>= 3.0.0')
 
 test('level', '>= 1.3.0')
 test('memcached', '>= 2.2.0')
