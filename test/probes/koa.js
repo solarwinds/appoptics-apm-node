@@ -5,6 +5,9 @@ const router = require('koa-router')
 const _ = require('koa-route')
 const koa = require('koa')
 
+const semver = require('semver')
+const koaVersion = require('koa/package.json').version
+
 const helper = require('../helper')
 const request = require('request')
 
@@ -163,18 +166,27 @@ exports.route_disabled = function (emitter, done) {
 exports.router = function (emitter, done) {
   const app = koa()
 
-  function* hello () {
-    this.body = 'done'
-  }
-
   // Mount router
   const r = router(app)
-  if (typeof r.routes === 'function') {
+
+  if (typeof r.routes !== 'function') {
+    throw new TypeError('r.routes must be a function')
+  }
+
+  // if koa version is 2+ then it uses promises and no longer
+  // supports generators.
+  if (semver.gte(koaVersion, '2.0.0')) {
+    const hello = (ctx) => {
+      ctx.body = 'done'
+    }
+    r.get('/hello/:name', hello)
+    app.use(r.routes())
+  } else {
+    function* hello () {
+      this.body = 'done'
+    }
     app.use(r.routes())
     r.get('/hello/:name', hello)
-  } else {
-    app.use(r)
-    app.get('/hello/:name', hello)
   }
 
   const validations = controllerValidations('get /hello/:name', 'hello')
