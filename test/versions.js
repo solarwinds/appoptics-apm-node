@@ -60,7 +60,7 @@ test('koa-route', '>= 1.0.1')
 test('koa-router', {
   ranges: [
     {
-      range: '>= 5.4.2 < 6.0.0',
+      range: '>= 3.0.0 < 6.0.0',
       dependencies: ['koa@1']
     }, {
       range: '>= 6.0.0',
