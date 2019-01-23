@@ -6,7 +6,7 @@ const _ = require('koa-route')
 const koa = require('koa')
 
 const semver = require('semver')
-const koaVersion = require('koa/package.json').version
+const koaRouterVersion = require('koa-router/package.json').version
 
 const helper = require('../helper')
 const request = require('request')
@@ -173,15 +173,17 @@ exports.router = function (emitter, done) {
     throw new TypeError('r.routes must be a function')
   }
 
-  // if koa version is 2+ then it uses promises and no longer
-  // supports generators.
-  if (semver.gte(koaVersion, '2.0.0')) {
+  if (semver.gte(koaRouterVersion, '6.0.0')) {
+    // if koa-router requires koa version 2 and no longer
+    // supports generators.
     const hello = (ctx) => {
       ctx.body = 'done'
     }
     r.get('/hello/:name', hello)
     app.use(r.routes())
   } else {
+    // koa-router v5 and below - app.use() requires a generator
+    // and router(app).routes() returns one.
     function* hello () {
       this.body = 'done'
     }
