@@ -68,7 +68,6 @@ test('koa-router', {
     }
   ]
 })
-//test('koa-router', '>= 3.0.0')
 
 test('level', '>= 1.3.0')
 test('memcached', '>= 2.2.0')
