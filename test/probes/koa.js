@@ -121,6 +121,13 @@ exports.disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-route tests
+//
+// koa-route is a simple version of koa-router
+//
+// https://www.npmjs.com/package/koa-route
+//
 exports.route = function (emitter, done) {
   const app = koa()
 
@@ -163,6 +170,13 @@ exports.route_disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-router tests
+//
+// this seems to be the primary koa-router implementation.
+//
+// https://github.com/alexmingoia/koa-router
+//
 exports.router = function (emitter, done) {
   const app = koa()
 
@@ -238,6 +252,14 @@ exports.router_disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-resource-router tests
+//
+// rails-style resource routing for koa. done by the same guy as
+// koa-router, but has not been updated in 4 years as of 2019-01.
+//
+// https://github.com/alexmingoia/koa-resource-router
+//
 exports.resourceRouter = function (emitter, done) {
   const app = koa()
 
