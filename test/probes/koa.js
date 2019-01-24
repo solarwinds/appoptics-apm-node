@@ -175,8 +175,8 @@ exports.router = function (emitter, done) {
     const hello = (ctx) => {
       ctx.body = 'done'
     }
-    r.get('/hello/:name', hello)
     app.use(r.routes())
+    r.get('/hello/:name', hello)
   } else {
     function* hello () {
       this.body = 'done'
@@ -189,7 +189,7 @@ exports.router = function (emitter, done) {
       r.get('/hello/:name', hello)
     } else {
       app.use(r)
-      app.get('/hello:name', hello)
+      app.get('/hello/:name', hello)
     }
   }
 
