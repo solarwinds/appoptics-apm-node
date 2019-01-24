@@ -169,10 +169,6 @@ exports.router = function (emitter, done) {
   // Mount router
   const r = router(app)
 
-  if (typeof r.routes !== 'function') {
-    throw new TypeError('r.routes must be a function')
-  }
-
   if (semver.gte(koaRouterVersion, '6.0.0')) {
     // if koa-router requires koa version 2 and no longer
     // supports generators.
@@ -182,13 +178,19 @@ exports.router = function (emitter, done) {
     r.get('/hello/:name', hello)
     app.use(r.routes())
   } else {
-    // koa-router v5 and below - app.use() requires a generator
-    // and router(app).routes() returns one.
     function* hello () {
       this.body = 'done'
     }
-    app.use(r.routes())
-    r.get('/hello/:name', hello)
+    // koa-router v5 and below - app.use() requires a generator
+    // and router(app).routes() returns one (unless it's a really)
+    // old version in which case just app.use(r).
+    if (typeof r.routes === 'function' ) {
+      app.use(r.routes())
+      r.get('/hello/:name', hello)
+    } else {
+      app.use(r)
+      app.get('/hello:name', hello)
+    }
   }
 
   const validations = controllerValidations('get /hello/:name', 'hello')
