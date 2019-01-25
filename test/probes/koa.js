@@ -5,6 +5,9 @@ const router = require('koa-router')
 const _ = require('koa-route')
 const koa = require('koa')
 
+const semver = require('semver')
+const koaRouterVersion = require('koa-router/package.json').version
+
 const helper = require('../helper')
 const request = require('request')
 
@@ -118,6 +121,13 @@ exports.disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-route tests
+//
+// koa-route is a simple version of koa-router
+//
+// https://www.npmjs.com/package/koa-route
+//
 exports.route = function (emitter, done) {
   const app = koa()
 
@@ -160,21 +170,41 @@ exports.route_disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-router tests
+//
+// this seems to be the primary koa-router implementation.
+//
+// https://github.com/alexmingoia/koa-router
+//
 exports.router = function (emitter, done) {
   const app = koa()
 
-  function* hello () {
-    this.body = 'done'
-  }
-
   // Mount router
   const r = router(app)
-  if (typeof r.routes === 'function') {
+
+  if (semver.gte(koaRouterVersion, '6.0.0')) {
+    // if koa-router requires koa version 2 and no longer
+    // supports generators.
+    const hello = (ctx) => {
+      ctx.body = 'done'
+    }
     app.use(r.routes())
     r.get('/hello/:name', hello)
   } else {
-    app.use(r)
-    app.get('/hello/:name', hello)
+    function* hello () {
+      this.body = 'done'
+    }
+    // koa-router v5 and below - app.use() requires a generator
+    // and router(app).routes() returns one (unless it's a really)
+    // old version in which case just app.use(r).
+    if (typeof r.routes === 'function' ) {
+      app.use(r.routes())
+      r.get('/hello/:name', hello)
+    } else {
+      app.use(r)
+      app.get('/hello/:name', hello)
+    }
   }
 
   const validations = controllerValidations('get /hello/:name', 'hello')
@@ -222,6 +252,14 @@ exports.router_disabled = function (emitter, done) {
   })
 }
 
+//
+// koa-resource-router tests
+//
+// rails-style resource routing for koa. done by the same guy as
+// koa-router, but has not been updated in 4 years as of 2019-01.
+//
+// https://github.com/alexmingoia/koa-resource-router
+//
 exports.resourceRouter = function (emitter, done) {
   const app = koa()
 
