@@ -2,6 +2,7 @@
 
 const {ao} = require('./1.test-common')
 exports.ao = ao
+const debug = ao.logger.debug
 const realPort = ao.port
 ao.skipSample = true
 
@@ -14,6 +15,7 @@ const http = require('http')
 const path = require('path')
 const assert = require('assert')
 const util = require('util')
+const expect = require('chai').expect
 
 Error.stackTraceLimit = 25
 
@@ -48,17 +50,13 @@ exports.skipTest = function (filename) {
   return true
 }
 
-const addon = ao.addon
-const oboeVersion = addon ? addon.Config.getVersionString() : '<not loaded>'
-log.debug('Using oboe version %s', oboeVersion)
-
 const env = process.env
 
 // turn off logging if requested. pretty much any falsey string except '' does
 // it. don't accept '' because that used to turn on showing logs, but the
 // default has inverted.
 if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
-  log.debug('AO_TEST_SHOW_LOGS not set, turning off logging')
+  log.debug('AO_TEST_SHOW_LOGS set falsey, turning off logging')
   let logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {
     return !item.startsWith('appoptics:')
@@ -147,7 +145,7 @@ exports.doChecks = function (emitter, checks, done) {
   const addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
-  log.test.info('doChecks invoked - server address ' + addr.address + ':' + addr.port)
+  log.test.info(`doChecks(${checks.length}) server address ${addr.address}:${addr.port}`)
 
   function onMessage (msg) {
     if (!emitter.__aoActive) {
@@ -249,6 +247,7 @@ exports.aggregate = function (emitter, config, done) {
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
   // noops skip testing the 'outer' span.
+  /*
   function outerEntry (msg) {
     msg.should.have.property('Layer', 'outer')
     msg.should.have.property('Label', 'entry')
@@ -257,6 +256,7 @@ exports.test = function (emitter, test, validations, done) {
     msg.should.have.property('Layer', 'outer')
     msg.should.have.property('Label', 'exit')
   }
+  // */
   // copy the caller's array so we can modify it without surprising
   // the caller.
   validations = validations.map(e => e)
@@ -265,7 +265,10 @@ exports.test = function (emitter, test, validations, done) {
 
   if (emitter[aoAggregate]) {
     // if an aggregate object has been set the aggregate messages using
-    // the aggregate configuration in emitter[aoAggregate].
+    // the aggregate configuration in emitter[aoAggregate]. this is only
+    // partially implemented but is intended to enable checking all responses
+    // once they have completed. that will make checking edges much more
+    // straightforward and will also eliminate timeout errors when.
     exports.aggregate(emitter, emitter[aoAggregate], done)
     delete emitter[aoAggregate]
   } else {
@@ -274,7 +277,7 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const span = new ao.Span('outer')
+    const span = ao.Span.makeEntrySpan('outer', exports.makeSettings({doSample: ao.traceMode}))
     // span.async = true
     log.test.span('helper.test outer: %l', span)
     log.test.info('test starting')
@@ -285,9 +288,8 @@ exports.test = function (emitter, test, validations, done) {
       if (err) {
         return done(err)
       }
-      data // suppress the eslint error.
       span.exit()
-      done
+      //done
     })
   })
 }
@@ -479,25 +481,36 @@ function checkData (data, fn) {
   }
 }
 
-let counter
 exports.checkLogMessages = checkLogMessages
-function checkLogMessages (debug, checks) {
+function checkLogMessages (checks) {
   const defaultLogger = debug.log
-  counter = 0
+  let counter = 0
+
+  // if the level is not one of these ignore it.
+  const levelsToCheck = {
+    'appoptics:error': true,
+    'appoptics:warn': true,
+    'appoptics:patching': true
+  }
 
   // log is called before substitutions are done, so don't check for the final
   // message as output.
   debug.log = function (output) {
     const [level, text] = getLevelAndText(output)
+    if (!(level in levelsToCheck && counter < checks.length)) {
+      return
+    }
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
-      assert('appoptics:' + check.level === level, 'message level should be ' + check.level)
-      assert(text.indexOf(check.message) === 0, 'found: "' + text + '" expected "' + check.message + '"')
+      expect(level).equal(`appoptics:${check.level}`, `level is wrong for message "${text}"`)
+      expect(text.indexOf(check.message) === 0).equal(
+        true, `found: "${text}" expected "${check.message}"`
+      )
       if (check.values) {
         for (let i = 0; i < check.values.length; i++) {
           if (Number.isNaN(check.values[i])) {
-            assert(Number.isNaN(arguments[i + 1])), 'argument ' + i + ' should be NaN'
+            assert(Number.isNaN(arguments[i + 1]), 'argument ' + i + ' should be NaN')
           } else {
             assert(check.values[i] === arguments[i + 1], 'argument ' + i + ' should be ', check.values[i])
           }
@@ -512,10 +525,14 @@ function checkLogMessages (debug, checks) {
       debug.log = defaultLogger
     }
   }
-}
-
-exports.getLogMessagesChecked = function () {
-  return counter
+  function clearLogMessageChecks () {
+    debug.log = defaultLogger
+    counter = 0
+  }
+  function getLogMessagesChecked () {
+    return counter
+  }
+  return [getLogMessagesChecked, clearLogMessageChecks]
 }
 
 exports.getLevelAndText = getLevelAndText
@@ -533,4 +550,14 @@ function getLevelAndText (text) {
     return [match[1], match[2]]
   }
   return ['', '']
+}
+
+exports.makeSettings = function (settings) {
+  const s = {
+    doSample: true,
+    doMetrics: true,
+    source: 1,              // local agent config
+    rate: ao.sampleRate,
+  }
+  return Object.assign(s, settings)
 }

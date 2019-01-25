@@ -1,7 +1,7 @@
 'use strict'
 
 const Resource = require('koa-resource-router')
-const router = require('koa-router')
+const Router = require('koa-router')
 const _ = require('koa-route')
 const koa = require('koa')
 
@@ -47,34 +47,56 @@ const check = {
   }
 }
 
-function controllerValidations (controller, action) {
-  const profileName = controller + ' ' + action
-  return [
+function controllerValidations (...args) {
+  if (args.length % 3 !== 0) {
+    throw new Error('controllerValidations requires arg count to be a multiple of 3')
+  }
+
+  let checks = [
     function (msg) {
       check['http-entry'](msg)
     },
     function (msg) {
       check['koa-entry'](msg)
     },
-    function (msg) {
-      msg.should.have.property('Label', 'profile_entry')
-      msg.should.have.property('ProfileName', profileName)
+  ]
+  const exits = []
+  let c
+  let a
+  for (let i = 0; i < args.length; i += 3) {
+    const layer = args[i + 0]
+    const controller = args[i + 1]
+    const action = args[i + 2]
+
+    c = controller
+    a = action
+
+    checks.push(function (msg) {
+      msg.should.have.property('Layer', layer)
+      msg.should.have.property('Label', 'entry')
       msg.should.have.property('Controller', controller)
       msg.should.have.property('Action', action)
-    },
-    function (msg) {
-      msg.should.have.property('Label', 'profile_exit')
-      msg.should.have.property('ProfileName', profileName)
-    },
+    })
+    exits.unshift(function (msg) {
+      msg.should.have.property('Layer', layer)
+      msg.should.have.property('Label', 'exit')
+    })
+  }
+
+  checks = checks.concat(exits)
+  checks = checks.concat([
     function (msg) {
       check['koa-exit'](msg)
     },
     function (msg) {
       check['http-exit'](msg)
-      msg.should.have.property('Controller', controller)
-      msg.should.have.property('Action', action)
+      msg.should.have.property('Controller', c)
+      msg.should.have.property('Action', a)
     }
-  ]
+  ])
+
+  return checks
+
 }
 
 exports.basic = function (emitter, done) {
@@ -135,7 +157,7 @@ exports.route = function (emitter, done) {
     this.body = 'done'
   }))
 
-  const validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations('koa-route', 'get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
@@ -181,8 +203,9 @@ exports.router = function (emitter, done) {
   const app = koa()
 
   // Mount router
-  const r = router(app)
+  const r = Router(app)
 
+  let spanName = 'koa-router'
   if (semver.gte(koaRouterVersion, '6.0.0')) {
     // if koa-router requires koa version 2 and no longer
     // supports generators.
@@ -192,6 +215,7 @@ exports.router = function (emitter, done) {
     app.use(r.routes())
     r.get('/hello/:name', hello)
   } else {
+    spanName = 'koa-router-handler'
     function* hello () {
       this.body = 'done'
     }
@@ -207,7 +231,7 @@ exports.router = function (emitter, done) {
     }
   }
 
-  const validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations(spanName, 'get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
@@ -215,6 +239,46 @@ exports.router = function (emitter, done) {
   const server = app.listen(function () {
     const port = server.address().port
     request('http://localhost:' + port + '/hello/world')
+  })
+}
+
+exports.router_promise = function (emitter, done) {
+  const app = koa()
+  const controller = new Router()
+
+  const handler = (ctx, next) => {
+    return next().then(() => {
+      ctx.status = 200
+    })
+  }
+
+  const handler2 = (ctx, next) => {
+    return next().then(() => {
+      ctx.body = 'Hello Koa'
+    })
+  }
+
+  controller.post('/api/visit', handler2, handler, handler)
+  app.use(controller.routes())
+
+  const validations = controllerValidations(
+    'koa-router',
+    'post /api/visit',
+    'handler2',
+    'koa-router',
+    'post /api/visit',
+    'handler',
+    'koa-router',
+    'post /api/visit',
+    'handler'
+  )
+  helper.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  const server = app.listen(function () {
+    const port = server.address().port
+    request.post('http://localhost:' + port + '/api/visit')
   })
 }
 
@@ -227,7 +291,7 @@ exports.router_disabled = function (emitter, done) {
   }
 
   // Mount router
-  const r = router(app)
+  const r = Router(app)
   if (typeof r.routes === 'function') {
     app.use(r.routes())
     r.get('/hello/:name', hello)
@@ -271,7 +335,7 @@ exports.resourceRouter = function (emitter, done) {
 
   app.use(res.middleware())
 
-  const validations = controllerValidations('hello', 'index')
+  const validations = controllerValidations('koa-resource-router', 'hello', 'index')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })

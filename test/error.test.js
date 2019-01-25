@@ -5,6 +5,9 @@ const Span = ao.Span
 const Event = ao.Event
 const should = require('should') // eslint-disable-line no-unused-vars
 
+const makeSettings = helper.makeSettings
+
+
 describe('error', function () {
   const conf = {enabled: true}
   const error = new Error('nope')
@@ -37,7 +40,7 @@ describe('error', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -68,25 +71,27 @@ describe('error', function () {
   // Tests
   //
   it('should add error properties to event', function () {
-    const event = new Event('error-test', 'info')
+    const md = ao.addon.Metadata.makeRandom(1)
+    const event = new Event('error-test', 'info', md)
     const err = new Error('test')
     event.error = err
 
-    event.should.have.property('ErrorClass', 'Error')
-    event.should.have.property('ErrorMsg', err.message)
-    event.should.have.property('Backtrace', err.stack)
+    event.kv.should.have.property('ErrorClass', 'Error')
+    event.kv.should.have.property('ErrorMsg', err.message)
+    event.kv.should.have.property('Backtrace', err.stack)
   })
 
   it('should set error multiple times (keeping last)', function () {
-    const event = new Event('error-test', 'info')
+    const md = ao.addon.Metadata.makeRandom(1)
+    const event = new Event('error-test', 'info', md)
     const first = new Error('first')
     const second = new Error('second')
     event.error = first
     event.error = second
 
-    event.should.have.property('ErrorClass', 'Error')
-    event.should.have.property('ErrorMsg', second.message)
-    event.should.have.property('Backtrace', second.stack)
+    event.kv.should.have.property('ErrorClass', 'Error')
+    event.kv.should.have.property('ErrorMsg', second.message)
+    event.kv.should.have.property('Backtrace', second.stack)
   })
 
   it('should report errors in sync calls', function (done) {
@@ -267,7 +272,8 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    const span = new Span('test', null, {})
+    const settings = makeSettings()
+    const span = Span.makeEntrySpan('test', settings, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
@@ -300,12 +306,13 @@ describe('error', function () {
   })
 
   it('should not send error events when not in a span', function () {
-    const span = new Span('test', null, {})
+    const settings = makeSettings()
+    const span = Span.makeEntrySpan('test', settings, {})
 
     const logChecks = [
       {level: 'error', message: 'test span error call could not find last event'},
     ]
-    helper.checkLogMessages(ao.debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     const send = Event.prototype.send
     Event.prototype.send = function () {

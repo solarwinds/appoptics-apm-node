@@ -47,6 +47,9 @@ elif [[ "$ARG" = "bash" ]]; then
     # this is used primarily for manual interactive testing.
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
 
+    # add a simple reset to basic debug output
+    export XDEBUG=appoptics:error,appoptics:warn,appoptics:patching,appoptics:debug
+
     # these are generally the right settings unless a collector
     # is required.
     export APPOPTICS_REPORTER_UDP=localhost:7832

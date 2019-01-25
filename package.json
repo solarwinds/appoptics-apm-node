@@ -1,19 +1,21 @@
 {
   "name": "appoptics-apm",
-  "version": "5.9.5",
+  "version": "6.0.0-rc4",
   "description": "Agent for AppOptics APM",
   "main": "lib/index.js",
   "bin": {
     "node-ao": "./bin/node-ao"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "mocha test/**/*.test.js",
+    "prepack": "./prepack.sh",
     "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
     "install-deps": "./deps.sh"
   },
   "author": "Bruce A. MacNaughton <bruce@solarwinds.cloud>",
   "contributors": [
-    "Stephen Belanger <admin@stephenbelanger.com>"
+    "Stephen Belanger <admin@stephenbelanger.com>",
+    "Ross Hendry <rh@kpv-lab.co.uk>"
   ],
   "keywords": [
     "tracing",
@@ -41,14 +43,12 @@
     "array-flatten": "^2.1.0",
     "cls-hooked": "^4.2.2",
     "continuation-local-storage": "^3.2.1",
-    "debug": "^4.1.0",
-    "es6-weak-map": "^2.0.1",
-    "event-pre-handler": "^1.0.0",
+    "debug-custom": "^1.0.5",
+    "event-pre-handler": "^1.0.1",
     "glob": "^7.0.3",
     "methods": "~1.1.0",
     "minimist": "^1.2.0",
     "semver": "^5.0.1",
-    "sliced": "^1.0.1",
     "ximmer": "^1.2.1"
   },
   "devDependencies": {
@@ -70,9 +70,9 @@
     "gulp": "^3.9.1",
     "gulp-istanbul": "^0.10.0",
     "gulp-mocha": "^3.0.1",
-    "hapi": "^17.8.1",
+    "hapi": "^17.8.4",
     "jsdoc-to-markdown": "^4.0.1",
-    "koa": "^2.6.2",
+    "koa": "^2.7.0",
     "koa-resource-router": "^0.4.0",
     "koa-route": "^2.4.2",
     "koa-router": "^7.4.0",
@@ -85,6 +85,7 @@
     "mongoose": "^5.4.3",
     "morgan": "^1.9.0",
     "mysql": "^2.16.0",
+    "nyc": "^13.1.0",
     "oracledb": "^2.2.0",
     "pg": "^7.7.1",
     "q": "^2.0.3",
@@ -97,9 +98,9 @@
     "supertest": "^3.0.0",
     "tedious": "^4.1.0",
     "testeachversion": "^8.0.2",
-    "vision": "^5.4.3"
+    "vision": "^5.4.4"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "5.7.1"
+    "appoptics-bindings": "^6.0.0-rc5"
   }
 }

@@ -2,6 +2,8 @@
 
 const helper = require('../helper')
 const {ao} = require('../1.test-common')
+const expect = require('chai').expect
+const util = require('util')
 
 const addon = ao.addon
 
@@ -12,6 +14,9 @@ describe('probes.http', function () {
   const ctx = {http: http}
   let emitter
   let realSampleTrace
+  const previousHttpEnabled = ao.probes.http.enabled
+  const previousHttpClientEnabled = ao.probes['http-client'].enabled
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -19,7 +24,7 @@ describe('probes.http', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -30,38 +35,68 @@ describe('probes.http', function () {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
+  after(function () {
+    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+  })
+
+
+  beforeEach(function () {
+    if (this.currentTest.title === 'should not report anything when http probe is disabled') {
+      ao.probes.http.enabled = false
+      ao.probes['http-client'].enabled = false
+    } else if (this.currentTest.title === 'should trace correctly within asyncrony') {
+      //this.skip()
+    } else if (this.currentTest.title === 'should not send a span or metrics when there is a filter for it') {
+      //this.skip()
+    }
+  })
+
+  afterEach(function () {
+    if (this.currentTest.title === 'should not report anything when http probe is disabled') {
+      ao.probes.http.enabled = previousHttpEnabled
+      ao.probes['http-client'].enabled = previousHttpClientEnabled
+    } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
+      ao.specialUrls = undefined
+    }
+  })
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
+  })
 
   const check = {
     server: {
       entry: function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'entry')
+        expect(msg).property('Layer', 'nodejs')
+        expect(msg).property('Label', 'entry')
       },
       info: function (msg) {
-        msg.should.have.property('Label', 'info')
+        expect(msg).property('Label', 'info')
       },
       error: function (msg) {
-        msg.should.have.property('Label', 'error')
+        expect(msg).property('Label', 'error')
       },
       exit: function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'exit')
+        expect(msg).property('Layer', 'nodejs')
+        expect(msg).property('Label', 'exit')
       }
     },
     client: {
       entry: function (msg) {
-        msg.should.have.property('Layer', 'http-client')
-        msg.should.have.property('Label', 'entry')
+        expect(msg).property('Layer', 'http-client')
+        expect(msg).property('Label', 'entry')
       },
       info: function (msg) {
-        msg.should.have.property('Label', 'info')
+        expect(msg).property('Label', 'info')
       },
       error: function (msg) {
-        msg.should.have.property('Label', 'error')
+        expect(msg).property('Label', 'error')
       },
       exit: function (msg) {
-        msg.should.have.property('Layer', 'http-client')
-        msg.should.have.property('Label', 'exit')
+        expect(msg).property('Layer', 'http-client')
+        expect(msg).property('Label', 'exit')
       }
     }
   }
@@ -73,12 +108,12 @@ describe('probes.http', function () {
     // it, so compensate for it.
     it('UDP might lose a message running locally', function (done) {
       helper.test(emitter, function (done) {
-        ao.instrument('fake', function () { })
+        ao.instrument('fake', function () {})
         done()
       }, [
         function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
-          msg.should.have.property('Layer', 'fake')
+          expect(msg).property('Label').oneOf(['entry', 'exit']),
+          expect(msg).property('Layer', 'fake')
         }
       ], done)
     })
@@ -95,16 +130,16 @@ describe('probes.http', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('Method', 'GET')
-          msg.should.have.property('Proto', 'http')
-          msg.should.have.property('HTTP-Host', 'localhost')
-          msg.should.have.property('Port', port)
-          msg.should.have.property('URL', '/foo?bar=baz')
-          msg.should.have.property('ClientIP')
+          expect(msg).property('Method', 'GET')
+          expect(msg).property('Proto', 'http')
+          expect(msg).property('HTTP-Host', 'localhost')
+          expect(msg).property('Port', port)
+          expect(msg).property('URL', '/foo?bar=baz')
+          expect(msg).property('ClientIP')
         },
         function (msg) {
           check.server.exit(msg)
-          msg.should.have.property('Status', 200)
+          expect(msg).property('Status', 200)
         }
       ], function () {
         server.close(done)
@@ -124,12 +159,13 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const originMetadata = addon.Metadata.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
 
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('Edge', origin.opId)
+          expect(msg).property('Edge', origin.opId)
         },
         function (msg) {
           check.server.exit(msg)
@@ -157,18 +193,20 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const originMetadata = addon.Metadata.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        {level: 'warn', message: `invalid X-Trace header received ${xtrace}`},
+        {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ]
-      helper.checkLogMessages(ao.debug, logChecks)
+      let getCount  // eslint-disable-line
+      [getCount, clear] = helper.checkLogMessages(logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.not.have.property('Edge', origin.opId)
+          expect(msg).not.property('Edge', origin.opId)
         },
         function (msg) {
           check.server.exit(msg)
@@ -199,8 +237,8 @@ describe('probes.http', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('SampleSource')
-          msg.should.have.property('SampleRate')
+          expect(msg).property('SampleSource')
+          expect(msg).property('SampleRate')
         },
         function (msg) {
           check.server.exit(msg)
@@ -215,6 +253,89 @@ describe('probes.http', function () {
           url: 'http://localhost:' + port
         })
       })
+    })
+
+    //
+    // it should not create a trace at all when the http is disabled
+    //
+    it('should not report anything when http probe is disabled', function (done) {
+
+      function deafListener (msg) {
+        throw new Error('unexpected message: ' + util.format(msg))
+      }
+
+      const server = http.createServer(function (req, res) {
+        setTimeout(function () {
+          res.end('done')
+          res.on('finish', function () {
+            emitter.removeListener('message', deafListener)
+            server.close(done)
+          })
+        }, 10)
+      })
+
+      emitter.removeAllListeners('message')
+      emitter.on('message', deafListener)
+
+      server.listen(function () {
+        const port = server.address().port
+        request({url: `http://localhost:${port}`})
+      })
+
+    })
+
+    //
+    // make sure url filters work when doMetrics is false.
+    // (oboe doesn't forward metrics messages using UDP so this can't really
+    // be tested end-to-end; we use a mock metricsSender - thanks maia.)
+    //
+    it('should not send a span or metrics when there is a filter for it', function (done) {
+      let messageCount = 0
+      let metricsCount = 0
+      ao.specialUrls = [
+        {string: '/filtered', doSample: false, doMetrics: false},
+        {regex: '^/files/', doSample: false, doMetrics: false}
+      ]
+
+      function deafListener (msg) {
+        messageCount += 1
+      }
+
+      function metricsSender (o) {
+        metricsCount += 1
+        return '/filtered'
+      }
+      const previousSendHttpSpan = ao.reporter.sendHttpSpan
+      ao.reporter.sendHttpSpan = metricsSender
+
+      const server = http.createServer(function (req, res) {
+        setTimeout(function () {
+          res.end('done')
+        }, 10)
+      })
+
+      emitter.removeAllListeners('message')
+      emitter.on('message', deafListener)
+
+      server.listen(function () {
+        const port = server.address().port
+        request({url: `http://localhost:${port}/filtered`})
+        request({url: `http://localhost:${port}/files/binary.data`})
+      })
+
+      // 1/4 second should be enough to get all messages. there's no clean way to
+      // wait on an indeterminate number of UDP messages.
+      setTimeout(function () {
+        emitter.removeListener('message', deafListener)
+        server.close(function () {
+          // restore mockups
+          ao.specialUrls = undefined
+          ao.reporter.sendHttpSpan = previousSendHttpSpan
+          // if messages were sent it's an error
+          const error = messageCount === 0 && metricsCount === 0
+          done(error ? undefined : new Error('messages should not be sent but were'))
+        })
+      }, 250)
     })
 
     //
@@ -256,7 +377,7 @@ describe('probes.http', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          msg.should.have.property('URL', '/foo')
+          expect(msg).property('URL', '/foo')
         },
         function (msg) {
           check.server.exit(msg)
@@ -286,12 +407,13 @@ describe('probes.http', function () {
     }
 
     Object.keys(passthroughHeaders).forEach(function (key) {
-      const val = passthroughHeaders[key]
+      const kvKey = passthroughHeaders[key]
+      const headerValue = `test-${key}`
 
       const headers = {}
-      headers[key] = 'test'
+      headers[key] = headerValue
 
-      it('should map ' + key + ' header to event.' + val, function (done) {
+      it(`should map ${key} header to event.kv.${kvKey}`, function (done) {
         const server = http.createServer(function (req, res) {
           res.end('done')
         })
@@ -299,7 +421,7 @@ describe('probes.http', function () {
         helper.doChecks(emitter, [
           function (msg) {
             check.server.entry(msg)
-            msg.should.have.property(val, 'test')
+            expect(msg).property(kvKey, headerValue)
           },
           function (msg) {
             check.server.exit(msg)
@@ -337,9 +459,9 @@ describe('probes.http', function () {
         },
         function (msg) {
           check.server.error(msg)
-          msg.should.have.property('ErrorClass', 'Error')
-          msg.should.have.property('ErrorMsg', error.message)
-          msg.should.have.property('Backtrace', error.stack)
+          expect(msg).property('ErrorClass', 'Error')
+          expect(msg).property('ErrorMsg', error.message)
+          expect(msg).property('Backtrace', error.stack)
         },
         function (msg) {
           check.server.exit(msg)
@@ -372,9 +494,9 @@ describe('probes.http', function () {
         },
         function (msg) {
           check.server.error(msg)
-          msg.should.have.property('ErrorClass', 'Error')
-          msg.should.have.property('ErrorMsg', error.message)
-          msg.should.have.property('Backtrace', error.stack)
+          expect(msg).property('ErrorClass', 'Error')
+          expect(msg).property('ErrorMsg', error.message)
+          expect(msg).property('Backtrace', error.stack)
         },
         function (msg) {
           check.server.exit(msg)
@@ -413,10 +535,10 @@ describe('probes.http', function () {
         },
         function (msg) {
           check.server.exit(msg)
-          msg.should.have.property('Status', 500)
+          expect(msg).property('Status', 500)
         }
       ], function () {
-        reached.should.equal(true)
+        expect(reached).equal(true)
         server.close(done)
       })
 
@@ -446,8 +568,8 @@ describe('probes.http', function () {
         helper.test(emitter, testFunction, [
           function (msg) {
             check.client.entry(msg)
-            msg.should.have.property('RemoteURL', ctx.data.url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', ctx.data.url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.server.entry(msg)
@@ -457,7 +579,7 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
           }
         ], done)
       })
@@ -477,8 +599,8 @@ describe('probes.http', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
-            msg.should.have.property('RemoteURL', url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.server.entry(msg)
@@ -488,7 +610,7 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
           }
         ], done)
       })
@@ -507,8 +629,8 @@ describe('probes.http', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg)
-            msg.should.have.property('RemoteURL', ctx.data.url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', ctx.data.url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.server.entry(msg)
@@ -518,7 +640,7 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
           }
         ], done)
       })
@@ -540,8 +662,8 @@ describe('probes.http', function () {
           function (msg) {
             check.client.entry(msg)
             const url = ctx.data.url.replace(/\?.*/, '')
-            msg.should.have.property('RemoteURL', url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.server.entry(msg)
@@ -551,7 +673,7 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
             conf.includeRemoteUrlParams = true
           }
         ], done)
@@ -579,14 +701,14 @@ describe('probes.http', function () {
         }, [
           function (msg) {
             check.client.entry(msg)
-            msg.should.have.property('RemoteURL', url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.client.error(msg)
-            msg.should.have.property('ErrorClass', 'Error')
-            msg.should.have.property('ErrorMsg', error.message)
-            msg.should.have.property('Backtrace', error.stack)
+            expect(msg).property('ErrorClass', 'Error')
+            expect(msg).property('ErrorMsg', error.message)
+            expect(msg).property('Backtrace', error.stack)
           },
           function (msg) {
             check.server.entry(msg)
@@ -596,7 +718,7 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
           }
         ], done)
       })
@@ -621,8 +743,8 @@ describe('probes.http', function () {
         }, [
           function (msg) {
             check.client.entry(msg)
-            msg.should.have.property('RemoteURL', url)
-            msg.should.have.property('IsService', 'yes')
+            expect(msg).property('RemoteURL', url)
+            expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.server.entry(msg)
@@ -632,13 +754,13 @@ describe('probes.http', function () {
           },
           function (msg) {
             check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
+            expect(msg).property('HTTPStatus', 200)
           },
           function (msg) {
             check.server.error(msg)
-            msg.should.have.property('ErrorClass', 'Error')
-            msg.should.have.property('ErrorMsg', error.message)
-            msg.should.have.property('Backtrace', error.stack)
+            expect(msg).property('ErrorClass', 'Error')
+            expect(msg).property('ErrorMsg', error.message)
+            expect(msg).property('Backtrace', error.stack)
           }
         ], done)
       })

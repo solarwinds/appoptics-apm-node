@@ -2,15 +2,17 @@
 
 const helper = require('./helper')
 const should = require('should')
-const debug = require('debug')
 const ao = require('..')
 const addon = ao.addon
 const Span = ao.Span
 const Event = ao.Event
 
+const makeSettings = helper.makeSettings
+
 describe('span', function () {
   let emitter
   let realSampleTrace
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -18,7 +20,7 @@ describe('span', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -28,7 +30,12 @@ describe('span', function () {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
-
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
+  })
   //
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
@@ -49,7 +56,7 @@ describe('span', function () {
   // Verify basic structural integrity
   //
   it('should construct valid span', function () {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings())
 
     span.should.have.property('events')
     const events = ['entry', 'exit']
@@ -66,7 +73,8 @@ describe('span', function () {
   it('should report sync boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
-    const span = new Span(name, null, data)
+    const span = Span.makeEntrySpan(name, makeSettings(), data)
+    delete span.topSpan
 
     const e = span.events
 
@@ -83,14 +91,14 @@ describe('span', function () {
     helper.doChecks(emitter, checks, done)
 
     span.runSync(function () {
-
     })
   })
 
   it('should report async boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
-    const span = new Span(name, null, data)
+    const span = Span.makeEntrySpan(name, makeSettings(), data)
+    delete span.topSpan
 
     const e = span.events
 
@@ -148,7 +156,9 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = new Span('outer', null, outerData)
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
+    delete outer.topSpan
+
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function () {})
@@ -184,7 +194,9 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = new Span('outer', null, outerData)
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
+    delete outer.topSpan
+
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function (wrap) {
@@ -204,8 +216,9 @@ describe('span', function () {
   it('should report nested boundaries of sync event within async event', function (done) {
     const outerData = {Foo: 'bar'}
     const innerData = {Baz: 'buz'}
-    const outer = new Span('outer', null, outerData)
     let inner
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
+    delete outer.topSpan
 
     const checks = [
       // Outer entry (async)
@@ -253,7 +266,8 @@ describe('span', function () {
   // Special events
   //
   it('should send info events', function (done) {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
     const data = {
       Foo: 'bar'
     }
@@ -272,7 +286,8 @@ describe('span', function () {
   })
 
   it('should send error events', function (done) {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
     const err = new Error('nopeconst')
 
     const checks = [
@@ -290,27 +305,29 @@ describe('span', function () {
 
   it('should support setting an exit error', function () {
     // Proper errors should work
-    const a = new Span('test', null, {})
+    const a = Span.makeEntrySpan('test', makeSettings(), {})
     const aExit = a.events.exit
     const err = new Error('Exit error message')
     a.setExitError(err)
-    aExit.should.have.property('ErrorClass', 'Error')
-    aExit.should.have.property('ErrorMsg', err.message)
-    aExit.should.have.property('Backtrace', err.stack)
+    aExit.kv.should.have.property('ErrorClass', 'Error')
+    aExit.kv.should.have.property('ErrorMsg', err.message)
+    aExit.kv.should.have.property('Backtrace', err.stack)
 
     // As should error strings
-    const b = new Span('test', null, {})
+    const b = Span.makeEntrySpan('test', makeSettings(), {})
     const bExit = b.events.exit
     b.setExitError('Exit error string')
-    bExit.should.have.property('ErrorClass', 'Error')
-    bExit.should.have.property('ErrorMsg', 'Exit error string')
+    bExit.kv.should.have.property('ErrorClass', 'Error')
+    bExit.kv.should.have.property('ErrorMsg', 'Exit error string')
   })
 
   //
   // Safety and correctness
   //
   it('should only send valid properties', function (done) {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
+
     const data = {
       Array: [],
       Object: {bar: 'baz'},
@@ -343,7 +360,8 @@ describe('span', function () {
       {level: 'error', message: 'Invalid type for KV'},
     ]
 
-    helper.checkLogMessages(debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(logChecks)
 
     span.run(function () {
       span.info(data)
@@ -351,7 +369,9 @@ describe('span', function () {
   })
 
   it('should not send info events when not in a span', function () {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings({doSample: false}), {})
+    delete span.topSpan
+
     const data = {Foo: 'bar'}
 
     const send = Event.prototype.send
@@ -363,14 +383,17 @@ describe('span', function () {
     const logChecks = [
       {level: 'error', message: 'test span info call could not find last event'}
     ]
-    helper.checkLogMessages(debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(logChecks)
 
     span.info(data)
     Event.prototype.send = send
   })
 
   it('should allow sending the same info data multiple times', function (done) {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
+
     const data = {
       Foo: 'bar'
     }
@@ -389,7 +412,9 @@ describe('span', function () {
   })
 
   it('should fail silently when sending non-object-literal info', function () {
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
+
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
@@ -407,7 +432,9 @@ describe('span', function () {
   //
   it('should chain internal event edges', function (done) {
     const n = 10 + Math.floor(Math.random() * 10)
-    const span = new Span('test', null, {})
+    const span = Span.makeEntrySpan('test', makeSettings(), {})
+    delete span.topSpan
+
     const tracker = helper.edgeTracker()
 
     const checks = [ tracker, tracker ]
@@ -433,7 +460,8 @@ describe('span', function () {
   })
 
   it('should chain internal events around sync sub span', function (done) {
-    const span = new Span('outer', null, {})
+    const span = Span.makeEntrySpan('outer', makeSettings(), {})
+    delete span.topSpan
 
     const before = {state: 'before'}
     const after = {state: 'after'}
@@ -461,7 +489,8 @@ describe('span', function () {
   })
 
   it('should chain internal events around async sub span', function (done) {
-    const span = new Span('outer', null, {})
+    const span = Span.makeEntrySpan('outer', makeSettings(), {})
+    delete span.topSpan
 
     const before = {state: 'before'}
     const after = {state: 'after'}
@@ -505,7 +534,7 @@ describe('span', function () {
   // TODO BAM fix this brittle test. 'inner-2' sometimes shows up instead
   // of 'inner-3'. Until then skip it for false negatives.
   it.skip('should properly attribute dangling info/error events', function (done) {
-    const span = new Span('outer', null, {})
+    const span = new Span('outer', {inbound: true, doSample: true}, {})
 
     const before = {state: 'before'}
     const after = {state: 'after'}

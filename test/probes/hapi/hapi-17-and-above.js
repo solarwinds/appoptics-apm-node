@@ -43,6 +43,7 @@ if (semver.gte(visionPkg.version, '5.0.0')) {
 describe('probes.hapi ' + pkg.version + visionText, function () {
   let emitter
   let port = 3000
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -52,12 +53,18 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.g.testing(__filename)
   })
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
   })
 
   const check = {
@@ -333,7 +340,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     const logChecks = [
       {level: 'error', message: 'hapi customNameFunc() error:', values: [error]},
     ]
-    helper.checkLogMessages(ao.debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(logChecks)
     return customTransactionNameTest(custom)()
   })
 
@@ -442,7 +450,6 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   //   tx - transaction name
   //   c - controller
   //   a - action
-  //   p - profile
   //
   function makeExpected (request, func) {
     // bind this when created. an error causes request.route
@@ -474,8 +481,6 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         result = controller
       } else if (what === 'a') {
         result = action
-      } else if (what === 'p') {
-        result = controller + ' ' + action
       }
 
       if (ao.cfg.domainPrefix && what === 'tx') {

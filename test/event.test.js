@@ -1,14 +1,16 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-const should = require('should')    // eslint-disable-line no-unused-vars
 const addon = ao.addon
-const debug = ao.debug
 const Event = ao.Event
+
+const expect = require('chai').expect
 
 describe('event', function () {
   let emitter
   let event
+  let md
+  let mdTaskId
 
   //
   // Intercept appoptics messages for analysis
@@ -16,10 +18,16 @@ describe('event', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
+  })
+
+  beforeEach(function () {
+    md = addon.Metadata.makeRandom(1)
+    const mds = md.toString(1).split(':')
+    mdTaskId = mds[1].toUpperCase()
   })
 
   it('UDP might lose a message', function (done) {
@@ -28,18 +36,19 @@ describe('event', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
-        msg.should.have.property('Layer', 'fake')
+        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Layer', 'fake')
       }
     ], done)
   })
 
   it('should construct valid event', function () {
-    event = new Event('test', 'entry')
-    event.should.have.property('Layer', 'test')
-    event.should.have.property('Label', 'entry')
-    event.should.have.property('taskId').and.match(/^[0-9A-F]{40}$/)
-    event.should.have.property('opId').and.match(/^[0-9A-F]{16}$/)
+    event = new Event('test', 'entry', md)
+    expect(event).property('Layer', 'test')
+    expect(event).property('Label', 'entry')
+    expect(event).property('taskId').and.match(/^[0-9A-F]{40}$/)
+    expect(event).property('opId').and.match(/^[0-9A-F]{16}$/)
+    expect(event).property('taskId', mdTaskId)
   })
 
   it('should convert an event to a string', function () {
@@ -48,32 +57,35 @@ describe('event', function () {
 
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
-    ao.sampleMode = 'never'
-    event = new Event('test', 'entry')
-    ao.sampling(event).should.equal(false)
-    ao.sampling(event.toString()).should.equal(false)
+    ao.traceMode = 'never'
+    md = addon.Metadata.makeRandom(0)
+    event = new Event('test', 'entry', md)
+    expect(ao.sampling(event)).equal(false)
+    expect(ao.sampling(event.toString())).equal(false)
 
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
-    event = new Event('test', 'entry')
-    ao.sampling(event).should.equal(true)
-    ao.sampling(event.toString()).should.equal(true)
+    ao.traceMode = 'always'
+    md = addon.Metadata.makeRandom(1)
+    event = new Event('test', 'entry', md)
+    expect(ao.sampling(event)).equal(true)
+    expect(ao.sampling(event.toString())).equal(true)
   })
 
   it('should enter the event context', function () {
     const context = addon.Context.toString()
     event.enter()
-    addon.Context.toString().should.not.equal(context)
+    expect(addon.Context.toString()).not.equal(context)
   })
 
   it('should send the event', function (done) {
-    const event2 = new Event('test', 'exit', event.event)
+    const edge = true
+    const event2 = new Event('test', 'exit', event.event, edge)
 
     emitter.once('message', function (msg) {
-      msg.should.have.property('X-Trace', event2.toString())
-      msg.should.have.property('Edge', event.opId)
-      msg.should.have.property('Layer', 'test')
-      msg.should.have.property('Label', 'exit')
+      expect(msg).property('X-Trace', event2.toString())
+      expect(msg).property('Edge', event.opId)
+      expect(msg).property('Layer', 'test')
+      expect(msg).property('Label', 'exit')
       done()
     })
 
@@ -90,25 +102,25 @@ describe('event', function () {
       {level: 'error', message: 'Invalid type for KV %s: %s', values: ['Nan', 'NaN']},
       // there is a stack trace here but issuing the error is enough.
     ]
-    helper.checkLogMessages(debug, logChecks)
+
+    const [getCount, clear] = helper.checkLogMessages(logChecks) // eslint-disable-line
 
     event2.set({Nan: NaN})
 
-    helper.getLogMessagesChecked().should.equal(1, 'incorrect log message count')
+    expect(getCount()).equal(1, 'incorrect log message count')
   })
 
   it('should support set function', function () {
-    const event = new Event('test', 'entry')
+    const event = new Event('test', 'entry', md)
     event.set({Foo: 'bar'})
-    event.should.have.property('Foo', 'bar')
+    expect(event.kv).property('Foo', 'bar')
   })
 
   it('should support data in send function', function (done) {
-    const event = new Event('test', 'entry')
+    const event = new Event('test', 'entry', md)
 
     emitter.once('message', function (msg) {
-      msg.should.have.property('Foo')
-      msg.Foo.should.equal('fubar')
+      expect(msg).property('Foo', 'fubar')
       done()
     })
     ao.requestStore.run(function () {

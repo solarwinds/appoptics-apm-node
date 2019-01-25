@@ -51,7 +51,7 @@ describe('probes/mongoose ' + pkg.version, function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     // make them more readable
     backtraces = ao.probes['mongodb-core'].collectBacktraces
     ao.probes['mongodb-core'].collectBacktraces = false
