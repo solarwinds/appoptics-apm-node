@@ -567,8 +567,12 @@ function makeTests (db_host, host, isReplicaSet) {
         function entry (msg) {
           check.entry(msg)
           check.common(msg)
-          msg.should.have.property('QueryOp', 'count')
-          msg.should.have.property('Query', JSON.stringify(query))
+          msg.should.have.property('QueryOp').oneOf('count', 'aggregate')
+          if (msg.QueryOp === 'count') {
+            msg.should.have.property('Query', JSON.stringify(query))
+          } else {
+            msg.should.have.property('Pipeline', '[{"$match":{"a":1}},{"$group":{"_id":null,"n":{"$sum":1}}}]')
+          }
         }
 
         function exit (msg) {
