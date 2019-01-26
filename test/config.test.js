@@ -1,6 +1,6 @@
 'use strict'
 
-const parseConfig = require('../lib/parse-config-file')
+const parseConfig = require('../lib/parse-config')
 
 const expect = require('chai').expect
 
@@ -18,7 +18,7 @@ const emptyConfig = {
   file: {},
   global: {},
   probes: {},
-  specials: undefined,
+  specialUrls: undefined,
   unusedConfig: undefined,
   unusedProbes: undefined,
   specialsErrors: undefined
@@ -28,7 +28,7 @@ const defaultedConfig = cloneConfig(emptyConfig)
 defaultedConfig.global = Object.assign({}, globalDefaults)
 
 // config to verify each key has been set
-const configFile1 = {
+const config1 = {
   enabled: false,
   hostnameAlias: 'bruce',
   traceMode: 'never',
@@ -39,19 +39,21 @@ const configFile1 = {
 }
 
 const configFile1Expected = cloneConfig(defaultedConfig)
-Object.keys(configFile1).forEach(k => {
-  configFile1Expected.global[k] = configFile1[k]
+Object.keys(config1).forEach(k => {
+  configFile1Expected.global[k] = config1[k]
 })
 
-function cloneConfig (config) {
+function cloneConfig (config, mergeConfig) {
   const clone = Object.assign({}, config)
   clone.file = Object.assign({}, config.file)
   clone.global = Object.assign({}, config.global)
   clone.probes = Object.assign({}, config.probes)
-  if (config.specials) clone.specials = config.specials.slice()
+  if (config.specialUrls) clone.specialUrls = config.specialUrls.slice()
   if (config.unusedConfig) clone.unusedConfig = config.unusedConfig.slice()
   if (config.unusedProbes) clone.unusedProbes = config.unusedProbes.slice()
   if (config.specialsErrors) clone.specialsErrors = config.specialsErrors.slice()
+
+  Object.assign(clone, mergeConfig)
 
   return clone
 }
@@ -67,80 +69,131 @@ const probeDefaults = {
   },
 }
 
+const defaults = {global: globalDefaults, probes: probeDefaults}
 
-//
+//==============
 // start testing
-//
+//==============
 describe('config', function () {
 
-  it('should handle undefined config and probe files', function () {
-    const expected = cloneConfig(defaultedConfig)
+  it('should handle no config and no defaults', function () {
     let config = parseConfig()
+    expect(config).deep.equal(emptyConfig)
 
-    expect(config).deep.equal(expected)
     config = parseConfig({}, {})
+    expect(config).deep.equal(emptyConfig)
+  })
+
+  it('should not set global configuration when no defaults', function () {
+    const fileConfig = {enabled: true}
+    const expected = cloneConfig(emptyConfig, {file: fileConfig, unusedConfig: ['enabled']})
+
+    const config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+  })
+
+  it('should use defaults when no configuration is supplied', function () {
+    const fileConfig = {}
+    const expected = cloneConfig(emptyConfig, {global: globalDefaults})
+
+    const config = parseConfig(fileConfig, {global: globalDefaults})
     expect(config).deep.equal(expected)
   })
 
   it('should set known config keys', function () {
-    const config = parseConfig(configFile1)
+    const expected = cloneConfig(emptyConfig, {
+      file: config1,
+      global: config1
+    })
 
-    expect(config.file).include(configFile1)
-    expect(config.global).include(configFile1)
+    const config = parseConfig(config1, {global: globalDefaults})
+    expect(config).deep.equal(expected)
+
     // make sure that there are no extra keys
-    expect(Object.keys(config.global)).members(Object.keys(configFile1))
+    expect(Object.keys(config.global)).members(Object.keys(config1))
   })
 
   it('should not set unknown config keys', function () {
     const badKey = {badKeyRising: 'i have been a bad key'}
+    const expected = cloneConfig(emptyConfig, {
+      file: badKey,
+      global: globalDefaults,
+      unusedConfig: ['badKeyRising']}
+    )
 
-    const config = parseConfig(badKey)
-
-    // verify that the the input is echoed correctly (file), that
-    // the defaults are present, that the bad key is not included
-    // in the config, and that the unused key is reported.
-    expect(config.file).deep.equal(badKey)
-    expect(config.global).include(globalDefaults)
-    expect(config.global).not.property('badKeyRising')
-    expect(config.probes).deep.equal({})
-    expect(config.specials).undefined
-
-    expect(config.unusedConfig).eql(['badKeyRising'])
-    expect(config.unusedProbes).undefined
-    expect(config.specialsErrors).undefined
+    const config = parseConfig(badKey, {global: globalDefaults})
+    expect(config).deep.equal(expected)
   })
 
   it('should set known probe keys', function () {
     const fileConfig = {probes: {fs: {enabled: true, collectBacktraces: false}}}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      probes: Object.assign({}, probeDefaults, fileConfig.probes)
+    })
 
-    const config = parseConfig(fileConfig, probeDefaults)
+    const config = parseConfig(fileConfig, {probes: probeDefaults})
+    expect(config).deep.equal(expected)
+  })
 
-    expect(config.file).deep.equal(fileConfig)
-    expect(config.global).include(globalDefaults)
-    expect(config.probes.fs).deep.equal({enabled: true, collectBacktraces: false})
+  it('should set both global and probe defaults', function () {
+    const fileConfig = {}
+    const expected = cloneConfig(emptyConfig, {
+      global: globalDefaults,
+      probes: probeDefaults
+    })
 
-    expect(config.specials).undefined
-    expect(config.unusedConfig).undefined
-    expect(config.unusedProbes).undefined
-    expect(config.specialsErrors).undefined
+    const config = parseConfig(fileConfig, defaults)
+    expect(config).deep.equal(expected)
   })
 
   it('should not set unknown probe keys', function () {
-    debugger
     const fileConfig = {probes: {xyzzy: {enabled: true, collectBacktraces: false}}}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      probes: Object.assign({}, probeDefaults),
+      unusedProbes: ['xyzzy']
+    })
 
-    const config = parseConfig(fileConfig, probeDefaults)
+    const config = parseConfig(fileConfig, {probes: probeDefaults})
+    expect(config).deep.equal(expected)
+  })
 
-    expect(config.file).deep.equal(fileConfig)
-    expect(config.global).include(globalDefaults)
-    expect(config.probes.crypto).deep.equal({enabled: true, collectBacktraces: true})
-    expect(config.probes.fs).deep.equal({enabled: true, collectBacktraces: true})
-    expect(config.probes.xyzzy).undefined
+  it('should allow RegExp and string forms of special URLs', function () {
+    const fileConfig = {specialUrls: [
+      {regex: /xyzzy/, mode: 'never'},
+      {regex: 'hello'},
+      {url: '/xy(zzy'}
+    ]}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialUrls: fileConfig.specialUrls.map(s => {
+        return {
+          url: s.url ? s.url : (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
+          doSample: false,
+          doMetrics: false}
+      })
+    })
 
-    expect(config.specials).undefined
-    expect(config.unusedConfig).undefined
-    expect(config.unusedProbes).deep.equal(['xyzzy'])
-    expect(config.specialsErrors).undefined
+    const config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+  })
+
+  it('should report invalid RegExp', function () {
+    const fileConfig = {specialUrls: [
+      {regex: /plover's egg/},
+      {regex: 'but this(is not valid'},
+    ]}
+    let specialError
+    try {new RegExp(fileConfig.specialUrls[1].regex)} catch (e) {specialError = e.message}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialUrls: [{url: fileConfig.specialUrls[0].regex, doSample: false, doMetrics: false}],
+      specialsErrors: [{spec: fileConfig.specialUrls[1], error: specialError}]
+    })
+
+    const config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
   })
 
 })
