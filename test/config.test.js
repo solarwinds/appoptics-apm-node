@@ -196,4 +196,34 @@ describe('config', function () {
     expect(config).deep.equal(expected)
   })
 
+  it('should report invalid specialUrls entries', function () {
+    const fileConfig = {specialUrls: [
+      {regex: /hello/, url: 'i am a string'},
+      {regex: 17},
+      {url: true}
+    ]}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialsErrors: [
+        {spec: fileConfig.specialUrls[0], error: 'must specify one, not both, of "url" and "regex"'},
+        {spec: fileConfig.specialUrls[1], error: 'invalid specialUrl'},
+        {spec: fileConfig.specialUrls[2], error: 'invalid specialUrl'},
+      ]
+    })
+
+    const config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+  })
+
+  it('should allow a single specialUrls entry', function () {
+    const fileConfig = {specialUrls: {regex: /i'm a shrimp/}}
+    const expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialUrls: [{url: fileConfig.specialUrls.regex, doSample: false, doMetrics: false}]
+    })
+
+    const config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+  })
+
 })
