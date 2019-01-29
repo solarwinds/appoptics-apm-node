@@ -11,7 +11,6 @@ describe('event', function () {
   let event
   let md
   let mdTaskId
-  let mdOpId
 
   //
   // Intercept appoptics messages for analysis
@@ -29,7 +28,6 @@ describe('event', function () {
     md = addon.Metadata.makeRandom(1)
     const mds = md.toString(1).split(':')
     mdTaskId = mds[1].toUpperCase()
-    mdOpId = mds[2].toUpperCase()
   })
 
   it('UDP might lose a message', function (done) {

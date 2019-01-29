@@ -68,7 +68,8 @@ describe('error', function () {
   // Tests
   //
   it('should add error properties to event', function () {
-    const event = new Event('error-test', 'info')
+    const md = ao.addon.Metadata.makeRandom(1)
+    const event = new Event('error-test', 'info', md)
     const err = new Error('test')
     event.error = err
 
@@ -78,7 +79,8 @@ describe('error', function () {
   })
 
   it('should set error multiple times (keeping last)', function () {
-    const event = new Event('error-test', 'info')
+    const md = ao.addon.Metadata.makeRandom(1)
+    const event = new Event('error-test', 'info', md)
     const first = new Error('first')
     const second = new Error('second')
     event.error = first
@@ -267,7 +269,8 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    const span = new Span('test', null, {})
+    const settings = {inbound: true, doSample: true}
+    const span = new Span('test', settings, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
@@ -300,7 +303,8 @@ describe('error', function () {
   })
 
   it('should not send error events when not in a span', function () {
-    const span = new Span('test', null, {})
+    const settings = {inbound: true, doSample: true}
+    const span = new Span('test', settings, {})
 
     const logChecks = [
       {level: 'error', message: 'test span error call could not find last event'},

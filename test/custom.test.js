@@ -618,7 +618,7 @@ describe('custom', function () {
       }
     ], done)
 
-    const previous = new Span('previous')
+    const previous = new Span('previous', {inbound: true, doSample: true})
     const entry = previous.events.entry
 
     previous.run(function (wrap) {
@@ -647,12 +647,12 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function (done) {
-    const realSample = ao.sample
+    const realSample = ao.getTraceSettings
     let called = false
 
-    ao.sample = function () {
+    ao.getTraceSettings = function () {
       called = true
-      return {sample: true, source: 0, rate: 0}
+      return {sample: true, source: 0, rate: 0, doSample: true}
     }
 
     // because a span is created and entered then Span.last & Event.last
@@ -672,8 +672,8 @@ describe('custom', function () {
       },
       [],                           // checks
       function (err) {
-        called.should.equal(true)
-        ao.sample = realSample
+        called.should.equal(true, 'the sample function should be called')
+        ao.getTraceSettings = realSample
         done(err)
       }
     )
@@ -717,7 +717,7 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = new Span('test')
+      const span = new Span('test', {inbound: true, doSample: true})
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -755,7 +755,7 @@ describe('custom', function () {
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = new Span('test')
+      const span = new Span('test', {inbound: true, doSample: true})
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)

@@ -14,6 +14,7 @@ const http = require('http')
 const path = require('path')
 const assert = require('assert')
 const util = require('util')
+const expect = require('chai').expect
 
 Error.stackTraceLimit = 25
 
@@ -249,6 +250,7 @@ exports.aggregate = function (emitter, config, done) {
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
   // noops skip testing the 'outer' span.
+  /*
   function outerEntry (msg) {
     msg.should.have.property('Layer', 'outer')
     msg.should.have.property('Label', 'entry')
@@ -257,6 +259,7 @@ exports.test = function (emitter, test, validations, done) {
     msg.should.have.property('Layer', 'outer')
     msg.should.have.property('Label', 'exit')
   }
+  // */
   // copy the caller's array so we can modify it without surprising
   // the caller.
   validations = validations.map(e => e)
@@ -491,8 +494,10 @@ function checkLogMessages (debug, checks) {
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
-      assert('appoptics:' + check.level === level, 'message level should be ' + check.level)
-      assert(text.indexOf(check.message) === 0, 'found: "' + text + '" expected "' + check.message + '"')
+      expect(level).equal(`appoptics:${check.level}`, `level is wrong for message "${text}"`)
+      expect(text.indexOf(check.message) === 0).equal(
+        true, `found: "${text}" expected "${check.message}"`
+      )
       if (check.values) {
         for (let i = 0; i < check.values.length; i++) {
           if (Number.isNaN(check.values[i])) {
