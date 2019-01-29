@@ -9,6 +9,9 @@ const Event = ao.Event
 describe('event', function () {
   let emitter
   let event
+  let md
+  let mdTaskId
+  let mdOpId
 
   //
   // Intercept appoptics messages for analysis
@@ -20,6 +23,13 @@ describe('event', function () {
   })
   after(function (done) {
     emitter.close(done)
+  })
+
+  beforeEach(function () {
+    md = addon.Metadata.makeRandom(1)
+    const mds = md.toString(1).split(':')
+    mdTaskId = mds[1].toUpperCase()
+    mdOpId = mds[2].toUpperCase()
   })
 
   it('UDP might lose a message', function (done) {
@@ -35,11 +45,12 @@ describe('event', function () {
   })
 
   it('should construct valid event', function () {
-    event = new Event('test', 'entry')
+    event = new Event('test', 'entry', md)
     event.should.have.property('Layer', 'test')
     event.should.have.property('Label', 'entry')
     event.should.have.property('taskId').and.match(/^[0-9A-F]{40}$/)
     event.should.have.property('opId').and.match(/^[0-9A-F]{16}$/)
+    event.should.have.property('taskId', mdTaskId)
   })
 
   it('should convert an event to a string', function () {
@@ -49,13 +60,15 @@ describe('event', function () {
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
     ao.sampleMode = 'never'
-    event = new Event('test', 'entry')
+    md = addon.Metadata.makeRandom(0)
+    event = new Event('test', 'entry', md)
     ao.sampling(event).should.equal(false)
     ao.sampling(event.toString()).should.equal(false)
 
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
-    event = new Event('test', 'entry')
+    md = addon.Metadata.makeRandom(1)
+    event = new Event('test', 'entry', md)
     ao.sampling(event).should.equal(true)
     ao.sampling(event.toString()).should.equal(true)
   })
@@ -67,7 +80,8 @@ describe('event', function () {
   })
 
   it('should send the event', function (done) {
-    const event2 = new Event('test', 'exit', event.event)
+    const edge = true
+    const event2 = new Event('test', 'exit', event.event, edge)
 
     emitter.once('message', function (msg) {
       msg.should.have.property('X-Trace', event2.toString())
@@ -98,13 +112,13 @@ describe('event', function () {
   })
 
   it('should support set function', function () {
-    const event = new Event('test', 'entry')
+    const event = new Event('test', 'entry', md)
     event.set({Foo: 'bar'})
     event.should.have.property('Foo', 'bar')
   })
 
   it('should support data in send function', function (done) {
-    const event = new Event('test', 'entry')
+    const event = new Event('test', 'entry', md)
 
     emitter.once('message', function (msg) {
       msg.should.have.property('Foo')

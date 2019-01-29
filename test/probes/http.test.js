@@ -73,7 +73,7 @@ describe('probes.http', function () {
     // it, so compensate for it.
     it('UDP might lose a message running locally', function (done) {
       helper.test(emitter, function (done) {
-        ao.instrument('fake', function () { })
+        ao.instrument('fake', function () {})
         done()
       }, [
         function (msg) {
@@ -124,7 +124,8 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const originMetadata = addon.Metadata.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -157,7 +158,8 @@ describe('probes.http', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const originMetadata = addon.Metadata.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [

@@ -274,7 +274,7 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const span = new ao.Span('outer')
+    const span = new ao.Span('outer', {inbound: true, doSample: ao.sampleMode === 1})
     // span.async = true
     log.test.span('helper.test outer: %l', span)
     log.test.info('test starting')
@@ -285,7 +285,6 @@ exports.test = function (emitter, test, validations, done) {
       if (err) {
         return done(err)
       }
-      data // suppress the eslint error.
       span.exit()
       done
     })
