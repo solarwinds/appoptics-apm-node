@@ -100,10 +100,12 @@ describe('probes.restify ' + pkg.version, function () {
         check['restify-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Label', 'profile_entry')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Label', 'profile_exit')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'exit')
       },
       function (msg) {
         check['restify-exit'](msg)
@@ -142,28 +144,32 @@ describe('probes.restify ' + pkg.version, function () {
         check['restify-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
         msg.should.have.property('Controller', 'GET /hello/:name')
         msg.should.have.property('Action', 'renamer')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', 'GET /hello/:name responder')
         msg.should.have.property('Controller', 'GET /hello/:name')
         msg.should.have.property('Action', 'responder')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'restify-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', 'GET /hello/:name responder')
       },
       function (msg) {
         check['restify-exit'](msg)

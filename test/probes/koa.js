@@ -47,8 +47,8 @@ const check = {
   }
 }
 
-function controllerValidations (controller, action) {
-  const profileName = controller + ' ' + action
+function controllerValidations (layer, controller, action) {
+  //const profileName = controller + ' ' + action
   return [
     function (msg) {
       check['http-entry'](msg)
@@ -57,14 +57,16 @@ function controllerValidations (controller, action) {
       check['koa-entry'](msg)
     },
     function (msg) {
-      msg.should.have.property('Label', 'profile_entry')
-      msg.should.have.property('ProfileName', profileName)
+      msg.should.have.property('Layer', layer)
+      msg.should.have.property('Label', 'entry')
+      //msg.should.have.property('ProfileName', profileName)
       msg.should.have.property('Controller', controller)
       msg.should.have.property('Action', action)
     },
     function (msg) {
-      msg.should.have.property('Label', 'profile_exit')
-      msg.should.have.property('ProfileName', profileName)
+      msg.should.have.property('Layer', layer)
+      msg.should.have.property('Label', 'exit')
+      //msg.should.have.property('ProfileName', profileName)
     },
     function (msg) {
       check['koa-exit'](msg)
@@ -135,7 +137,7 @@ exports.route = function (emitter, done) {
     this.body = 'done'
   }))
 
-  const validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations('koa-route', 'get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
@@ -207,7 +209,7 @@ exports.router = function (emitter, done) {
     }
   }
 
-  const validations = controllerValidations('get /hello/:name', 'hello')
+  const validations = controllerValidations('koa-router', 'get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
@@ -271,7 +273,7 @@ exports.resourceRouter = function (emitter, done) {
 
   app.use(res.middleware())
 
-  const validations = controllerValidations('hello', 'index')
+  const validations = controllerValidations('koa-resource-router', 'hello', 'index')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })

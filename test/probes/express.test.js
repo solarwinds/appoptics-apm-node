@@ -384,28 +384,32 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
 
       },
       function (msg) {
@@ -455,28 +459,32 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -525,28 +533,32 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRen('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expectedRes('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -643,8 +655,9 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
       },
       function (msg) {
         msg.should.have.property('Layer', 'express-render')
@@ -662,8 +675,9 @@ describe('probes.express ' + pkg.version, function () {
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
       },
       function (msg) {
         check['express-exit'](msg)
@@ -796,18 +810,20 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', expected('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'entry')
+        //msg.should.have.property('ProfileName', expected('p'))
         msg.should.have.property('Controller', expected('c'))
         msg.should.have.property('Action', expected('a'))
       },
       function () {},
       function () {},
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', expected('p'))
+        //msg.should.have.property('Language', 'nodejs')
+        msg.should.have.property('Layer', 'express-route')
+        msg.should.have.property('Label', 'exit')
+        //msg.should.have.property('ProfileName', expected('p'))
       },
       function (msg) {
         msg.should.not.have.property('Layer')
