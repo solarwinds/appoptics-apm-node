@@ -226,4 +226,24 @@ describe('config', function () {
     expect(config).deep.equal(expected)
   })
 
+  it('should accept traceMode "never" and no other value', function () {
+    const fileConfig = {specialUrls: {regex: /and so am i/, traceMode: 'never'}}
+    let expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialUrls: [{url: fileConfig.specialUrls.regex, doSample: false, doMetrics: false}]
+    })
+
+    let config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+
+    fileConfig.specialUrls.traceMode = 'always'
+    expected = cloneConfig(emptyConfig, {
+      file: fileConfig,
+      specialsErrors: [{spec: fileConfig.specialUrls, error: 'invalid traceMode: "always"'}]
+    })
+
+    config = parseConfig(fileConfig)
+    expect(config).deep.equal(expected)
+  })
+
 })
