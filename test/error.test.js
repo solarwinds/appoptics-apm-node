@@ -73,9 +73,9 @@ describe('error', function () {
     const err = new Error('test')
     event.error = err
 
-    event.should.have.property('ErrorClass', 'Error')
-    event.should.have.property('ErrorMsg', err.message)
-    event.should.have.property('Backtrace', err.stack)
+    event.kv.should.have.property('ErrorClass', 'Error')
+    event.kv.should.have.property('ErrorMsg', err.message)
+    event.kv.should.have.property('Backtrace', err.stack)
   })
 
   it('should set error multiple times (keeping last)', function () {
@@ -86,9 +86,9 @@ describe('error', function () {
     event.error = first
     event.error = second
 
-    event.should.have.property('ErrorClass', 'Error')
-    event.should.have.property('ErrorMsg', second.message)
-    event.should.have.property('Backtrace', second.stack)
+    event.kv.should.have.property('ErrorClass', 'Error')
+    event.kv.should.have.property('ErrorMsg', second.message)
+    event.kv.should.have.property('Backtrace', second.stack)
   })
 
   it('should report errors in sync calls', function (done) {

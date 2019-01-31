@@ -294,16 +294,16 @@ describe('span', function () {
     const aExit = a.events.exit
     const err = new Error('Exit error message')
     a.setExitError(err)
-    aExit.should.have.property('ErrorClass', 'Error')
-    aExit.should.have.property('ErrorMsg', err.message)
-    aExit.should.have.property('Backtrace', err.stack)
+    aExit.kv.should.have.property('ErrorClass', 'Error')
+    aExit.kv.should.have.property('ErrorMsg', err.message)
+    aExit.kv.should.have.property('Backtrace', err.stack)
 
     // As should error strings
     const b = new Span('test', {inbound: true, doSample: true}, {})
     const bExit = b.events.exit
     b.setExitError('Exit error string')
-    bExit.should.have.property('ErrorClass', 'Error')
-    bExit.should.have.property('ErrorMsg', 'Exit error string')
+    bExit.kv.should.have.property('ErrorClass', 'Error')
+    bExit.kv.should.have.property('ErrorMsg', 'Exit error string')
   })
 
   //

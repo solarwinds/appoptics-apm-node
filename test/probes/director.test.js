@@ -63,7 +63,7 @@ describe('probes.director ' + pkg.version, function () {
   //
   // Tests
   //
-  it('should create a director span', function (done) {
+  it('should create a director route span', function (done) {
     function hello (name) {
       this.res.writeHead(200, {'Content-Type': 'text/plain'})
       this.res.end('Hello, ' + name + '!')
@@ -90,13 +90,13 @@ describe('probes.director ' + pkg.version, function () {
         check['director-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'director')
+        msg.should.have.property('Layer', 'director-route')
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Controller', '/hello/:name')
         msg.should.have.property('Action', 'hello')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'director')
+        msg.should.have.property('Layer', 'director-route')
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {

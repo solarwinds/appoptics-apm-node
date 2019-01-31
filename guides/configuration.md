@@ -10,7 +10,7 @@ It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY 
 
 ### The Configuration File ###
 
-The `appoptics-apm` configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path.
+The `appoptics-apm` default configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path. The file can also be a node module that exports a single object containing the same information has `appoptics-apm.json` would.
 
 The configuration file supplies the following properties, showing their defaults:
 

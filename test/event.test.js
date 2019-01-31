@@ -112,7 +112,7 @@ describe('event', function () {
   it('should support set function', function () {
     const event = new Event('test', 'entry', md)
     event.set({Foo: 'bar'})
-    event.should.have.property('Foo', 'bar')
+    event.kv.should.have.property('Foo', 'bar')
   })
 
   it('should support data in send function', function (done) {

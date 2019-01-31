@@ -407,9 +407,9 @@ describe('custom', function () {
   it('should handle errors correctly between build and run functions', function (done) {
     helper.test(emitter, function (done) {
       const err = new Error('nope')
-      function build (span) { return span.descend('test') }
-      function nope () { count++; throw err }
-      function inc () { count++ }
+      function build (span) {return span.descend('test')}
+      function nope () {count++; throw err}
+      function inc () {count++}
       let count = 0
 
       const logChecks = [
@@ -425,7 +425,7 @@ describe('custom', function () {
 
       // Verify that errors thrown in the runner function *do* propagate
       count = 0
-      function validateError (e) { return e === err }
+      function validateError (e) {return e === err}
       should.throws(function () {
         ao.instrument(build, nope)
       }, validateError)

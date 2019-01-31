@@ -140,7 +140,8 @@ describe('probes.https', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const md = ao.addon.Metadata.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', md)
 
       helper.doChecks(emitter, [
         function (msg) {
