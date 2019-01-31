@@ -134,7 +134,7 @@ describe('probes.request', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const origin = new ao.Event('span-name', 'label-name', addon.Metadata.makeRandom(1))
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -167,11 +167,11 @@ describe('probes.request', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', '')
+      const origin = new ao.Event('span-name', 'label-name', addon.Metadata.makeRandom(1))
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        {level: 'warn', message: `invalid X-Trace header received ${xtrace}`},
+        {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ]
       helper.checkLogMessages(ao.debug, logChecks)
 
