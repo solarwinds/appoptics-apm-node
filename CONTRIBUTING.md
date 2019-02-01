@@ -85,28 +85,11 @@ in the test directory.
 
 ## Process
 
-### Building
+### Baseline
 
-The code is written in ES6 and uses [Babel](http://babeljs.io) to transpile it
-for old node versions. You can trigger this build manually with `gulp build`.
-However, the build task gets triggered automatically by any test, benchmark,
-coverage, or support-matrix task and is also included as a prepublish step in
-`package.json`, so you should probably never need to trigger it yourself.
-
-(beta note: the following need to be moved to internal release process notes)
-
-### Developing
-
-The development process thus far has involved maintaining separate branches
-for each feature, which get rebased from master before a squash or merge back
-to master, depending on complexity (ie: need to keep commits separate).
-
-I'm finding that creating a staging branch before merging to master makes testing
-easier; if only one branch is being merged it is effectively its own staging branch.
-See the releasing section below for more on why the staging branch is useful.
-
-Documentation changes, changes to testing, and changes to the development
-environment are often committed directly to master.
+The code is written with JavaScript features supported by node v6 and above. Until
+the minimum supported version is 8 this means, for example, that `async/await` can't
+be used because it generates JavaScript syntax errors.
 
 ### Testing
 
@@ -130,55 +113,18 @@ not invoked as an executable. To setup the environment for the `npm test` comman
 
 `. env.sh bash`.
 
-The primary documentation for `env.sh` is the file itself.
+The primary documentation for `env.sh` is the file itself. Using the `bash` argument places
+the `node_modules/.bin/` directory in your path in addition to defining the environment
+variables needed for the tests to run against the docker compose environment.
 
 After `. env.sh bash` you should be able to run the test suite using `npm test`. You can
-also use gulp directly to choose specific tests like `gulp test:unit` or `gulp test:probes`
-or even a single specific test with `gulp test:probe:generic-pool`.
+selectively run tests using `mocha test/basics.test.js`, `mocha test/*.test.js`,
+`mocha test/**/*.test.js`, and any other variations that mocha supports. This is especially
+useful for debugging using something like `mocha --inspect-brk test/probes/http.test.js`.
 
-### Releasing
+### Pull Requests
 
-When you are ready to release, create a staging branch (name n.n.n - the intended version
-of the release) from master, rebase your branch(es) off the staging branch, run the local
-tests, and repeat for any additional branch(es). If there is only one branch then it may
-be used instead of creating a staging branch.
+When your changes pass testing, including any new tests required to verify your changes
+and documentation if appropriate, issue a PR. We'll try to take a prompt look at get back
+to you quickly.
 
-When all items planned for the release have been incorporated into the staging branch then
-run additional some additional tests. At a minimum, start with a clean copy of the repository
-and run the test suite again. This will catch missing dependencies that may still be in the
-`node_modules` directory in a development area. So, in some directory,
-
-```
-git clone --depth=1 https://github.com/appoptics/appoptics-apm-node clean-apm
-cd clean-apm
-git checkout n.n.n     # the branch name
-npm install
-npm test               # presumes the docker environment for testing (see above).
-```
-
-If the change is significant you may need to run the support matrix again. That's beyond
-the scope of this document but involves testing appoptics against each released version
-of each package.
-
-As an extra precaution it is useful to test this in a real-world test harness. I use
-https://github.com/bmacnaughton/todomvc-mongodb. In the the `clean-apm` directory use
-`npm pack` to make a `.tgz` file, copy that to the `todomvc-mongodb` directory, change
-`package.json` for the `appoptics-apm` dependency to reference the `.tgz` file, install
-using `npm install`, setup the environment with `. env.sh stg` (works against the staging
-server - you might use another key), and run the server with `node server.js --fe_ip=localhost:port`.
-Use curl or a browser to execute requests against the server then check the Appoptics
-dashboard to make sure the traces appear and look good. The source, `server.js`, is the
-only documentation for the supported transactions.
-
-Once testing has been done and you are confident that the release works, then merge the
-staging branch to master, create a version bump commit. I use `npm version major.minor.patch`
-but if can be done manually if you prefer. The `npm` command updates `package.json` with the
-new version.
-
-After all commits and tags have been pushed to git, it's simply a matter of running `npm publish`
-to send the latest version to the npm registry. Note that your account should have 2FA authentication
-enabled for publishing. The default `npm` distributed with node 6 doesn't support that so I release
-using node 8. The command `npm publish --otp=dddddd` adds the one-time password required. If the
-release is non-production, i.e., `-beta.1` or `-rc.1`, etc., then be sure to add `--tag beta` or
-`--tag rc`. If no tag is supplied then it gets the default `latest` and any user doing an install
-will get that version (not usually desired for release-candidates).
