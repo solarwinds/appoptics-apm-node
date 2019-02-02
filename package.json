@@ -7,7 +7,7 @@
     "node-ao": "./bin/node-ao"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "mocha test/**/*.test.js",
     "docs": "jsdoc2md -f lib/index.js -f lib/span.js -f lib/event.js > guides/api.md",
     "install-deps": "./deps.sh"
   },
