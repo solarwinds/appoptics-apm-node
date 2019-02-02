@@ -1,10 +1,11 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-const should = require('should')    // eslint-disable-line no-unused-vars
 const addon = ao.addon
 const debug = ao.debug
 const Event = ao.Event
+
+const expect = require('chai').expect
 
 describe('event', function () {
   let emitter
@@ -36,19 +37,19 @@ describe('event', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
-        msg.should.have.property('Layer', 'fake')
+        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Layer', 'fake')
       }
     ], done)
   })
 
   it('should construct valid event', function () {
     event = new Event('test', 'entry', md)
-    event.should.have.property('Layer', 'test')
-    event.should.have.property('Label', 'entry')
-    event.should.have.property('taskId').and.match(/^[0-9A-F]{40}$/)
-    event.should.have.property('opId').and.match(/^[0-9A-F]{16}$/)
-    event.should.have.property('taskId', mdTaskId)
+    expect(event).property('Layer', 'test')
+    expect(event).property('Label', 'entry')
+    expect(event).property('taskId').and.match(/^[0-9A-F]{40}$/)
+    expect(event).property('opId').and.match(/^[0-9A-F]{16}$/)
+    expect(event).property('taskId', mdTaskId)
   })
 
   it('should convert an event to a string', function () {
@@ -60,21 +61,21 @@ describe('event', function () {
     ao.sampleMode = 'never'
     md = addon.Metadata.makeRandom(0)
     event = new Event('test', 'entry', md)
-    ao.sampling(event).should.equal(false)
-    ao.sampling(event.toString()).should.equal(false)
+    expect(ao.sampling(event)).equal(false)
+    expect(ao.sampling(event.toString())).equal(false)
 
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.sampleMode = 'always'
     md = addon.Metadata.makeRandom(1)
     event = new Event('test', 'entry', md)
-    ao.sampling(event).should.equal(true)
-    ao.sampling(event.toString()).should.equal(true)
+    expect(ao.sampling(event)).equal(true)
+    expect(ao.sampling(event.toString())).equal(true)
   })
 
   it('should enter the event context', function () {
     const context = addon.Context.toString()
     event.enter()
-    addon.Context.toString().should.not.equal(context)
+    expect(addon.Context.toString()).not.equal(context)
   })
 
   it('should send the event', function (done) {
@@ -82,10 +83,10 @@ describe('event', function () {
     const event2 = new Event('test', 'exit', event.event, edge)
 
     emitter.once('message', function (msg) {
-      msg.should.have.property('X-Trace', event2.toString())
-      msg.should.have.property('Edge', event.opId)
-      msg.should.have.property('Layer', 'test')
-      msg.should.have.property('Label', 'exit')
+      expect(msg).property('X-Trace', event2.toString())
+      expect(msg).property('Edge', event.opId)
+      expect(msg).property('Layer', 'test')
+      expect(msg).property('Label', 'exit')
       done()
     })
 
@@ -106,21 +107,20 @@ describe('event', function () {
 
     event2.set({Nan: NaN})
 
-    helper.getLogMessagesChecked().should.equal(1, 'incorrect log message count')
+    expect(helper.getLogMessagesChecked()).equal(1, 'incorrect log message count')
   })
 
   it('should support set function', function () {
     const event = new Event('test', 'entry', md)
     event.set({Foo: 'bar'})
-    event.kv.should.have.property('Foo', 'bar')
+    expect(event.kv).property('Foo', 'bar')
   })
 
   it('should support data in send function', function (done) {
     const event = new Event('test', 'entry', md)
 
     emitter.once('message', function (msg) {
-      msg.should.have.property('Foo')
-      msg.Foo.should.equal('fubar')
+      expect(msg).property('Foo', 'fubar')
       done()
     })
     ao.requestStore.run(function () {
