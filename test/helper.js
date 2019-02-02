@@ -148,7 +148,7 @@ exports.doChecks = function (emitter, checks, done) {
   const addr = emitter.server.address()
   emitter.removeAllListeners('message')
 
-  log.test.info('doChecks invoked - server address ' + addr.address + ':' + addr.port)
+  log.test.info(`doChecks(${checks.length}) server address ${addr.address}:${addr.port}`)
 
   function onMessage (msg) {
     if (!emitter.__aoActive) {
@@ -487,10 +487,20 @@ function checkLogMessages (debug, checks) {
   const defaultLogger = debug.log
   counter = 0
 
+  // if the level is not one of these ignore it.
+  const levelsToCheck = {
+    'appoptics:error': true,
+    'appoptics:warn': true,
+    'appoptics:patching': true
+  }
+
   // log is called before substitutions are done, so don't check for the final
   // message as output.
   debug.log = function (output) {
     const [level, text] = getLevelAndText(output)
+    if (!(level in levelsToCheck)) {
+      return
+    }
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
@@ -501,7 +511,7 @@ function checkLogMessages (debug, checks) {
       if (check.values) {
         for (let i = 0; i < check.values.length; i++) {
           if (Number.isNaN(check.values[i])) {
-            assert(Number.isNaN(arguments[i + 1])), 'argument ' + i + ' should be NaN'
+            assert(Number.isNaN(arguments[i + 1]), 'argument ' + i + ' should be NaN')
           } else {
             assert(check.values[i] === arguments[i + 1], 'argument ' + i + ' should be ', check.values[i])
           }
