@@ -1,10 +1,11 @@
 'use strict'
 
 const helper = require('./helper')
-const should = require('should') // eslint-disable-line no-unused-vars
 const ao = require('..')
 const debug = ao.loggers._debug
-//const Span = ao.Span
+
+const util = require('util')
+const expect = require('chai').expect
 
 //
 // for some reason it's  not possible to set debug.inspectOpts.colors
@@ -39,8 +40,8 @@ describe('logging', function () {
     }
     const before = ao.logLevel
     ao.logLevel = 'span'
-    ao.logLevel.should.equal('span')
-    correct.should.equal(true)
+    expect(ao.logLevel).equal('span')
+    expect(correct).equal(true)
     ao.logLevel = before
   })
 
@@ -49,9 +50,9 @@ describe('logging', function () {
     const previous = ao.logLevel
     const expected = previous ? previous + ',' + add : add
     ao.logLevelAdd(add)
-    ao.logLevel.should.equal(expected)
+    expect(ao.logLevel).equal(expected)
     ao.logLevelRemove(add)
-    ao.logLevel.should.equal(previous)
+    expect(ao.logLevel).equal(previous)
   })
 
   it('should log correctly', function () {
@@ -59,12 +60,12 @@ describe('logging', function () {
     let called = false
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      level.should.equal('appoptics:error')
-      text.should.equal(msg)
+      expect(level).equal('appoptics:error')
+      expect(text).equal(msg)
       called = true
     }
     ao.loggers.error(msg)
-    called.should.equal(true, 'logger must be called')
+    expect(called).equal(true, 'logger must be called')
   })
 
   it('should debounce repetitive logging by count', function () {
@@ -75,21 +76,21 @@ describe('logging', function () {
     let i
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      level.should.equal('appoptics:' + aolevel)
-      text.should.equal('[' + (i + 1) + ']' + msg)
+      expect(level).equal('appoptics:' + aolevel)
+      expect(text).equal('[' + (i + 1) + ']' + msg)
       count += 1
     }
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    count.should.equal(11)
+    expect(count).equal(11)
 
     debounced = new ao.loggers.Debounce('error', {deltaCount: 500})
     count = 0
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    count.should.equal(3)
+    expect(count).equal(3)
   })
 
   it('should debounce repetitive logging by time', function (done) {
@@ -106,8 +107,8 @@ describe('logging', function () {
 
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      level.should.equal('appoptics:' + aolevel)
-      text.should.equal('[' + calls + ']' + msg)
+      expect(level).equal('appoptics:' + aolevel)
+      expect(text).equal('[' + calls + ']' + msg)
       count += 1
     }
 
@@ -118,7 +119,7 @@ describe('logging', function () {
       if (i >= 4) {
         clearInterval(id)
         clearInterval(lid)
-        count.should.equal(4)
+        expect(count).equal(4)
         done()
       }
     }, 1000)
@@ -131,6 +132,156 @@ describe('logging', function () {
 
   })
 
+  it('should handle standard formats correctly', function () {
+    let [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.error('embed a string "%s" with a number %d', 'adventure', 98.6);
+    let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
+    expect(called).equal(true, 'logger must be called')
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal('embed a string "adventure" with a number 98.6');
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.warn('embed integer %i floating %f object %o Object %O', 17.5, 17.5, [1, 2], [1, 2]);
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true, 'logger must be called')
+    expect(level).equal('appoptics:warn')
+    expect(formatted).equal('embed integer 17 floating 17.5 object [ 1, 2, [length]: 2 ] Object [ 1, 2 ]')
+  })
+
+  it('should handle the appoptics extended xtrace (%x) format', function () {
+    let [logger, getter] = makeLogHandler()
+    debug.log = logger
+    const md = new ao.addon.Metadata.makeRandom()
+    ao.loggers.error('xtrace %x', md)
+    let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`xtrace ${md.toString(1)}`);
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.error('xtrace %x', '');
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal('xtrace <no xtrace>');
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.error('xtrace %x', 'bad:beef:cafe');
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal('xtrace -:-:-:-(bad:beef:cafe)');
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    let event = new ao.addon.Event()
+    ao.loggers.error('native event xtrace %x', event);
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`native event xtrace ${event.toString(1)}`);
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    event = new ao.Event('span', 'label', md)
+    ao.loggers.error('event xtrace %x', event);
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`event xtrace ${event.event.toString(1)}`);
+
+    [logger, getter] = makeLogHandler()
+    debug.log = logger
+    // get uppercase, non-delimited string
+    const s = md.toString()
+    ao.loggers.error('string xtrace %x', s);
+    [called, level, text, formatted] = getter()
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`string xtrace ${md.toString(1)}`);
+
+  })
+
+  it('should handle the appoptics extended metadata (%m) format', function () {
+    // this only needs to verify that %m works; the previous test verified
+    // that all forms of this function work.
+    const [logger, getter] = makeLogHandler()
+    debug.log = logger
+    const md = new ao.addon.Metadata.makeRandom()
+    ao.loggers.error('metadata %m', md)
+    const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`metadata ${md.toString(1)}`);
+  })
+
+  // check span formatting (%l). it was done when they were called layers and %s already
+  // means string.
+  it('should handle the appoptics extended span (%l) format', function () {
+    const span = new ao.Span('log-span', {inbound: true, doSample: true, doMetrics: true})
+    const name = span.name
+    const entry = `${name}:entry`
+    const exit = `${name}:exit`
+    const entryEvent = span.events.entry.event.toString(1)
+    const exitEvent = span.events.exit.event.toString(1)
+
+    const [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.error('%l', span)
+    const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`${name} ${entry} ${entryEvent} ${exit} ${exitEvent}`);
+  })
+
+  it('should handle the appoptics extended event (%e) format', function () {
+    const md = new ao.addon.Metadata.makeRandom()
+    const edge = false
+    const event = new ao.Event('log-event', 'entry', md, edge)
+    const name = 'log-event:entry'
+
+    const [logger, getter] = makeLogHandler()
+    debug.log = logger
+    ao.loggers.error('%e', event)
+    const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
+    expect(called).equal(true)
+    expect(level).equal('appoptics:error')
+    expect(formatted).equal(`${name} ${event.event.toString(1)}`)
+  })
+
+  it.skip('should handle the appoptics extended cls (%c) format', function () {})
+
+  //
+  // helpers
+  //
+
+  // return an array of two functions. the first is a replacement for the debug.log
+  // function so that logging output can be captured. the second returns the captured
+  // output.
+  function makeLogHandler () {
+    let called = false
+    let level
+    let text
+    let formatted
+
+    return [
+      function (...args) {
+        [level, text] = getLevelAndText(...args)
+        const formatArgs = [...args].slice(1).slice(0, -1)
+        formatArgs.unshift(text)
+        formatted = util.format(...formatArgs)
+        called = true
+      },
+      function () {
+        return [called, level, text, formatted]
+      }
+    ]
+  }
+
   // TODO BAM keeping these around to add tests of various custom formatters at
   // some point in the future. E.g., %e, %l.
   /*
@@ -138,17 +289,17 @@ describe('logging', function () {
     const md0 = new ao.addon.Metadata.makeRandom()
     const md1 = new ao.addon.Metadata.makeRandom(1)
 
-    ao.sampling(md0).should.equal(false)
-    ao.sampling(md0.toString()).should.equal(false)
-    ao.sampling(md1).should.equal(true)
-    ao.sampling(md1.toString()).should.equal(true)
+    expect(ao.sampling(md0)).equal(false)
+    expect(ao.sampling(md0.toString())).equal(false)
+    expect(ao.sampling(md1)).equal(true)
+    expect(ao.sampling(md1.toString())).equal(true)
   })
 
   ifaob('should be able to detect if it is in a trace', function () {
-    ao.tracing.should.be.false
+    expect(ao.tracing).be.false
     const span = new Span('test')
     span.run(function () {
-      ao.tracing.should.be.true
+      expect(ao.tracing).be.true
     })
   })
 
@@ -158,7 +309,7 @@ describe('logging', function () {
     ao.sampleMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.sample('test')
-    s.should.not.be.false
+    expect(s).not.be.false
 
     ao.sampleRate = 1
     const samples = []
@@ -166,7 +317,7 @@ describe('logging', function () {
       s = ao.sample('test')
       samples.push(!!s[0])
     }
-    samples.should.containEql(false)
+    expect(samples).containEql(false)
     ao.skipSample = skipSample
   })
 
