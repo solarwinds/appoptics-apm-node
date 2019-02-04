@@ -162,7 +162,7 @@ describe('custom', function () {
     ], done)
   })
 
-  it('should include backtrace, when collectBacktraces is on', function (done) {
+  it('should include backtrace when collectBacktraces is on', function (done) {
     helper.test(emitter, function (done) {
       ao.instrument('test', soon, {
         collectBacktraces: true,
