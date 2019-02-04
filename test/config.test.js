@@ -18,10 +18,10 @@ const emptyConfig = {
   file: {},
   global: {},
   probes: {},
-  specialUrls: undefined,
+  transactionSettings: undefined,
   unusedConfig: undefined,
   unusedProbes: undefined,
-  specialsErrors: undefined
+  settingsErrors: undefined
 }
 
 const defaultedConfig = cloneConfig(emptyConfig)
@@ -48,10 +48,10 @@ function cloneConfig (config, mergeConfig) {
   clone.file = Object.assign({}, config.file)
   clone.global = Object.assign({}, config.global)
   clone.probes = Object.assign({}, config.probes)
-  if (config.specialUrls) clone.specialUrls = config.specialUrls.slice()
+  if (config.transactionSettings) clone.transactionSettings = config.transactionSettings.slice()
   if (config.unusedConfig) clone.unusedConfig = config.unusedConfig.slice()
   if (config.unusedProbes) clone.unusedProbes = config.unusedProbes.slice()
-  if (config.specialsErrors) clone.specialsErrors = config.specialsErrors.slice()
+  if (config.settingsErrors) clone.settingsErrors = config.settingsErrors.slice()
 
   Object.assign(clone, mergeConfig)
 
@@ -159,17 +159,18 @@ describe('config', function () {
     expect(config).deep.equal(expected)
   })
 
-  it('should allow RegExp and string forms of special URLs', function () {
-    const fileConfig = {specialUrls: [
-      {regex: /xyzzy/, mode: 'never'},
-      {regex: 'hello'},
-      {url: '/xy(zzy'}
+  it('should allow RegExp and string forms of URL settings', function () {
+    const fileConfig = {transactionSettings: [
+      {type: 'url', regex: /xyzzy/, tracing: 'disabled'},
+      {type: 'url', regex: 'hello', tracing: 'disabled'},
+      {type: 'url', string: '/xy(zzy', tracing: 'disabled'},
     ]}
     const expected = cloneConfig(emptyConfig, {
       file: fileConfig,
-      specialUrls: fileConfig.specialUrls.map(s => {
+      transactionSettings: fileConfig.transactionSettings.map(s => {
         return {
-          url: s.url ? s.url : (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
+          type: 'url',
+          pattern: s.string ? s.string : (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
           doSample: false,
           doMetrics: false}
       })
@@ -180,34 +181,43 @@ describe('config', function () {
   })
 
   it('should report invalid RegExp', function () {
-    const fileConfig = {specialUrls: [
-      {regex: /plover's egg/},
-      {regex: 'but this(is not valid'},
+    const fileConfig = {transactionSettings: [
+      {type: 'url', regex: /plover's egg/, tracing: 'disabled'},
+      {type: 'url', regex: 'but this(is not valid', tracing: 'disabled'},
     ]}
     let specialError
-    try {new RegExp(fileConfig.specialUrls[1].regex)} catch (e) {specialError = e.message}
+    try {new RegExp(fileConfig.transactionSettings[1].regex)} catch (e) {specialError = e.message}
     const expected = cloneConfig(emptyConfig, {
       file: fileConfig,
-      specialUrls: [{url: fileConfig.specialUrls[0].regex, doSample: false, doMetrics: false}],
-      specialsErrors: [{spec: fileConfig.specialUrls[1], error: specialError}]
+      transactionSettings: [{
+        type: 'url',
+        pattern: fileConfig.transactionSettings[0].regex,
+        doSample: false,
+        doMetrics: false
+      }],
+      settingsErrors: [{spec: fileConfig.transactionSettings[1], error: specialError}]
     })
 
     const config = parseConfig(fileConfig)
     expect(config).deep.equal(expected)
   })
 
-  it('should report invalid specialUrls entries', function () {
-    const fileConfig = {specialUrls: [
-      {regex: /hello/, url: 'i am a string'},
+  it('should report invalid transactionSettings entries', function () {
+    const fileConfig = {transactionSettings: [
+      {type: 'url', regex: /hello/, string: 'i am a string'},
       {regex: 17},
-      {url: true}
+      {type: 'url', regex: /hello/},
+      {type: 'url', regex: /hello/, tracing: 'invalid'},
+      {type: 'url', tracing: 'enabled'},
     ]}
     const expected = cloneConfig(emptyConfig, {
       file: fileConfig,
-      specialsErrors: [
-        {spec: fileConfig.specialUrls[0], error: 'must specify one, not both, of "url" and "regex"'},
-        {spec: fileConfig.specialUrls[1], error: 'invalid specialUrl'},
-        {spec: fileConfig.specialUrls[2], error: 'invalid specialUrl'},
+      settingsErrors: [
+        {spec: fileConfig.transactionSettings[0], error: 'must specify one, not both, of "string" and "regex"'},
+        {spec: fileConfig.transactionSettings[1], error: 'invalid type: "undefined"'},
+        {spec: fileConfig.transactionSettings[2], error: 'invalid tracing value: "undefined"'},
+        {spec: fileConfig.transactionSettings[3], error: 'invalid tracing value: "invalid"'},
+        {spec: fileConfig.transactionSettings[4], error: 'must specify one, not both, of "string" and "regex"'},
       ]
     })
 
@@ -215,34 +225,19 @@ describe('config', function () {
     expect(config).deep.equal(expected)
   })
 
-  it('should allow a single specialUrls entry', function () {
-    const fileConfig = {specialUrls: {regex: /i'm a shrimp/}}
+  it('should allow a single transactionSettings entry', function () {
+    const fileConfig = {transactionSettings: {type: 'url', regex: /i'm a shrimp/, tracing: 'disabled'}}
     const expected = cloneConfig(emptyConfig, {
       file: fileConfig,
-      specialUrls: [{url: fileConfig.specialUrls.regex, doSample: false, doMetrics: false}]
+      transactionSettings: [{
+        type: 'url',
+        pattern: fileConfig.transactionSettings.regex,
+        doSample: false,
+        doMetrics: false
+      }]
     })
 
     const config = parseConfig(fileConfig)
-    expect(config).deep.equal(expected)
-  })
-
-  it('should accept traceMode "never" and no other value', function () {
-    const fileConfig = {specialUrls: {regex: /and so am i/, traceMode: 'never'}}
-    let expected = cloneConfig(emptyConfig, {
-      file: fileConfig,
-      specialUrls: [{url: fileConfig.specialUrls.regex, doSample: false, doMetrics: false}]
-    })
-
-    let config = parseConfig(fileConfig)
-    expect(config).deep.equal(expected)
-
-    fileConfig.specialUrls.traceMode = 'always'
-    expected = cloneConfig(emptyConfig, {
-      file: fileConfig,
-      specialsErrors: [{spec: fileConfig.specialUrls, error: 'invalid traceMode: "always"'}]
-    })
-
-    config = parseConfig(fileConfig)
     expect(config).deep.equal(expected)
   })
 
