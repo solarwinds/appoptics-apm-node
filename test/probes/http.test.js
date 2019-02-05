@@ -280,7 +280,7 @@ describe('probes.http', function () {
     it('should not send a span or metrics when there is a filter for it', function (done) {
       let messageCount = 0
       let metricsCount = 0
-      ao.specialUrls = [{url: '/filtered', doSample: false, doMetrics: false}]
+      ao.specialUrls = [{string: '/filtered', doSample: false, doMetrics: false}]
 
       function deafListener (msg) {
         messageCount += 1
