@@ -269,8 +269,8 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    const settings = {inbound: true, doSample: true}
-    const span = new Span('test', settings, {})
+    const settings = {doSample: true}
+    const span = Span.makeEntrySpan('test', settings, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
@@ -303,8 +303,8 @@ describe('error', function () {
   })
 
   it('should not send error events when not in a span', function () {
-    const settings = {inbound: true, doSample: true}
-    const span = new Span('test', settings, {})
+    const settings = {doSample: true}
+    const span = Span.makeEntrySpan('test', settings, {})
 
     const logChecks = [
       {level: 'error', message: 'test span error call could not find last event'},

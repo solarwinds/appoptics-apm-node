@@ -459,9 +459,7 @@ describe('custom', function () {
     ], done)
 
     const test = 'foo'
-    const res = ao.startOrContinueTrace(null, function (last) {
-      return last.descend('test')
-    }, function () {
+    const res = ao.startOrContinueTrace(null, 'test', function () {
       return test
     }, conf)
 
@@ -491,9 +489,7 @@ describe('custom', function () {
     const test = 'foo'
     const res = ao.startOrContinueTrace(
       null,                          // xtrace
-      function (last) {              // span maker function
-        return last.descend('test')
-      },
+      'test',                        // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
         return test
@@ -618,7 +614,7 @@ describe('custom', function () {
       }
     ], done)
 
-    const previous = new Span('previous', {inbound: true, doSample: true})
+    const previous = Span.makeEntrySpan('previous', {doSample: true})
     const entry = previous.events.entry
 
     previous.run(function (wrap) {
@@ -717,7 +713,7 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = new Span('test', {inbound: true, doSample: true})
+      const span = Span.makeEntrySpan('test', {doSample: true})
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -755,7 +751,7 @@ describe('custom', function () {
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = new Span('test', {inbound: true, doSample: true})
+      const span = Span.makeEntrySpan('test', {doSample: true})
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)

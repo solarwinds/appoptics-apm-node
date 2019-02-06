@@ -49,7 +49,7 @@ describe('span', function () {
   // Verify basic structural integrity
   //
   it('should construct valid span', function () {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true})
 
     span.should.have.property('events')
     const events = ['entry', 'exit']
@@ -66,7 +66,7 @@ describe('span', function () {
   it('should report sync boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
-    const span = new Span(name, {inbound: true, doSample: true}, data)
+    const span = Span.makeEntrySpan(name, {doSample: true}, data)
 
     const e = span.events
 
@@ -83,14 +83,13 @@ describe('span', function () {
     helper.doChecks(emitter, checks, done)
 
     span.runSync(function () {
-
     })
   })
 
   it('should report async boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
-    const span = new Span(name, {inbound: true, doSample: true}, data)
+    const span = Span.makeEntrySpan(name, {doSample: true}, data)
 
     const e = span.events
 
@@ -148,7 +147,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = new Span('outer', {inbound: true, doSample: true}, outerData)
+    const outer = Span.makeEntrySpan('outer', {doSample: true}, outerData)
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function () {})
@@ -184,7 +183,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = new Span('outer', {inbound: true, doSample: true}, outerData)
+    const outer = Span.makeEntrySpan('outer', {doSample: true}, outerData)
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
       inner.run(function (wrap) {
@@ -204,7 +203,7 @@ describe('span', function () {
   it('should report nested boundaries of sync event within async event', function (done) {
     const outerData = {Foo: 'bar'}
     const innerData = {Baz: 'buz'}
-    const outer = new Span('outer', {inbound: true, doSample: true}, outerData)
+    const outer = Span.makeEntrySpan('outer', {doSample: true}, outerData)
     let inner
 
     const checks = [
@@ -253,7 +252,7 @@ describe('span', function () {
   // Special events
   //
   it('should send info events', function (done) {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     const data = {
       Foo: 'bar'
     }
@@ -272,7 +271,7 @@ describe('span', function () {
   })
 
   it('should send error events', function (done) {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     const err = new Error('nopeconst')
 
     const checks = [
@@ -290,7 +289,7 @@ describe('span', function () {
 
   it('should support setting an exit error', function () {
     // Proper errors should work
-    const a = new Span('test', {inbound: true, doSample: true}, {})
+    const a = Span.makeEntrySpan('test', {doSample: true}, {})
     const aExit = a.events.exit
     const err = new Error('Exit error message')
     a.setExitError(err)
@@ -299,7 +298,7 @@ describe('span', function () {
     aExit.kv.should.have.property('Backtrace', err.stack)
 
     // As should error strings
-    const b = new Span('test', {inbound: true, doSample: true}, {})
+    const b = Span.makeEntrySpan('test', {doSample: true}, {})
     const bExit = b.events.exit
     b.setExitError('Exit error string')
     bExit.kv.should.have.property('ErrorClass', 'Error')
@@ -310,7 +309,7 @@ describe('span', function () {
   // Safety and correctness
   //
   it('should only send valid properties', function (done) {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     const data = {
       Array: [],
       Object: {bar: 'baz'},
@@ -351,8 +350,7 @@ describe('span', function () {
   })
 
   it('should not send info events when not in a span', function () {
-    const settings = {inbound: true, doSample: false}
-    const span = new Span('test', settings, {})
+    const span = Span.makeEntrySpan('test', {doSample: false}, {})
     const data = {Foo: 'bar'}
 
     const send = Event.prototype.send
@@ -371,7 +369,7 @@ describe('span', function () {
   })
 
   it('should allow sending the same info data multiple times', function (done) {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     const data = {
       Foo: 'bar'
     }
@@ -390,7 +388,7 @@ describe('span', function () {
   })
 
   it('should fail silently when sending non-object-literal info', function () {
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
@@ -408,7 +406,7 @@ describe('span', function () {
   //
   it('should chain internal event edges', function (done) {
     const n = 10 + Math.floor(Math.random() * 10)
-    const span = new Span('test', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('test', {doSample: true}, {})
     const tracker = helper.edgeTracker()
 
     const checks = [ tracker, tracker ]
@@ -434,7 +432,7 @@ describe('span', function () {
   })
 
   it('should chain internal events around sync sub span', function (done) {
-    const span = new Span('outer', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('outer', {doSample: true}, {})
 
     const before = {state: 'before'}
     const after = {state: 'after'}
@@ -462,7 +460,7 @@ describe('span', function () {
   })
 
   it('should chain internal events around async sub span', function (done) {
-    const span = new Span('outer', {inbound: true, doSample: true}, {})
+    const span = Span.makeEntrySpan('outer', {doSample: true}, {})
 
     const before = {state: 'before'}
     const after = {state: 'after'}

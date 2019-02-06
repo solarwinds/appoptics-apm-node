@@ -277,7 +277,7 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const span = new ao.Span('outer', {inbound: true, doSample: ao.sampleMode === 1})
+    const span = ao.Span.makeEntrySpan('outer', {doSample: ao.sampleMode})
     // span.async = true
     log.test.span('helper.test outer: %l', span)
     log.test.info('test starting')
@@ -498,7 +498,7 @@ function checkLogMessages (debug, checks) {
   // message as output.
   debug.log = function (output) {
     const [level, text] = getLevelAndText(output)
-    if (!(level in levelsToCheck)) {
+    if (!(level in levelsToCheck && counter < checks.length)) {
       return
     }
     const check = checks[counter++]

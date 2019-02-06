@@ -222,7 +222,7 @@ describe('logging', function () {
   // check span formatting (%l). it was done when they were called layers and %s already
   // means string.
   it('should handle the appoptics extended span (%l) format', function () {
-    const span = new ao.Span('log-span', {inbound: true, doSample: true, doMetrics: true})
+    const span = ao.Span.makeEntrySpan('log-span', {doSample: true, doMetrics: true})
     const name = span.name
     const entry = `${name}:entry`
     const exit = `${name}:exit`

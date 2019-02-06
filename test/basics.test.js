@@ -130,7 +130,7 @@ describe('basics', function () {
 
   ifaob('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
-    const span = new Span('test', {inbound: true, doSample: true})
+    const span = Span.makeEntrySpan('test', {doSample: true})
     span.run(function () {
       ao.tracing.should.be.true
     })

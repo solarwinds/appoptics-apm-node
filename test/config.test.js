@@ -170,7 +170,8 @@ describe('config', function () {
       transactionSettings: fileConfig.transactionSettings.map(s => {
         return {
           type: 'url',
-          pattern: s.string ? s.string : (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
+          pattern: s.string ? s.string
+            : (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
           doSample: false,
           doMetrics: false}
       })
