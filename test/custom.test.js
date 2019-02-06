@@ -124,11 +124,13 @@ describe('custom', function () {
 
   it('should support builder function', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument(function (last) {
-        return last.descend('test', {
-          Foo: 'bar'
-        })
-      }, soon, done)
+      ao.instrument(
+        function () {
+          return {
+            name: 'test',
+            kvpairs: {Foo: 'bar'}
+          }
+        }, soon, done)
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -383,6 +385,8 @@ describe('custom', function () {
 
       const logChecks = [
         {level: 'warn', message: 'ao.runInstrument found no span name or builder'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
       helper.checkLogMessages(debug, logChecks)
 
@@ -394,11 +398,17 @@ describe('custom', function () {
       ao.instrument(null, run)
       ao.startOrContinueTrace(null, null, run)
 
-      // Verify the runner is still run when builder fails to return a span
+      // Verify the runner is still run when spaninfo fails to return an object
       ao.instrument(getInc(), getInc())
       ao.startOrContinueTrace(null, getInc(), getInc())
       found.should.deepEqual(expected)
       count.should.equal(4)
+
+      expected.push('nnrun')
+      // Verify the runner is still run when spaninfo fails to return a name
+      ao.instrument(function () {return {}}, getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(5)
 
       done()
     }, [], done)
@@ -774,14 +784,18 @@ describe('custom', function () {
     let last
 
     helper.test(emitter, function (done) {
-      ao.instrumentHttp(function (span) {
-        return span.descend('test')
-      }, function () {
-        setImmediate(function () {
-          res.end()
-          done()
-        })
-      }, conf, res)
+      ao.instrumentHttp(
+        () => {
+          return {
+            name: 'test'
+          }
+        },
+        function () {
+          setImmediate(function () {
+            res.end()
+            done()
+          })
+        }, conf, res)
     }, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
