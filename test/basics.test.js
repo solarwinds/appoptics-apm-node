@@ -1,10 +1,11 @@
 'use strict'
 
-const should = require('should') // eslint-disable-line no-unused-vars
 const debug = require('debug')
 const ao = require('..')
 const Span = ao.Span
 const helper = require('./helper')
+
+const expect = require('chai').expect
 
 let ifaob    // execute or skip test depending on whether bindings are loaded.
 let ALWAYS
@@ -30,24 +31,24 @@ describe('basics', function () {
   })
 
   it('should get trace mode', function () {
-    ao.sampleMode.should.equal(ALWAYS)
+    expect(ao.sampleMode).equal(ALWAYS)
   })
 
   it('should set trace mode as string', function () {
     ao.sampleMode = 'never'
-    ao.sampleMode.should.equal(NEVER)
+    expect(ao.sampleMode).equal(NEVER)
 
     ao.sampleMode = 'always'
-    ao.sampleMode.should.equal(ALWAYS)
+    expect(ao.sampleMode).equal(ALWAYS)
   })
 
   ifaob('should set and get sample rate', function () {
     ao.sampleRate = 0
-    ao.sampleRate.should.equal(0, 'when setting to 0')
+    expect(ao.sampleRate).equal(0, 'when setting to 0')
     ao.sampleRate = 1000000
-    ao.sampleRate.should.equal(1000000, 'when setting to 1000000')
+    expect(ao.sampleRate).equal(1000000, 'when setting to 1000000')
     ao.sampleRate = 100
-    ao.sampleRate.should.equal(100, 'when setting to 100')
+    expect(ao.sampleRate).equal(100, 'when setting to 100')
   })
 
   ifaob('should handle invalid sample rates correctly', function () {
@@ -60,13 +61,13 @@ describe('basics', function () {
     helper.checkLogMessages(debug, logChecks)
 
     ao.sampleRate = NaN
-    ao.sampleRate.should.equal(100, '(unchanged) when trying to set to NaN')
+    expect(ao.sampleRate).equal(100, '(unchanged) when trying to set to NaN')
     ao.sampleRate = 2000000
-    ao.sampleRate.should.equal(1000000, 'when trying to set to 2000000')
+    expect(ao.sampleRate).equal(1000000, 'when trying to set to 2000000')
     ao.sampleRate = -10
-    ao.sampleRate.should.equal(0, 'when trying to set to a negative number')
+    expect(ao.sampleRate).equal(0, 'when trying to set to a negative number')
     ao.sampleRate = 100
-    ao.sampleRate.should.equal(100, 'setting back to the original')
+    expect(ao.sampleRate).equal(100, 'setting back to the original')
   })
 
   it('should set sample source', function () {
@@ -74,7 +75,7 @@ describe('basics', function () {
   })
 
   it('should get sample source', function () {
-    ao.sampleSource.should.equal(100)
+    expect(ao.sampleSource).equal(100)
   })
 
   it('should have sugary trace mode detectors', function () {
@@ -94,38 +95,14 @@ describe('basics', function () {
     ao.serviceKey.should.be.a.String
   })
 
-  it('should set logging', function () {
-    let called = false
-    const real = debug.enable
-    debug.enable = function () {
-      called = true
-      debug.enable = real
-    }
-    const before = ao.logLevel
-    ao.logLevel = 'span'
-    ao.logLevel.should.equal('span')
-    called.should.equal(true)
-    ao.logLevel = before
-  })
-
-  it('should add and remove logging', function () {
-    const add = 'info,span'
-    const previous = ao.logLevel
-    const expected = previous ? previous + ',' + add : add
-    ao.logLevelAdd(add)
-    ao.logLevel.should.equal(expected)
-    ao.logLevelRemove(add)
-    ao.logLevel.should.equal(previous)
-  })
-
   ifaob('should be able to check metadata\'s sample flag', function () {
     const md0 = new ao.addon.Metadata.makeRandom()
     const md1 = new ao.addon.Metadata.makeRandom(1)
 
-    ao.sampling(md0).should.equal(false)
-    ao.sampling(md0.toString()).should.equal(false)
-    ao.sampling(md1).should.equal(true)
-    ao.sampling(md1.toString()).should.equal(true)
+    expect(ao.sampling(md0)).equal(false)
+    expect(ao.sampling(md0.toString())).equal(false)
+    expect(ao.sampling(md1)).equal(true)
+    expect(ao.sampling(md1.toString())).equal(true)
   })
 
   ifaob('should be able to detect if it is in a trace', function () {
@@ -136,19 +113,19 @@ describe('basics', function () {
     })
   })
 
-  it('should support sampling', function () {
+  it('should support sampling using getTraceSettings()', function () {
     const skipSample = ao.skipSample
     ao.skipSample = false
     ao.sampleMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
-    let s = ao.sample('test')
+    let s = ao.getTraceSettings()
     s.should.not.be.false
 
     ao.sampleRate = 1
     const samples = []
     for (let i = 0; i < 1000; i++) {
-      s = ao.sample('test')
-      samples.push(!!s[0])
+      s = ao.getTraceSettings()
+      samples.push(s.doSample)
     }
     samples.should.containEql(false)
     ao.skipSample = skipSample
@@ -161,7 +138,7 @@ describe('basics', function () {
     ao.skipSample = false
 
     function after (err) {
-      should.equal(err, undefined)
+      expect(err).equal(undefined)
       ao.addon.Context.setDefaultSampleRate = old
       ao.skipSample = skipSample
     }
@@ -172,7 +149,7 @@ describe('basics', function () {
       throw new Error('Should not have called sampleRate setter')
     }
 
-    ao.sample('test')
+    ao.getTraceSettings()
     after()
   })
 
@@ -184,6 +161,6 @@ describe('basics', function () {
     const key = require.resolve('..')
     delete require.cache[key]
     const ao2 = require('..')
-    ao.should.equal(ao2)
+    expect(ao).equal(ao2)
   })
 })
