@@ -79,23 +79,39 @@ The signature is `ao.instrument (span, fn, config, callback)`.
 
 If the `span` argument is a string a span will be created using that name.
 
-If the `span` argument is a function (a "span-maker" function), it must create and return a `span`.
+If the `span` argument is a function (a "span-info" function), it must create and return an object
+with information on how to build the span. There are two reasons to use a "span-info" function:
+- specify KV pairs to be set on the entry event of the span
+- gain access to the created span for deferred actions, e.g., adding a KV pair that is only defined during execution of the span.
 
-The span-maker function's signature is `span-maker (current)`.
+The span-info function's signature is `span-info ()` and it returns an object with up to three properties:
+- name (required)
+- kvpairs (optional)
+- finalize (optional function)
 
-- `current` is the current span. You can call `current.descend(...)` to create a new span descended from the current span. will be called to create a `span` which it must return.
+name - the name of the span
+kvpairs - a object of key-value pairs that will be added to the span's entry event.
+finalize - a function `finalize(createdSpan, previousSpan)` that is called after the span has been created.
 
-The `descend` method's signature is `descend (name, kvPairs)`.
-
-- `name` is the string name of the span to be created.
-- `kvPairs` is an object of key-value pairs that will be sent as span metadata.
 
 ```js
-function build (current) {
-  return current.descend('span-name', {
-    elapsed: currentTime() - startTime,
-    cpuTime: currentCpu() - startCpu
-  })
+let span
+
+function spanInfo () {
+  return {
+      name: 'span-name',
+      kvpairs: {
+        elapsed: currentTime() - startTime,
+        cpuTime: currentCpu() - startCpu
+      },
+      // it is uncommon that the previous span is needed. this
+      // function just stores the created span for later use. if
+      // there is no need to add execution-time KVs to the span
+      // then this may be omitted.
+      finalize (createdSpan) {
+        span = createdSpan
+      }
+  }
 }
 ```
 
@@ -163,9 +179,8 @@ callback. It will trigger the exits in reverse chronological order when the
 
 ```js
 http.createServer((req, res) => {
-  const spanMaker = current => current.descend('http-span')
   const runner = () => res.end('done')
-  ao.instrumentHttp(spanMaker, runner, options, res)
+  ao.instrumentHttp('http-span', runner, options, res)
 })
 ```
 
@@ -174,13 +189,12 @@ http.createServer((req, res) => {
 Sometimes `ao.instrument(...)` or `ao.instrumentHttp(...)` don't quite fit
 what is needed for a given patch. For these situations, you can drop down to
 the lower-level API. Those other functions are really just sugar over the
-`Span`	class. The current span reference you'd expect to get from the builder
-function can be acquired at `ao.Span.last` and, as usual, you can call the
-`current.descend(...)` function on that. The runner part is encapsulated in
-`span.runSync(fn)` and `span.runAsync(fn)`, with a function length based
-sugar wrapper around both of those at `span.run(fn)`. When using the `Span`
-class, you will need to call both the run callback and the callback for the
-instrumented function itself separately.
+`Span`	class. The current span reference you'd expect can be acquired via
+`ao.Span.last` and, as usual, you can call the `last.descend(...)` function
+on that. The runner part is encapsulated by `span.runSync(fn)` and `span.runAsync(fn)`,
+with a function length based sugar wrapper around both of those at `span.run(fn)`.
+When using the `Span` class, you will need to call both the run callback and
+the callback for the instrumented function itself separately.
 
 ```js
 const last = ao.Span.last
@@ -191,6 +205,16 @@ span.runSync(() => {
   console.log('doing some stuff')
 })
 ```
+
+If creating an entry span, i.e., a span when there is no `Span.last`, the
+static class function `Span.makeEntrySpan()` is available. The kvpairs are
+an optional object of KVs to be attached to the span entry event.
+
+```js
+const settings = ao.getTraceSettings()
+const span = Span.makeEntrySpan('my-span', settings, kvpairs)
+```
+
 
 ### Starting or continuing a trace
 
