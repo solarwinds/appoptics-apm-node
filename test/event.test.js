@@ -103,11 +103,12 @@ describe('event', function () {
       {level: 'error', message: 'Invalid type for KV %s: %s', values: ['Nan', 'NaN']},
       // there is a stack trace here but issuing the error is enough.
     ]
-    helper.checkLogMessages(debug, logChecks)
+
+    const [getCount, clear] = helper.checkLogMessages(debug, logChecks) // eslint-disable-line
 
     event2.set({Nan: NaN})
 
-    expect(helper.getLogMessagesChecked()).equal(1, 'incorrect log message count')
+    expect(getCount()).equal(1, 'incorrect log message count')
   })
 
   it('should support set function', function () {
