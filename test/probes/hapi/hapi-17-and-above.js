@@ -450,7 +450,6 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   //   tx - transaction name
   //   c - controller
   //   a - action
-  //   p - profile
   //
   function makeExpected (request, func) {
     // bind this when created. an error causes request.route
@@ -482,8 +481,6 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
         result = controller
       } else if (what === 'a') {
         result = action
-      } else if (what === 'p') {
-        result = controller + ' ' + action
       }
 
       if (ao.cfg.domainPrefix && what === 'tx') {

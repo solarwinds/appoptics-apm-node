@@ -176,9 +176,9 @@ describe('probes.restify ' + pkg.version, function () {
 
   if (semver.satisfies(process.version.slice(1), '> 0.8')) {
     it('should forward controller/action', testControllerAction)
-    it('should profile each middleware', testMiddleware)
+    it('should create a span for each middleware', testMiddleware)
   } else {
     it.skip('should forward controller/action', testControllerAction)
-    it.skip('should profile each middleware', testMiddleware)
+    it.skip('should create a span for each middleware', testMiddleware)
   }
 })

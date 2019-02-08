@@ -68,8 +68,8 @@ and benchmarks can be found at `test/probes/${module}.bench.js`.
 
 The default config values are all described in `lib/defaults.js`, and get
 applied to the core module that exposes the custom API in `lib/index.js`.
-The lower-level `Span`, `Profile` and `Event` types are described in
-`lib/span.js`, `lib/profile.js` and `lib/event.js`.
+The lower-level `Span` and `Event` types are described in `lib/span.js`
+and `lib/event.js`.
 
 The patching mechanism works by intercepting `require(...)` calls in
 `lib/require-patch.js`. The require patch interface includes a `register(...)`

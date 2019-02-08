@@ -23,7 +23,6 @@ ao.probes.express.legacyTxname = false && legacy
 //   tx - transaction name
 //   c - controller
 //   a - action
-//   p - profile
 //
 function makeExpected (req, func) {
   // bind this when created. an error causes req.route
@@ -55,8 +54,6 @@ function makeExpected (req, func) {
       result = controller
     } else if (what === 'a') {
       result = action
-    } else if (what === 'p') {
-      result = controller + ' ' + action
     }
 
     if (ao.cfg.domainPrefix && what === 'tx') {
@@ -203,12 +200,12 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         check['express-entry'](msg)
       },
-      // skip the reqRoutePath profile entry and exit
+      // skip the reqRoutePath span entry and exit
       function () {},
       function () {}
     ]
 
-    // if it is get then skip the '*' profile entry and exit too.
+    // if it is get then skip the '*' span entry and exit too.
     // (it will be called first, but we need two more skips anyway.)
     if (method === 'get' || true) {
       validations = validations.concat([function () {}, function () {}])
@@ -361,7 +358,7 @@ describe('probes.express ' + pkg.version, function () {
   //
   // multiple handlers
   //
-  it('should profile each middleware', function (done) {
+  it('should have a span for each middleware', function (done) {
     const reqRoutePath = '/hello/:name'
     let expectedRen
     let expectedRes
@@ -392,32 +389,24 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
 
       },
       function (msg) {
@@ -437,7 +426,7 @@ describe('probes.express ' + pkg.version, function () {
     })
   })
 
-  it('should profile multiple middlewares', function (done) {
+  it('should create spans for multiple middlewares', function (done) {
     const reqRoutePath = '/hello/:name'
     let expectedRen
     let expectedRes
@@ -467,32 +456,24 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -511,7 +492,7 @@ describe('probes.express ' + pkg.version, function () {
     })
   })
 
-  it('should profile middleware specified as array', function (done) {
+  it('should create spans for middleware specified as array', function (done) {
     const reqRoutePath = '/hello/:name'
     let expectedRen
     let expectedRes
@@ -541,32 +522,24 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
         msg.should.have.property('Controller', expectedRen('c'))
         msg.should.have.property('Action', expectedRen('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRen('p'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
         msg.should.have.property('Controller', expectedRes('c'))
         msg.should.have.property('Action', expectedRes('a'))
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expectedRes('p'))
       },
       function (msg) {
         check['express-exit'](msg)
@@ -663,7 +636,6 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
       },
@@ -683,7 +655,6 @@ describe('probes.express ' + pkg.version, function () {
         msg.should.have.property('Label', 'exit')
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
       },
@@ -818,20 +789,16 @@ describe('probes.express ' + pkg.version, function () {
         check['express-entry'](msg)
       },
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'entry')
-        //msg.should.have.property('ProfileName', expected('p'))
         msg.should.have.property('Controller', expected('c'))
         msg.should.have.property('Action', expected('a'))
       },
       function () {},
       function () {},
       function (msg) {
-        //msg.should.have.property('Language', 'nodejs')
         msg.should.have.property('Layer', 'express-route')
         msg.should.have.property('Label', 'exit')
-        //msg.should.have.property('ProfileName', expected('p'))
       },
       function (msg) {
         msg.should.not.have.property('Layer')
