@@ -11,6 +11,7 @@ const Event = ao.Event
 describe('span', function () {
   let emitter
   let realSampleTrace
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -28,7 +29,12 @@ describe('span', function () {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
-
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
+  })
   //
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
@@ -342,7 +348,8 @@ describe('span', function () {
       {level: 'error', message: 'Invalid type for KV'},
     ]
 
-    helper.checkLogMessages(debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(debug, logChecks)
 
     span.run(function () {
       span.info(data)
@@ -362,7 +369,8 @@ describe('span', function () {
     const logChecks = [
       {level: 'error', message: 'test span info call could not find last event'}
     ]
-    helper.checkLogMessages(debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(debug, logChecks)
 
     span.info(data)
     Event.prototype.send = send
