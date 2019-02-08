@@ -35,13 +35,13 @@
     * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.bind(fn)](#ao.bind) ⇒ <code>function</code>
     * [.bindEmitter(em)](#ao.bindEmitter) ⇒ <code>EventEmitter</code>
-    * [.backtrace()](#ao.backtrace)
+    * [.backtrace()](#ao.backtrace) ⇒ <code>string</code>
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction)
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
-    * [.stringToMetadata(metadata)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
-    * [.instrumentHttp(build, run, [options], res)](#ao.instrumentHttp)
-    * [.instrument(build, run, [options], [callback])](#ao.instrument)
-    * [.startOrContinueTrace(xtrace, build, run, [opts], [callback])](#ao.startOrContinueTrace)
+    * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
+    * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp)
+    * [.instrument(span, run, [options], [callback])](#ao.instrument)
+    * [.startOrContinueTrace(xtrace, span, run, [opts], [callback])](#ao.startOrContinueTrace)
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
 
@@ -226,10 +226,11 @@ Bind an emitter, if tracing
 
 <a name="ao.backtrace"></a>
 
-### ao.backtrace()
+### ao.backtrace() ⇒ <code>string</code>
 Generate a backtrace string
 
 **Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> - the backtrace  
 <a name="ao.setCustomTxNameFunction"></a>
 
 ### ao.setCustomTxNameFunction(probe, fn)
@@ -264,7 +265,7 @@ metadata.
 
 <a name="ao.stringToMetadata"></a>
 
-### ao.stringToMetadata(metadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
+### ao.stringToMetadata(xtrace) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
 Convert an xtrace ID to a metadata object.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
@@ -273,18 +274,18 @@ Convert an xtrace ID to a metadata object.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| metadata | <code>string</code> | string metadata (X-Trace ID) |
+| xtrace | <code>string</code> | X-Trace ID, string version of Metadata. |
 
 <a name="ao.instrumentHttp"></a>
 
-### ao.instrumentHttp(build, run, [options], res)
+### ao.instrumentHttp(span, run, [options], res)
 Instrument HTTP request/response
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| build | <code>string</code> \| <code>function</code> | span name or builder function |
+| span | <code>string</code> \| <code>function</code> | span name or span-info function |
 | run | <code>function</code> | code to instrument and run |
 | [options] | <code>object</code> | options |
 | [options.enabled] | <code>object</code> | enable tracing, on by default |
@@ -293,14 +294,14 @@ Instrument HTTP request/response
 
 <a name="ao.instrument"></a>
 
-### ao.instrument(build, run, [options], [callback])
+### ao.instrument(span, run, [options], [callback])
 Apply custom instrumentation to a function.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| build | <code>string</code> \| <code>function</code> |  | span name or builder function     If `build` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must generate a     a span. |
+| span | <code>string</code> \| <code>function</code> |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return an     object that contains the span name as the name property. Other     properties may exist - see instrumenting-a-module.md in guides/. |
 | run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error appoptics will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     AppOptics know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
 | [options] | <code>object</code> |  | options |
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
@@ -316,8 +317,8 @@ Apply custom instrumentation to a function.
 //   a callback, e.g., `function run () {...}`.
 //
 
-function build (last) {
-  return last.descend('custom', {Foo: 'bar'})
+function spanInfo () {
+  return {name: 'custom', kvpairs: {Foo: 'bar'}}
 }
 
 function run () {
@@ -325,7 +326,7 @@ function run () {
   // do things with contents
 }
 
-ao.instrument(build, run)
+ao.instrument(spanInfo, run)
 ```
 **Example**  
 ```js
@@ -340,8 +341,8 @@ ao.instrument(build, run)
 // arguments as were received by the `done` callback for the `run` function
 // and the same `this` context is also applied to it.
 
-function build (last) {
-  return last.descend('custom', {Foo: 'bar'})
+function spanInfo () {
+  return {name: 'custom', {Foo: 'bar'}}
 }
 
 function run (done) {
@@ -352,11 +353,11 @@ function callback (err, data) {
   console.log('file contents are: ' + data)
 }
 
-ao.instrument(build, run, callback)
+ao.instrument(spanInfo, run, callback)
 ```
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, build, run, [opts], [callback])
+### ao.startOrContinueTrace(xtrace, span, run, [opts], [callback])
 Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
@@ -366,7 +367,7 @@ HTTP headers or message queue headers.
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
-| build | <code>string</code> \| <code>function</code> |  | name or function to return a span |
+| span | <code>string</code> \| <code>function</code> |  | name of span or function to return span-info |
 | run | <code>function</code> |  | run the code. if sync, no arguments, else one |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
@@ -441,29 +442,34 @@ Report an info event in the current trace.
 **Kind**: global class  
 
 * [Span](#Span)
-    * [new Span(name, parent, [data])](#new_Span_new)
-    * [.descend(name, data)](#Span+descend)
-    * [.run(fn)](#Span+run)
-    * [.runAsync(fn, [rootOpts])](#Span+runAsync)
-    * [.runSync(fn, [rootOpts])](#Span+runSync)
-    * [.enter(data)](#Span+enter)
-    * [.exit(data)](#Span+exit)
-    * [.exitWithError(err, data)](#Span+exitWithError)
-    * [.setExitError(err)](#Span+setExitError)
-    * [.info(data)](#Span+info)
-    * [.error(data)](#Span+error)
+    * [new Span(name, settings, [data])](#new_Span_new)
+    * _instance_
+        * [.descend(name, data)](#Span+descend)
+        * [.run(fn)](#Span+run)
+        * [.runAsync(fn)](#Span+runAsync)
+        * [.runSync(fn)](#Span+runSync)
+        * [.enter(data)](#Span+enter)
+        * [.exit(data)](#Span+exit)
+        * [.exitWithError(err, data)](#Span+exitWithError)
+        * [.setExitError(err)](#Span+setExitError)
+        * [.info(data)](#Span+info)
+        * [.error(data)](#Span+error)
+    * _static_
+        * [.makeEntrySpan(name, settings, kvpairs)](#Span.makeEntrySpan)
 
 <a name="new_Span_new"></a>
 
-### new Span(name, parent, [data])
+### new Span(name, settings, [data])
 Create an execution span.
 
 
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>string</code> | Span name |
-| parent | <code>string</code> \| [<code>Event</code>](#Event) | Context to continue from |
-| [data] | <code>object</code> | Key/Value pairs of info to add to event |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| name | <code>string</code> |  | Span name |
+| settings | <code>object</code> |  | Settings returned from getTraceSettings() |
+| [settings.metadata] | <code>metadata</code> |  | an addon.Metadata instance to create the events from.     Events will have the same task ID and sample bit but unique op IDs. This value is set     by getTraceSettings() and must be present. |
+| [settings.edge] | <code>boolean</code> | <code>true</code> | the entry event of this span should edge back to the     metadata. The only time this is not true is when the span being created is a new top     level span not being continued from an inbound X-Trace ID. This must be set explicitly     to a falsey value; it's absence is true. |
+| [data] | <code>object</code> |  | Key/Value pairs of info to add to event |
 
 **Example**  
 ```js
@@ -515,7 +521,7 @@ span.run(function (wrap) {
 ```
 <a name="Span+runAsync"></a>
 
-### span.runAsync(fn, [rootOpts])
+### span.runAsync(fn)
 Run an async function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
@@ -523,9 +529,6 @@ Run an async function within the context of this span.
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | async function to run within the span context |
-| [rootOpts] | <code>object</code> | presence indicates that this is a root span |
-| [rootOpts.defaultTxName] | <code>string</code> | default transaction name to use |
-| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
 **Example**  
 ```js
@@ -535,7 +538,7 @@ span.runAsync(function (wrap) {
 ```
 <a name="Span+runSync"></a>
 
-### span.runSync(fn, [rootOpts])
+### span.runSync(fn)
 Run a sync function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
@@ -543,9 +546,6 @@ Run a sync function within the context of this span.
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | sync function to run withing the span context |
-| [rootOpts] | <code>object</code> | presence indicates that this is a root span |
-| [rootOpts.defaultTxName] | <code>string</code> | the default transaction name |
-| [rootOpts.customTxName] | <code>string</code> \| <code>function</code> | string or function |
 
 **Example**  
 ```js
@@ -645,13 +645,28 @@ Create and send an error event
 ```js
 span.error(error)
 ```
+<a name="Span.makeEntrySpan"></a>
+
+### Span.makeEntrySpan(name, settings, kvpairs)
+Create a new entry span. An entry span is the top span in a new trace in
+this process. It might be continued from another process, e.g., an X-Trace-ID
+header was attached to an inbound HTTP/HTTPS request.
+
+**Kind**: static method of [<code>Span</code>](#Span)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | the name for the span. |
+| settings | <code>object</code> | the object returned by ao.getTraceSettings() |
+| kvpairs | <code>object</code> | key/value pairs to be added to the entry event |
+
 <a name="Event"></a>
 
 ## Event
 **Kind**: global class  
 
 * [Event](#Event)
-    * [new Event(span, label, parent)](#new_Event_new)
+    * [new Event(span, label, parent, edge)](#new_Event_new)
     * [.set(data)](#Event+set)
     * [.enter()](#Event+enter)
     * [.toString()](#Event+toString)
@@ -659,7 +674,7 @@ span.error(error)
 
 <a name="new_Event_new"></a>
 
-### new Event(span, label, parent)
+### new Event(span, label, parent, edge)
 Create an event
 
 
@@ -667,7 +682,8 @@ Create an event
 | --- | --- | --- |
 | span | <code>string</code> | name of the event's span |
 | label | <code>string</code> | Event label (usually entry or exit) |
-| parent | <code>object</code> | Parent event to edge back to |
+| parent | <code>addon.Event</code> \| <code>addon.Metadata</code> | Metadata to construct the event from. |
+| edge | <code>boolean</code> | This should edge back to the parent |
 
 <a name="Event+set"></a>
 
