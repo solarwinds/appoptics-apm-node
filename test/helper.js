@@ -481,11 +481,10 @@ function checkData (data, fn) {
   }
 }
 
-let counter
 exports.checkLogMessages = checkLogMessages
 function checkLogMessages (debug, checks) {
   const defaultLogger = debug.log
-  counter = 0
+  let counter = 0
 
   // if the level is not one of these ignore it.
   const levelsToCheck = {
@@ -526,10 +525,14 @@ function checkLogMessages (debug, checks) {
       debug.log = defaultLogger
     }
   }
-}
-
-exports.getLogMessagesChecked = function () {
-  return counter
+  function clearLogMessageChecks () {
+    debug.log = defaultLogger
+    counter = 0
+  }
+  function getLogMessagesChecked () {
+    return counter
+  }
+  return [getLogMessagesChecked, clearLogMessageChecks]
 }
 
 exports.getLevelAndText = getLevelAndText

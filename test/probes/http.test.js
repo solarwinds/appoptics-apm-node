@@ -16,6 +16,7 @@ describe('probes.http', function () {
   let realSampleTrace
   const previousHttpEnabled = ao.probes.http.enabled
   const previousHttpClientEnabled = ao.probes['http-client'].enabled
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -52,6 +53,12 @@ describe('probes.http', function () {
       ao.probes['http-client'].enabled = previousHttpClientEnabled
     } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
       ao.specialUrls = undefined
+    }
+  })
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
     }
   })
 
@@ -189,7 +196,8 @@ describe('probes.http', function () {
       const logChecks = [
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ]
-      helper.checkLogMessages(ao.debug, logChecks)
+      let getCount  // eslint-disable-line
+      [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {

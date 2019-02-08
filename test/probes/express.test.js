@@ -77,6 +77,7 @@ const pkg = require('express/package.json')
 
 describe('probes.express ' + pkg.version, function () {
   let emitter
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -91,6 +92,12 @@ describe('probes.express ' + pkg.version, function () {
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
   })
 
   const check = {
@@ -271,7 +278,8 @@ describe('probes.express ' + pkg.version, function () {
     const logChecks = [
       {level: 'error', message: 'express customNameFunc() error:', values: [error]},
     ]
-    helper.checkLogMessages(ao.debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
     customTransactionName(custom, done)
   })
 

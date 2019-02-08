@@ -43,6 +43,7 @@ if (semver.gte(visionPkg.version, '5.0.0')) {
 describe('probes.hapi ' + pkg.version + visionText, function () {
   let emitter
   let port = 3000
+  let clear
 
   //
   // Intercept appoptics messages for analysis
@@ -58,6 +59,12 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
+  })
+  afterEach(function () {
+    if (clear) {
+      clear()
+      clear = undefined
+    }
   })
 
   const check = {
@@ -333,7 +340,8 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     const logChecks = [
       {level: 'error', message: 'hapi customNameFunc() error:', values: [error]},
     ]
-    helper.checkLogMessages(ao.debug, logChecks)
+    let getCount  // eslint-disable-line
+    [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
     return customTransactionNameTest(custom)()
   })
 
