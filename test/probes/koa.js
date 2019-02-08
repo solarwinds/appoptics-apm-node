@@ -48,7 +48,6 @@ const check = {
 }
 
 function controllerValidations (layer, controller, action) {
-  //const profileName = controller + ' ' + action
   return [
     function (msg) {
       check['http-entry'](msg)
@@ -59,14 +58,12 @@ function controllerValidations (layer, controller, action) {
     function (msg) {
       msg.should.have.property('Layer', layer)
       msg.should.have.property('Label', 'entry')
-      //msg.should.have.property('ProfileName', profileName)
       msg.should.have.property('Controller', controller)
       msg.should.have.property('Action', action)
     },
     function (msg) {
       msg.should.have.property('Layer', layer)
       msg.should.have.property('Label', 'exit')
-      //msg.should.have.property('ProfileName', profileName)
     },
     function (msg) {
       check['koa-exit'](msg)
@@ -185,6 +182,7 @@ exports.router = function (emitter, done) {
   // Mount router
   const r = router(app)
 
+  let spanName = 'koa-router'
   if (semver.gte(koaRouterVersion, '6.0.0')) {
     // if koa-router requires koa version 2 and no longer
     // supports generators.
@@ -194,6 +192,7 @@ exports.router = function (emitter, done) {
     app.use(r.routes())
     r.get('/hello/:name', hello)
   } else {
+    spanName = 'koa-router-handler'
     function* hello () {
       this.body = 'done'
     }
@@ -209,7 +208,7 @@ exports.router = function (emitter, done) {
     }
   }
 
-  const validations = controllerValidations('koa-router', 'get /hello/:name', 'hello')
+  const validations = controllerValidations(spanName, 'get /hello/:name', 'hello')
   helper.doChecks(emitter, validations, function () {
     server.close(done)
   })
