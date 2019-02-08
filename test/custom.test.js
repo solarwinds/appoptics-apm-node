@@ -384,7 +384,7 @@ describe('custom', function () {
       let count = 0
 
       const logChecks = [
-        {level: 'warn', message: 'ao.runInstrument found no span name or builder'},
+        {level: 'warn', message: 'ao.runInstrument found no span name or span-info function'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
