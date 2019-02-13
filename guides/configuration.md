@@ -96,7 +96,8 @@ These environment variables may be set:
 |APPOPTICS_COLLECTOR|collector.appoptics.com:443|SSL collector endpoint address and port (only used if APPOPTICS_REPORTER = ssl). This is typically changed only for testing.|
 |APPOPTICS_COLLECTOR_UDP|127.0.0.1:7832|UDP collector endpoint address and port (ignored unless APPOPTICS_REPORTER = udp).|
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
-|DEBUG|appoptics:error,appoptics:warn|The node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging.|
+|APPOPTICS_LOG_SETTINGS|'error,warn'|Log events categories to enable. If set this takes precedence over DEBUG.|
+|DEBUG|appoptics:error,appoptics:warn|Deprecated. While the node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging, it is more convenient to use APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each category.|
 
 Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 

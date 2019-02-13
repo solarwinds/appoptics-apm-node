@@ -55,6 +55,15 @@ describe('logging', function () {
     expect(ao.logLevel).equal(previous)
   })
 
+  it('should interact with existing debug logging correctly', function () {
+    process.env.DEBUG = 'xyzzy:plover,xyzzy:dragon'
+    ao.logLevel = 'error'
+    expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon', 'appoptics:error'])
+    ao.logLevel = ''
+    expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon'])
+    ao.logLevel = 'error,warn'
+  })
+
   it('should log correctly', function () {
     const msg = 'test logging'
     let called = false
