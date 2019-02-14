@@ -1,7 +1,7 @@
 'use strict'
 
-const debug = require('debug')
 const ao = require('..')
+const debug = ao.logger.debug
 const Span = ao.Span
 const helper = require('./helper')
 
@@ -58,7 +58,7 @@ describe('basics', function () {
       {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000]},
       {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0]},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     ao.sampleRate = NaN
     expect(ao.sampleRate).equal(100, '(unchanged) when trying to set to NaN')
@@ -157,7 +157,7 @@ describe('basics', function () {
     const logChecks = [
       {level: 'warn', message: 'appoptics-apm is being executed more than once'},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
     const key = require.resolve('..')
     delete require.cache[key]
     const ao2 = require('..')

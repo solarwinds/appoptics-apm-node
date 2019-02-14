@@ -1,11 +1,10 @@
 'use strict'
 
-const helper = require('../helper')
 const semver = require('semver')
 const should = require('should')
 const {ao} = require('../1.test-common')
 
-const gpDebug = ao.debug('appoptics:probe:generic-pool')
+const gpDebug = ao.logger.debug('appoptics:probe:generic-pool')
 
 const gp = require('generic-pool')
 

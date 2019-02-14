@@ -22,8 +22,6 @@ const config = {
   connectString: host + '/' + database,
 }
 
-ao.debugLogging(true)
-
 describe('probes.oracledb ' + pkg.version, function () {
   let emitter
   let realSampleTrace

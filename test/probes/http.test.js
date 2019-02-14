@@ -197,7 +197,7 @@ describe('probes.http', function () {
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ]
       let getCount  // eslint-disable-line
-      [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
+      [getCount, clear] = helper.checkLogMessages(logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {

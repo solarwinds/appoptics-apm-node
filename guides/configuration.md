@@ -102,7 +102,7 @@ These environment variables may be set:
 Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 
 ```
-// shorthand for setting up `require('debug')('appoptics:error')`
+// no need to set up standard error loggers (error, warn, info, debug, patching)
 const log = ao.loggers
 log.error('bad error')
 ```

@@ -2,8 +2,8 @@
 
 const helper = require('./helper')
 const should = require('should')
-const debug = require('debug')
 const ao = require('..')
+const debug = ao.logger.debug
 const addon = ao.addon
 const Span = ao.Span
 const Event = ao.Event
@@ -349,7 +349,7 @@ describe('span', function () {
     ]
 
     let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(debug, logChecks)
+    [getCount, clear] = helper.checkLogMessages(logChecks)
 
     span.run(function () {
       span.info(data)
@@ -370,7 +370,7 @@ describe('span', function () {
       {level: 'error', message: 'test span info call could not find last event'}
     ]
     let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(debug, logChecks)
+    [getCount, clear] = helper.checkLogMessages(logChecks)
 
     span.info(data)
     Event.prototype.send = send

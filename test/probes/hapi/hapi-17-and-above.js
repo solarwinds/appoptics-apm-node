@@ -341,7 +341,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
       {level: 'error', message: 'hapi customNameFunc() error:', values: [error]},
     ]
     let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
+    [getCount, clear] = helper.checkLogMessages(logChecks)
     return customTransactionNameTest(custom)()
   })
 

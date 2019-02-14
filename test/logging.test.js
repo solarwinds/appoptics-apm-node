@@ -2,7 +2,7 @@
 
 const helper = require('./helper')
 const ao = require('..')
-const debug = ao.loggers._debug
+const debug = ao.logger.debug
 
 const util = require('util')
 const expect = require('chai').expect

@@ -3,7 +3,6 @@ const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
 const ao = require('..')
-const debug = ao.debug
 const Span = ao.Span
 const Event = ao.Event
 
@@ -388,7 +387,7 @@ describe('custom', function () {
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
-      helper.checkLogMessages(debug, logChecks)
+      helper.checkLogMessages(logChecks)
 
       // Verify nothing bad happens when run function is missing
       ao.instrument(build)
@@ -426,7 +425,7 @@ describe('custom', function () {
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
-      helper.checkLogMessages(debug, logChecks)
+      helper.checkLogMessages(logChecks)
 
       // Verify errors thrown in builder do not propagate
       ao.instrument(nope, inc)
@@ -668,7 +667,7 @@ describe('custom', function () {
       {level: 'error', message: 'task IDs don\'t match'},
       {level: 'error', message: 'outer:exit 2b:'},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     helper.test(
       emitter,
@@ -718,7 +717,7 @@ describe('custom', function () {
       {level: 'warn', message: 'ao.bind(%s) - no context', values: ['noop']},
       {level: 'warn', message: 'ao.bind(%s) - not a function', values: [null]},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     try {
       ao.bind(noop)
@@ -756,7 +755,7 @@ describe('custom', function () {
       {level: 'warn', message: '[1]ao.bindEmitter - no context'},
       {level: 'error', message: '[1]ao.bindEmitter - non-emitter'},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     try {
       ao.bindEmitter(emitter)

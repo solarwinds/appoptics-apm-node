@@ -2,6 +2,7 @@
 
 const {ao} = require('./1.test-common')
 exports.ao = ao
+const debug = ao.logger.debug
 const realPort = ao.port
 ao.skipSample = true
 
@@ -59,7 +60,7 @@ const env = process.env
 // it. don't accept '' because that used to turn on showing logs, but the
 // default has inverted.
 if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
-  log.debug('AO_TEST_SHOW_LOGS not set, turning off logging')
+  log.debug('AO_TEST_SHOW_LOGS set falsey, turning off logging')
   let logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {
     return !item.startsWith('appoptics:')
@@ -482,7 +483,7 @@ function checkData (data, fn) {
 }
 
 exports.checkLogMessages = checkLogMessages
-function checkLogMessages (debug, checks) {
+function checkLogMessages (checks) {
   const defaultLogger = debug.log
   let counter = 0
 

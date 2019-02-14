@@ -276,7 +276,7 @@ describe('probes.express ' + pkg.version, function () {
       {level: 'error', message: 'express customNameFunc() error:', values: [error]},
     ]
     let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(ao.debug, logChecks)
+    [getCount, clear] = helper.checkLogMessages(logChecks)
     customTransactionName(custom, done)
   })
 

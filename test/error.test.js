@@ -309,7 +309,7 @@ describe('error', function () {
     const logChecks = [
       {level: 'error', message: 'test span error call could not find last event'},
     ]
-    helper.checkLogMessages(ao.debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     const send = Event.prototype.send
     Event.prototype.send = function () {

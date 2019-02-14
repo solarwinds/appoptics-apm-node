@@ -2,7 +2,6 @@
 const helper = require('./helper')
 const ao = helper.ao
 const addon = ao.addon
-const debug = ao.debug
 const Event = ao.Event
 
 const expect = require('chai').expect
@@ -104,7 +103,7 @@ describe('event', function () {
       // there is a stack trace here but issuing the error is enough.
     ]
 
-    const [getCount, clear] = helper.checkLogMessages(debug, logChecks) // eslint-disable-line
+    const [getCount, clear] = helper.checkLogMessages(logChecks) // eslint-disable-line
 
     event2.set({Nan: NaN})
 

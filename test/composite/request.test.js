@@ -173,7 +173,7 @@ describe('probes.request', function () {
       const logChecks = [
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ]
-      helper.checkLogMessages(ao.debug, logChecks)
+      helper.checkLogMessages(logChecks)
 
       helper.doChecks(emitter, [
         function (msg) {
