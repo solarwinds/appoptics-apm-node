@@ -6,6 +6,9 @@ const ao = require('..')
 const Span = ao.Span
 const Event = ao.Event
 
+const oSpanSendNon = Span.sendNonHttpSpan
+const oEventSend = Event.send
+
 //
 //                 ^     ^
 //            __--| \:::/ |___
@@ -73,6 +76,8 @@ describe('custom', function () {
     emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
+    Span.sendNonHttpSpan = oSpanSendNon
+    Event.send = oEventSend
     emitter.close(done)
   })
 
@@ -450,6 +455,14 @@ describe('custom', function () {
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for sync function', function (done) {
     let last
+    let metricsSent = false
+
+    const original = Span.sendNonHttpSpan
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent = true
+      return txname
+    }
+
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -465,7 +478,11 @@ describe('custom', function () {
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
-    ], done)
+    ], function (err) {
+      Span.sendNonHttpSpan = original
+      metricsSent.should.equal(true)
+      done(err)
+    })
 
     const test = 'foo'
     const res = ao.startOrContinueTrace(null, 'test', function () {
@@ -475,10 +492,79 @@ describe('custom', function () {
     res.should.equal(test)
   })
 
+  // Verify startOrContinueTrace doesn't sample or do metrics when sampling is false
+  it('should not send events or metrics - unsampled x-trace, sync', function () {
+    let metricsSent = 0
+    let eventsSent = 0
+
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent += 1
+      return txname
+    }
+
+    Event.send = function () {
+      eventsSent += 1
+    }
+
+    const test = 'foo'
+    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(xtrace, 'test', function () {return test}, conf)
+
+    res.should.equal(test)
+    metricsSent.should.equal(0)
+    eventsSent.should.equal(0)
+
+  })
+
+  // Verify startOrContinue trace doesn't sample or metrics with unsampled x-trace
+  it('should not send events or metrics - unsampled x-trace, async', function (done) {
+    // it's a little tricky to test an unsampled trace because the callback will
+    // be called before all the async contexts have cleared resulting in leftover
+    // contexts and resultant errors for the next test.
+    let metricsSent = 0
+    let eventsSent = 0
+
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent += 1
+      return txname
+    }
+
+    Event.send = function () {
+      eventsSent += 1
+    }
+
+    const test = 'foo'
+    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(
+      xtrace,
+      'test',                        // span name
+      function (cb) {                // runner
+        setTimeout(function () {cb(1, 2, 3, 5)}, 50)
+        return test
+      },
+      conf,                          // configuration
+      function () {
+        arguments.should.have.property('0', 1)
+        arguments.should.have.property('1', 2)
+        arguments.should.have.property('2', 3)
+        arguments.should.have.property('3', 5)
+        metricsSent.should.equal(0)
+        eventsSent.should.equal(0)
+      }
+    )
+
+    res.should.equal(test)
+
+    // wait for contexts to clear.
+    setTimeout(function () {
+      done()
+    }, 100)
+  })
+
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for async function', function (done) {
-    let last
 
+    let last
     helper.doChecks(emitter, [
       function (msg) {
         msg.should.have.property('Layer', 'test')
@@ -497,7 +583,7 @@ describe('custom', function () {
 
     const test = 'foo'
     const res = ao.startOrContinueTrace(
-      null,                          // xtrace
+      null,
       'test',                        // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
@@ -556,10 +642,14 @@ describe('custom', function () {
       function (cb) {               // runner function, creates a new span
         ao.startOrContinueTrace(
           Span.last.events.entry.toString(),    // xtrace ID for last span
-          last => {                             // builder function
-            outer = last
-            entry = outer.events.entry
-            return last.descend('test')
+          () => {
+            return {
+              name: 'test',
+              finalize (span, last) {
+                outer = last
+                entry = outer.events.entry
+              }
+            }
           },
           function (cb) {cb()},                 // runner function, pseudo async
           conf,                                 // config
