@@ -126,7 +126,7 @@ describe('custom', function () {
     ], done)
   })
 
-  it('should support builder function', function (done) {
+  it('should support spanInfo function', function (done) {
     helper.test(emitter, function (done) {
       ao.instrument(
         function () {
