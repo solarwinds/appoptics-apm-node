@@ -1,7 +1,7 @@
 'use strict'
 
 const Resource = require('koa-resource-router')
-const router = require('koa-router')
+const Router = require('koa-router')
 const _ = require('koa-route')
 const koa = require('koa')
 
@@ -47,33 +47,56 @@ const check = {
   }
 }
 
-function controllerValidations (layer, controller, action) {
-  return [
+function controllerValidations (...args) {
+  if (args.length % 3 !== 0) {
+    throw new Error('controllerValidations requires arg count to be a multiple of 3')
+  }
+
+  let checks = [
     function (msg) {
       check['http-entry'](msg)
     },
     function (msg) {
       check['koa-entry'](msg)
     },
-    function (msg) {
+  ]
+  const exits = []
+  let c
+  let a
+  for (let i = 0; i < args.length; i += 3) {
+    const layer = args[i + 0]
+    const controller = args[i + 1]
+    const action = args[i + 2]
+
+    c = controller
+    a = action
+
+    checks.push(function (msg) {
       msg.should.have.property('Layer', layer)
       msg.should.have.property('Label', 'entry')
       msg.should.have.property('Controller', controller)
       msg.should.have.property('Action', action)
-    },
-    function (msg) {
+    })
+    exits.unshift(function (msg) {
       msg.should.have.property('Layer', layer)
       msg.should.have.property('Label', 'exit')
-    },
+    })
+  }
+
+  checks = checks.concat(exits)
+  checks = checks.concat([
     function (msg) {
       check['koa-exit'](msg)
     },
     function (msg) {
       check['http-exit'](msg)
-      msg.should.have.property('Controller', controller)
-      msg.should.have.property('Action', action)
+      msg.should.have.property('Controller', c)
+      msg.should.have.property('Action', a)
     }
-  ]
+  ])
+
+  return checks
+
 }
 
 exports.basic = function (emitter, done) {
@@ -180,7 +203,7 @@ exports.router = function (emitter, done) {
   const app = koa()
 
   // Mount router
-  const r = router(app)
+  const r = Router(app)
 
   let spanName = 'koa-router'
   if (semver.gte(koaRouterVersion, '6.0.0')) {
@@ -219,6 +242,46 @@ exports.router = function (emitter, done) {
   })
 }
 
+exports.router_promise = function (emitter, done) {
+  const app = koa()
+  const controller = new Router()
+
+  const handler = (ctx, next) => {
+    return next().then(() => {
+      ctx.status = 200
+    })
+  }
+
+  const handler2 = (ctx, next) => {
+    return next().then(() => {
+      ctx.body = 'Hello Koa'
+    })
+  }
+
+  controller.post('/api/visit', handler2, handler, handler)
+  app.use(controller.routes())
+
+  const validations = controllerValidations(
+    'koa-router',
+    'post /api/visit',
+    'handler2',
+    'koa-router',
+    'post /api/visit',
+    'handler',
+    'koa-router',
+    'post /api/visit',
+    'handler'
+  )
+  helper.doChecks(emitter, validations, function () {
+    server.close(done)
+  })
+
+  const server = app.listen(function () {
+    const port = server.address().port
+    request.post('http://localhost:' + port + '/api/visit')
+  })
+}
+
 exports.router_disabled = function (emitter, done) {
   ao.probes['koa-router'].enabled = false
   const app = koa()
@@ -228,7 +291,7 @@ exports.router_disabled = function (emitter, done) {
   }
 
   // Mount router
-  const r = router(app)
+  const r = Router(app)
   if (typeof r.routes === 'function') {
     app.use(r.routes())
     r.get('/hello/:name', hello)
