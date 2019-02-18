@@ -1,7 +1,6 @@
 'use strict'
 
 const ao = require('..')
-const debug = ao.logger.debug
 const Span = ao.Span
 const helper = require('./helper')
 
