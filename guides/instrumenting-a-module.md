@@ -91,7 +91,7 @@ The span-info function's signature is `span-info ()` and it returns an object wi
 
 name - the name of the span
 kvpairs - a object of key-value pairs that will be added to the span's entry event.
-finalize - a function `finalize(createdSpan, previousSpan)` that is called after the span has been created.
+finalize - a function `finalize(createdSpan, previousSpan)` that is called after the span has been created. Note that previousSpan will not exist for a new trace or a trace that is being continued from an inbound X-Trace ID.
 
 
 ```js
