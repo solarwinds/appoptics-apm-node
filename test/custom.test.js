@@ -6,9 +6,6 @@ const ao = require('..')
 const Span = ao.Span
 const Event = ao.Event
 
-const oSpanSendNon = Span.sendNonHttpSpan
-const oEventSend = Event.send
-
 //
 //                 ^     ^
 //            __--| \:::/ |___
@@ -28,7 +25,7 @@ const soon = global.setImmediate || process.nextTick
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if (!ao.addon) {
+if (ao.addon.version === 'not loaded') {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
       let counter = 0
@@ -38,7 +35,7 @@ if (!ao.addon) {
       counter.should.equal(1)
     })
     it('should passthrough async instrument', function (done) {
-      ao.instrument('test', soon, 'foo', done)
+      ao.instrument('test', soon, {}, done)
     })
 
     it('should passthrough sync startOrContinueTrace', function () {
@@ -67,6 +64,8 @@ if (!ao.addon) {
 // custom tests with addon enabled
 //================================
 describe('custom', function () {
+  const oSpanSendNon = Span.sendNonHttpSpan
+  const oEventSend = Event.send
   const conf = {enabled: true}
   let emitter
   let counter = 0
