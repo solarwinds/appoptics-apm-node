@@ -36,12 +36,12 @@
     * [.bind(fn)](#ao.bind) ⇒ <code>function</code>
     * [.bindEmitter(em)](#ao.bindEmitter) ⇒ <code>EventEmitter</code>
     * [.backtrace()](#ao.backtrace) ⇒ <code>string</code>
-    * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction)
+    * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
     * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
-    * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp)
-    * [.instrument(span, run, [options], [callback])](#ao.instrument)
-    * [.startOrContinueTrace(xtrace, span, run, [opts], [callback])](#ao.startOrContinueTrace)
+    * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
+    * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒
+    * [.startOrContinueTrace(xtrace, span, run, [opts], [callback])](#ao.startOrContinueTrace) ⇒
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
 
@@ -215,7 +215,7 @@ Bind a function to the CLS context if tracing.
 <a name="ao.bindEmitter"></a>
 
 ### ao.bindEmitter(em) ⇒ <code>EventEmitter</code>
-Bind an emitter, if tracing
+Bind an emitter if tracing
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.  
@@ -233,11 +233,12 @@ Generate a backtrace string
 **Returns**: <code>string</code> - the backtrace  
 <a name="ao.setCustomTxNameFunction"></a>
 
-### ao.setCustomTxNameFunction(probe, fn)
+### ao.setCustomTxNameFunction(probe, fn) ⇒ <code>boolean</code>
 Set a custom transaction name function for a specific probe. This is
 most commonly used when setting custom names for all or most routes.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - true if successfully set else false  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -278,10 +279,11 @@ Convert an xtrace ID to a metadata object.
 
 <a name="ao.instrumentHttp"></a>
 
-### ao.instrumentHttp(span, run, [options], res)
+### ao.instrumentHttp(span, run, [options], res) ⇒
 Instrument HTTP request/response
 
 **Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: the value returned by the run function or undefined if it can't be run.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -294,14 +296,15 @@ Instrument HTTP request/response
 
 <a name="ao.instrument"></a>
 
-### ao.instrument(span, run, [options], [callback])
+### ao.instrument(span, run, [options], [callback]) ⇒
 Apply custom instrumentation to a function.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| span | <code>string</code> \| <code>function</code> |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return an     object that contains the span name as the name property. Other     properties may exist - see instrumenting-a-module.md in guides/. |
+| span | <code>string</code> \| <code>function</code> |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return an     object that contains the span name as the name property. Other     properties are allowed - see instrumenting-a-module.md in guides/. |
 | run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error appoptics will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     AppOptics know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
 | [options] | <code>object</code> |  | options |
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
@@ -357,12 +360,13 @@ ao.instrument(spanInfo, run, callback)
 ```
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, span, run, [opts], [callback])
+### ao.startOrContinueTrace(xtrace, span, run, [opts], [callback]) ⇒
 Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -444,10 +448,10 @@ Report an info event in the current trace.
 * [Span](#Span)
     * [new Span(name, settings, [data])](#new_Span_new)
     * _instance_
-        * [.descend(name, data)](#Span+descend)
-        * [.run(fn)](#Span+run)
-        * [.runAsync(fn)](#Span+runAsync)
-        * [.runSync(fn)](#Span+runSync)
+        * [.descend(name, data)](#Span+descend) ⇒ [<code>Span</code>](#Span)
+        * [.run(fn)](#Span+run) ⇒
+        * [.runAsync(fn)](#Span+runAsync) ⇒
+        * [.runSync(fn)](#Span+runSync) ⇒
         * [.enter(data)](#Span+enter)
         * [.exit(data)](#Span+exit)
         * [.exitWithError(err, data)](#Span+exitWithError)
@@ -479,10 +483,11 @@ var span = new Span('fs', Event.last, {
 ```
 <a name="Span+descend"></a>
 
-### span.descend(name, data)
+### span.descend(name, data) ⇒ [<code>Span</code>](#Span)
 Create a new span descending from the current span
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: [<code>Span</code>](#Span) - the created span  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -497,11 +502,12 @@ var inner = outer.descend('fs', {
 ```
 <a name="Span+run"></a>
 
-### span.run(fn)
+### span.run(fn) ⇒
 Run a function within the context of this span. Similar to mocha, this
 identifies asynchronicity by function arity and invokes runSync or runAsync
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -521,10 +527,11 @@ span.run(function (wrap) {
 ```
 <a name="Span+runAsync"></a>
 
-### span.runAsync(fn)
+### span.runAsync(fn) ⇒
 Run an async function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -538,10 +545,11 @@ span.runAsync(function (wrap) {
 ```
 <a name="Span+runSync"></a>
 
-### span.runSync(fn)
+### span.runSync(fn) ⇒
 Run a sync function within the context of this span.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
