@@ -201,8 +201,9 @@ describe('probes.zlib', function () {
           helper.test(emitter, function (done) {
             const inst = new (zlib[name])(options)
             inst.should.be.an.instanceOf(zlib[name])
+
             inst.on('error', done)
-            inst.on('close', done)
+            //inst.on('close', nextTick)
             inst.on('end', done)
 
             inst.pipe(concat(function (buf) {
@@ -235,8 +236,9 @@ describe('probes.zlib', function () {
           helper.test(emitter, function (done) {
             const inst = new zlib[creator](options)
             inst.should.be.an.instanceOf(zlib[name])
+
             inst.on('error', done)
-            inst.on('close', done)
+            //inst.on('close', nextTick)
             inst.on('end', done)
 
             inst.pipe(concat(function (buf) {
