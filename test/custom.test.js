@@ -63,9 +63,26 @@ if (!ao.addon) {
   return
 }
 
+//================================
+// custom tests with addon enabled
+//================================
 describe('custom', function () {
   const conf = {enabled: true}
   let emitter
+  let counter = 0
+  let pfx
+  let main
+
+  beforeEach(function () {
+    // provide up to 100 tests with a unique prefix
+    pfx = ('0' + counter++).slice(-2)
+    main = `${pfx}-test`
+    if (this.currentTest.title === 'x-should continue from previous trace id') {
+      ao.logLevelAdd('test:messages,event:*')
+    } else {
+      ao.logLevelRemove('test:messages,event:*')
+    }
+  })
 
   //
   // Intercept appoptics messages for analysis
@@ -97,15 +114,15 @@ describe('custom', function () {
 
   it('should custom instrument sync code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', function () {})
+      ao.instrument(main, function () {})
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -113,14 +130,14 @@ describe('custom', function () {
 
   it('should custom instrument async code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, done)
+      ao.instrument(main, soon, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -131,18 +148,18 @@ describe('custom', function () {
       ao.instrument(
         function () {
           return {
-            name: 'test',
+            name: main,
             kvpairs: {Foo: 'bar'}
           }
         }, soon, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Foo', 'bar')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -150,7 +167,7 @@ describe('custom', function () {
 
   it('should allow optional callback with async code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', function (doneInner) {
+      ao.instrument(main, function (doneInner) {
         soon(function () {
           doneInner()
           done()
@@ -158,11 +175,11 @@ describe('custom', function () {
       })
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -170,18 +187,18 @@ describe('custom', function () {
 
   it('should include backtrace when collectBacktraces is on', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, {
+      ao.instrument(main, soon, {
         collectBacktraces: true,
         enabled: true
       }, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Backtrace')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -189,7 +206,7 @@ describe('custom', function () {
 
   it('should skip when not enabled', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, {
+      ao.instrument(main, soon, {
         enabled: false
       }, done)
     }, [], done)
@@ -201,14 +218,14 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return span.descend('test')
+        return {name: main}
       }, function (callback) {
         ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
@@ -220,7 +237,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -344,14 +361,14 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return span.descend('test')
+        return {name: main}
       }, function (callback) {
         ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
@@ -364,7 +381,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -373,7 +390,7 @@ describe('custom', function () {
 
   it('should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
-      function build (span) { return span.descend('test') }
+      function build (span) {return {name: main}}
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
       const found = []
       let i = 0
@@ -418,10 +435,10 @@ describe('custom', function () {
     }, [], done)
   })
 
-  it('should handle errors correctly between build and run functions', function (done) {
+  it('should handle errors correctly between spanInfo and run functions', function (done) {
     helper.test(emitter, function (done) {
       const err = new Error('nope')
-      function build (span) {return span.descend('test')}
+      function build (span) {return {name: main}}
       function nope () {count++; throw err}
       function inc () {count++}
       let count = 0
@@ -466,7 +483,7 @@ describe('custom', function () {
 
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
@@ -474,7 +491,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -485,7 +502,7 @@ describe('custom', function () {
     })
 
     const test = 'foo'
-    const res = ao.startOrContinueTrace(null, 'test', function () {
+    const res = ao.startOrContinueTrace(null, main, function () {
       return test
     }, conf)
 
@@ -508,7 +525,7 @@ describe('custom', function () {
 
     const test = 'foo'
     const xtrace = ao.addon.Metadata.makeRandom(0).toString()
-    const res = ao.startOrContinueTrace(xtrace, 'test', function () {return test}, conf)
+    const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
 
     res.should.equal(test)
     metricsSent.should.equal(0)
@@ -537,7 +554,7 @@ describe('custom', function () {
     const xtrace = ao.addon.Metadata.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
-      'test',                        // span name
+      main,                        // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 50)
         return test
@@ -567,7 +584,7 @@ describe('custom', function () {
     let last
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
@@ -575,7 +592,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -584,7 +601,7 @@ describe('custom', function () {
     const test = 'foo'
     const res = ao.startOrContinueTrace(
       null,
-      'test',                        // span name
+      main,                        // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
         return test
@@ -608,12 +625,12 @@ describe('custom', function () {
 
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Layer', 'x-previous')
         msg.should.have.property('Label', 'entry')
         msg.should.not.have.property('Edge')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
@@ -621,53 +638,49 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Layer', 'x-previous')
         msg.should.have.property('Label', 'exit')
-        msg.Edge.should.equal(last)
+        msg.Edge.should.equal(entry.opId)
       }
     ], done)
 
-
-    let outer
-
     ao.startOrContinueTrace(
       '',                           // no xtrace ID, start a trace
-      'previous',                   // span name
-      function (cb) {               // runner function, creates a new span
+      'x-previous',                   // span name
+      function (pcb) {               // runner function, creates a new span
         ao.startOrContinueTrace(
           Span.last.events.entry.toString(),    // xtrace ID for last span
           () => {
             return {
-              name: 'test',
+              name: main,
               finalize (span, last) {
-                outer = last
-                entry = outer.events.entry
+                entry = last.events.entry
               }
             }
           },
-          function (cb) {cb()},                 // runner function, pseudo async
+          function (cb) {           // runner function, pseudo async
+            cb()
+          },
           conf,                                 // config
           function () {                         // done function
-            outer.exit()
           }
         )
-        cb()
+        pcb()
       },
       conf,                         // config
       function () {                 // done function
-        //done()
       }
     )
   })
 
   // Verify startOrContinueTrace continues from existing traces,
-  // when already tracing, whether or not an xtrace if is provided.
+  // when already tracing, whether or not an xtrace is provided.
   it('should continue outer traces when already tracing', function (done) {
     let prev, outer, sub
 
@@ -779,7 +792,7 @@ describe('custom', function () {
     should.not.exist(ao.traceId)
     ao.startOrContinueTrace(
       null,
-      'test',
+      main,
       function (cb) {
         should.exist(ao.traceId)
         cb()
@@ -812,7 +825,7 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = Span.makeEntrySpan('test', {doSample: true})
+      const span = Span.makeEntrySpan(main, {doSample: true})
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -850,7 +863,7 @@ describe('custom', function () {
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = Span.makeEntrySpan('test', {doSample: true})
+      const span = Span.makeEntrySpan(main, {doSample: true})
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
@@ -876,7 +889,7 @@ describe('custom', function () {
       ao.instrumentHttp(
         () => {
           return {
-            name: 'test'
+            name: main
           }
         },
         function () {
@@ -887,12 +900,12 @@ describe('custom', function () {
         }, conf, res)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
