@@ -269,7 +269,10 @@ exports.test = function (emitter, test, validations, done) {
 
   if (emitter[aoAggregate]) {
     // if an aggregate object has been set the aggregate messages using
-    // the aggregate configuration in emitter[aoAggregate].
+    // the aggregate configuration in emitter[aoAggregate]. this is only
+    // partially implemented but is intended to enable checking all responses
+    // once they have completed. that will make checking edges much more
+    // straightforward and will also eliminate timeout errors when.
     exports.aggregate(emitter, emitter[aoAggregate], done)
     delete emitter[aoAggregate]
   } else {
@@ -290,7 +293,7 @@ exports.test = function (emitter, test, validations, done) {
         return done(err)
       }
       span.exit()
-      done
+      //done
     })
   })
 }
