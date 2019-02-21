@@ -50,10 +50,6 @@ exports.skipTest = function (filename) {
   return true
 }
 
-const addon = ao.addon
-const oboeVersion = addon ? addon.Config.getVersionString() : '<not loaded>'
-log.debug('Using oboe version %s', oboeVersion)
-
 const env = process.env
 
 // turn off logging if requested. pretty much any falsey string except '' does
