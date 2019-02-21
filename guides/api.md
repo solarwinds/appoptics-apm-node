@@ -12,7 +12,7 @@
 ## Typedefs
 
 <dl>
-<dt><a href="#SampleInfo">SampleInfo</a> : <code>object</code></dt>
+<dt><a href="#TraceSettings">TraceSettings</a> : <code>object</code></dt>
 <dd></dd>
 </dl>
 
@@ -727,15 +727,18 @@ Send this event to the reporter
 | --- | --- | --- |
 | data | <code>object</code> | additional key-value pairs to send |
 
-<a name="SampleInfo"></a>
+<a name="TraceSettings"></a>
 
-## SampleInfo : <code>object</code>
+## TraceSettings : <code>object</code>
 **Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| sample | <code>boolean</code> | whether to sample or not |
-| source | <code>number</code> | the source of the sample decision |
-| rate | <code>number</code> | the rate that was used to make the decision |
+| doSample | <code>boolean</code> | the sample decision |
+| doMetrics | <code>boolean</code> | the metrics decision |
+| metadata | <code>Metadata</code> | the metadata to use |
+| edge | <code>boolean</code> | whether to edge back to metadata |
+| source | <code>number</code> | the sample decision source |
+| rate | <code>number</code> | the sample rate used |
 
