@@ -288,7 +288,10 @@ describe('probes.http', function () {
     it('should not send a span or metrics when there is a filter for it', function (done) {
       let messageCount = 0
       let metricsCount = 0
-      ao.specialUrls = [{string: '/filtered', doSample: false, doMetrics: false}]
+      ao.specialUrls = [
+        {string: '/filtered', doSample: false, doMetrics: false},
+        {regex: '^/files/', doSample: false, doMetrics: false}
+      ]
 
       function deafListener (msg) {
         messageCount += 1
@@ -313,6 +316,7 @@ describe('probes.http', function () {
       server.listen(function () {
         const port = server.address().port
         request({url: `http://localhost:${port}/filtered`})
+        request({url: `http://localhost:${port}/files/binary.data`})
       })
 
       // 1/4 second should be enough to get all messages. there's no clean way to
