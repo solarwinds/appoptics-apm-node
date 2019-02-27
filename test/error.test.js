@@ -5,6 +5,9 @@ const Span = ao.Span
 const Event = ao.Event
 const should = require('should') // eslint-disable-line no-unused-vars
 
+const makeSettings = helper.makeSettings
+
+
 describe('error', function () {
   const conf = {enabled: true}
   const error = new Error('nope')
@@ -37,7 +40,7 @@ describe('error', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -269,7 +272,7 @@ describe('error', function () {
   })
 
   it('should fail silently when given non-error, non-string types', function () {
-    const settings = {doSample: true}
+    const settings = makeSettings()
     const span = Span.makeEntrySpan('test', settings, {})
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
@@ -303,7 +306,7 @@ describe('error', function () {
   })
 
   it('should not send error events when not in a span', function () {
-    const settings = {doSample: true}
+    const settings = makeSettings()
     const span = Span.makeEntrySpan('test', settings, {})
 
     const logChecks = [

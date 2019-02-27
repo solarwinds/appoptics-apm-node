@@ -38,7 +38,7 @@ describe('probes.restify ' + pkg.version, function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     // restify newer versions of restify use negotiator which does file io
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false

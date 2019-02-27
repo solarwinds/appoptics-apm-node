@@ -53,7 +53,7 @@ describe('probes.hapi ' + pkg.version + visionText, function () {
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.g.testing(__filename)
   })
   after(function (done) {

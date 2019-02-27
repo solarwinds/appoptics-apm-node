@@ -277,7 +277,7 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const span = ao.Span.makeEntrySpan('outer', {doSample: ao.sampleMode})
+    const span = ao.Span.makeEntrySpan('outer', exports.makeSettings({doSample: ao.traceMode}))
     // span.async = true
     log.test.span('helper.test outer: %l', span)
     log.test.info('test starting')
@@ -550,4 +550,14 @@ function getLevelAndText (text) {
     return [match[1], match[2]]
   }
   return ['', '']
+}
+
+exports.makeSettings = function (settings) {
+  const s = {
+    doSample: true,
+    doMetrics: true,
+    source: 1,              // local agent config
+    rate: ao.sampleRate,
+  }
+  return Object.assign(s, settings)
 }

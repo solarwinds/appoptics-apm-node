@@ -18,7 +18,7 @@ describe('event', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
   })
   after(function (done) {
     emitter.close(done)
@@ -57,14 +57,14 @@ describe('event', function () {
 
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
-    ao.sampleMode = 'never'
+    ao.traceMode = 'never'
     md = addon.Metadata.makeRandom(0)
     event = new Event('test', 'entry', md)
     expect(ao.sampling(event)).equal(false)
     expect(ao.sampling(event.toString())).equal(false)
 
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     md = addon.Metadata.makeRandom(1)
     event = new Event('test', 'entry', md)
     expect(ao.sampling(event)).equal(true)

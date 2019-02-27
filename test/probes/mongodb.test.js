@@ -55,7 +55,7 @@ describe('probes.mongodb UDP', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.g.testing(__filename)
   })
   after(function (done) {
@@ -117,7 +117,7 @@ function makeTests (db_host, host, isReplicaSet) {
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}

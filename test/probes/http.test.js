@@ -24,7 +24,7 @@ describe('probes.http', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -35,6 +35,10 @@ describe('probes.http', function () {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
+  after(function () {
+    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+  })
+
 
   beforeEach(function () {
     if (this.currentTest.title === 'should not report anything when http probe is disabled') {

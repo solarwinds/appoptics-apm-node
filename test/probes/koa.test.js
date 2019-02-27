@@ -29,7 +29,7 @@ describe('probes/koa ' + pkg.version, function () {
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
   })
   after(function (done) {
     ao.probes.fs.enabled = true

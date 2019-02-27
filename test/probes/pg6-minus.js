@@ -11,7 +11,6 @@ const extend = Object.assign
 
 const postgres = require('pg')
 const pkg = require('pg/package')
-const semver = require('semver')
 
 const env = process.env
 const addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
@@ -55,7 +54,7 @@ describe('probes.pg ' + pkg.version, function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.probes.fs.enabled = false
 
     realSampleTrace = ao.addon.Context.sampleTrace

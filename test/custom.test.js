@@ -6,6 +6,8 @@ const ao = require('..')
 const Span = ao.Span
 const Event = ao.Event
 
+const makeSettings = helper.makeSettings
+
 //
 //                 ^     ^
 //            __--| \:::/ |___
@@ -72,6 +74,10 @@ describe('custom', function () {
   let pfx
   let main
 
+  after(function () {
+    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+  })
+
   beforeEach(function () {
     // provide up to 100 tests with a unique prefix
     pfx = ('0' + counter++).slice(-2)
@@ -88,7 +94,7 @@ describe('custom', function () {
   //
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
@@ -726,7 +732,9 @@ describe('custom', function () {
       }
     ], done)
 
-    const previous = Span.makeEntrySpan('previous', {doSample: true})
+    const previous = Span.makeEntrySpan('previous', makeSettings())
+    // don't let this act like a real entry span
+    delete previous.topSpan
     const entry = previous.events.entry
 
     previous.run(function (wrap) {
@@ -760,7 +768,7 @@ describe('custom', function () {
 
     ao.getTraceSettings = function () {
       called = true
-      return {sample: true, source: 0, rate: 0, doSample: true}
+      return makeSettings({source: 0, rate: 0})
     }
 
     // because a span is created and entered then Span.last & Event.last
@@ -825,7 +833,9 @@ describe('custom', function () {
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = Span.makeEntrySpan(main, {doSample: true})
+      const span = Span.makeEntrySpan(main, makeSettings())
+      // don't let it try to send metrics
+      delete span.topSpan
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -863,7 +873,8 @@ describe('custom', function () {
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = Span.makeEntrySpan(main, {doSample: true})
+      const span = Span.makeEntrySpan(main, makeSettings())
+      delete span.topSpan
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)

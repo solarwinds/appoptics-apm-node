@@ -2,9 +2,11 @@
 
 const ao = require('..')
 const Span = ao.Span
-const helper = require('./helper')
-
 const expect = require('chai').expect
+
+const helper = require('./helper')
+const makeSettings = helper.makeSettings
+
 
 let ifaob    // execute or skip test depending on whether bindings are loaded.
 let ALWAYS
@@ -26,19 +28,19 @@ if (ao.addon) {
 
 describe('basics', function () {
   it('should set trace mode', function () {
-    ao.sampleMode = ALWAYS
+    ao.traceMode = ALWAYS
   })
 
   it('should get trace mode', function () {
-    expect(ao.sampleMode).equal(ALWAYS)
+    expect(ao.traceMode).equal(ALWAYS)
   })
 
   it('should set trace mode as string', function () {
-    ao.sampleMode = 'never'
-    expect(ao.sampleMode).equal(NEVER)
+    ao.traceMode = 'never'
+    expect(ao.traceMode).equal(NEVER)
 
-    ao.sampleMode = 'always'
-    expect(ao.sampleMode).equal(ALWAYS)
+    ao.traceMode = 'always'
+    expect(ao.traceMode).equal(ALWAYS)
   })
 
   ifaob('should set and get sample rate', function () {
@@ -79,14 +81,14 @@ describe('basics', function () {
 
   it('should have sugary trace mode detectors', function () {
     // Reset first
-    ao.sampleMode = NEVER
+    ao.traceMode = NEVER
 
     ao.always.should.be.false
-    ao.sampleMode = ALWAYS
+    ao.traceMode = ALWAYS
     ao.always.should.be.true
 
     ao.never.should.be.false
-    ao.sampleMode = NEVER
+    ao.traceMode = NEVER
     ao.never.should.be.true
   })
 
@@ -106,7 +108,9 @@ describe('basics', function () {
 
   ifaob('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
-    const span = Span.makeEntrySpan('test', {doSample: true})
+    const span = Span.makeEntrySpan('test', makeSettings())
+    delete span.topSpan
+
     span.run(function () {
       ao.tracing.should.be.true
     })
@@ -115,7 +119,7 @@ describe('basics', function () {
   it('should support sampling using getTraceSettings()', function () {
     const skipSample = ao.skipSample
     ao.skipSample = false
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.getTraceSettings()
     s.should.not.be.false
@@ -132,7 +136,7 @@ describe('basics', function () {
 
   ifaob('should not call sampleRate setter from sample function', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     const skipSample = ao.skipSample
     ao.skipSample = false
 

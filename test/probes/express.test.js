@@ -82,7 +82,7 @@ describe('probes.express ' + pkg.version, function () {
   before(function (done) {
     ao.probes.fs.enabled = false
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     emitter = helper.appoptics(done)
     ao.g.testing(__filename)
   })

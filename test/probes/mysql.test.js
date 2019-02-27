@@ -63,7 +63,7 @@ describe('probes.mysql ' + pkg.version, function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.probes.fs.enabled = false
   })
   after(function (done) {

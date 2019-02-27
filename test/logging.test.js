@@ -7,6 +7,8 @@ const debug = ao.logger.debug
 const util = require('util')
 const expect = require('chai').expect
 
+const makeSettings = helper.makeSettings
+
 //
 // for some reason it's  not possible to set debug.inspectOpts.colors
 // here and have it take effect. At this point mocha has already loaded
@@ -231,7 +233,7 @@ describe('logging', function () {
   // check span formatting (%l). it was done when they were called layers and %s already
   // means string.
   it('should handle the appoptics extended span (%l) format', function () {
-    const span = ao.Span.makeEntrySpan('log-span', {doSample: true, doMetrics: true})
+    const span = ao.Span.makeEntrySpan('log-span', makeSettings())
     const name = span.name
     const entry = `${name}:entry`
     const exit = `${name}:exit`
@@ -315,7 +317,7 @@ describe('logging', function () {
   it('should support sampling', function () {
     const skipSample = ao.skipSample
     ao.skipSample = false
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.sample('test')
     expect(s).not.be.false
@@ -332,7 +334,7 @@ describe('logging', function () {
 
   ifaob('should not call sampleRate setter from sample function', function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     const skipSample = ao.skipSample
     ao.skipSample = false
 
