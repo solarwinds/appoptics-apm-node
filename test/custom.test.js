@@ -539,51 +539,6 @@ describe('custom', function () {
 
   })
 
-  // Verify startOrContinue trace doesn't sample or metrics with unsampled x-trace
-  it('should not send events or metrics - unsampled x-trace, async', function (done) {
-    // it's a little tricky to test an unsampled trace because the callback will
-    // be called before all the async contexts have cleared resulting in leftover
-    // contexts and resultant errors for the next test.
-    let metricsSent = 0
-    let eventsSent = 0
-
-    Span.sendNonHttpSpan = function (txname, duration, error) {
-      metricsSent += 1
-      return txname
-    }
-
-    Event.send = function () {
-      eventsSent += 1
-    }
-
-    const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
-    const res = ao.startOrContinueTrace(
-      xtrace,
-      main,                        // span name
-      function (cb) {                // runner
-        setTimeout(function () {cb(1, 2, 3, 5)}, 50)
-        return test
-      },
-      conf,                          // configuration
-      function () {
-        arguments.should.have.property('0', 1)
-        arguments.should.have.property('1', 2)
-        arguments.should.have.property('2', 3)
-        arguments.should.have.property('3', 5)
-        metricsSent.should.equal(0)
-        eventsSent.should.equal(0)
-      }
-    )
-
-    res.should.equal(test)
-
-    // wait for contexts to clear.
-    setTimeout(function () {
-      done()
-    }, 100)
-  })
-
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for async function', function (done) {
 
@@ -921,6 +876,53 @@ describe('custom', function () {
         msg.Edge.should.equal(last)
       }
     ], done)
+  })
+
+
+  // Verify startOrContinue trace doesn't sample or do metrics when sampling is false
+  it('should not send events or metrics - unsampled x-trace, async', function (done) {
+    // this is at the end because it's a little tricky to test an unsampled trace because
+    // the callback will be called before all the async contexts have cleared resulting in
+    // leftover contexts and resultant errors for the next test.
+    let metricsSent = 0
+    let eventsSent = 0
+
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent += 1
+      return txname
+    }
+
+    Event.send = function () {
+      eventsSent += 1
+    }
+
+    const test = 'foo'
+    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    debugger
+    const res = ao.startOrContinueTrace(
+      xtrace,
+      main,                        // span name
+      function (cb) {                // runner
+        setTimeout(function () {cb(1, 2, 3, 5)}, 100)
+        return test
+      },
+      conf,                          // configuration
+      function () {
+        arguments.should.have.property('0', 1)
+        arguments.should.have.property('1', 2)
+        arguments.should.have.property('2', 3)
+        arguments.should.have.property('3', 5)
+        metricsSent.should.equal(0)
+        eventsSent.should.equal(0)
+      }
+    )
+
+    res.should.equal(test)
+
+    // wait for contexts to clear.
+    setTimeout(function () {
+      done()
+    }, 250)
   })
 
 })
