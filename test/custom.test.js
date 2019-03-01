@@ -898,7 +898,6 @@ describe('custom', function () {
 
     const test = 'foo'
     const xtrace = ao.addon.Metadata.makeRandom(0).toString()
-    debugger
     const res = ao.startOrContinueTrace(
       xtrace,
       main,                        // span name
@@ -912,8 +911,8 @@ describe('custom', function () {
         arguments.should.have.property('1', 2)
         arguments.should.have.property('2', 3)
         arguments.should.have.property('3', 5)
-        metricsSent.should.equal(0)
-        eventsSent.should.equal(0)
+        //metricsSent.should.equal(0)
+        //eventsSent.should.equal(0)
       }
     )
 
@@ -921,6 +920,8 @@ describe('custom', function () {
 
     // wait for contexts to clear.
     setTimeout(function () {
+      metricsSent.should.equal(0)
+      eventsSent.should.equal(0)
       done()
     }, 250)
   })
