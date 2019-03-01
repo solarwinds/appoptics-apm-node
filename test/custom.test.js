@@ -911,8 +911,6 @@ describe('custom', function () {
         arguments.should.have.property('1', 2)
         arguments.should.have.property('2', 3)
         arguments.should.have.property('3', 5)
-        //metricsSent.should.equal(0)
-        //eventsSent.should.equal(0)
       }
     )
 
