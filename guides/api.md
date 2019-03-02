@@ -14,6 +14,10 @@
 <dl>
 <dt><a href="#TraceSettings">TraceSettings</a> : <code>object</code></dt>
 <dd></dd>
+<dt><a href="#spanInfo">spanInfo</a> : <code>object</code></dt>
+<dd></dd>
+<dt><a href="#spanInfoFunction">spanInfoFunction</a> ⇒ <code><a href="#spanInfo">spanInfo</a></code></dt>
+<dd></dd>
 </dl>
 
 <a name="ao"></a>
@@ -24,7 +28,6 @@
 * [ao](#ao)
     * [.logLevel](#ao.logLevel)
     * [.serviceKey](#ao.serviceKey)
-    * [.sampleMode](#ao.sampleMode)
     * [.traceMode](#ao.traceMode)
     * [.sampleRate](#ao.sampleRate)
     * [.tracing](#ao.tracing)
@@ -73,23 +76,10 @@ var settings = ao.logLevel
 | --- | --- |
 | <code>string</code> | the service key |
 
-<a name="ao.sampleMode"></a>
-
-### ao.sampleMode
-Get and set the sample mode
-
-**Kind**: static property of [<code>ao</code>](#ao)  
-**Properties**
-
-| Type | Description |
-| --- | --- |
-| <code>string</code> | the sample mode |
-
 <a name="ao.traceMode"></a>
 
 ### ao.traceMode
-Get and set the sample mode. This is an alias for 'sampleMode' and
-is for consistency with other agents and history.
+Get and set the trace mode
 
 **Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
@@ -287,7 +277,7 @@ Instrument HTTP request/response
 
 | Param | Type | Description |
 | --- | --- | --- |
-| span | <code>string</code> \| <code>function</code> | span name or span-info function |
+| span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) | name or function returning spanInfo |
 | run | <code>function</code> | code to instrument and run |
 | [options] | <code>object</code> | options |
 | [options.enabled] | <code>object</code> | enable tracing, on by default |
@@ -304,7 +294,7 @@ Apply custom instrumentation to a function.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| span | <code>string</code> \| <code>function</code> |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return an     object that contains the span name as the name property. Other     properties are allowed - see instrumenting-a-module.md in guides/. |
+| span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return a     spanInfo-compatible object - see instrumenting-a-module.md in guides/. |
 | run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error appoptics will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     AppOptics know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
 | [options] | <code>object</code> |  | options |
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
@@ -371,7 +361,7 @@ HTTP headers or message queue headers.
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
-| span | <code>string</code> \| <code>function</code> |  | name of span or function to return span-info |
+| span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
 | run | <code>function</code> |  | run the code. if sync, no arguments, else one |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
@@ -742,3 +732,19 @@ Send this event to the reporter
 | source | <code>number</code> | the sample decision source |
 | rate | <code>number</code> | the sample rate used |
 
+<a name="spanInfo"></a>
+
+## spanInfo : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | the name for the span |
+| [kvpairs] | <code>object</code> | kvpairs to add to the span |
+| [finalize] | <code>function</code> | callback receiving created span |
+
+<a name="spanInfoFunction"></a>
+
+## spanInfoFunction ⇒ [<code>spanInfo</code>](#spanInfo)
+**Kind**: global typedef  
