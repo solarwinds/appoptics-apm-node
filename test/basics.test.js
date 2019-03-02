@@ -27,20 +27,24 @@ if (ao.addon) {
 
 
 describe('basics', function () {
-  it('should set trace mode', function () {
-    ao.traceMode = ALWAYS
-  })
-
-  it('should get trace mode', function () {
-    expect(ao.traceMode).equal(ALWAYS)
-  })
-
-  it('should set trace mode as string', function () {
+  it('should set trace mode as string or integer and always get a string', function () {
     ao.traceMode = 'never'
-    expect(ao.traceMode).equal(NEVER)
+    expect(ao.traceMode).equal('disabled')
 
     ao.traceMode = 'always'
-    expect(ao.traceMode).equal(ALWAYS)
+    expect(ao.traceMode).equal('enabled')
+
+    ao.traceMode = 0
+    expect(ao.traceMode).equal('disabled')
+
+    ao.traceMode = 1
+    expect(ao.traceMode).equal('enabled')
+
+    ao.traceMode = 'disabled'
+    expect(ao.traceMode).equal('disabled')
+
+    ao.traceMode = 'enabled'
+    expect(ao.traceMode).equal('enabled')
   })
 
   ifaob('should set and get sample rate', function () {
@@ -77,19 +81,6 @@ describe('basics', function () {
 
   it('should get sample source', function () {
     expect(ao.sampleSource).equal(100)
-  })
-
-  it('should have sugary trace mode detectors', function () {
-    // Reset first
-    ao.traceMode = NEVER
-
-    ao.always.should.be.false
-    ao.traceMode = ALWAYS
-    ao.always.should.be.true
-
-    ao.never.should.be.false
-    ao.traceMode = NEVER
-    ao.never.should.be.true
   })
 
   ifaob('should get the service key', function () {
