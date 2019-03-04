@@ -3,6 +3,7 @@
 ### v6.0.0
 
 Features and bug fixes
+- add per-url transaction filtering
 - route handling code and middleware for express, koa, and restify are now traced.
 - use APPOPTICS_LOG_SETTINGS to set log levels; using the DEBUG environment variable is deprecated.
     - `export APPOPTICS_LOG_SETTINGS=error,warn` as opposed to `export DEBUG=appoptics:error,appoptics:warn`
