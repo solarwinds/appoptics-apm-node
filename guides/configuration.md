@@ -10,7 +10,7 @@ It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY 
 
 ### The Configuration File ###
 
-The `appoptics-apm` configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path.
+The `appoptics-apm` default configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path. The file can also be a node module that exports a single object containing the same information has `appoptics-apm.json` would.
 
 The configuration file supplies the following properties, showing their defaults:
 
@@ -91,17 +91,19 @@ These environment variables may be set:
 
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
-|APPOPTICS_DEBUG_LEVEL|2|Logging level to adjust the logging verbosity. Increase the logging verbosity to one of the debug levels to get more detailed information. Possible values: 1 to 6|
+|APPOPTICS_LOG_SETTINGS|'error,warn'|Categories to log. If set this takes precedence over the DEBUG environment variable (deprecated).|
+|APPOPTICS_APM_CONFIG_NODE|'$PWD/appoptics-apm'|The location of the configuration file.|
 |APPOPTICS_REPORTER|ssl|The reporter that will be used throughout the runtime of the app. Possible values: ssl, udp, file. This is typically used only for testing.|
 |APPOPTICS_COLLECTOR|collector.appoptics.com:443|SSL collector endpoint address and port (only used if APPOPTICS_REPORTER = ssl). This is typically changed only for testing.|
 |APPOPTICS_COLLECTOR_UDP|127.0.0.1:7832|UDP collector endpoint address and port (ignored unless APPOPTICS_REPORTER = udp).|
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
-|DEBUG|appoptics:error,appoptics:warn|The node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging.|
+|APPOPTICS_DEBUG_LEVEL|2|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|
+|DEBUG|appoptics:error,appoptics:warn|Deprecated. While the node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging, it is more convenient to use APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each category.|
 
 Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 
 ```
-// shorthand for setting up `require('debug')('appoptics:error')`
+// no need to set up standard error loggers (error, warn, info, debug, patching)
 const log = ao.loggers
 log.error('bad error')
 ```

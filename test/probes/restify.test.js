@@ -3,7 +3,7 @@
 const helper = require('../helper')
 const {ao} = require('../1.test-common')
 
-const should = require('should')  // eslint-disable-line no-unused-vars
+const expect = require('chai').expect
 const semver = require('semver')
 
 const request = require('request')
@@ -24,7 +24,7 @@ const restify = require('restify')
 
 // restify does fs IO starting in node 8
 if (semver.satisfies(process.version, '>=8.0.0')) {
-  console.log('turning off fs instrumentation')
+  ao.loggers.debug('turning off fs instrumentation')
   ao.probes.fs.enabled = false
 }
 
@@ -38,7 +38,7 @@ describe('probes.restify ' + pkg.version, function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     // restify newer versions of restify use negotiator which does file io
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
@@ -51,20 +51,18 @@ describe('probes.restify ' + pkg.version, function () {
 
   const check = {
     'http-entry': function (msg) {
-      msg.should.have.property('Layer', 'nodejs')
-      msg.should.have.property('Label', 'entry')
+      expect(msg).property('Layer', 'nodejs')
+      expect(msg).property('Label', 'entry')
     },
     'http-exit': function (msg) {
-      msg.should.have.property('Layer', 'nodejs')
-      msg.should.have.property('Label', 'exit')
+      expect(msg).property('Layer', 'nodejs')
+      expect(msg).property('Label', 'exit')
     },
     'restify-entry': function (msg) {
-      msg.should.have.property('Layer', 'restify')
-      msg.should.have.property('Label', 'entry')
+      expect(msg).include({Layer: 'restify', Label: 'entry'})
     },
     'restify-exit': function (msg) {
-      msg.should.have.property('Layer', 'restify')
-      msg.should.have.property('Label', 'exit')
+      expect(msg).include({Layer: 'restify', Label: 'exit'})
     }
   }
 
@@ -76,8 +74,8 @@ describe('probes.restify ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
-        msg.should.have.property('Layer', 'fake')
+        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Layer', 'fake')
       }
     ], done)
   })
@@ -100,18 +98,20 @@ describe('probes.restify ' + pkg.version, function () {
         check['restify-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Label', 'profile_entry')
+        expect(msg).property('Layer', 'restify-route')
+        expect(msg).property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Label', 'profile_exit')
+        expect(msg).property('Layer', 'restify-route')
+        expect(msg).property('Label', 'exit')
       },
       function (msg) {
         check['restify-exit'](msg)
       },
       function (msg) {
         check['http-exit'](msg)
-        msg.should.have.property('Controller', 'GET /hello/:name')
-        msg.should.have.property('Action', 'hello')
+        expect(msg).property('Controller', 'GET /hello/:name')
+        expect(msg).property('Action', 'hello')
       }
     ]
     helper.doChecks(emitter, validations, function () {
@@ -142,28 +142,20 @@ describe('probes.restify ' + pkg.version, function () {
         check['restify-entry'](msg)
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
-        msg.should.have.property('Controller', 'GET /hello/:name')
-        msg.should.have.property('Action', 'renamer')
+        expect(msg).include({Layer: 'restify-route', Label: 'entry'})
+        expect(msg).property('Controller', 'GET /hello/:name')
+        expect(msg).property('Action', 'renamer')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', 'GET /hello/:name renamer')
+        expect(msg).include({Layer: 'restify-route', Label: 'exit'})
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_entry')
-        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
-        msg.should.have.property('Controller', 'GET /hello/:name')
-        msg.should.have.property('Action', 'responder')
+        expect(msg).include({Layer: 'restify-route', Label: 'entry'})
+        expect(msg).property('Controller', 'GET /hello/:name')
+        expect(msg).property('Action', 'responder')
       },
       function (msg) {
-        msg.should.have.property('Language', 'nodejs')
-        msg.should.have.property('Label', 'profile_exit')
-        msg.should.have.property('ProfileName', 'GET /hello/:name responder')
+        expect(msg).include({Layer: 'restify-route', Label: 'exit'})
       },
       function (msg) {
         check['restify-exit'](msg)
@@ -184,9 +176,9 @@ describe('probes.restify ' + pkg.version, function () {
 
   if (semver.satisfies(process.version.slice(1), '> 0.8')) {
     it('should forward controller/action', testControllerAction)
-    it('should profile each middleware', testMiddleware)
+    it('should create a span for each middleware', testMiddleware)
   } else {
     it.skip('should forward controller/action', testControllerAction)
-    it.skip('should profile each middleware', testMiddleware)
+    it.skip('should create a span for each middleware', testMiddleware)
   }
 })

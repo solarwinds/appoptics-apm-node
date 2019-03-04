@@ -3,9 +3,10 @@ const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
 const ao = require('..')
-const debug = ao.debug
 const Span = ao.Span
 const Event = ao.Event
+
+const makeSettings = helper.makeSettings
 
 //
 //                 ^     ^
@@ -26,7 +27,7 @@ const soon = global.setImmediate || process.nextTick
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if (!ao.addon) {
+if (ao.addon.version === 'not loaded') {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
       let counter = 0
@@ -36,7 +37,7 @@ if (!ao.addon) {
       counter.should.equal(1)
     })
     it('should passthrough async instrument', function (done) {
-      ao.instrument('test', soon, 'foo', done)
+      ao.instrument('test', soon, {}, done)
     })
 
     it('should passthrough sync startOrContinueTrace', function () {
@@ -61,19 +62,44 @@ if (!ao.addon) {
   return
 }
 
+//================================
+// custom tests with addon enabled
+//================================
 describe('custom', function () {
+  const oSpanSendNon = Span.sendNonHttpSpan
+  const oEventSend = Event.send
   const conf = {enabled: true}
   let emitter
+  let counter = 0
+  let pfx
+  let main
+
+  after(function () {
+    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+  })
+
+  beforeEach(function () {
+    // provide up to 100 tests with a unique prefix
+    pfx = ('0' + counter++).slice(-2)
+    main = `${pfx}-test`
+    if (this.currentTest.title === 'x-should continue from previous trace id') {
+      ao.logLevelAdd('test:messages,event:*')
+    } else {
+      ao.logLevelRemove('test:messages,event:*')
+    }
+  })
 
   //
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
+    Span.sendNonHttpSpan = oSpanSendNon
+    Event.send = oEventSend
     emitter.close(done)
   })
 
@@ -81,7 +107,7 @@ describe('custom', function () {
   // send failure.
   it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('fake', function () { })
+      ao.instrument('fake', function () {})
       done()
     }, [
       function (msg) {
@@ -93,15 +119,15 @@ describe('custom', function () {
 
   it('should custom instrument sync code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', function () {})
+      ao.instrument(main, function () {})
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -109,34 +135,36 @@ describe('custom', function () {
 
   it('should custom instrument async code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, done)
+      ao.instrument(main, soon, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
   })
 
-  it('should support builder function', function (done) {
+  it('should support spanInfo function', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument(function (last) {
-        return last.descend('test', {
-          Foo: 'bar'
-        })
-      }, soon, done)
+      ao.instrument(
+        function () {
+          return {
+            name: main,
+            kvpairs: {Foo: 'bar'}
+          }
+        }, soon, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Foo', 'bar')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -144,7 +172,7 @@ describe('custom', function () {
 
   it('should allow optional callback with async code', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', function (doneInner) {
+      ao.instrument(main, function (doneInner) {
         soon(function () {
           doneInner()
           done()
@@ -152,30 +180,30 @@ describe('custom', function () {
       })
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
   })
 
-  it('should include backtrace, when collectBacktraces is on', function (done) {
+  it('should include backtrace when collectBacktraces is on', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, {
+      ao.instrument(main, soon, {
         collectBacktraces: true,
         enabled: true
       }, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('Backtrace')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
       }
     ], done)
@@ -183,7 +211,7 @@ describe('custom', function () {
 
   it('should skip when not enabled', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('test', soon, {
+      ao.instrument(main, soon, {
         enabled: false
       }, done)
     }, [], done)
@@ -195,14 +223,14 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return span.descend('test')
+        return {name: main}
       }, function (callback) {
         ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
@@ -214,7 +242,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -338,14 +366,14 @@ describe('custom', function () {
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return span.descend('test')
+        return {name: main}
       }, function (callback) {
         ao.reportInfo(data)
         callback()
       }, conf, done)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
@@ -358,7 +386,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -367,7 +395,7 @@ describe('custom', function () {
 
   it('should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
-      function build (span) { return span.descend('test') }
+      function build (span) {return {name: main}}
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
       const found = []
       let i = 0
@@ -382,9 +410,12 @@ describe('custom', function () {
       let count = 0
 
       const logChecks = [
-        {level: 'warn', message: 'ao.runInstrument found no span name or builder'},
+        {level: 'error', message: 'ao.instrument() run function is'},
+        {level: 'error', message: 'ao.runInstrument found no span name or span-info function'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
-      helper.checkLogMessages(debug, logChecks)
+      helper.checkLogMessages(logChecks)
 
       // Verify nothing bad happens when run function is missing
       ao.instrument(build)
@@ -394,29 +425,35 @@ describe('custom', function () {
       ao.instrument(null, run)
       ao.startOrContinueTrace(null, null, run)
 
-      // Verify the runner is still run when builder fails to return a span
+      // Verify the runner is still run when spaninfo fails to return an object
       ao.instrument(getInc(), getInc())
       ao.startOrContinueTrace(null, getInc(), getInc())
       found.should.deepEqual(expected)
       count.should.equal(4)
 
+      expected.push('nnrun')
+      // Verify the runner is still run when spaninfo fails to return a name
+      ao.instrument(function () {return {}}, getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(5)
+
       done()
     }, [], done)
   })
 
-  it('should handle errors correctly between build and run functions', function (done) {
+  it('should handle errors correctly between spanInfo and run functions', function (done) {
     helper.test(emitter, function (done) {
       const err = new Error('nope')
-      function build (span) { return span.descend('test') }
-      function nope () { count++; throw err }
-      function inc () { count++ }
+      function build (span) {return {name: main}}
+      function nope () {count++; throw err}
+      function inc () {count++}
       let count = 0
 
       const logChecks = [
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
       ]
-      helper.checkLogMessages(debug, logChecks)
+      helper.checkLogMessages(logChecks)
 
       // Verify errors thrown in builder do not propagate
       ao.instrument(nope, inc)
@@ -425,7 +462,7 @@ describe('custom', function () {
 
       // Verify that errors thrown in the runner function *do* propagate
       count = 0
-      function validateError (e) { return e === err }
+      function validateError (e) {return e === err}
       should.throws(function () {
         ao.instrument(build, nope)
       }, validateError)
@@ -441,10 +478,18 @@ describe('custom', function () {
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for sync function', function (done) {
     let last
+    let metricsSent = false
+
+    const original = Span.sendNonHttpSpan
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent = true
+      return txname
+    }
+
 
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
@@ -452,29 +497,55 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
-    ], done)
+    ], function (err) {
+      Span.sendNonHttpSpan = original
+      metricsSent.should.equal(true)
+      done(err)
+    })
 
     const test = 'foo'
-    const res = ao.startOrContinueTrace(null, function (last) {
-      return last.descend('test')
-    }, function () {
+    const res = ao.startOrContinueTrace(null, main, function () {
       return test
     }, conf)
 
     res.should.equal(test)
   })
 
+  // Verify startOrContinueTrace doesn't sample or do metrics when sampling is false
+  it('should not send events or metrics - unsampled x-trace, sync', function () {
+    let metricsSent = 0
+    let eventsSent = 0
+
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent += 1
+      return txname
+    }
+
+    Event.send = function () {
+      eventsSent += 1
+    }
+
+    const test = 'foo'
+    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
+
+    res.should.equal(test)
+    metricsSent.should.equal(0)
+    eventsSent.should.equal(0)
+
+  })
+
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for async function', function (done) {
-    let last
 
+    let last
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
@@ -482,7 +553,7 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
@@ -490,10 +561,8 @@ describe('custom', function () {
 
     const test = 'foo'
     const res = ao.startOrContinueTrace(
-      null,                          // xtrace
-      function (last) {              // span maker function
-        return last.descend('test')
-      },
+      null,
+      main,                        // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
         return test
@@ -517,12 +586,12 @@ describe('custom', function () {
 
     helper.doChecks(emitter, [
       function (msg) {
-        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Layer', 'x-previous')
         msg.should.have.property('Label', 'entry')
         msg.should.not.have.property('Edge')
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
@@ -530,49 +599,49 @@ describe('custom', function () {
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'previous')
+        msg.should.have.property('Layer', 'x-previous')
         msg.should.have.property('Label', 'exit')
-        msg.Edge.should.equal(last)
+        msg.Edge.should.equal(entry.opId)
       }
     ], done)
 
-
-    let outer
-
     ao.startOrContinueTrace(
       '',                           // no xtrace ID, start a trace
-      'previous',                   // span name
-      function (cb) {               // runner function, creates a new span
+      'x-previous',                   // span name
+      function (pcb) {               // runner function, creates a new span
         ao.startOrContinueTrace(
           Span.last.events.entry.toString(),    // xtrace ID for last span
-          last => {                             // builder function
-            outer = last
-            entry = outer.events.entry
-            return last.descend('test')
+          () => {
+            return {
+              name: main,
+              finalize (span, last) {
+                entry = last.events.entry
+              }
+            }
           },
-          function (cb) {cb()},                 // runner function, pseudo async
+          function (cb) {           // runner function, pseudo async
+            cb()
+          },
           conf,                                 // config
           function () {                         // done function
-            outer.exit()
           }
         )
-        cb()
+        pcb()
       },
       conf,                         // config
       function () {                 // done function
-        //done()
       }
     )
   })
 
   // Verify startOrContinueTrace continues from existing traces,
-  // when already tracing, whether or not an xtrace if is provided.
+  // when already tracing, whether or not an xtrace is provided.
   it('should continue outer traces when already tracing', function (done) {
     let prev, outer, sub
 
@@ -618,7 +687,9 @@ describe('custom', function () {
       }
     ], done)
 
-    const previous = new Span('previous')
+    const previous = Span.makeEntrySpan('previous', makeSettings())
+    // don't let this act like a real entry span
+    delete previous.topSpan
     const entry = previous.events.entry
 
     previous.run(function (wrap) {
@@ -647,12 +718,12 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function (done) {
-    const realSample = ao.sample
+    const realSample = ao.getTraceSettings
     let called = false
 
-    ao.sample = function () {
+    ao.getTraceSettings = function () {
       called = true
-      return {sample: true, source: 0, rate: 0}
+      return makeSettings({source: 0, rate: 0})
     }
 
     // because a span is created and entered then Span.last & Event.last
@@ -662,7 +733,7 @@ describe('custom', function () {
       {level: 'error', message: 'task IDs don\'t match'},
       {level: 'error', message: 'outer:exit 2b:'},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     helper.test(
       emitter,
@@ -672,8 +743,8 @@ describe('custom', function () {
       },
       [],                           // checks
       function (err) {
-        called.should.equal(true)
-        ao.sample = realSample
+        called.should.equal(true, 'the sample function should be called')
+        ao.getTraceSettings = realSample
         done(err)
       }
     )
@@ -684,7 +755,7 @@ describe('custom', function () {
     should.not.exist(ao.traceId)
     ao.startOrContinueTrace(
       null,
-      'test',
+      main,
       function (cb) {
         should.exist(ao.traceId)
         cb()
@@ -712,12 +783,14 @@ describe('custom', function () {
       {level: 'warn', message: 'ao.bind(%s) - no context', values: ['noop']},
       {level: 'warn', message: 'ao.bind(%s) - not a function', values: [null]},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     try {
       ao.bind(noop)
       called.should.equal(false)
-      const span = new Span('test')
+      const span = Span.makeEntrySpan(main, makeSettings())
+      // don't let it try to send metrics
+      delete span.topSpan
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -750,12 +823,13 @@ describe('custom', function () {
       {level: 'warn', message: '[1]ao.bindEmitter - no context'},
       {level: 'error', message: '[1]ao.bindEmitter - non-emitter'},
     ]
-    helper.checkLogMessages(debug, logChecks)
+    helper.checkLogMessages(logChecks)
 
     try {
       ao.bindEmitter(emitter)
       called.should.equal(false)
-      const span = new Span('test')
+      const span = Span.makeEntrySpan(main, makeSettings())
+      delete span.topSpan
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
@@ -778,26 +852,76 @@ describe('custom', function () {
     let last
 
     helper.test(emitter, function (done) {
-      ao.instrumentHttp(function (span) {
-        return span.descend('test')
-      }, function () {
-        setImmediate(function () {
-          res.end()
-          done()
-        })
-      }, conf, res)
+      ao.instrumentHttp(
+        () => {
+          return {
+            name: main
+          }
+        },
+        function () {
+          setImmediate(function () {
+            res.end()
+            done()
+          })
+        }, conf, res)
     }, [
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        msg.should.have.property('Layer', 'test')
+        msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'exit')
         msg.Edge.should.equal(last)
       }
     ], done)
+  })
+
+
+  // Verify startOrContinue trace doesn't sample or do metrics when sampling is false
+  it('should not send events or metrics - unsampled x-trace, async', function (done) {
+    // this is at the end because it's a little tricky to test an unsampled trace because
+    // the callback will be called before all the async contexts have cleared resulting in
+    // leftover contexts and resultant errors for the next test.
+    let metricsSent = 0
+    let eventsSent = 0
+
+    Span.sendNonHttpSpan = function (txname, duration, error) {
+      metricsSent += 1
+      return txname
+    }
+
+    Event.send = function () {
+      eventsSent += 1
+    }
+
+    const test = 'foo'
+    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(
+      xtrace,
+      main,                        // span name
+      function (cb) {                // runner
+        setTimeout(function () {cb(1, 2, 3, 5)}, 100)
+        return test
+      },
+      conf,                          // configuration
+      function () {
+        arguments.should.have.property('0', 1)
+        arguments.should.have.property('1', 2)
+        arguments.should.have.property('2', 3)
+        arguments.should.have.property('3', 5)
+      }
+    )
+
+    res.should.equal(test)
+
+    // wait for contexts to clear.
+    setTimeout(function () {
+      metricsSent.should.equal(0)
+      eventsSent.should.equal(0)
+      done()
+    }, 250)
   })
 
 })

@@ -18,7 +18,7 @@ describe('probes.fs once', function () {
   //
   before(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     emitter = helper.appoptics(done)
     ao.g.testing(__filename)
   })
@@ -100,7 +100,7 @@ describe('probes.fs', function () {
   before(function (done) {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
@@ -137,8 +137,12 @@ describe('probes.fs', function () {
       args: ['fs-output/foo.bar'],
       subs: function () {
         // node changed exists so it calls fs.access. It might have changed
-        // before 10 but we're only supported LTS versions.
+        // before 10 but we're only supporting LTS versions.
         if (semver.lt(process.version, '10.0.0')) {
+          return undefined
+        }
+        // and now it doesn't call fs.access again.
+        if (semver.gt(process.version, '10.15.0') && mode === 'sync') {
           return undefined
         }
 

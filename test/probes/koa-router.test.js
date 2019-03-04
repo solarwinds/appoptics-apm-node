@@ -3,6 +3,7 @@
 const helper = require('../helper')
 const {ao} = require('../1.test-common.js')
 
+const semver = require('semver')
 const pkg = require('koa-router/package')
 
 let canGenerator = false
@@ -11,8 +12,6 @@ try {
   canGenerator = true
 } catch (e) {
 }
-
-function noop () {}
 
 describe('probes/koa-router ' + pkg.version, function () {
   let emitter
@@ -26,7 +25,7 @@ describe('probes/koa-router ' + pkg.version, function () {
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.sampleMode = 'always'
+    ao.traceMode = 'always'
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
@@ -59,15 +58,17 @@ describe('probes/koa-router ' + pkg.version, function () {
   //
   // Tests
   //
-  if (!canGenerator) {
-    it.skip('should support koa-router controllers', noop)
-    it.skip('should skip when disabled', noop)
-  } else {
-    it('should support koa-router controllers', function (done) {
-      tests.router(emitter, done)
-    })
-    it('should skip when disabled', function (done) {
-      tests.router_disabled(emitter, done)
-    })
-  }
+  const ifgen = canGenerator ? it : it.skip
+  const if6 = semver.gte(pkg.version, '6.0.0') ? it : it.skip
+
+  ifgen('should support koa-router controllers', function (done) {
+    tests.router(emitter, done)
+  })
+  ifgen('should skip when disabled', function (done) {
+    tests.router_disabled(emitter, done)
+  })
+  if6('should try something new', function (done) {
+    tests.router_promise(emitter, done)
+  })
+
 })
