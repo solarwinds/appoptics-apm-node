@@ -51,5 +51,8 @@ There are numerous low-level API changes so if you're working at this lower leve
 - `Span` constructor signature has changed. v5: `new Span(name, parent, kvpairs)` v6: `new Span(name, settings, kvpairs)` where settings is the object returned by `getTraceSettings()`.
 - the span factory, `Span.makeEntrySpan()` is used to create top-level, e.g., http, spans. This replaces directly calling the `Span` constructor with the right combination of arguments.
 - `Event` constructor signature has changed. v5: `new Event(span, label, parent)` v6: `new Event(span, label, parent, edge)`. The added edge argument is the most obvious change, but parent must now be an instance of `addon.Event` or `addon.Metadata`. The event constructor uses this metadata to construct the event; it will no longer create random metadata on its own.
+- `ao.sampleSource` has been removed. Use `settings.source` from `settings = getTraceSettings()`.
+- `ao.sampleMode` has been removed. Use `ao.traceMode`.
+- `traceMode`s `always` and `never` are deprecated. Use `enabled` and `disabled`.
+    - removed sugar mode detectors `ao.always` and `ao.never`
 - `ao.addon` - there are many breaking changes. If you are using an of these functions directly let us know and we'll work with you to update your code.
-
