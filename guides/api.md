@@ -29,7 +29,6 @@
     * [.logLevel](#ao.logLevel)
     * [.serviceKey](#ao.serviceKey)
     * [.traceMode](#ao.traceMode)
-    * [.sampleRate](#ao.sampleRate)
     * [.tracing](#ao.tracing)
     * [.traceId](#ao.traceId)
     * [.loggers](#ao.loggers)
@@ -87,19 +86,6 @@ Get and set the trace mode
 | Type | Description |
 | --- | --- |
 | <code>string</code> | the sample mode |
-
-<a name="ao.sampleRate"></a>
-
-### ao.sampleRate
-Get and set the sample rate. The number is parts of 1,000,000
-so 100,000 represents a 10% sample rate.
-
-**Kind**: static property of [<code>ao</code>](#ao)  
-**Properties**
-
-| Type | Description |
-| --- | --- |
-| <code>number</code> | this value divided by 1000000 is the sample rate. |
 
 <a name="ao.tracing"></a>
 

@@ -21,7 +21,6 @@ The configuration file supplies the following properties, showing their defaults
   hostnameAlias: undefined,
   domainPrefix: false,
   traceMode: undefined,
-  sampleRate: undefined,
   ignoreConflicts: false,
   probes: {
     // probe-specific defaults. see dist/defaults.js for details
@@ -37,7 +36,7 @@ The configuration file supplies the following properties, showing their defaults
 |enabled|true|If set to false the `appoptics-apm` agent will disable itself.|
 |hostnameAlias||A logical hostname that can be used to easily identify the host.|
 |domainPrefix|false|Prefix transaction names with the domain name.|
-|ignoreConflicts|false|Appoptics will not ignore conflicting APM products are loaded and will disable itself unless this is set to `true`.|
+|ignoreConflicts|false|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 
 #### Configuration File Probe Settings ####
 
@@ -57,7 +56,7 @@ Probe settings in the `appoptics-apm` configuration file will override those in 
 }
 ```
 
-Bonus - the configuration file is `require`d so it needn't be pure JSON syntax (double quoting properties, no comments):
+Bonus - the configuration file is `require`d so it can be a module as opposed to pure JSON (double quoting properties, no comments):
 
 ```
 module.exports = {
@@ -82,8 +81,9 @@ These configuration file properties may be set:
 
 | Property Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
-|traceMode|auto|Mode 'always' will cause Appoptics to sample as many requests as possible. Mode 'never' will disable sampling (metrics will still be collected).|
-|sampleRate|auto|Numerator for denominator of 1,000,000 to set the fraction of requests that Appoptics will attempt to sample.|
+|traceMode|auto|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling (metrics will still be collected).|
+|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing is set to trace-setting. Valid values for trace-setting are 'enabled' and 'disabled'. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
+
 
 #### Environment Variables ####
 
