@@ -9,19 +9,13 @@ const makeSettings = helper.makeSettings
 
 
 let ifaob    // execute or skip test depending on whether bindings are loaded.
-let ALWAYS
-let NEVER
 let MAX_SAMPLE_RATE
 
 if (ao.addon) {
   ifaob = it
-  ALWAYS = ao.addon.TRACE_ALWAYS
-  NEVER = ao.addon.TRACE_NEVER
   MAX_SAMPLE_RATE = ao.addon.MAX_SAMPLE_RATE
 } else {
   ifaob = it.skip
-  ALWAYS = 1
-  NEVER = 0
   MAX_SAMPLE_RATE = 1000000
 }
 
