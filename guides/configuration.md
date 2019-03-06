@@ -81,8 +81,8 @@ These configuration file properties may be set:
 
 | Property Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
-|traceMode|auto|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling (metrics will still be collected).|
-|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing is set to trace-setting. Valid values for trace-setting are 'enabled' and 'disabled'. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
+|traceMode|auto|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
+|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing fpr that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
 
 
 #### Environment Variables ####
