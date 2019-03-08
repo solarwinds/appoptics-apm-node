@@ -47,8 +47,8 @@ elif [[ "$ARG" = "bash" ]]; then
     # this is used primarily for manual interactive testing.
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
 
-    # add a simple reset to basic debug output
-    export XDEBUG=appoptics:error,appoptics:warn,appoptics:patching,appoptics:debug
+    # set logging that should be seen during testing.
+    export APPOPTICS_LOG_SETTINGS=error,warn,patching,bind,debug
 
     # these are generally the right settings unless a collector
     # is required.
@@ -130,7 +130,7 @@ elif [[ "$ARG" = "debug" ]]; then
     # LEVEL 2 is most of what you want to see. 6 (highest) is too much.
     export APPOPTICS_DEBUG_LEVEL=2
     # see lib/loggers.js for all the options
-    export DEBUG=appoptics:error,appoptics:warn,appoptics:debug,appoptics:patching
+    export APPOPTICS_LOG_SETTINGS=error,warn,debug,patching,bind
     export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
     export APPOPTICS_TOKEN_BUCKET_RATE=1000
 elif [[ "$ARG" = "bindings" ]]; then
