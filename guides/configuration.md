@@ -37,6 +37,9 @@ The configuration file supplies the following properties, showing their defaults
 |hostnameAlias||A logical hostname that can be used to easily identify the host.|
 |domainPrefix|false|Prefix transaction names with the domain name.|
 |ignoreConflicts|false|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
+|traceMode||Mode 'enabled' (the default) will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
+|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
+
 
 #### Configuration File Probe Settings ####
 
@@ -74,16 +77,6 @@ module.exports = {
 ### Debugging Configuration ###
 
 This section is primarily of interest to those implementing custom instrumentation or doing development on the `appoptics-apm` agent and SDK.
-
-#### Configuration File ####
-
-These configuration file properties may be set:
-
-| Property Name        | Default  | Description |
-| -------------------- | -------- | ----------- |
-|traceMode|auto|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
-|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing fpr that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
-
 
 #### Environment Variables ####
 
