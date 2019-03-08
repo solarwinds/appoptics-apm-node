@@ -74,7 +74,7 @@ test('memcached', '>= 2.2.0')
 
 test('mongodb-core', '>= 2.0.0')
 
-test('mongoose', '>= 4.2.2')
+test('mongoose', '>= 4.6.4')
 
 test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
