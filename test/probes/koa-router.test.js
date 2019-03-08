@@ -67,7 +67,7 @@ describe('probes/koa-router ' + pkg.version, function () {
   ifgen('should skip when disabled', function (done) {
     tests.router_disabled(emitter, done)
   })
-  if6('should try something new', function (done) {
+  if6('should work with promises', function (done) {
     tests.router_promise(emitter, done)
   })
 

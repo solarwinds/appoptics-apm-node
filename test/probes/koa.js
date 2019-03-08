@@ -205,7 +205,7 @@ exports.router = function (emitter, done) {
   // Mount router
   const r = Router(app)
 
-  let spanName = 'koa-router'
+  let spanName = 'koa-router:hello'
   if (semver.gte(koaRouterVersion, '6.0.0')) {
     // if koa-router requires koa version 2 and no longer
     // supports generators.
@@ -262,13 +262,13 @@ exports.router_promise = function (emitter, done) {
   app.use(controller.routes())
 
   const validations = controllerValidations(
-    'koa-router',
+    'koa-router:handler2',
     'post /api/visit',
     'handler2',
-    'koa-router',
+    'koa-router:handler',
     'post /api/visit',
     'handler',
-    'koa-router',
+    'koa-router:handler',
     'post /api/visit',
     'handler'
   )
