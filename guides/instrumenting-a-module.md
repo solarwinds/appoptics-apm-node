@@ -161,9 +161,9 @@ it'd look something like this:
 ```js
 shimmer.wrap(abc, 'xyz', xyz => {
   return function (n, cb) {
-    const spanMaker = current => current.descend('awesome-span', {n: n})
+    const spanInfoMaker = () => return {name: 'awesome-span', kvpairs: {n: n}}
     const runner = done => xyz.call(this, n, done)
-    return ao.instrument(spanMaker, runner, {enabled: true}, cb)
+    return ao.instrument(spanInfoMaker, runner, {enabled: true}, cb)
   }
 })
 ```
