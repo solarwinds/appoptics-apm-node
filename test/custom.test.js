@@ -25,6 +25,12 @@ const makeSettings = helper.makeSettings
 
 const soon = global.setImmediate || process.nextTick
 
+function psoon () {
+  return new Promise((resolve, reject) => {
+    soon(() => resolve())
+  })
+}
+
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
 if (ao.addon.version === 'not loaded') {
@@ -146,6 +152,25 @@ describe('custom', function () {
         msg.should.have.property('Label', 'exit')
       }
     ], done)
+  })
+
+  it('should custom instrument promise code', function (done) {
+    helper.test(
+      emitter,
+      function (done) {
+        ao.pInstrument(main, psoon).then(r => {
+          done()
+        })
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], done)
   })
 
   it('should support spanInfo function', function (done) {
