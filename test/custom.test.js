@@ -418,7 +418,7 @@ describe('custom', function () {
     ], done)
   })
 
-  it('should fail gracefully when invalid arguments are given', function (done) {
+  it('standard version should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
       function build (span) {return {name: main}}
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
@@ -459,6 +459,54 @@ describe('custom', function () {
       expected.push('nnrun')
       // Verify the runner is still run when spaninfo fails to return a name
       ao.instrument(function () {return {}}, getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(5)
+
+      done()
+    }, [], done)
+  })
+
+  it('promise version should fail gracefully when invalid arguments are given', function (done) {
+    helper.test(emitter, function (done) {
+      function build (span) {return {name: main}}
+      const expected = ['ibuild', 'irun', 'sbuild', 'srun']
+      const found = []
+      let i = 0
+      function getInc () {
+        const what = expected[i++]
+        return function () {
+          count++
+          found.push(what)
+        }
+      }
+      function run () {}
+      let count = 0
+
+      const logChecks = [
+        {level: 'error', message: 'ao.instrument() run function is'},
+        {level: 'error', message: 'ao.runInstrument found no span name or span-info function'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+      ]
+      helper.checkLogMessages(logChecks)
+
+      // Verify nothing bad happens when run function is missing
+      ao.pInstrument(build)
+      ao.pStartOrContinueTrace(null, build)
+
+      // Verify nothing bad happens when build function is missing
+      ao.pInstrument(null, run)
+      ao.pStartOrContinueTrace(null, null, run)
+
+      // Verify the runner is still run when spaninfo fails to return an object
+      ao.pInstrument(getInc(), getInc())
+      ao.pStartOrContinueTrace(null, getInc(), getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(4)
+
+      expected.push('nnrun')
+      // Verify the runner is still run when spaninfo fails to return a name
+      ao.pInstrument(function () {return {}}, getInc())
       found.should.deepEqual(expected)
       count.should.equal(5)
 

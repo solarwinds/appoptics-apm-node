@@ -124,6 +124,6 @@ function test (name, ranges) {
   } else if (typeof ranges === 'object') {
     options.ranges = ranges.ranges
   }
-  options.task = './node_modules/gulp/bin/gulp.js test:probe:' + name
+  options.task = `mocha test/probes/${name}.test.js`
   packages.push(new VersionSpec(name, options))
 }
