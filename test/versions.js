@@ -124,6 +124,6 @@ function test (name, ranges) {
   } else if (typeof ranges === 'object') {
     options.ranges = ranges.ranges
   }
-  options.task = `mocha test/probes/${name}.test.js`
+  options.task = `mocha --exit test/probes/${name}.test.js`
   packages.push(new VersionSpec(name, options))
 }
