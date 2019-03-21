@@ -42,8 +42,10 @@
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
     * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
-    * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒
-    * [.startOrContinueTrace(xtrace, span, run, [opts], [callback])](#ao.startOrContinueTrace) ⇒
+    * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
+    * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
+    * [.startOrContinueTrace(xtrace, span, run, [opts])](#ao.startOrContinueTrace) ⇒ <code>value</code>
+    * [.pStartOrContinueTrace(xtrace, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
 
@@ -272,11 +274,11 @@ Instrument HTTP request/response
 
 <a name="ao.instrument"></a>
 
-### ao.instrument(span, run, [options], [callback]) ⇒
-Apply custom instrumentation to a function.
+### ao.instrument(span, run, [options], [callback]) ⇒ <code>value</code>
+Apply custom instrumentation to a synchronous or async-callback function.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: the value returned by the run function or undefined if it can't be run  
+**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -334,26 +336,63 @@ function callback (err, data) {
 
 ao.instrument(spanInfo, run, callback)
 ```
+<a name="ao.pInstrument"></a>
+
+### ao.pInstrument(span, run, [options]) ⇒ <code>Promise</code>
+Apply custom instrumentation to a promise-returning asynchronous function.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return a     spanInfo-compatible object - see instrumenting-a-module.md in guides/. |
+| run | <code>function</code> |  | the function to instrument<br/><br/>     This function must return a promise. |
+| [options] | <code>object</code> |  | options |
+| [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
+| [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
+
+**Example**  
+```js
+//
+// A synchronous `run` function.
+//
+//   If the run function is synchronous the signature does not include
+//   a callback, e.g., `function run () {...}`.
+//
+
+function spanInfo () {
+  return {name: 'custom', kvpairs: {Foo: 'bar'}}
+}
+
+function run () {
+  return axios.get('https://google.com').then(r => {
+    ...
+    return r;
+  })
+}
+
+ao.pInstrument(spanInfo, run).then(...)
+```
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, span, run, [opts], [callback]) ⇒
+### ao.startOrContinueTrace(xtrace, span, run, [opts]) ⇒ <code>value</code>
 Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: the value returned by the run function or undefined if it can't be run  
+**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
-| run | <code>function</code> |  | run the code. if sync, no arguments, else one |
+| run | <code>function</code> |  | the promise-returning function to run |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
-| [callback] | <code>function</code> |  | Callback, if async |
 
 **Example**  
 ```js
@@ -393,6 +432,46 @@ ao.startOrContinueTrace(
   // no options this time
   realCallback            // receives request's callback arguments.
 )
+```
+<a name="ao.pStartOrContinueTrace"></a>
+
+### ao.pStartOrContinueTrace(xtrace, span, run, [opts]) ⇒ <code>Promise</code>
+Start or continue a trace running a function that returns a promise. Continue is in
+the sense of continuing a trace based on an X-Trace ID received from an external
+source, e.g., HTTP headers or message queue headers.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
+| span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
+| run | <code>function</code> |  | run the code. if sync, no arguments, else one |
+| [opts] | <code>object</code> |  | options |
+| [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
+| [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
+| [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
+
+**Example**  
+```js
+function spanInfo () {
+  return {name: 'custom', kvpairs: {Foo: 'bar'}}
+}
+
+// axios returns a promise
+function functionToRun () {
+  return axios.get('https://google.com').then(r => {
+    ...
+    return r;
+  })
+}
+
+ao.pStartOrContinueTrace(
+  null,
+  spanInfo,
+  functionToRun,
+).then(...)
 ```
 <a name="ao.reportError"></a>
 
