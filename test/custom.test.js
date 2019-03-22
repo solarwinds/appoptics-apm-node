@@ -25,6 +25,12 @@ const makeSettings = helper.makeSettings
 
 const soon = global.setImmediate || process.nextTick
 
+function psoon () {
+  return new Promise((resolve, reject) => {
+    soon(() => resolve())
+  })
+}
+
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
 if (ao.addon.version === 'not loaded') {
@@ -146,6 +152,25 @@ describe('custom', function () {
         msg.should.have.property('Label', 'exit')
       }
     ], done)
+  })
+
+  it('should custom instrument promise code', function (done) {
+    helper.test(
+      emitter,
+      function (done) {
+        ao.pInstrument(main, psoon).then(r => {
+          done()
+        })
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], done)
   })
 
   it('should support spanInfo function', function (done) {
@@ -393,7 +418,7 @@ describe('custom', function () {
     ], done)
   })
 
-  it('should fail gracefully when invalid arguments are given', function (done) {
+  it('standard version should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
       function build (span) {return {name: main}}
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
@@ -434,6 +459,54 @@ describe('custom', function () {
       expected.push('nnrun')
       // Verify the runner is still run when spaninfo fails to return a name
       ao.instrument(function () {return {}}, getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(5)
+
+      done()
+    }, [], done)
+  })
+
+  it('promise version should fail gracefully when invalid arguments are given', function (done) {
+    helper.test(emitter, function (done) {
+      function build (span) {return {name: main}}
+      const expected = ['ibuild', 'irun', 'sbuild', 'srun']
+      const found = []
+      let i = 0
+      function getInc () {
+        const what = expected[i++]
+        return function () {
+          count++
+          found.push(what)
+        }
+      }
+      function run () {}
+      let count = 0
+
+      const logChecks = [
+        {level: 'error', message: 'ao.instrument() run function is'},
+        {level: 'error', message: 'ao.runInstrument found no span name or span-info function'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'ao.runInstrument failed to build span'},
+      ]
+      helper.checkLogMessages(logChecks)
+
+      // Verify nothing bad happens when run function is missing
+      ao.pInstrument(build)
+      ao.pStartOrContinueTrace(null, build)
+
+      // Verify nothing bad happens when build function is missing
+      ao.pInstrument(null, run)
+      ao.pStartOrContinueTrace(null, null, run)
+
+      // Verify the runner is still run when spaninfo fails to return an object
+      ao.pInstrument(getInc(), getInc())
+      ao.pStartOrContinueTrace(null, getInc(), getInc())
+      found.should.deepEqual(expected)
+      count.should.equal(4)
+
+      expected.push('nnrun')
+      // Verify the runner is still run when spaninfo fails to return a name
+      ao.pInstrument(function () {return {}}, getInc())
       found.should.deepEqual(expected)
       count.should.equal(5)
 
@@ -562,7 +635,7 @@ describe('custom', function () {
     const test = 'foo'
     const res = ao.startOrContinueTrace(
       null,
-      main,                        // span name
+      main,                          // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
         return test
@@ -577,6 +650,62 @@ describe('custom', function () {
     )
 
     res.should.equal(test)
+  })
+
+  it('should start a fresh trace for a promise function', function () {
+
+    // wait for the promise-returning run function and the message checks to finish
+    const all = []
+
+    // the promise-returning run function
+    function psoon (...args) {
+      return new Promise((resolve, reject) => {
+        soon(() => resolve(args))
+      })
+    }
+
+    let done;
+    all.push(new Promise((resolve, reject) => {
+      done = function () {
+        resolve()
+      }
+    }))
+
+    let last
+    helper.doChecks(emitter, [
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'entry')
+        msg.should.have.property('SampleSource')
+        msg.should.have.property('SampleRate')
+        msg.should.not.have.property('Edge')
+        last = msg['X-Trace'].substr(42, 16)
+      },
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'exit')
+        msg.Edge.should.equal(last)
+      }
+    ], done)
+
+    // promise-startOrContinueTrace. psoon's ...args are used to resolve the promise.
+    const res = ao.pStartOrContinueTrace(
+      null,
+      main,                           // span name
+      () => psoon(1, 2, 3, 5),        // promise-returning runner
+      conf                            // configuration
+    )
+
+    res.should.instanceof(Promise)
+
+    // wait for both but care only about res
+    all.push(res)
+    return Promise.all(all).then(r => {
+      return res.then(res => {
+        res.should.eql([1, 2, 3, 5])
+        return res;
+      })
+    })
   })
 
   // Verify startOrContinueTrace continues from provided trace id.

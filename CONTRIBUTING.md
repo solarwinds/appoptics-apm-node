@@ -29,7 +29,7 @@ The primary environment for testing is Docker. Unit tests can be run without doc
 
 `$ source env.sh <args>` in order to set up environment variables for different testing scenarios.
 
-It's typically easiest to work at the bash shell and test against docker containers. That is the method that the rest of this document focuses on.
+It's typically easiest to work at the bash shell and test against docker containers. That is the method that the rest of this document focuses on. If you are not running linux then you can't install/build appoptics-bindings, a dependency. Refer to `test/docker/mac-os-test-env` for details on using a mac.
 
 ## Testing
 
@@ -37,7 +37,7 @@ It's typically easiest to work at the bash shell and test against docker contain
 
 In order to run the full test suite various databases are required so that instrumentation for the database drivers can be tested. The test environment is created by first executing the bash command `source env.sh bash` and then executing `docker-compose up -d`. This two steps will set environment variables and bring up docker containers that provide services (mostly databases) needed by the test suite.
 
-With that in place, the full suite of tests can be run using `npm test`. It is also possible to run subsets of the tests by directly invoking gulp, e.g., `gulp test:unit` to run only the unit tests or `gulp test:probes` to run just the probes. More useful is the ability to test only one probe, `gulp test:probe:mysql`. N.B. `gulp` is directly referenceable because `./node_modules/.bin` was added to `PATH` by `source env.sh bash`.
+With that in place, the full suite of tests can be run using `npm test`. Each test resides in a file name ending in `.test.js` so it is possible to run subsets of the tests by directly invoking mocha, e.g., `mocha test/custom.test.js`, `mocha test/*.test.js`, or `mocha test/probes/*.test.js`.
 
 There is also a `main` container created that can be used as a clean-room environment for testing. So if we have put the `appoptics-apm-node` code in the `ao` directory (because it is short and concise) docker will create the container `ao_main_1` as a default name. To use that, presuming the `docker-compose up -d` command has already been executed:
 
@@ -46,7 +46,7 @@ There is also a `main` container created that can be used as a clean-room enviro
 3. `npm install` - to install the package and dependencies
 4. `source env.sh docker-java` - to setup the java-collector (beta note: the "docker" arg needs to be updated)
 5. `source env.sh add-bin` - to add the node_module executables to the path
-5. run tests using `npm test` or `gulp.js test[:unit|probes|probe:${module}]`
+5. run tests using `npm test` or using mocha directory as shown above.
 
 
 For testing, a mock reporter that listens on UDP port 7832 is used (hardcoded in `test/helper.js`). The mock reporter intercepts UDP messages and checks them for correctness. When you source `env.sh` it will set environment variables appropriately. It does require that `AO_TOKEN_STG` exists in your environment. That is the service key that is used for access.  If using the java-collector or scribe-collector the key can be fake, like `f08da708-7f1c-4935-ae2e-122caf1ebe31`. If accessing a production or staging environment it must be a valid key.

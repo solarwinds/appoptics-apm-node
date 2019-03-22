@@ -14,7 +14,8 @@ const hosts = helper.Address.from(
 const ks = 'test' + (process.env.AO_IX || '')
 
 if (helper.skipTest(module.filename)) {
-  describe = function () {}
+  describe = function () {};
+  return;
 }
 
 //
@@ -91,16 +92,23 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     before(function (done) {
       const testClient = new cassandra.Client({
         contactPoints: hosts.map(function (v) {return v.host}),
-        protocolOptions: {port: hosts[0].port}
+        protocolOptions: {port: hosts[0].port},
+        localDataCenter: 'datacenter1'
       })
+      function shutdown () {
+        testClient.shutdown(function () {
+          done()
+        })
+      }
       // eslint-disable-next-line max-len
-      testClient.execute(`CREATE KEYSPACE IF NOT EXISTS ${ks} WITH replication = {'class':'SimpleStrategy','replication_factor':1};`, done)
+      testClient.execute(`CREATE KEYSPACE IF NOT EXISTS ${ks} WITH replication = {'class':'SimpleStrategy','replication_factor':1};`, shutdown)
     })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
         contactPoints: hosts.map(function (v) {return v.host}),
         protocolOptions: {port: hosts[0].port},
-        keyspace: ks
+        keyspace: ks,
+        localDataCenter: 'datacenter1'
       })
     })
     before(function (done) {
@@ -118,7 +126,9 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     // cleanup
     after(function (done) {
       client.execute('TRUNCATE "foo";', function () {
-        client.shutdown(done)
+        client.shutdown(function () {
+          done()
+        })
       })
     })
 
