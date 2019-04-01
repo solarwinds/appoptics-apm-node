@@ -26,7 +26,7 @@ describe('event', function () {
 
   beforeEach(function () {
     md = addon.Metadata.makeRandom(1)
-    const mds = md.toString(1).split(':')
+    const mds = md.toString(1).split('-')
     mdTaskId = mds[1].toUpperCase()
   })
 
