@@ -39,7 +39,7 @@ The configuration file supplies the following properties, showing their defaults
 |ignoreConflicts|false|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 |traceMode|enabled|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
 |transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
-|insertTraceIdsIntoLogs|none|Insert trace IDs into supported logging package output. Options are `true`, `traces`, `always` where `true` annd `traces` insert the ID when AppOptics is tracing. `always` inserts an empty trace ID value even when not tracing.|
+|insertTraceIdsIntoLogs|false|Insert trace IDs into supported logging package output. Options are `true`, `traced`, `sampledOnly`, and `always`. The default, `false`, does not insert trace ids. `true` and `traced` insert the ID when AppOptics is tracing. `sampledOnly` inserts the ID when the trace is sampled. `always` inserts an empty trace ID value (all-zeroes) even when not tracing.|
 
 
 #### Configuration File Probe Settings ####
