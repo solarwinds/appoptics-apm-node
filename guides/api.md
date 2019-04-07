@@ -48,6 +48,9 @@
     * [.pStartOrContinueTrace(xtrace, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
+    * [.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>
+    * [.getFormattedTraceId()](#ao.getFormattedTraceId) ⇒ <code>string</code>
+    * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
 
 <a name="ao.logLevel"></a>
 
@@ -495,6 +498,112 @@ Report an info event in the current trace.
 | --- | --- | --- |
 | data | <code>object</code> | Data to report in the info event |
 
+<a name="ao.sendMetric"></a>
+
+### ao.sendMetric(name, [options]) ⇒ <code>number</code>
+Send a custom metric. There are two types of metrics:
+1) count-based - the number of times something has occurred (no value is associated with this type)
+2) value-based - a specific value (or sum of values).
+If options.value is present the metric being reported is value-based.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>number</code> - - -1 for success else an error code.  
+**Throws**:
+
+- <code>TypeError</code> - if an invalid argument is supplied
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| name | <code>string</code> |  | the name of the metric |
+| [options] | <code>object</code> |  |  |
+| [options.count] | <code>number</code> | <code>1</code> | the number of observations being reported |
+| [options.value] | <code>number</code> |  | if present the metric is value based and this                                   is the value, or sum of the values if count is                                   greater than 1 |
+| [options.addHostTag] | <code>boolean</code> |  | add {host: hostname} to tags |
+| [options.tags] | <code>object</code> |  | an object containing {tag: value} pairs |
+
+**Example**  
+```js
+// simplest forms
+ao.sendMetric('my.little.count')
+ao.sendMetric('my.little.value', {value: 234.7})
+
+// report two observations
+ao.sendMetric('my.little.count', {count: 2})
+ao.sendMetric('my.little.value', {count: 2, value: 469.4})
+
+// to supply tags that can be used for filtering
+ao.sendMetric('my.little.count', {tags: {status: error}})
+
+// to have a host name tag added automatically
+ao.sendMetric('my.little.count', {addHostTag: true, tags: {status: error}})
+```
+<a name="ao.getFormattedTraceId"></a>
+
+### ao.getFormattedTraceId() ⇒ <code>string</code>
+Get the abbreviated trace ID format used for logs.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> - - 40 character trace identifier - sample flag  
+**Example**  
+```js
+//
+// using morgan in express
+//
+const ao = require('appoptics');
+const Express = require('express');
+const app = new Express();
+const morgan = require('morgan');
+
+// define a format with a new token in it, 'trace-id' or a name of your choosing.
+const logFormat = ':method :url :status :res[content-length] :trace-id - :response-time ms';
+// define a token for the name used in the format. return
+morgan.token('trace-id', function (req, res) {return ao.getFormattedTraceId();});
+const logger = morgan(logFormat, {...});
+app.use(logger);
+// now the 42-character trace-id will be added to log entries.
+```
+<a name="ao.insertLogObject"></a>
+
+### ao.insertLogObject([object]) ⇒ <code>object</code>
+Insert the appoptics object containing a trace ID into an object. The primary intended use for this is
+to auto-insert traceIds into JSON-like logs; it's documented so it can be used for unsupported logging
+packages or by those wishing a higher level of control.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>object</code> - - the object with the an additional property, ao, e.g., object.ao === {traceId: ...}.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [object] | <code>object</code> | inserts an ao log object containing a traceId property when conditions are met. |
+
+**Example**  
+```js
+const ao = require('appoptics-apm');
+const logger = require('pino')();
+
+// with no object as an argument ao.insertLogObject returns {ao: {traceId: ...}}
+logger.info(ao.insertLogObject(), 'not-so-important message');
+```
+**Example**  
+```js
+const ao = require('appoptics-apm');
+const winston = require('winston');
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+      winston.format.splat(),
+      winston.format.json()
+    ),
+    defaultMeta: {service: 'ao-log-example'},
+    transports: [...]
+})
+
+logger.info(ao.insertLogObject({
+    message: 'this object is being modified by insertLogObject',
+    more: 'there will be an added ao property'
+}))
+```
 <a name="Span"></a>
 
 ## Span
