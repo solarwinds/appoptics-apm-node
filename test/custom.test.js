@@ -860,7 +860,7 @@ describe('custom', function () {
     // next two errors should be generated.
     const logChecks = [
       {level: 'error', message: 'task IDs don\'t match'},
-      {level: 'error', message: 'outer:exit 2b:'},
+      {level: 'error', message: 'outer:exit 2b-'},
     ]
     helper.checkLogMessages(logChecks)
 

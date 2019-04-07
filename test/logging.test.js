@@ -185,7 +185,7 @@ describe('logging', function () {
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal('xtrace -:-:-:-(bad:beef:cafe)');
+    expect(formatted).equal('xtrace ?-?-?-?(bad:beef:cafe)');
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
