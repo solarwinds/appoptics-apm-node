@@ -47,9 +47,10 @@ describe('probes.fs', function () {
 
   beforeEach(function (done) {
     // wait a tenth of a second between tests.
-    setTimeout(function () {
-      done()
-    }, 100)
+    //setTimeout(function () {
+    //  done()
+    //}, 100)
+    done()
   })
 
   //
