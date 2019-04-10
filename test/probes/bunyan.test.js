@@ -14,6 +14,11 @@ const major = semver.major(version);
 
 const {EventEmitter} = require('events');
 
+// helpful:
+// https://medium.com/@tobydigz/logging-in-a-node-express-app-with-morgan-and-bunyan-30d9bf2c07a
+
+// various outputs format from running manually:
+//
 //> child.info('message to love')
 //{"level": 30, "time": 1554384912925, "pid": 31188, "hostname": "uxpanapa", "a": 100, "msg": "message to love", "v": 1}
 //undefined
