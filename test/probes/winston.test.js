@@ -15,7 +15,7 @@ if (major < 1 || major > 3) {
 let testTransport;
 let createLogger;
 
-const debugging = false;
+const debugging = true;
 
 //===============================================================
 // version 3
@@ -28,9 +28,7 @@ if (major >= 3) {
       super(opts);
     }
     log (info, cb) {
-      setImmediate(() => {
-        this.emit('test-log', info);
-      });
+      this.emit('test-log', info);
       cb();
     }
   }
@@ -95,12 +93,6 @@ if (major >= 3) {
 const defaultMeta = {service: 'ao-test-winston'};
 
 const logger = createLogger();
-
-//function makeExpected (info) {
-//  const {level, message, ...rest} = info;
-//  const extras = stripSymbols(info);
-//  return `${level}: ${message} ${JSON.stringify(extras)}`;
-//}
 
 function stripSymbols (rest) {
   const symbols = Object.getOwnPropertySymbols(rest);
@@ -170,6 +162,8 @@ function getTraceIdString () {
   return topSpan.toString(2 | 16 | 32);
 }
 
+const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
+
 //=================================
 // winston tests
 //=================================
@@ -187,7 +181,6 @@ describe(`winston v${version}`, function () {
   })
 
   before(function () {
-    ao.cfg.insertTraceIdsIntoLogs = true;
     // the test transport must be an emitter.
     testTransport.addListener('test-log', function (info, ...rest) {
       if (major === 3) {
@@ -206,7 +199,8 @@ describe(`winston v${version}`, function () {
     spanName = `${pfx}-test`;
 
     // the following are global to all tests so they can use a common
-    // check function.
+    // check function without having to declare their own transport to
+    // capture the object being logged.
     eventInfo = undefined;
   })
 
@@ -216,6 +210,8 @@ describe(`winston v${version}`, function () {
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
+    ao.cfg.insertTraceIdsIntoLogs = true;
+
     emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
@@ -236,32 +232,79 @@ describe(`winston v${version}`, function () {
     ], done)
   })
 
-  it('should insert trace IDs in synchronous instrumented code', function (done) {
-    const level = 'info';
-    const message = 'property and synchronous';
-    let traceId;
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : '';
 
-    function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
-    }
+    it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
+      const level = 'info';
+      const message = 'property and synchronous';
+      let traceId;
 
-    helper.test(emitter, function (done) {
-      ao.instrument(spanName, function () {
-        traceId = getTraceIdString();
-        logger.log(...makeLogArgs(level, message));
-      })
-      done()
-    }, [
-      function (msg) {
-        msg.should.have.property('Layer', spanName)
-        msg.should.have.property('Label', 'entry')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', spanName)
-        msg.should.have.property('Label', 'exit')
+      ao.cfg.insertTraceIdsIntoLogs = mode;
+
+      function localDone () {
+        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId);
+        setImmediate(done);
       }
-    ], localDone)
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = getTraceIdString();
+          logger.log(...makeLogArgs(level, message));
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  insertModes.forEach(mode => {
+    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : '';
+    eventInfo = undefined;
+
+    it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function () {
+      const level = 'error';
+      const message = `unsampled mode = ${mode}`;
+      let traceId;
+
+      ao.cfg.insertTraceIdsIntoLogs = mode;
+      ao.traceMode = 0;
+      ao.sampleRate = 0;
+
+      function test () {
+        traceId = getTraceIdString();
+        expect(traceId[traceId.length - 1] === 0, 'traceId should be unsampled');
+        // log
+        logger.log(...makeLogArgs(level, message));
+
+        return 'test-done';
+      }
+
+      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(xtrace, spanName, test);
+
+      expect(result).equal('test-done');
+      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId);
+    })
+  })
+
+  it('mode=\'always\' should always insert a trace ID even if not tracing', function () {
+    const level = 'info';
+    const message = 'always insert';
+
+    ao.cfg.insertTraceIdsIntoLogs = 'always';
+
+    logger.log(...makeLogArgs(level, message));
+
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`);
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
@@ -295,6 +338,7 @@ describe(`winston v${version}`, function () {
       }
     ], localDone)
   })
+
 
   it('should insert trace IDs in promise-based instrumented code', function (done) {
     const level = 'info';

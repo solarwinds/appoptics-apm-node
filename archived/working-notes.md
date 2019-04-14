@@ -1,3 +1,7 @@
+working notes
+
+### 6.0.0 rearchitecture
+
 1. removed RUM artifacts
 2. removed Profiles
 3. moved sampling decision from Event constructor to function calling Span constructor.
@@ -39,3 +43,11 @@
 29. [deprecated] traceMode 'always' and 'never'; use 'enabled' and 'disabled'
 30. [API BREAKING] removed sugary mode detectors, e.g., ao.always. use ao.traceMode === 'enabled' or ao.traceMode === 'disabled'
 31. use native WeakMap replacing 'es6-weak-map' package.
+
+
+### next up
+
+morgan test
+move api out of index and into api
+
+back from vacation - learn how to configure and build oboe

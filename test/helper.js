@@ -104,7 +104,7 @@ exports.appoptics = function (done) {
     const parsed = BSON.deserialize(msg)
     log.test.messages('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
-      console.log(parsed)
+      console.log(parsed)     // eslint-disable-line no-console
     }
     emitter.emit('message', parsed)
 
@@ -277,7 +277,8 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const span = ao.Span.makeEntrySpan('outer', exports.makeSettings({doSample: ao.traceMode}))
+    const template = {doSample: ao.traceMode === 'enabled', doMetrics: ao.traceMode === 'enabled'};
+    const span = ao.Span.makeEntrySpan('outer', exports.makeSettings(template))
     // span.async = true
     log.test.span('helper.test outer: %l', span)
     log.test.info('test starting')
