@@ -289,6 +289,51 @@ describe(`morgan v${version}`, function () {
   })
 
   //
+  // for each mode verify that insert works in sampled code
+  //
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : '';
+    eventInfo = undefined;
+
+    it(`should ${maybe}insert in when mode=${mode} using a format function`, function (done) {
+      let traceId;
+      debugging = false;
+
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoMorgan = mode;
+      logger = makeLogger(function () {return 'xyzzy'});
+
+      function localDone () {
+        const expected = mode === false ? '' : ` ao.traceId=${traceId}`;
+        expect(eventInfo).equal(`xyzzy${expected}\n`);
+        done();
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = getTraceIdString();
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok;
+          })
+          fakeRes.writeHead(200);
+          fakeRes.finished = true;
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
   // verify that mode 'always' inserts even when not tracing
   //
   it('mode=\'always\' should always insert a trace ID even if not tracing', function (done) {
@@ -428,6 +473,5 @@ describe(`morgan v${version}`, function () {
       localDone
     );
   })
-
 })
 
