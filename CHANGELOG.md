@@ -28,3 +28,10 @@ Features
 - enable inserting trace IDs into logs automatically (bunyan)
 - `insertTraceIdsIntoLogs` options expanded to `false`, `true`, `'traced'`, `'sampledOnly'`, `'always'`
 
+#### v6.3.0
+
+Features and bug fixes
+- add `insertTraceIdsIntoMorgan` to enable appending `ao.traceId=...` format morgan's text output.
+- add `createTraceIdsToken`. Set to `'morgan'` to have the token `ao-auto-trace-id` token created. Use as `:ao-auto-trace-id` in morgan formats.
+- set config to service key that was used.
+- fix aws-sdk bad signature error on transaction retry.
