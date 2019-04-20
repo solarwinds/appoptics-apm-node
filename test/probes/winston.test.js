@@ -15,7 +15,7 @@ if (major < 1 || major > 3) {
 let testTransport;
 let createLogger;
 
-const debugging = true;
+const debugging = false;
 
 //===============================================================
 // version 3
