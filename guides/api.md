@@ -391,7 +391,7 @@ HTTP headers or message queue headers.
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
-| run | <code>function</code> |  | the promise-returning function to run |
+| run | <code>function</code> |  | run this function. sync if no arguments, async if one. |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
@@ -450,7 +450,7 @@ source, e.g., HTTP headers or message queue headers.
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
-| run | <code>function</code> |  | run the code. if sync, no arguments, else one |
+| run | <code>function</code> |  | the promise-returning function to instrument |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
