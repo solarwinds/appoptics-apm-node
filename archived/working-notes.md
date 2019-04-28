@@ -44,10 +44,21 @@ working notes
 30. [API BREAKING] removed sugary mode detectors, e.g., ao.always. use ao.traceMode === 'enabled' or ao.traceMode === 'disabled'
 31. use native WeakMap replacing 'es6-weak-map' package.
 
+### 6.3.0
+
+1. delete requestStore.topSpan on exit topSpan.
+2. Fix reversed API docs.
+3. aws-sdk fixes and tests.
+4. log unsampled task IDs don't match at debug level.
+5. make task IDs don't match message more clear.
+6. log insertion: winston, pino, morgan, bunyan
+7. log insertion tests
+8. add async-dump file (devDependency) consider wtfnode.
+9. set cfg to service key used, not the one specified.
+
 
 ### next up
 
-morgan test
 move api out of index and into api
 
-back from vacation - learn how to configure and build oboe
+back from vacation - configure and build oboe
