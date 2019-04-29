@@ -14,6 +14,11 @@ const major = semver.major(version);
 
 const {EventEmitter} = require('events');
 
+// helpful:
+// https://medium.com/@tobydigz/logging-in-a-node-express-app-with-morgan-and-bunyan-30d9bf2c07a
+
+// various outputs format from running manually:
+//
 //> child.info('message to love')
 //{"level": 30, "time": 1554384912925, "pid": 31188, "hostname": "uxpanapa", "a": 100, "msg": "message to love", "v": 1}
 //undefined
@@ -72,6 +77,7 @@ function makePost (obj) {
   return Object.assign({}, template2, obj);
 }
 
+// if no traceId is passed then don't expect {ao: {traceId}}
 function checkEventInfo (eventInfo, level, message, traceId) {
   // check time first because it's not a straight compare
   expect(eventInfo.time.valueOf()).within(Date.now() - 150, Date.now() + 100);
@@ -117,6 +123,8 @@ function getTraceIdString () {
   // 2 task, 16 sample bit, 32 separators
   return firstEvent.toString(2 | 16 | 32);
 }
+
+const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
 
 
 //=================================
@@ -180,8 +188,13 @@ describe(`bunyan v${version}`, function () {
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
+    // make sure we get sampled traces
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
+    // default to the simple 'true'
+    ao.cfg.insertTraceIdsIntoLogs = true;
+    ao.probes.fs.enabled = false;
+
     emitter = helper.appoptics(done)
   })
   afterEach(function (done) {
@@ -202,34 +215,86 @@ describe(`bunyan v${version}`, function () {
     ], done)
   })
 
-  it('should insert trace IDs in synchronous instrumented code', function (done) {
-    const level = 'info';
-    const message = 'synchronous instrumentation';
-    let traceId;
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : '';
+    eventInfo = undefined;
 
-    function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
-    }
+    it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
+      const level = 'info';
+      const message = `synchronous traced setting = ${mode}`;
+      let traceId;
 
-    helper.test(emitter, function (done) {
-      ao.instrument(spanName, function () {
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode;
+
+      function localDone () {
+        // if not trace
+        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId);
+        done();
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = getTraceIdString();
+          // log
+          logger.info(message);
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  insertModes.forEach(mode => {
+    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : '';
+
+    it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function () {
+      const level = 'info';
+      const message = `synchronous traced setting = ${mode}`;
+      let traceId;
+
+      // reset in beforeEach() so set in each test.
+      ao.cfg.insertTraceIdsIntoLogs = mode;
+      ao.traceMode = 0;
+      ao.sampleRate = 0;
+
+      function test () {
         traceId = getTraceIdString();
+        expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled');
         // log
         logger.info(message);
-      })
-      done()
-    }, [
-      function (msg) {
-        msg.should.have.property('Layer', spanName)
-        msg.should.have.property('Label', 'entry')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', spanName)
-        msg.should.have.property('Label', 'exit')
+
+        return 'test-done';
       }
-    ], localDone)
+
+      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(xtrace, spanName, test);
+
+      expect(result).equal('test-done');
+      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId);
+    })
   })
+
+  it('mode=\'always\' should always insert a trace ID even if not tracing', function () {
+    const level = 'info';
+    const message = 'always insert';
+    ao.Event.last = undefined;
+
+    ao.cfg.insertTraceIdsIntoLogs = 'always';
+
+    logger.info(message);
+
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`);
+  })
+
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
     const level = 'error';
