@@ -12,16 +12,20 @@ It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY 
 
 The `appoptics-apm` default configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path. The file can also be a node module that exports a single object containing the same information has `appoptics-apm.json` would.
 
-The configuration file supplies the following properties, showing their defaults:
+The configuration file can supply the following properties, showing their defaults:
 
 ```
 {
-  enabled: true,
   serviceKey: undefined,
+  enabled: true,
   hostnameAlias: undefined,
   domainPrefix: false,
-  traceMode: undefined,
   ignoreConflicts: false,
+  traceMode: 'enabled',
+  transactionSettings: undefined,
+  insertTraceIdsIntoLogs: false,
+  insertTraceIdsIntoMorgan: false,
+  createTraceIdsToken: undefined,
   probes: {
     // probe-specific defaults. see dist/defaults.js for details
   }
@@ -38,8 +42,10 @@ The configuration file supplies the following properties, showing their defaults
 |domainPrefix|false|Prefix transaction names with the domain name.|
 |ignoreConflicts|false|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 |traceMode|enabled|Mode 'enabled' will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
-|transactionSettings|none|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
-|insertTraceIdsIntoLogs|false|Insert trace IDs into supported logging package output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
+|transactionSettings|undefined|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only 'url' is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
+|insertTraceIdsIntoLogs|false|Insert trace IDs into supported logging packages' output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
+|insertTraceIdsIntoMorgan|false|Append trace IDs to morgan log lines. Because morgan does not output JSON the morgan formats must be modified to enable the trace IDs to be appended. This is a more invasive approach than inserting a property in a JSON object so it requires this explicit setting. The options are the same as for `insertTraceIdsIntoLogs`.|
+|createTraceIdsToken|undefined|Create a token that can be used in a logging package's format string. If set to `'morgan'` the token `ao-auto-trace-id` will be created and `:ao-auto-trace-id` can be used in morgan format strings.|
 
 
 #### Configuration File Probe Settings ####
@@ -97,7 +103,7 @@ These environment variables may be set:
 Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 
 ```
-// no need to set up standard error loggers (error, warn, info, debug, patching)
+// no need to set up standard error loggers (error, warn)
 const log = ao.loggers
 log.error('bad error')
 ```
