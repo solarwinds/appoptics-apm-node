@@ -3,6 +3,7 @@
 process.env.AO_TEST_NO_BINDINGS = '1';
 
 const ao = require('../..');
+const aob = ao.addon;
 const assert = require('assert');
 
 
@@ -35,6 +36,14 @@ describe('custom (without native bindings present)', function () {
   it('should have a version of \'not loaded\'', function () {
     assert(ao.addon.version === 'not loaded');
   });
+
+  it('should passthrough instrumentHttp', function () {
+    let counter = 0;
+    ao.instrumentHttp('span-name', function () {
+      counter += 1;
+    });
+    assert(counter === 1);
+  })
 
   it('should passthrough sync instrument', function () {
     let counter = 0;
@@ -99,7 +108,41 @@ describe('custom (without native bindings present)', function () {
     ao.instrument('test', soon, done)
   })
 
-  it('should not fail when accessing traceId', function () {
+  it('should supply API functions and properties', function () {
+    assert(ao.traceMode === 'disabled');
+    assert(ao.sampleRate === 0);
+    assert(ao.tracing === false);
     assert(ao.traceId === undefined);
+    assert(ao.lastEvent === undefined);
+    assert(ao.lastSpan === undefined);
+    assert(ao.requestStore && typeof ao.requestStore.get === 'function');
+    assert(typeof ao.resetRequestStore === 'function');
+    assert(ao.clsCheck() === false);
+    assert(ao.stack() === '');
+    assert(ao.bind('x') === 'x');
+    assert(ao.bindEmitter('x') === 'x');
+    assert(ao.backtrace());
+    assert(ao.setCustomTxNameFunction('x') === false);
+
+    assert(ao.readyToSample() === false);
+    assert(ao.getTraceSettings().doSample === false);
+    assert(ao.sampling() === false);
+    assert(ao.stringToMetadata('') instanceof aob.Metadata);
+    assert(ao.patchResponse('x') === undefined);
+    assert(ao.addResponseFinalizer('x') === undefined);
+    assert(ao.traceId === undefined);
+    assert(ao.reportError(new Error('xyzzy')) === undefined);
+    assert(ao.reportInfo('this is info') === undefined);
+    assert(ao.sendMetric() === -1);
+    assert(ao.getFormattedTraceId() === `${'0'.repeat(40)}-0`);
+
+    let o = ao.insertLogObject();
+    assert(typeof o === 'object');
+    assert(Object.keys(o).length === 0);
+
+    o = ao.insertLogObject({existing: 'bruce'});
+    assert(typeof o === 'object');
+    assert(Object.keys(o).length === 1);
+    assert(o.existing === 'bruce');
   })
 })
