@@ -479,13 +479,13 @@ describe('probes.request', function () {
         request.get('http://www.google.com')
           .on('response', function (response) {
             if (response.statusCode !== 200) {
-              console.log('statusCode', response.statusCode)
+              ao.loggers.error('statusCode', response.statusCode)
             }
             res.end('done')
             server.close()
           })
           .on('error', function (err) {
-            console.log('error', err)
+            ao.loggers.error('error', err)
             res.statusCode = 422
             res.end({geterror: err.toString()})
             server.close()
@@ -542,13 +542,13 @@ describe('probes.request', function () {
         requestpn(options)
           .then(function (response) {
             if (response.statusCode !== 200) {
-              console.log('statusCode', response.statusCode)
+              ao.loggers.error('statusCode', response.statusCode)
             }
             res.end('done')
             server.close()
           })
           .catch(function (err) {
-            console.log('error', err)
+            ao.loggers.error('error', err)
             res.statusCode = 422
             res.end({geterror: err.toString()})
             server.close()
