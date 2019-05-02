@@ -25,6 +25,7 @@ const config = {
 describe('probes.oracledb ' + pkg.version, function () {
   let emitter
   let realSampleTrace
+  let lastConnection;
 
   //
   // Intercept appoptics messages for analysis
@@ -44,6 +45,13 @@ describe('probes.oracledb ' + pkg.version, function () {
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
+  })
+
+  afterEach(function () {
+    if (!lastConnection) {
+      return Promise.resolve();
+    }
+    return lastConnection.close();
   })
 
   it('UDP might lose a message', function (done) {
@@ -96,7 +104,11 @@ describe('probes.oracledb ' + pkg.version, function () {
     helper.test(emitter, function (done) {
       function query (err, connection) {
         log.debug('test_basic query callback invoked')
-        if (err) return done(err)
+        if (err) {
+          log.debug('error in query callback', err);
+          return done(err);
+        }
+        lastConnection = connection;
         connection.execute('SELECT 1 FROM DUAL', done)
       }
       log.debug('test_basic being executed')
@@ -117,6 +129,7 @@ describe('probes.oracledb ' + pkg.version, function () {
     helper.test(emitter, function (done) {
       function query (err, connection) {
         if (err) return done(err)
+        lastConnection = connection;
         connection.execute('SELECT 1 FROM DUAL', done)
       }
 
@@ -146,6 +159,7 @@ describe('probes.oracledb ' + pkg.version, function () {
 
           return function (err) {
             if (err) return done(err)
+            lastConnection = connection;
             connection.execute('SELECT 1 FROM DUAL', [], options, done)
           }
         }
