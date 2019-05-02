@@ -21,6 +21,7 @@ test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', '>= 0.8.6')
 test('bluebird', '>= 2.0.0')
+test('bunyan', '>= 1.0.0')
 
 test('cassandra-driver', '>= 3.3.0')
 test('co-render')
@@ -53,10 +54,8 @@ test('koa', {
     }
   ]
 })
-
 test('koa-resource-router')
 test('koa-route', '>= 1.0.1')
-
 test('koa-router', {
   ranges: [
     {
@@ -70,17 +69,16 @@ test('koa-router', {
 })
 
 test('level', '>= 1.3.0')
+
 test('memcached', '>= 2.2.0')
-
 test('mongodb-core', '>= 2.0.0')
-
 test('mongoose', '>= 4.6.4')
-
+test('morgan', '>= 1.6.0')
 test('mysql', '>= 2.1.0')
+
 test('oracledb', '>= 2.0.14')
 
 test('pino', '>= 2.3.0');
-
 test('pg', '>= 4.5.5')
 /*
 test('pg', {
@@ -97,9 +95,11 @@ test('pg', {
 // */
 
 test('q', '>= 0.9.0')
+
 test('raw-body')
 test('redis', '>= 0.8.0')
 test('restify', '>= 2.0.0 < 2.0.2 || >= 2.0.3')
+
 test('tedious', '>= 0.1.5')
 
 test('vision', {
