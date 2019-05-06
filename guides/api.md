@@ -28,17 +28,17 @@
 * [ao](#ao)
     * [.logLevel](#ao.logLevel)
     * [.serviceKey](#ao.serviceKey)
+    * [.loggers](#ao.loggers)
     * [.traceMode](#ao.traceMode)
     * [.tracing](#ao.tracing)
     * [.traceId](#ao.traceId)
-    * [.loggers](#ao.loggers)
     * [.logLevelAdd(levels)](#ao.logLevelAdd) ⇒ <code>string</code> \| <code>undefined</code>
     * [.logLevelRemove(levels)](#ao.logLevelRemove) ⇒ <code>string</code> \| <code>undefined</code>
-    * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
+    * [.backtrace()](#ao.backtrace) ⇒ <code>string</code>
     * [.bind(fn)](#ao.bind) ⇒ <code>function</code>
     * [.bindEmitter(em)](#ao.bindEmitter) ⇒ <code>EventEmitter</code>
-    * [.backtrace()](#ao.backtrace) ⇒ <code>string</code>
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
+    * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
     * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
@@ -80,6 +80,19 @@ var settings = ao.logLevel
 | --- | --- |
 | <code>string</code> | the service key |
 
+<a name="ao.loggers"></a>
+
+### ao.loggers
+Expose debug logging global and create a function to turn
+logging on/off.
+
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Properties**
+
+| Type | Description |
+| --- | --- |
+| <code>object</code> | the loggers available for use |
+
 <a name="ao.traceMode"></a>
 
 ### ao.traceMode
@@ -118,19 +131,6 @@ Get X-Trace ID of the last event
 | --- | --- |
 | <code>string</code> | the trace ID as a string or undefined if not tracing. |
 
-<a name="ao.loggers"></a>
-
-### ao.loggers
-Expose debug logging global and create a function to turn
-logging on/off.
-
-**Kind**: static property of [<code>ao</code>](#ao)  
-**Properties**
-
-| Type | Description |
-| --- | --- |
-| <code>object</code> | the loggers available for use |
-
 <a name="ao.logLevelAdd"></a>
 
 ### ao.logLevelAdd(levels) ⇒ <code>string</code> \| <code>undefined</code>
@@ -166,20 +166,13 @@ var previousLogLevel = ao.logLevel
 ao.logLevelAdd('debug')
 ao.logLevelRemove(previousLogLevel)
 ```
-<a name="ao.readyToSample"></a>
+<a name="ao.backtrace"></a>
 
-### ao.readyToSample(ms, [obj]) ⇒ <code>boolean</code>
-Check whether the appoptics agent is ready to sample. It will wait up to
-the specified number of milliseconds before returning.
+### ao.backtrace() ⇒ <code>string</code>
+Generate a backtrace string
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>boolean</code> - - true if ready to sample; false if not  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ms | <code>Number</code> | milliseconds to wait; default 0 means don't wait (poll). |
-| [obj] | <code>Object</code> | if present obj.status will receive low level status |
-
+**Returns**: <code>string</code> - the backtrace  
 <a name="ao.bind"></a>
 
 ### ao.bind(fn) ⇒ <code>function</code>
@@ -205,13 +198,6 @@ Bind an emitter if tracing
 | --- | --- | --- |
 | em | <code>EventEmitter</code> | The emitter to bind to the trace context |
 
-<a name="ao.backtrace"></a>
-
-### ao.backtrace() ⇒ <code>string</code>
-Generate a backtrace string
-
-**Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>string</code> - the backtrace  
 <a name="ao.setCustomTxNameFunction"></a>
 
 ### ao.setCustomTxNameFunction(probe, fn) ⇒ <code>boolean</code>
@@ -232,6 +218,20 @@ most commonly used when setting custom names for all or most routes.
 express: customFunction (req, res)
 hapi: customFunction (request)
 ```
+<a name="ao.readyToSample"></a>
+
+### ao.readyToSample(ms, [obj]) ⇒ <code>boolean</code>
+Check whether the appoptics agent is ready to sample. It will wait up to
+the specified number of milliseconds before returning.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - - true if ready to sample; false if not  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ms | <code>Number</code> | milliseconds to wait; default 0 means don't wait (poll). |
+| [obj] | <code>Object</code> | if present obj.status will receive low level status |
+
 <a name="ao.sampling"></a>
 
 ### ao.sampling(item) ⇒ <code>boolean</code>
