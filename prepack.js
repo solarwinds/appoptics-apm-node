@@ -29,9 +29,13 @@ if (errorCount) {
 const skeletalAo = {
   loggers: {
     addGroup () {},
+    Debounce: function () {
+      return {
+        log: function () {}
+      };
+    },
   },
   logger: {
-    Debounce () {},
     addEnabled () {},
   }
 };
