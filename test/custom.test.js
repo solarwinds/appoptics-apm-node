@@ -3,6 +3,7 @@ const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
 const ao = require('..')
+const aob = ao.addon;
 const Span = ao.Span
 const Event = ao.Event
 
@@ -847,10 +848,10 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function (done) {
-    const realSample = ao.getTraceSettings
+    const realSample = aob.Context.getTraceSettings
     let called = false
 
-    ao.getTraceSettings = function () {
+    aob.Context.getTraceSettings = function () {
       called = true
       return makeSettings({source: 0, rate: 0})
     }
@@ -873,7 +874,7 @@ describe('custom', function () {
       [],                           // checks
       function (err) {
         called.should.equal(true, 'the sample function should be called')
-        ao.getTraceSettings = realSample
+        aob.Context.getTraceSettings = realSample
         done(err)
       }
     )

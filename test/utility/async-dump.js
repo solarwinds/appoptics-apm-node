@@ -1,7 +1,16 @@
 'use strict';
 
 const {createHook} = require('async_hooks');
-const {stackTraceFilter} = require('mocha/lib/utils');
+
+let stackTraceFilter;
+
+try {
+  stackTraceFilter = require('mocha/lib/utils').stackTraceFilter;
+} catch (e) {
+  const globalNode = `${process.env.NVM_DIR}/versions/node/${process.version}/lib/node_modules`;
+  stackTraceFilter = require(`${globalNode}/mocha/lib/utils`).stackTraceFilter;
+}
+
 const allResources = new Map();
 
 // consider using wtfnode.
