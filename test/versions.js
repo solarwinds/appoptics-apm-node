@@ -1,6 +1,7 @@
 'use strict'
 
 const {VersionSpec} = require('testeachversion')
+const semver = require('semver');
 
 const packages = module.exports = []
 
@@ -68,7 +69,7 @@ test('koa-router', {
   ]
 })
 
-test('level', '>= 1.3.0')
+test('level', node('gte', '12.0.0') ? '>= 5.0.0' : '>= 1.3.0');
 
 test('memcached', '>= 2.2.0')
 test('mongodb-core', '>= 2.0.0')
@@ -118,7 +119,7 @@ test('winston', '>= 1.0.0');
 
 
 //
-// Helper
+// Helpers
 //
 
 function test (name, ranges) {
@@ -130,4 +131,8 @@ function test (name, ranges) {
   }
   options.task = `mocha --exit test/probes/${name}.test.js`
   packages.push(new VersionSpec(name, options))
+}
+
+function node (op, version) {
+  return semver[op](process.version, version);
 }
