@@ -35,3 +35,16 @@ Features and bug fixes
 - add `createTraceIdsToken`. Set to `'morgan'` to have the token `ao-auto-trace-id` token created. Use as `:ao-auto-trace-id` in morgan formats.
 - set config to service key that was used.
 - fix aws-sdk bad signature error on transaction retry.
+
+#### v6.4.0
+
+Features and bug fixes
+- add support for SolarWinds Tokens (swoken)
+- incorporate appoptics-bindings v6.2.1 with custom metrics fix
+
+### v6.5.0
+
+Features and bug fixes
+- internal environment variable reorganization
+- fix corrupted histogram in node 11.10.0+.
+- support @hapi scoped packages hapi & vision.

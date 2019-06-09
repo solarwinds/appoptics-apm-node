@@ -37,9 +37,18 @@ test('hapi', {
       range: '>= 13.0.0 < 17.0.0',
       dependencies: ['vision@4'],
     }, {
-      range: '>= 17.0.0',
+      range: '>= 17.0.0 <= 18.1.0',
       dependencies: ['vision@5'],
     }
+  ]
+})
+
+test('@hapi/hapi', {
+  ranges: [
+    {
+      range: '*',
+      dependencies: ['vision@5'],
+    },
   ]
 })
 
@@ -115,6 +124,15 @@ test('vision', {
   ]
 })
 
+test('@hapi/vision', {
+  ranges: [
+    {
+      range: '*',
+      dependencies: ['hapi@18']
+    }
+  ]
+})
+
 test('winston', '>= 1.0.0');
 
 
@@ -129,7 +147,11 @@ function test (name, ranges) {
   } else if (typeof ranges === 'object') {
     options.ranges = ranges.ranges
   }
-  options.task = `mocha --exit test/probes/${name}.test.js`
+  if (name[0] === '@') {
+    options.task = `mocha --exit test/probes/${name.replace('/', '-')}.test.js`;
+  } else {
+    options.task = `mocha --exit test/probes/${name}.test.js`
+  }
   packages.push(new VersionSpec(name, options))
 }
 

@@ -6,7 +6,7 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const {ao} = require('../../1.test-common')
+const ao = global[Symbol.for('AppOptics.Apm.Once')];
 
 const semver = require('semver')
 
@@ -20,11 +20,15 @@ if (!hasAsyncAwait) {
   throw new Error('hapi@17 testing requires async/await')
 }
 
-const hapi = require('hapi')
-const vision = require('vision')
+// if testing the @hapi scoped package then hapiVersion is set to @hapi
+const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi';
+const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision';
 
-const pkg = require('hapi/package.json')
-const visionPkg = require('vision/package.json')
+const hapi = require(hapiName);
+const vision = require(visionName);
+
+const pkg = require(`${hapiName}/package.json`);
+const visionPkg = require(`${visionName}/package.json`);
 
 if (semver.lt(pkg.version, '17.0.0')) {
   throw new Error('hapi-17-and-above requires hapi version 17+')
@@ -33,14 +37,14 @@ if (semver.lt(pkg.version, '17.0.0')) {
 let plugins
 let visionText
 if (semver.gte(visionPkg.version, '5.0.0')) {
-  plugins = {plugin: require('vision')}
-  visionText = ' vision ' + visionPkg.version
+  plugins = {plugin: require(visionName)}
+  visionText = `${visionName} ${visionPkg.version}`;
 } else {
   plugins = {}
-  visionText = ' vision ' + visionPkg.version + ' not compatible (untested)'
+  visionText = `${visionName} ${visionPkg.version} not compatible (untested)`;
 }
 
-describe('probes.hapi ' + pkg.version + visionText, function () {
+describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   let emitter
   let port = 3000
   let clear
