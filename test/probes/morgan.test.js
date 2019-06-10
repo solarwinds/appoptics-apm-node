@@ -14,7 +14,7 @@ const major = semver.major(version);
 const {EventEmitter} = require('events');
 
 
-let debugging = false;
+let debugging = true;
 
 // if no traceId is passed then don't expect {ao: {traceId}}
 function checkEventInfo (eventInfo, req, res, traceId) {
@@ -29,9 +29,9 @@ function checkEventInfo (eventInfo, req, res, traceId) {
   const reString = `${method} ${url} ${status} 42 - \\d\\.\\d{3} ms( (ao.traceId=[A-F0-9]{40}-(0|1)))?`;
   const re = new RegExp(reString);
   const m = eventInfo.match(re);
-  if (debugging) {
+  if (debugging && !m) {
     // eslint-disable-next-line no-console
-    console.log('match', m);
+    console.log('eventInfo', eventInfo, 'match', m);
   }
   expect(m).ok;
   expect(m.length).equal(4);
