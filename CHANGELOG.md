@@ -48,3 +48,13 @@ Features and bug fixes
 - internal environment variable reorganization
 - fix corrupted histogram in node 11.10.0+.
 - support @hapi scoped packages hapi & vision.
+
+### v6.5.1
+
+Features and bug fixes
+- use oboe v5.1.1, correcting histogram memory leak
+
+### v6.6.0
+
+Features and bug fixes
+- context management improvements
