@@ -57,4 +57,7 @@ Features and bug fixes
 ### v6.6.0
 
 Features and bug fixes
-- context management improvements
+- context management simplification + bindings 6.4.0
+- handle more boolean environment variable variations.
+- propagate FilePath KV value correctly in edge case
+- add log setting 'event:create', cassandra-driver now always uses 'patching'
