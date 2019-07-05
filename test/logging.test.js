@@ -169,7 +169,7 @@ describe('logging', function () {
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal(`xtrace ${md.toString(1)}`);
+    expect(formatted, 'metadata').equal(`xtrace ${md.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
@@ -177,7 +177,7 @@ describe('logging', function () {
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal('xtrace <no xtrace>');
+    expect(formatted, 'null').equal('xtrace <no xtrace>');
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
@@ -185,16 +185,16 @@ describe('logging', function () {
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal('xtrace ?-?-?-?(bad:beef:cafe)');
+    expect(formatted, 'bad:beef:cafe').equal('xtrace ?-?-?-?(bad:beef:cafe)');
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
-    let event = new ao.addon.Event()
+    let event = new ao.addon.Event(md)
     ao.loggers.error('native event xtrace %x', event);
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal(`native event xtrace ${event.toString(1)}`);
+    expect(formatted, 'event').equal(`native event xtrace ${event.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
@@ -203,7 +203,7 @@ describe('logging', function () {
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal(`event xtrace ${event.event.toString(1)}`);
+    expect(formatted, 'span').equal(`event xtrace ${event.event.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
@@ -213,7 +213,7 @@ describe('logging', function () {
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal(`string xtrace ${md.toString(1)}`);
+    expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`);
 
   })
 

@@ -132,6 +132,8 @@ describe('probes.crypto', function () {
 
   if (crypto.createDiffieHellman) {
     it('should support computeSecret for DiffieHellman', function (done) {
+      // increase timeout - intermittent failures when running matrix tests
+      this.timeout(5000);
       helper.test(emitter, function (done) {
         const a = crypto.createDiffieHellman(512)
         a.generateKeys()

@@ -71,12 +71,6 @@ describe('event', function () {
     expect(ao.sampling(event.toString())).equal(true)
   })
 
-  it('should enter the event context', function () {
-    const context = addon.Context.toString()
-    event.enter()
-    expect(addon.Context.toString()).not.equal(context)
-  })
-
   it('should send the event', function (done) {
     const edge = true
     const event2 = new Event('test', 'exit', event.event, edge)

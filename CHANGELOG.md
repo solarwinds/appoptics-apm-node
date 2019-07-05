@@ -48,3 +48,16 @@ Features and bug fixes
 - internal environment variable reorganization
 - fix corrupted histogram in node 11.10.0+.
 - support @hapi scoped packages hapi & vision.
+
+### v6.5.1
+
+Features and bug fixes
+- use oboe v5.1.1, correcting histogram memory leak
+
+### v6.6.0
+
+Features and bug fixes
+- context management simplification + bindings 6.4.0
+- handle more boolean environment variable variations.
+- propagate FilePath KV value correctly in edge case
+- add log setting 'event:create', cassandra-driver now always uses 'patching'
