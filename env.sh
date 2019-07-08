@@ -32,13 +32,11 @@ elif [[ "$ARG" = "add-bin" ]]; then
     # add ./node_modules/.bin to PATH
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
 elif [[ "$ARG" = "docker-java" ]]; then
-    export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
     export APPOPTICS_COLLECTOR=java-collector:12222
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
     export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "docker-scribe" ]]; then
-    export APPOPTICS_REPORTER_UDP=localhost:7832
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/scribe-collector.crt
     export APPOPTICS_COLLECTOR=scribe-collector:4444
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
@@ -50,12 +48,12 @@ elif [[ "$ARG" = "bash" ]]; then
     # set logging that should be seen during testing.
     export APPOPTICS_LOG_SETTINGS=error,warn,patching,bind,debug
 
-    # these are generally the right settings unless a collector
+    # these are generally the right settings unless a real collector
     # is required.
-    export APPOPTICS_REPORTER_UDP=localhost:7832
-    export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    #export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    export APPOPTICS_COLLECTOR=localhost:7832
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
-    # set this to ssl in order to use APPOPTICS_COLLECTOR
+    # set this to ssl and change APPOPTICS_COLLECTOR to use SSL.
     export APPOPTICS_REPORTER=udp
 
     # and the buckets need to be adjusted if using UDP because the defaults
@@ -100,31 +98,33 @@ elif [[ "$ARG" = "bam-local-mongo" ]]; then
     AO_TEST_MONGO_2_6_HOST_PORT=27027
     AO_TEST_MYSQL_HOST_PORT=33306
 elif [[ "$ARG" = "travis" ]]; then
-    # presume a travis-ci environment. servers should be running
-    # as localhost on standard ports.
-    export AO_TEST_CASSANDRA_2_2=localhost:9042
-    export AO_TEST_MEMCACHED_1_4=localhost:11211
-    # only one mongodb is tested per travis run.
-    export AO_TEST_MONGODB_3=localhost:27017
-    # mysql/travis doesn't like 127.0.0.1 - must be localhost
-    export AO_TEST_MYSQL=localhost:3306
-    export AO_TEST_MYSQL_USERNAME=root
-    export AO_TEST_MYSQL_PASSWORD=admin
-    # this requires an entry in /etc/hosts because this
-    # isn't run in a container it can't use docker names.
-    # use the IP address from "docker inspect ao_oracle_1"
-    export AO_TEST_ORACLE=oracledb.com
-    export AO_TEST_ORACLE_USERNAME=system
-    export AO_TEST_ORACLE_PASSWORD=oracle
-    # defaults should be fine.
-    #export AO_TEST_POSTGRES_USER=postgres
-    #export AO_TEST_POSTGRES_PASSWORD=
-    export AO_TEST_POSTGRES=localhost:5432
-    export AO_TEST_RABBITMQ_3_5=localhost:5672
-    export AO_TEST_REDIS_3_0=localhost:6379
-    # the tedious probe tests SQL Server.
-    export AO_TEST_SQLSERVER_EX=mssql:1433
-    export AO_TEST_SQLSERVER_EX_USERNAME=sa
+    # travis has been retired in favor of the matrix tests
+    ## presume a travis-ci environment. servers should be running
+    ## as localhost on standard ports.
+    #export AO_TEST_CASSANDRA_2_2=localhost:9042
+    #export AO_TEST_MEMCACHED_1_4=localhost:11211
+    ## only one mongodb is tested per travis run.
+    #export AO_TEST_MONGODB_3=localhost:27017
+    ## mysql/travis doesn't like 127.0.0.1 - must be localhost
+    #export AO_TEST_MYSQL=localhost:3306
+    #export AO_TEST_MYSQL_USERNAME=root
+    #export AO_TEST_MYSQL_PASSWORD=admin
+    ## this requires an entry in /etc/hosts because this
+    ## isn't run in a container it can't use docker names.
+    ## use the IP address from "docker inspect ao_oracle_1"
+    #export AO_TEST_ORACLE=oracledb.com
+    #export AO_TEST_ORACLE_USERNAME=system
+    #export AO_TEST_ORACLE_PASSWORD=oracle
+    ## defaults should be fine.
+    ##export AO_TEST_POSTGRES_USER=postgres
+    ##export AO_TEST_POSTGRES_PASSWORD=
+    #export AO_TEST_POSTGRES=localhost:5432
+    #export AO_TEST_RABBITMQ_3_5=localhost:5672
+    #export AO_TEST_REDIS_3_0=localhost:6379
+    ## the tedious probe tests SQL Server.
+    #export AO_TEST_SQLSERVER_EX=mssql:1433
+    #export AO_TEST_SQLSERVER_EX_USERNAME=sa
+    echo "WARNING, travis is no longer used"
 elif [[ "$ARG" = "debug" ]]; then
     # this section is more for reference than anything else.
     # LEVEL 2 is most of what you want to see. 6 (highest) is too much.
