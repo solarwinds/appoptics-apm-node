@@ -1,9 +1,18 @@
 ARG=$1
 PARAM=$2
 
-if [[ -z "$AO_TOKEN_STG" ]]; then
-    echo "AO_TOKEN_STG must be defined and contain a valid token"
-    echo "for accessing collector-stg.appoptics.com"
+AO_TOKEN=${AO_TOKEN_STG:-AO_TOKEN_PROD}
+
+if [[ -z "$AO_TOKEN" ]]; then
+    echo "AO_TOKEN_PROD or AO_TOKEN_STG must be defined and contain a valid SolarWinds token"
+    echo "for accessing a collector."
+    return
+fi
+
+if [ "$AO_TOKEN" = "$AO_TOKEN_PROD" ]; then
+    AO_COLLECTOR=collector.appoptics.com
+else
+    AO_COLLECTOR=collector-stg.appoptics.com
 fi
 
 if [[ -z "$ARG" ]]; then
@@ -26,7 +35,7 @@ elif [[ "$ARG" = "key" ]]; then
         echo "defining the service key requires a service name argument"
         return
     fi
-    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:$PARAM
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:$PARAM
     echo "set APPOPTICS_SERVICE_KEY=$APPOPTICS_SERVICE_KEY"
 elif [[ "$ARG" = "add-bin" ]]; then
     # add ./node_modules/.bin to PATH
@@ -34,15 +43,16 @@ elif [[ "$ARG" = "add-bin" ]]; then
 elif [[ "$ARG" = "docker-java" ]]; then
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/java-collector.crt
     export APPOPTICS_COLLECTOR=java-collector:12222
-    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:ao-node-test-docker
     export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "docker-scribe" ]]; then
     export APPOPTICS_TRUSTEDPATH=/appoptics/test/certs/scribe-collector.crt
     export APPOPTICS_COLLECTOR=scribe-collector:4444
-    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test-docker
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:ao-node-test-docker
     export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "bash" ]]; then
-    # this is used primarily for manual interactive testing.
+    # this is used primarily for manual interactive testing so doesn't connect to a
+    # real collector as most tests will fail if it does.
     [[ ":$PATH" != *":$PWD/node_modules/.bin"* ]] && PATH="${PATH}:$PWD/node_modules/.bin"
 
     # set logging that should be seen during testing.
@@ -50,9 +60,9 @@ elif [[ "$ARG" = "bash" ]]; then
 
     # these are generally the right settings unless a real collector
     # is required.
-    #export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    #export APPOPTICS_COLLECTOR=$AO_COLLECTOR
     export APPOPTICS_COLLECTOR=localhost:7832
-    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:ao-node-test
     # set this to ssl and change APPOPTICS_COLLECTOR to use SSL.
     export APPOPTICS_REPORTER=udp
 
