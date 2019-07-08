@@ -18,41 +18,65 @@ Table of Contents
 
 ## Dev environment
 
-The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-apm-node) requires node (version 4+), docker, and a bash shell. It's generally easiest to work at a bash command prompt for editing and running tests from that prompt that interact with exposed ports from the docker containers created by the `docker-compose.yml` file.
+The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-apm-node) requires
+node (version 6+, 10+ preferred), docker, and a bash shell. It's generally easiest to work at a bash
+command prompt for editing and running tests from that prompt that interact with exposed ports from
+the docker containers created by the `docker-compose.yml` file.
 
 
 ### Setup
 
-The primary environment for testing is Docker. Unit tests can be run without docker but probe testing requires databases and servers to test against. `docker-compose.yml` defines a complete environment for testing.
+The primary environment for testing is Docker. Unit tests can be run without docker but probe testing
+requires databases and servers to test against. `docker-compose.yml` defines a complete environment for
+testing.
 
 `env.sh` is desiged to be sourced,
 
 `$ source env.sh <args>` in order to set up environment variables for different testing scenarios.
 
-It's typically easiest to work at the bash shell and test against docker containers. That is the method that the rest of this document focuses on. If you are not running linux then you can't install/build appoptics-bindings, a dependency. Refer to `test/docker/mac-os-test-env` for details on using a mac.
+It's typically easiest to work at the bash shell and test against docker containers. That is the method
+that the rest of this document focuses on. If you are not running linux then you can't install/build
+appoptics-bindings, a dependency. Refer to `test/docker/mac-os-test-env` for details on using a mac.
 
 ## Testing
 
 ### Running the basic test suite
 
-In order to run the full test suite various databases are required so that instrumentation for the database drivers can be tested. The test environment is created by first executing the bash command `source env.sh bash` and then executing `docker-compose up -d`. This two steps will set environment variables and bring up docker containers that provide services (mostly databases) needed by the test suite.
+In order to run the full test suite various databases are required so that instrumentation for the database
+drivers can be tested. The test environment is created by first executing the bash command
+`source env.sh bash` and then executing `docker-compose up -d`. This two steps will set environment
+variables and bring up docker containers that provide services (mostly databases) needed by the test suite.
 
-With that in place, the full suite of tests can be run using `npm test`. Each test resides in a file name ending in `.test.js` so it is possible to run subsets of the tests by directly invoking mocha, e.g., `mocha test/custom.test.js`, `mocha test/*.test.js`, or `mocha test/probes/*.test.js`.
+With that in place, the full suite of tests can be run using `npm test`. Each test resides in a file name
+ending in `.test.js` so it is possible to run subsets of the tests by directly invoking mocha, e.g.,
+`mocha test/custom.test.js`, `mocha test/*.test.js`, or `mocha test/probes/*.test.js`
 
-There is also a `main` container created that can be used as a clean-room environment for testing. So if we have put the `appoptics-apm-node` code in the `ao` directory (because it is short and concise) docker will create the container `ao_main_1` as a default name. To use that, presuming the `docker-compose up -d` command has already been executed:
+There is also a `main` container created that can be used as a clean-room environment for testing. So if we
+have put the `appoptics-apm-node` code in the `ao` directory (because it is short and concise) docker will
+create the container `ao_main_1` as a default name. To use that, presuming the `docker-compose up -d`
+command has already been executed:
 
 1. `docker exec -it ao_main_1 /bin/bash` - get a command prompt in the container
 2. `cd appoptics` - change to the appoptics directory
 3. `npm install` - to install the package and dependencies
-4. `source env.sh docker-java` - to setup the java-collector (beta note: the "docker" arg needs to be updated)
+4. `source env.sh docker-java` - to setup the java-collector (beta note: the "docker" arg needs to be
+updated)
 5. `source env.sh add-bin` - to add the node_module executables to the path
 5. run tests using `npm test` or using mocha directory as shown above.
 
 
-For testing, a mock reporter that listens on UDP port 7832 is used (hardcoded in `test/helper.js`). The mock reporter intercepts UDP messages and checks them for correctness. When you source `env.sh` it will set environment variables appropriately. It does require that `AO_TOKEN_STG` exists in your environment. That is the service key that is used for access.  If using the java-collector or scribe-collector the key can be fake, like `f08da708-7f1c-4935-ae2e-122caf1ebe31`. If accessing a production or staging environment it must be a valid key.
+For testing, a mock reporter that listens on UDP port 7832 is used (hardcoded in `test/helper.js`). The
+mock reporter intercepts UDP messages and checks them for correctness. When you source `env.sh` it will set
+environment variables appropriately. It does require that `AO_TOKEN_STG` exists in your environment. That
+is the service key that is used for access.  If using the java-collector or scribe-collector the key can be
+fake, like `f08da708-7f1c-4935-ae2e-122caf1ebe31`. If accessing a production or staging environment it must
+be a valid key.
 
 
-It is possible to use non-production versions of the `appoptics-bindings` package when developing. There are many different ways to do so ranging from npm's `link` command, manually copying files, and many options embedded in the npm `postinstall` script, `install-appoptics-bindings.js`. The primary documentation for this advanced feature is the code.
+It is possible to use non-production versions of the `appoptics-bindings` package when developing. There
+are many different ways to do so ranging from npm's `link` command, manually copying files, and many
+options embedded in the npm `postinstall` script, `install-appoptics-bindings.js`. The primary
+documentation for this advanced feature is the code.
 
 
 ## Docs
@@ -104,7 +128,7 @@ supplied using docker. In the `appoptics-apm-node` root directory run:
 to start the containers needed for testing.
 
 Next use `env.sh` to setup the environment variables correctly. `env.sh` requires that
-the `AO_TOKEN_STG` environment variable be defined as holding the secret token portion
+the `AO_TOKEN_PROD` environment variable be defined as holding the secret token portion
 (the part before `:service-name`) of `APPOPTICS_SERVICE_KEY`.
 
 `env.sh` defines environment variables for the testing modules; it must be sourced,
@@ -127,4 +151,3 @@ useful for debugging using something like `mocha --inspect-brk test/probes/http.
 When your changes pass testing, including any new tests required to verify your changes
 and documentation if appropriate, issue a PR. We'll try to take a prompt look at get back
 to you quickly.
-
