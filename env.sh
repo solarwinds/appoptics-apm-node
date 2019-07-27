@@ -1,7 +1,7 @@
 ARG=$1
 PARAM=$2
 
-AO_TOKEN=${AO_TOKEN_STG:-AO_TOKEN_PROD}
+AO_TOKEN=${AO_TOKEN_STG:-$AO_TOKEN_PROD}
 
 if [[ -z "$AO_TOKEN" ]]; then
     echo "AO_TOKEN_PROD or AO_TOKEN_STG must be defined and contain a valid SolarWinds token"
@@ -58,12 +58,8 @@ elif [[ "$ARG" = "bash" ]]; then
     # set logging that should be seen during testing.
     export APPOPTICS_LOG_SETTINGS=error,warn,patching,bind,debug
 
-    # these are generally the right settings unless a real collector
-    # is required.
-    #export APPOPTICS_COLLECTOR=$AO_COLLECTOR
     export APPOPTICS_COLLECTOR=localhost:7832
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:ao-node-test
-    # set this to ssl and change APPOPTICS_COLLECTOR to use SSL.
     export APPOPTICS_REPORTER=udp
 
     # and the buckets need to be adjusted if using UDP because the defaults
@@ -102,9 +98,16 @@ elif [[ "$ARG" = "bash" ]]; then
     export AO_TEST_REDIS_3_0=localhost:6379
     # the tedious probe tests SQL Server.
     export AO_TEST_SQLSERVER_EX=localhost:1433
+elif [[ "$ARG" = "stg" ]]; then
+    export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
+    export APPOPTICS_REPORTER=ssl
+elif [[ "$ARG" = "prod" ]]; then
+    export APPOPTICS_COLLECTOR=collector.appoptics.com
+    export APPOPTICS_SERVICE_KEY=${AO_TOKEN_PROD}:ao-node-test
+    export APPOPTICS_REPORTER=ssl
 elif [[ "$ARG" = "bam-local-mongo" ]]; then
-    # I have local copies running so this reassigns
-    # the ports that docker uses.
+    # I have local copies running so this reassigns the ports that docker uses.
     AO_TEST_MONGO_2_6_HOST_PORT=27027
     AO_TEST_MYSQL_HOST_PORT=33306
 elif [[ "$ARG" = "travis" ]]; then
@@ -134,7 +137,7 @@ elif [[ "$ARG" = "travis" ]]; then
     ## the tedious probe tests SQL Server.
     #export AO_TEST_SQLSERVER_EX=mssql:1433
     #export AO_TEST_SQLSERVER_EX_USERNAME=sa
-    echo "WARNING, travis is no longer used"
+    echo "[WARNING] travis is no longer used"
 elif [[ "$ARG" = "debug" ]]; then
     # this section is more for reference than anything else.
     # LEVEL 2 is most of what you want to see. 6 (highest) is too much.
@@ -144,14 +147,16 @@ elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
     export APPOPTICS_TOKEN_BUCKET_RATE=1000
 elif [[ "$ARG" = "bindings" ]]; then
-    # use these to provide authentication and specify an alternate branch/tag
-    # for use by install-appoptics-bindings.js. the example below, given a git
-    # auth token in the variable AO_TEST_GITAUTH, will cause "npm run postinstall"
-    # to fetch appoptics-bindings directly from github. documentation is the code
-    # in install-appoptics-bindings.js
-    export AO_TEST_PACKAGE=appoptics/node-appoptics-bindings
-    # this requires that one's git access token is already defined.
-    export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
+    # this is no longer used as appoptics is now public, open source software.
+    ## use these to provide authentication and specify an alternate branch/tag
+    ## for use by install-appoptics-bindings.js. the example below, given a git
+    ## auth token in the variable AO_TEST_GITAUTH, will cause "npm run postinstall"
+    ## to fetch appoptics-bindings directly from github. documentation is the code
+    ## in install-appoptics-bindings.js
+    #export AO_TEST_PACKAGE=appoptics/node-appoptics-bindings
+    ## this requires that one's git access token is already defined.
+    #export AO_TEST_GITAUTH=${AO_TOKEN_GIT}
+    echo "[WARNING] bindings is no longer used"
 elif [[ "$ARG" = "help" ]]; then
     echo "try"
     echo "    $ sudo tcpdump -i lo -n udp port 7832"
