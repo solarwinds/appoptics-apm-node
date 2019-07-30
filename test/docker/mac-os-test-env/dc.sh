@@ -9,7 +9,7 @@ case $action in
     ps)
 	docker-compose ps
 	;;
-	test)
+    test)
 	docker-compose down -v --remove-orphans
 	docker-compose run --service-ports --rm --name node_main node_main test/docker/mac-os-test-env/start.sh
 	;;
