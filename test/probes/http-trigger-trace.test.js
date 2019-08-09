@@ -9,6 +9,8 @@ const addon = ao.addon
 
 const http = require('http');
 const axios = require('axios');
+const hmacSha1 = require('crypto-js/hmac-sha1');
+const hashToHex = require('crypto-js/enc-hex').stringify;
 
 
 // ok
@@ -61,21 +63,46 @@ const optionsTests = [
 ]
 
 // Sample X-Trace-Options-Signature and X-Trace-Options to test
-// Current time needs to be ‘mocked’ as: 1564597681
-const mockTimestamp = 1564597681;
-// Trigger token: 8mZ98ZnZhhggcsUmdMbS
+// This token is used for udp/file-reporter testing.
 const mockToken = '8mZ98ZnZhhggcsUmdMbS';
+const badMockToken = 'xyzzyadventuredragon';
+const signedPdKeys = 'lo:se,check-id:123';
 
-const sigTests = [
+const signedTests = [
   // ok
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=1564597681', signature: '2c1c398c3e6be898f47f74bf74f035903b48b59c'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'ts', desc: 'a correct signature'},
   // bad, signature doesn't match
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=1564597681', signature: '2c1c398c3e6be898f47f74bf74f035903b48baaa'},
-  // bad, missing timestamp
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123', signature: '2c1c398c3e6be898f47f74bf74f035903b48b59c'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'ts', sig: 'bad', desc: 'an incorrect signature'},
   // bad, timestamp outside window
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=1288310400', signature: '2c1c398c3e6be898f47f74bf74f035903b48b59c'}
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'expired', desc: 'an expired timestamp'},
+  // bad, missing timestamp
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123', desc: 'a missing timestamp'},
 ];
+
+function makeSignedHeaders (test) {
+  let options = test.options;
+  if (test.ts) {
+    options = options.replace('${ts}', Date.now());
+  }
+  const token = test.sig === 'bad' ? badMockToken : mockToken;
+  const hmac = hmacSha1(options, token);
+  const hexString = hashToHex(hmac);
+  return {
+    'x-trace-options': options,
+    'x-trace-options-signature': hexString,
+  }
+}
+
+const checks = {
+  entry: function (msg) {
+    expect(msg).property('Layer', 'nodejs')
+    expect(msg).property('Label', 'entry')
+  },
+  exit: function (msg) {
+    expect(msg).property('Layer', 'nodejs')
+    expect(msg).property('Label', 'exit')
+  }
+};
 
 //
 // mock up a getTraceSettings function until oboe is ready.
@@ -220,6 +247,10 @@ describe('probes.http', function () {
       });
     });
 
+    after(function () {
+      server.close();
+    })
+
     describe('it should handle x-trace-options correctly', function () {
       optionsTests.forEach(t => {
         it(`should handle ${t.req}`, function (done) {
@@ -230,10 +261,48 @@ describe('probes.http', function () {
                 //console.log(`options response=${r.headers['x-trace-options-response']}`)
                 expect(r.headers['x-trace-options-response']).equal(t.res);
                 done();
-              })
+              });
+          });
+        });
+      });
+    });
+
+    describe('it should handle x-trace-options with x-trace-options-signature', function () {
+      signedTests.forEach(t => {
+        it(`should handle ${t.desc}`, function (done) {
+          afterServerIsReady.then(() => {
+            signedTest(t, done);
           })
         })
       });
-    })
+    });
+
+    function signedTest (t, done) {
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg);
+          expect(msg).property('pd-keys', signedPdKeys);
+          debugger
+          //expect(msg).property('Method', 'GET')
+          //expect(msg).property('Proto', 'http')
+          //expect(msg).property('HTTP-Host', 'localhost')
+          //expect(msg).property('Port', port)
+          //expect(msg).property('URL', '/foo?bar=baz')
+          //expect(msg).property('ClientIP')
+        },
+        function (msg) {
+          check.server.exit(msg)
+          //expect(msg).property('Status', 200)
+        }
+      ], function () {
+        done();
+      })
+
+      const opts = Object.assign({}, options, {headers: makeSignedHeaders(t)});
+      axios.request(opts)
+        .then(r => {
+          console.log('x-trace-options-response', r.headers['x-trace-options-response']);
+        })
+    }
   })
 })
