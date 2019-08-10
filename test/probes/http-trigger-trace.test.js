@@ -82,7 +82,12 @@ const signedTests = [
 function makeSignedHeaders (test) {
   let options = test.options;
   if (test.ts) {
-    options = options.replace('${ts}', Date.now());
+    let ts = Math.floor(Date.now() / 1000);
+    if (test.ts === 'expired') {
+      // force it 5 minutes and 1 second ago.
+      ts -= 60 * 5 + 1;
+    }
+    options = options.replace('${ts}', ts);
   }
   const token = test.sig === 'bad' ? badMockToken : mockToken;
   const hmac = hmacSha1(options, token);
@@ -148,7 +153,7 @@ describe('probes.http', function () {
 
     // simulate getTraceSettings()
     realGetTraceSettings = ao.addon.Settings.getTraceSettings;
-    ao.addon.Settings.getTraceSettings = mockGetTraceSettings;
+    //ao.addon.Settings.getTraceSettings = mockGetTraceSettings;
 
     // set the testing context for debugging tests.
     ao.g.testing(__filename)
@@ -280,9 +285,9 @@ describe('probes.http', function () {
     function signedTest (t, done) {
       helper.doChecks(emitter, [
         function (msg) {
+          console.log('checking entry');
           check.server.entry(msg);
           expect(msg).property('pd-keys', signedPdKeys);
-          debugger
           //expect(msg).property('Method', 'GET')
           //expect(msg).property('Proto', 'http')
           //expect(msg).property('HTTP-Host', 'localhost')
@@ -291,6 +296,7 @@ describe('probes.http', function () {
           //expect(msg).property('ClientIP')
         },
         function (msg) {
+          console.log('checking exit');
           check.server.exit(msg)
           //expect(msg).property('Status', 200)
         }
