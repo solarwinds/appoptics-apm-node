@@ -70,18 +70,23 @@ const signedPdKeys = 'lo:se,check-id:123';
 
 const signedTests = [
   // ok
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'ts', desc: 'a correct signature'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
+    ts: 'ts', desc: 'a correct signature', sample: true},
   // bad, signature doesn't match
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'ts', sig: 'bad', desc: 'an incorrect signature'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
+    ts: 'ts', sig: 'bad', desc: 'an incorrect signature', sample: false},
   // bad, timestamp outside window
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}', ts: 'expired', desc: 'an expired timestamp'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
+    ts: 'expired', desc: 'an expired timestamp', sample: false},
   // bad, missing timestamp
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123', desc: 'a missing timestamp'},
+  {options: 'trigger-trace;pd-keys=lo:se,check-id:123',
+    desc: 'a missing timestamp', sample: false},
 ];
 
 function makeSignedHeaders (test) {
   let options = test.options;
   if (test.ts) {
+    // make unix timestamp - seconds since epoch.
     let ts = Math.floor(Date.now() / 1000);
     if (test.ts === 'expired') {
       // force it 5 minutes and 1 second ago.
@@ -256,7 +261,7 @@ describe('probes.http', function () {
       server.close();
     })
 
-    describe('it should handle x-trace-options correctly', function () {
+    describe('it should handle x-trace-options headers correctly', function () {
       optionsTests.forEach(t => {
         it(`should handle ${t.req}`, function (done) {
           afterServerIsReady.then(() => {
@@ -272,6 +277,13 @@ describe('probes.http', function () {
       });
     });
 
+    //
+    // test various x-trace-options header with x-trace-options-signature header
+    // permutations.
+    //
+    // this mini-suite of tests should be run last as it replaces the listener set
+    // up at the start.
+    //
     describe('it should handle x-trace-options with x-trace-options-signature', function () {
       signedTests.forEach(t => {
         it(`should handle ${t.desc}`, function (done) {
@@ -282,32 +294,59 @@ describe('probes.http', function () {
       });
     });
 
+    function wait (ms) {
+      if (ms === 0) {
+        return Promise.resolve()
+      }
+      return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
     function signedTest (t, done) {
-      helper.doChecks(emitter, [
-        function (msg) {
-          console.log('checking entry');
-          check.server.entry(msg);
-          expect(msg).property('pd-keys', signedPdKeys);
-          //expect(msg).property('Method', 'GET')
-          //expect(msg).property('Proto', 'http')
-          //expect(msg).property('HTTP-Host', 'localhost')
-          //expect(msg).property('Port', port)
-          //expect(msg).property('URL', '/foo?bar=baz')
-          //expect(msg).property('ClientIP')
-        },
-        function (msg) {
-          console.log('checking exit');
-          check.server.exit(msg)
-          //expect(msg).property('Status', 200)
+      let messageCount = 0;
+      // if the test should be sampled set up the expected messages
+      // to be received. if not sampled make sure it isn't by counting
+      // the messages received.
+      if (t.sample) {
+        helper.doChecks(emitter, [
+          function (msg) {
+            console.log('checking entry');
+            check.server.entry(msg);
+            expect(msg).property('pd-keys', signedPdKeys);
+            //expect(msg).property('Method', 'GET')
+            //expect(msg).property('Proto', 'http')
+            //expect(msg).property('HTTP-Host', 'localhost')
+            //expect(msg).property('Port', port)
+            //expect(msg).property('URL', '/foo?bar=baz')
+            //expect(msg).property('ClientIP')
+          },
+          function (msg) {
+            console.log('checking exit');
+            check.server.exit(msg)
+            //expect(msg).property('Status', 200)
+          }
+        ], function () {
+          //done();
+        });
+      } else {
+        function counterListener (msg) {
+          messageCount += 1;
         }
-      ], function () {
-        done();
-      })
+        emitter.removeAllListeners('message');
+        emitter.on('message', counterListener);
+      }
+
 
       const opts = Object.assign({}, options, {headers: makeSignedHeaders(t)});
       axios.request(opts)
         .then(r => {
           console.log('x-trace-options-response', r.headers['x-trace-options-response']);
+          return wait(250);
+        })
+        .then(() => {
+          if (!t.sample) {
+            expect(messageCount).equal(0, 'messageCount must equal 0');
+          }
+          done();
         })
     }
   })
