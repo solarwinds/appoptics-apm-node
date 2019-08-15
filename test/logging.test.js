@@ -22,6 +22,7 @@ describe('logging', function () {
   const logger = debug.log
 
   before(function () {
+    ao.sampleRate = 1000000;
     ao.logLevel = 'error,warn'
   })
 
@@ -77,7 +78,15 @@ describe('logging', function () {
     }
     ao.loggers.error(msg)
     expect(called).equal(true, 'logger must be called')
-  })
+  });
+
+  it('should throw when constructing a debounced logger that does not exist', function () {
+    function badLogger () {
+      return new ao.loggers.Debounce('xyzzy');
+    }
+    expect(badLogger).throws('Debounce: level \'xyzzy\' doesn\'t exist');
+  });
+
 
   it('should debounce repetitive logging by count', function () {
     const msg = 'test logging'
