@@ -67,20 +67,53 @@ const optionsTests = [
 const mockToken = '8mZ98ZnZhhggcsUmdMbS';
 const badMockToken = 'xyzzyadventuredragon';
 const signedPdKeys = 'lo:se,check-id:123';
+const signedCustomKey = 'custom-1';
+const signedCustomValue = 'One';
+const edStack = [];
+
+function disableTT () {
+  edStack.push(ao.cfg.triggerTraceEnabled);
+  ao.cfg.triggerTraceEnabled = false;
+}
+
+function restoreTT () {
+  ao.cfg.triggerTraceEnabled = edStack.pop();
+}
+
+function disableTracing () {
+  edStack.push(ao.traceMode);
+  ao.traceMode = 'disabled';
+}
+
+function restoreTracing () {
+  ao.traceMode = edStack.pop();
+}
 
 const signedTests = [
   // ok
-  {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
-    ts: 'ts', desc: 'a correct signature', sample: true},
+  {options: `trigger-trace;pd-keys=lo:se,check-id:123;${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    ts: 'ts', desc: 'a correct signature', sample: true,
+    expected: 'auth=ok;trigger-trace=ok'},
   // bad, signature doesn't match
   {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
-    ts: 'ts', sig: 'bad', desc: 'an incorrect signature', sample: false},
+    ts: 'ts', sig: 'bad', desc: 'an incorrect signature', sample: false,
+    expected: 'auth=bad-signature'},
   // bad, timestamp outside window
   {options: 'trigger-trace;pd-keys=lo:se,check-id:123;ts=${ts}',
-    ts: 'expired', desc: 'an expired timestamp', sample: false},
+    ts: 'expired', desc: 'an expired timestamp', sample: false,
+    expected: 'auth=bad-timestamp'},
   // bad, missing timestamp
   {options: 'trigger-trace;pd-keys=lo:se,check-id:123',
-    desc: 'a missing timestamp', sample: false},
+    desc: 'a missing timestamp', sample: false,
+    expected: 'auth=bad-timestamp'},
+  // trigger-trace disabled
+  {options: `trigger-trace;pd-keys=lo:se,check-id:123;${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    ts: 'ts', desc: 'trigger-trace-disabled', sample: false, setup: disableTT, teardown: restoreTT,
+    expected: 'trigger-trace=trigger-trace-disabled'},
+  // tracing disabled
+  {options: `trigger-trace;pd-keys=lo:se,check-id:123;${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    ts: 'ts', desc: 'trigger-trace-disabled', sample: false, setup: disableTracing, teardown: restoreTracing,
+    expected: 'auth=not-checked;trigger-trace=tracing-disabled'},
 ];
 
 function makeSignedHeaders (test) {
@@ -271,7 +304,11 @@ describe('probes.http', function () {
                 //console.log(`options response=${r.headers['x-trace-options-response']}`)
                 expect(r.headers['x-trace-options-response']).equal(t.res);
                 done();
-              });
+              })
+              .catch(e => {
+                console.log(e.message);
+                done(e);
+              })
           });
         });
       });
@@ -303,6 +340,7 @@ describe('probes.http', function () {
 
     function signedTest (t, done) {
       let messageCount = 0;
+      let response;
       // if the test should be sampled set up the expected messages
       // to be received. if not sampled make sure it isn't by counting
       // the messages received.
@@ -312,6 +350,7 @@ describe('probes.http', function () {
             console.log('checking entry');
             check.server.entry(msg);
             expect(msg).property('pd-keys', signedPdKeys);
+            expect(msg).property(signedCustomKey, signedCustomValue);
             //expect(msg).property('Method', 'GET')
             //expect(msg).property('Proto', 'http')
             //expect(msg).property('HTTP-Host', 'localhost')
@@ -335,19 +374,35 @@ describe('probes.http', function () {
         emitter.on('message', counterListener);
       }
 
+      if (t.setup) {
+        t.setup();
+      }
+
 
       const opts = Object.assign({}, options, {headers: makeSignedHeaders(t)});
       axios.request(opts)
         .then(r => {
-          console.log('x-trace-options-response', r.headers['x-trace-options-response']);
+          response = r.headers['x-trace-options-response'];
+          expect(typeof response).equal('string', 'x-trace-options-response header must be a string');
+          expect(response).equal(t.expected);
           return wait(250);
         })
         .then(() => {
           if (!t.sample) {
             expect(messageCount).equal(0, 'messageCount must equal 0');
           }
+          if (t.teardown) {
+            t.teardown();
+          }
           done();
         })
+        .catch(e => {
+          console.log(e.message);
+          if (t.teardown) {
+            t.teardown();
+          }
+          done(e);
+        });
     }
   })
 })
