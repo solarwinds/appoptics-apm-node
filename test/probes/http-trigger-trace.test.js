@@ -7,11 +7,9 @@ const addon = ao.addon
 const testdebug = ao.logger.make('testdebug');
 
 const http = require('http');
-const util = require('util');
 const axios = require('axios');
 const hmacSha1 = require('crypto-js/hmac-sha1');
 const hashToHex = require('crypto-js/enc-hex').stringify;
-
 
 
 const mockToken = '8mZ98ZnZhhggcsUmdMbS';       // built-in secret key for udp/file reporters
@@ -35,7 +33,9 @@ const erStack = [];                             // a stack to enable and restore
 // sig [optional string] - 'bad' => bad key, 'good' => good key, else no signature
 // setup, teardown [optional function] - if present execute at start and end of test
 // expected [string] - response expected in x-trace-options-response
-// expectedKeys [object] - KV pairs must be present in entry event message.
+// expectedKeys [optional object] - keys that must be present in entry event message.
+// invalidKeys [optional object] - keys that must *not* be present in the entry event message.
+// debug [optional boolean] - true if invoke debugger for test
 //
 const tests = [
   //
@@ -54,18 +54,19 @@ const tests = [
   {desc: 'report and log ignored keys',
     options: 'what_is_this=value_thing;and_that=otherval;whoot',
     sample: true,       // TODO BAM may need to check return of getTracingDecisions() to know what to do
-    expected: 'trigger-trace=not-requested;ignored=what_is_this,and_that,whoot',
-    expectedKeys: {}},
+    expected: 'trigger-trace=not-requested;ignored=what_is_this,and_that,whoot'},
   {desc: 'ignore and report trigger-trace with a value',
     options: 'trigger-trace=1;custom-something=value_thing',
     sample: true,       // ditto
     expected: 'trigger-trace=not-requested;ignored=trigger-trace',
-    expectedKeys: {'custom-something': 'value_thing'}},
+    expectedKeys: {'custom-something': 'value_thing'},
+    invalidKeys: ttKey},
   {desc: 'keep the value of the first repeated key',
     options: 'custom-something=keep_this_0;pd-keys=keep_this;pd-keys=029734wrqj21,0d9;custom-something=otherval',
     sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: {'custom-something': 'keep_this_0', PDKeys: 'keep_this'}},
+    expectedKeys: {'custom-something': 'keep_this_0', PDKeys: 'keep_this'},
+    invalidKeys: ttKey},
   {desc: 'keep a value that includes ‘=’',
     options: 'trigger-trace;custom-something=value_thing=4;custom-OtherThing=other val',
     sample: true,
@@ -97,30 +98,25 @@ const tests = [
   {desc: 'respond that a signature is not valid',
     options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
     ts: 'ts', sig: 'bad', sample: false,
-    expected: 'auth=bad-signature',
-    expectedKeys: {PDKeys: pdKeysValue}},
+    expected: 'auth=bad-signature'},
   {desc: 'respond that an expired timestamp is not valid',
     options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
     ts: 'expired', sig: 'good', sample: false,
-    expected: 'auth=bad-timestamp',
-    expectedKeys: {PDKeys: pdKeysValue}},
+    expected: 'auth=bad-timestamp'},
   {desc: 'respond that a missing timestamp is not valid',
     options: `trigger-trace;pd-keys=${pdKeysValue}`,
     sig: 'good', sample: false,
-    expected: 'auth=bad-timestamp',
-    expectedKeys: {PDKeys: pdKeysValue}},
+    expected: 'auth=bad-timestamp'},
   {desc: 'respond that trigger trace is disabled when it is',
     options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts', sig: 'good', sample: false,
     setup: disableTT, teardown: restoreTT,
-    expected: 'trigger-trace=trigger-trace-disabled',
-    expectedKeys: {PDKeys: pdKeysValue}},
+    expected: 'trigger-trace=trigger-trace-disabled'},
   {desc: 'respond that tracing is disabled when it is',
     options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts', sig: 'good', sample: false,
     setup: disableTracing, teardown: restoreTracing,
-    expected: 'auth=not-checked;trigger-trace=tracing-disabled',
-    expectedKeys: {PDKeys: pdKeysValue}},
+    expected: 'auth=not-checked;trigger-trace=tracing-disabled'},
   {desc: 'verify mocked rate-limiting returns the right message',
     options: `trigger-trace;pd-keys=${pdKeysValue}`,
     sample: false,
@@ -135,12 +131,14 @@ const tests = [
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
     xtrace: 1, sample: true,
     expected: 'trigger-trace=ignored',
-    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'}},
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
+    invalidKeys: ttKey},
   {desc: 'add x-trace-options KV pairs to an existing x-trace',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover`,
     xtrace: 1, sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'}}
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
+    invalidKeys: ttKey}
 ];
 /* eslint-enable max-len */
 
@@ -323,10 +321,17 @@ describe('probes.http trigger-trace', function () {
     });
   });
 
+  //
   // and this does the real work to execute the tests.
+  //
   function executeTest (t, done) {
     let messageCount = 0;
     let response;
+
+    if (t.debug) {
+      debugger // eslint-disable-line no-debugger
+    }
+
     // if the test should be sampled set up the expected messages
     // to be received. if not sampled make sure it isn't by counting
     // the messages received.
@@ -336,10 +341,18 @@ describe('probes.http trigger-trace', function () {
       helper.doChecks(emitter, [
         function (msg) {
           testdebug('checking entry');
+
+          messageCount += 1;
           check.server.entry(msg);
 
           for (const key in expectedKeys) {
             expect(msg).property(key, expectedKeys[key]);
+          }
+
+          if (t.invalidKeys) {
+            for (const key in t.invalidKeys) {
+              expect(msg).not.property(key);
+            }
           }
           //expect(msg).property('Method', 'GET')
           //expect(msg).property('Proto', 'http')
@@ -350,6 +363,8 @@ describe('probes.http trigger-trace', function () {
         },
         function (msg) {
           testdebug('checking exit');
+
+          messageCount += 1;
           check.server.exit(msg)
           //expect(msg).property('Status', 200)
         }
@@ -391,6 +406,8 @@ describe('probes.http trigger-trace', function () {
       .then(() => {
         if (!t.sample) {
           expect(messageCount).equal(0, 'messageCount must equal 0');
+        } else {
+          expect(messageCount).equal(2, 'expected entry and exit messages');
         }
         if (t.teardown) {
           t.teardown(t);
