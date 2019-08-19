@@ -7,21 +7,12 @@ const addon = ao.addon
 const testdebug = ao.logger.make('testdebug');
 
 const http = require('http');
+const util = require('util');
 const axios = require('axios');
 const hmacSha1 = require('crypto-js/hmac-sha1');
 const hashToHex = require('crypto-js/enc-hex').stringify;
 
-// test definitions.
-//
-// desc [string] - description of test for `it('should ${test.desc}, ...)`.
-// options [string] - the x-trace-options header
-// ts [optional string] - at test execution, replaces '${ts}' in the options header with a unix timestamp
-// sample [boolean] - the request should be sampled, so check for correct UDP messages
-// sig [optional string] - 'bad' => bad key, 'good' => good key, else no signature
-// setup, teardown [optional function] - if present execute at start and end of test
-// expected [string] - response expected in x-trace-options-response
-// expectedKeys [object] - KV pairs must be present in entry event message.
-//
+
 
 const mockToken = '8mZ98ZnZhhggcsUmdMbS';       // built-in secret key for udp/file reporters
 const badMockToken = 'xyzzyadventuredragon';    // any secret key that isn't the same as above
@@ -34,10 +25,22 @@ const erStack = [];                             // a stack to enable and restore
 
 /* eslint-disable max-len */
 
+// test definitions.
 //
-// the test definitions
+// desc [string] - description of test for `it('should ${test.desc}, ...)`.
+// options [string] - the x-trace-options header
+// xtrace [optional boolean] - if present add an xtrace header with sample bit as specified
+// ts [optional string] - at test execution, replaces '${ts}' in the options header with a unix timestamp
+// sample [boolean] - the request should be sampled, so check for correct UDP messages
+// sig [optional string] - 'bad' => bad key, 'good' => good key, else no signature
+// setup, teardown [optional function] - if present execute at start and end of test
+// expected [string] - response expected in x-trace-options-response
+// expectedKeys [object] - KV pairs must be present in entry event message.
 //
 const tests = [
+  //
+  // variations from acceptance criteria, phase I: permutations on x-trace-options contents.
+  //
   {desc: 'handle a valid x-trace-options header',
     options: 'trigger-trace;custom-something=value;custom-OtherThing=other val;pd-keys=029734wr70:9wqj21,0d9j1',
     sample: true,
@@ -83,6 +86,9 @@ const tests = [
     sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: {'custom-something': 'value_thing', PDKeys: '02973r70', 'custom-key': 'val'}},
+  //
+  // from results-matrix, variations on responses for different scenarios
+  //
   {desc: 'handle a valid signature',
     options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts', sig: 'good', sample: true,
@@ -115,27 +121,29 @@ const tests = [
     setup: disableTracing, teardown: restoreTracing,
     expected: 'auth=not-checked;trigger-trace=tracing-disabled',
     expectedKeys: {PDKeys: pdKeysValue}},
+  {desc: 'verify mocked rate-limiting returns the right message',
+    options: `trigger-trace;pd-keys=${pdKeysValue}`,
+    sample: false,
+    setup: wrapGTS, teardown: unwrapGTS,
+    expected: 'trigger-trace=rate-exceeded'},
+  {desc: 'verify that signed-mocked rate-limiting returns the right message',
+    options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
+    ts: 'ts', sig: 'good', sample: false,
+    setup: wrapGTS, teardown: unwrapGTS,
+    expected: 'auth=ok;trigger-trace=rate-exceeded'},
+  {desc: 'prioritize an x-trace header over a trigger-trace request',
+    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
+    xtrace: 1, sample: true,
+    expected: 'trigger-trace=ignored',
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'}},
+  {desc: 'add x-trace-options KV pairs to an existing x-trace',
+    options: `pd-keys=${pdKeysValue};custom-xyzzy=plover`,
+    xtrace: 1, sample: true,
+    expected: 'trigger-trace=not-requested',
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'}}
 ];
 /* eslint-enable max-len */
 
-//
-// helpers to disable/restore trigger-tracing and tracing
-//
-function disableTT () {
-  erStack.push(ao.cfg.triggerTraceEnabled);
-  ao.cfg.triggerTraceEnabled = false;
-}
-function restoreTT () {
-  ao.cfg.triggerTraceEnabled = erStack.pop();
-}
-
-function disableTracing () {
-  erStack.push(ao.traceMode);
-  ao.traceMode = 'disabled';
-}
-function restoreTracing () {
-  ao.traceMode = erStack.pop();
-}
 
 //
 // helper to make headers using a test definition as the spec.
@@ -160,7 +168,75 @@ function makeSignedHeaders (test) {
     headers['x-trace-options-signature'] = hexString;
   }
 
+  // add an xtrace with appropriate sample bit if requezted
+  if ('xtrace' in test) {
+    headers['x-trace'] = ao.addon.Metadata.makeRandom(test.xtrace).toString();
+  }
+
   return headers;
+}
+
+//
+// helpers to disable/restore trigger-tracing and tracing
+//
+function disableTT () {
+  erStack.push(ao.cfg.triggerTraceEnabled);
+  ao.cfg.triggerTraceEnabled = false;
+}
+function restoreTT () {
+  ao.cfg.triggerTraceEnabled = erStack.pop();
+}
+
+function disableTracing () {
+  erStack.push(ao.traceMode);
+  ao.traceMode = 'disabled';
+}
+function restoreTracing () {
+  ao.traceMode = erStack.pop();
+}
+
+// helper to force rate-exceeded return
+// oops, look like rate limiting doesn't work with UDP.
+// check with daniel - maybe oboe reporter can be a
+// base class that handles rate limiting, etc. that
+// each class (ssl, udp, file) inherits from?
+//function consumeAllowed (test) {
+//  let counter = 0;
+//  const options = {
+//    ttRequested: true,
+//    xtraceOpts: test.options
+//  }
+//  const results = [];
+//
+//  while (counter++ < 100) {
+//    const settings = ao.addon.Settings.getTraceSettings('', options);
+//    results.push(settings.status);
+//    if (settings.status !== 0) {
+//      console.log(settings.status, settings.message);
+//    }
+//  }
+//  return results;
+//}
+
+// helper to wrap getTraceSettings()
+function wrapGTS () {
+  const realGetTraceSettings = ao.getTraceSettings;
+  erStack.push(realGetTraceSettings);
+  ao.getTraceSettings = function wrappedGetTraceSettings (...args) {
+    const settings = realGetTraceSettings(...args);
+    if (settings.status > 0) {
+      return settings;
+    }
+    // mock that the good return is rate-exceeded.
+    settings.message = 'rate-exceeded';
+    settings.doSample = false;
+    settings.doMetrics = false;
+    settings.metadata.setSampleFlagTo(0);
+    return settings;
+  }
+}
+function unwrapGTS () {
+  ao.getTraceSettings = erStack.pop();
 }
 
 //
@@ -291,7 +367,7 @@ describe('probes.http trigger-trace', function () {
     // the test might have specific setup required. this was put into place to
     // disable tracing/trigger-tracing so those conditions could be tested.
     if (t.setup) {
-      t.setup();
+      t.setup(t);
     }
 
     // make the request. using a catch on the promise chain is required when an
@@ -300,10 +376,16 @@ describe('probes.http trigger-trace', function () {
     const opts = Object.assign({}, options, {headers: makeSignedHeaders(t)});
     axios.request(opts)
       .then(r => {
+        const xtrace = r.headers['x-trace'];
+        expect(typeof xtrace).equal('string');
+        expect(xtrace.length).equal(60);
+        // if expecting
+        if ('xtrace' in t) {
+          expect(+ao.addon.Metadata.sampleFlagIsSet(xtrace)).equal(t.xtrace);
+        }
         response = r.headers['x-trace-options-response'];
-        expect(typeof response).equal('string', 'x-trace-options-response header must be a string');
         expect(response).equal(t.expected);
-        // wait to make sure no messages come in if not expected any.
+        // wait to make sure no messages come in if not expecting any.
         return wait(200);
       })
       .then(() => {
@@ -311,14 +393,14 @@ describe('probes.http trigger-trace', function () {
           expect(messageCount).equal(0, 'messageCount must equal 0');
         }
         if (t.teardown) {
-          t.teardown();
+          t.teardown(t);
         }
         done();
       })
       .catch(e => {
         console.log(e.message); // eslint-disable-line
         if (t.teardown) {
-          t.teardown();
+          t.teardown(t);
         }
         done(e);
       });
