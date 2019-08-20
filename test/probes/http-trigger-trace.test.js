@@ -154,6 +154,13 @@ const tests = [
     expected: 'auth=ok;trigger-trace=ignored',
     expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
     invalidKeys: ttKey},
+  {desc: 'add x-trace-options KV pairs to an existing x-trace',
+    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    ts: 'ts', sig: 'good',
+    xtrace: 0, sample: false,
+    expected: 'auth=ok;trigger-trace=ignored',
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
+    invalidKeys: ttKey},
   // if x-trace and bad sig x-trace-options without trigger-trace request, do neither
   {desc: 'invalidate both x-trace and x-trace-options on bad signature',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
