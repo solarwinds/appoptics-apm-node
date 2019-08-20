@@ -111,7 +111,7 @@ const tests = [
     options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts', sig: 'good', sample: false,
     setup: disableTT, teardown: restoreTT,
-    expected: 'trigger-trace=trigger-trace-disabled'},
+    expected: 'auth=ok;trigger-trace=trigger-tracing-disabled'},
   {desc: 'respond that tracing is disabled when it is',
     options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts', sig: 'good', sample: false,
@@ -127,7 +127,8 @@ const tests = [
     ts: 'ts', sig: 'good', sample: false,
     setup: wrapGTS, teardown: unwrapGTS,
     expected: 'auth=ok;trigger-trace=rate-exceeded'},
-  {desc: 'prioritize an x-trace header over a trigger-trace request',
+  // unexpected usage
+  {desc: 'prioritize an x-trace header over unsigned trigger-trace request',
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
     xtrace: 1, sample: true,
     expected: 'trigger-trace=ignored',
@@ -138,7 +139,12 @@ const tests = [
     xtrace: 1, sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
-    invalidKeys: ttKey}
+    invalidKeys: ttKey},
+  {desc: 'invalidate both x-trace and x-trace-options on bad signature',
+    options: `pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    ts: 'ts', sig: 'bad',
+    xtrace: 1, sample: false,
+    expected: 'auth=bad-signature'}
 ];
 /* eslint-enable max-len */
 
@@ -201,7 +207,7 @@ function restoreTracing () {
 //function consumeAllowed (test) {
 //  let counter = 0;
 //  const options = {
-//    ttRequested: true,
+//    typeRequested: 1,
 //    xtraceOpts: test.options
 //  }
 //  const results = [];
@@ -396,7 +402,10 @@ describe('probes.http trigger-trace', function () {
         expect(xtrace.length).equal(60);
         // if expecting
         if ('xtrace' in t) {
-          expect(+ao.addon.Metadata.sampleFlagIsSet(xtrace)).equal(t.xtrace);
+          const mdSampleBit = +ao.addon.Metadata.sampleFlagIsSet(xtrace);
+          // if the signature is bad then the expected bit should be 0.
+          const expectedBit = (t.sig === 'bad' || (t.ts && t.ts !== 'ts')) ? 0 : t.xtrace;
+          expect(mdSampleBit).equal(expectedBit, 'returned x-trace header must have correct sample bit');
         }
         response = r.headers['x-trace-options-response'];
         expect(response).equal(t.expected);
