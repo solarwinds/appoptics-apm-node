@@ -35,7 +35,7 @@ const erStack = [];                             // a stack to enable and restore
 // expected [string] - response expected in x-trace-options-response
 // expectedKeys [optional object] - keys that must be present in entry event message.
 // invalidKeys [optional object] - keys that must *not* be present in the entry event message.
-// debug [optional boolean] - true if invoke debugger for test
+// debug [optional boolean] - if true invoke debugger for test
 //
 const tests = [
   //
@@ -127,21 +127,42 @@ const tests = [
     ts: 'ts', sig: 'good', sample: false,
     setup: wrapGTS, teardown: unwrapGTS,
     expected: 'auth=ok;trigger-trace=rate-exceeded'},
+
+  //
   // unexpected usage
+  //
+
+  // if x-trace and unsigned x-trace-options trigger-trace request are valid, obey x-trace
   {desc: 'prioritize an x-trace header over unsigned trigger-trace request',
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
     xtrace: 1, sample: true,
     expected: 'trigger-trace=ignored',
     expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
     invalidKeys: ttKey},
+  // if x-trace and unsigned x-trace-options without trigger-trace request are valid, obey x-trace
   {desc: 'add x-trace-options KV pairs to an existing x-trace',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover`,
     xtrace: 1, sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
     invalidKeys: ttKey},
+  // if x-trace and signed x-trace-options with trigger-trace, obey x-trace
+  {desc: 'add x-trace-options KV pairs to an existing x-trace',
+    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    ts: 'ts', sig: 'good',
+    xtrace: 1, sample: true,
+    expected: 'auth=ok;trigger-trace=ignored',
+    expectedKeys: {PDKeys: pdKeysValue, 'custom-xyzzy': 'plover'},
+    invalidKeys: ttKey},
+  // if x-trace and bad sig x-trace-options without trigger-trace request, do neither
   {desc: 'invalidate both x-trace and x-trace-options on bad signature',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    ts: 'ts', sig: 'bad',
+    xtrace: 1, sample: false,
+    expected: 'auth=bad-signature'},
+  // if x-trace and bad sig on x-trace-options with trigger-trace request, do neither
+  {desc: 'invalidate both x-trace and x-trace-options with trigger-trace on bad signature',
+    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts', sig: 'bad',
     xtrace: 1, sample: false,
     expected: 'auth=bad-signature'}
@@ -317,7 +338,7 @@ describe('probes.http trigger-trace', function () {
   })
 
   //
-  // here's where the tests really get executed
+  // here's where the tests finally get executed
   //
   tests.forEach(test => {
     it(`should ${test.desc}`, function (done) {
