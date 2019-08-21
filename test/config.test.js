@@ -261,11 +261,12 @@ describe('config', function () {
     TRUSTEDPATH: {name: 'trustedPath', type: 's'},
     HOSTNAME_ALIAS: {name: 'hostnameAlias', type: 's'},
     DEBUG_LEVEL: {name: 'logLevel', type: 'i'},
-    TRIGGER_TRACE: {name: 'triggerTrace', type: {enable: 1, disable: 0} },
+    TRIGGER_TRACE: {name: 'triggerTrace', type: {enable: 1, disable: 0}},
     REPORTER: {name: 'reporter', type: 's'},
     COLLECTOR: {name: 'endpoint', type: 's'},
     TOKEN_BUCKET_CAPACITY: {name: 'tokenBucketCapacity', type: 'i'},      // file and udp reporter
     TOKEN_BUCKET_RATE: {name: 'tokenBucketRate', type: 'i'},              // file and udp reporter
+    EC2_METADATA_TIMEOUT: {name: 'ec2MetadataTimeout', type: 'i'},
     // not used by node agent
     BUFSIZE: {name: 'bufferSize', type: 'i'},
     LOGNAME: {name: 'logFilePath', type: 's'},
@@ -329,7 +330,7 @@ describe('config', function () {
   const savedKeys = {};
 
   function copyKeys (source, destination) {
-    for (let k in keys) {
+    for (const k in keys) {
       const ak = `APPOPTICS_${k}`;
       if (ak in source) {
         destination[ak] = source[ak];
