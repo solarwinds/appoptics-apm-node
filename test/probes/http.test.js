@@ -98,7 +98,7 @@ describe('probes.http', function () {
         expect(msg).property('Layer', 'http-client')
         expect(msg).property('Label', 'exit')
       }
-    }
+    },
   }
 
   describe('http-server', function () {
@@ -112,8 +112,8 @@ describe('probes.http', function () {
         done()
       }, [
         function (msg) {
-          expect(msg).property('Label').oneOf(['entry', 'exit']),
-          expect(msg).property('Layer', 'fake')
+          expect(msg).property('Label').oneOf(['entry', 'exit']);
+          expect(msg).property('Layer', 'fake');
         }
       ], done)
     })
@@ -356,7 +356,9 @@ describe('probes.http', function () {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close(function () {
+          done();
+        })
       })
 
       server.listen(function () {
@@ -369,6 +371,8 @@ describe('probes.http', function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
+      ao.loggers.debug('http.test: before creating server lastEvent = %e', ao.Event.last);
+
       conf.includeRemoteUrlParams = false
       const server = http.createServer(function (req, res) {
         res.end('done')
