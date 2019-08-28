@@ -289,7 +289,7 @@ describe('probes.http', function () {
     // (oboe doesn't forward metrics messages using UDP so this can't really
     // be tested end-to-end; we use a mock metricsSender - thanks maia.)
     //
-    it('should not send a span or metrics when there is a filter for it', function (done) {
+    it('should not send a span or metrics when a string or regex filter matches', function (done) {
       let messageCount = 0
       let metricsCount = 0
       ao.specialUrls = [
@@ -323,7 +323,7 @@ describe('probes.http', function () {
         request({url: `http://localhost:${port}/files/binary.data`})
       })
 
-      // 1/4 second should be enough to get all messages. there's no clean way to
+      // 1/10 second should be enough to get all messages. there's no clean way to
       // wait on an indeterminate number of UDP messages.
       setTimeout(function () {
         emitter.removeListener('message', deafListener)
@@ -335,7 +335,7 @@ describe('probes.http', function () {
           const error = messageCount === 0 && metricsCount === 0
           done(error ? undefined : new Error('messages should not be sent but were'))
         })
-      }, 250)
+      }, 100)
     })
 
     //
@@ -371,7 +371,9 @@ describe('probes.http', function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      ao.loggers.debug('http.test: before creating server lastEvent = %e', ao.Event.last);
+      if (ao.Event.last) {
+        ao.loggers.debug('http.test: before creating server lastEvent = %e', ao.Event.last);
+      }
 
       conf.includeRemoteUrlParams = false
       const server = http.createServer(function (req, res) {
