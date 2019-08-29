@@ -184,11 +184,16 @@ describe('probes/generic-pool ' + pkg.version, function () {
 
         const t = setInterval(function () {
           if (okToRelease) {
-            gpDebug('releasing %o by %e', resource, ao.lastEvent)
+            // if releasing the pool entry Event.last has been cleared so
+            // this must be checked against topSpan (which remains until the
+            // cls context is exited completely).
+            // TODO BAM maybe test against closure-version of ao.lastEvent?
+            const entry = ao.topSpan && ao.topSpan.events.entry;
+            gpDebug('releasing %o by %e', resource, entry);
 
-            should.exist(ao.lastEvent.Layer)
-            ao.lastEvent.Layer.should.equal(span)
-            taskId.should.be.equal(ao.lastEvent.taskId)
+            should.exist(entry.Layer);
+            entry.Layer.should.equal(span);
+            taskId.should.equal(entry.taskId);
 
             pool.release(resource)
             clearInterval(t)
@@ -202,6 +207,7 @@ describe('probes/generic-pool ' + pkg.version, function () {
       if (hasAsync) {
         // kind of ugly, but how else to get around JavaScript  < 8 issuing a
         // syntax error?
+        //acquire = (function () {return pool.acquire()}).bind(pool);
         eval('acquire = (async function () {return await pool.acquire()}).bind(pool)')
       } else {
         acquire = pool.acquire.bind(pool)
