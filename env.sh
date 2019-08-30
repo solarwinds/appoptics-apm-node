@@ -82,7 +82,7 @@ elif [[ "$ARG" = "bash" ]]; then
     DTS=ec2-52-7-124-5.compute-1.amazonaws.com
     export AO_TEST_MONGODB_SET=$DTS:10301,$DTS:10302,$DTS:10303
 
-    # enable docker to run with different port
+    # enable mysql to run with different port
     export AO_TEST_MYSQL=localhost:${AO_TEST_MYSQL_HOST_PORT:-3306}
     # if different port then use default user/password settings
     export AO_TEST_MYSQL_USERNAME=${AO_TEST_MYSQL_HOST_USERNAME:root}

@@ -51,27 +51,37 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     emitter.close(done)
   })
 
-  const check = {
-    'http-entry': function (msg) {
+  const checks = {
+    httpEntry: function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
     },
-    'http-exit': function (msg) {
+    httpExit: function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'exit')
     },
-    'hapi-entry': function (msg) {
+    hapiEntry: function (msg) {
       msg.should.have.property('Layer', 'hapi')
       msg.should.have.property('Label', 'entry')
     },
-    'hapi-exit': function (msg) {
+    hapiExit: function (msg) {
       msg.should.have.property('Layer', 'hapi')
       msg.should.have.property('Label', 'exit')
     },
-    'render-exit': function (msg) {
-      msg.should.have.property('Layer', 'render')
+    renderEntry (msg) {
+      msg.should.have.property('Label', 'entry')
+      msg.should.have.property('Layer', 'hapi-render')
+    },
+    renderExit (msg) {
       msg.should.have.property('Label', 'exit')
-    }
+      msg.should.have.property('Layer', 'hapi-render')
+    },
+    zlibEntry: function zlibEntry (msg) {
+
+    },
+    zlibExit: function zlibExit (msg) {
+
+    },
   }
 
   // the promise in case it's not hapi v17
@@ -121,6 +131,7 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
 
     return server
   }
+
   function viewServer () {
     const config = {
       views: {
@@ -164,23 +175,22 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
         }
       })
 
-      const validations = [
-        function (msg) {
-          check['http-entry'](msg)
-        },
-        function (msg) {
-          check['hapi-entry'](msg)
-          msg.should.not.have.property('Async')
-        },
-        function (msg) {
-          check['hapi-exit'](msg)
-        },
-        function (msg) {
-          check['http-exit'](msg)
-          msg.should.have.property('Controller', 'hapi.hello')
-          msg.should.have.property('Action', method + '/hello/{name}')
-        }
-      ]
+      // setup validations
+      const validations = [];
+      validations.push(checks.httpEntry);
+      validations.push(function (msg) {
+        checks.hapiEntry(msg);
+        msg.should.not.property('Async');
+      });
+      validations.push(checks.zlibEntry);
+      validations.push(checks.zlibExit);
+      validations.push(checks.hapiExit);
+      validations.push(function (msg) {
+        checks.httpExit(msg);
+        msg.should.have.property('Controller', 'hapi.hello');
+        msg.should.have.property('Action', method + '/hello/{name}');
+      })
+
       helper.doChecks(emitter, validations, function () {
         server.listener.close(function () {
           done()
@@ -191,52 +201,54 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
         server.start(function () {
           request({
             method: method.toUpperCase(),
-            url: 'http://localhost:' + port + '/hello/world'
+            url: `http://localhost:${port}/hello/world`,
+            headers: {'accept-encoding': 'gzip'},
+          }).on('response', function (r) {
+            //console.log('got response', r.headers);
           })
         })
       })
     }
   }
 
-  function renderTest (done) {
+  function renderTestWith (done) {
+    renderTest(done, helloDotEjs);
+  }
+
+  function renderTestWithout (done) {
+    renderTest(done, 'hello');
+  }
+
+  function renderTest (done, filename) {
     const server = viewServer()
 
     server.route({
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, reply) {
-        renderer(request, reply)(helloDotEjs, {
+        renderer(request, reply)(filename, {
           name: request.params.name
         })
       }
     })
 
-    const validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['hapi-entry'](msg)
-      },
-      function (msg) {
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', 'hapi-render')
-        msg.should.have.property('TemplateLanguage', '.ejs')
-        msg.should.have.property('TemplateFile', helloDotEjs)
-      },
-      function (msg) {
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', 'hapi-render')
-      },
-      function (msg) {
-        check['hapi-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-        msg.should.have.property('Controller', 'hapi.hello')
-        msg.should.have.property('Action', 'get/hello/{name}')
-      }
-    ]
+    // setup validations
+    const validations = [];
+    validations.push(checks.httpEntry);
+    validations.push(checks.hapiEntry);
+    validations.push(function (msg) {
+      checks.renderEntry(msg);
+      msg.should.have.property('TemplateLanguage', 'ejs');
+      msg.should.have.property('TemplateFile', filename);
+    });
+    validations.push(checks.renderExit);
+    validations.push(checks.hapiExit);
+    validations.push(function (msg) {
+      checks.httpExit(msg);
+      msg.should.have.property('Controller', 'hapi.hello');
+      msg.should.have.property('Action', 'get/hello/{name}');
+    })
+
     helper.doChecks(emitter, validations, function () {
       server.listener.close(done)
     })
@@ -262,14 +274,9 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       }
     })
 
-    const validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-      }
-    ]
+    // setup validations
+    const validations = [checks.httpEntry, checks.httpExit];
+
     helper.doChecks(emitter, validations, function () {
       ao.probes.hapi.enabled = true
       server.listener.close(done)
@@ -300,13 +307,17 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     ], done)
   })
 
+  //
+  // run the tests
+  //
   const httpMethods = ['get', 'post', 'put', 'delete']
   if (hapi && vision) {
     httpMethods.forEach(function (method) {
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
-    it('should trace render span', renderTest)
+    it('should trace render span with template extension', renderTestWith);
+    it('should trace render span without template extension', renderTestWithout);
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
