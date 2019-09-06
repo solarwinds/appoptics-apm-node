@@ -52,8 +52,8 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    const c = ao.requestStore.active ? ao.requestStore.active.id : null
-    if (c) {
+    if (ao.lastEvent) {
+      const c = ao.requestStore.active ? ao.requestStore.active.id : null
       ao.loggers.debug(`id ${c} event.last at startup %e`, ao.lastEvent)
     }
 
@@ -419,7 +419,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
           try {
             client.release()
           } catch (e) {
-            console.log(e)
+            console.log(e) // eslint-disable-line no-console
           }
         }, ctx.delayms)
       }
