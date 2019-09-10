@@ -11,6 +11,7 @@ const ao = global[Symbol.for('AppOptics.Apm.Once')];
 const semver = require('semver')
 
 const request = require('request')
+const axios = require('axios');
 
 // This test can't even be compiled if JavaScript doesn't recognize async/await.
 const nodeVersion = process.version.slice(1)
@@ -71,27 +72,44 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     }
   })
 
-  const check = {
-    'http-entry': function (msg) {
+  const checks = {
+    httpEntry: function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'entry')
     },
-    'http-exit': function (msg) {
+    httpExit: function (msg) {
       msg.should.have.property('Layer', 'nodejs')
       msg.should.have.property('Label', 'exit')
     },
-    'hapi-entry': function (msg) {
+    hapiEntry: function (msg) {
       msg.should.have.property('Layer', 'hapi')
       msg.should.have.property('Label', 'entry')
     },
-    'hapi-exit': function (msg) {
+    hapiExit: function (msg) {
       msg.should.have.property('Layer', 'hapi')
       msg.should.have.property('Label', 'exit')
     },
-    'render-exit': function (msg) {
-      msg.should.have.property('Layer', 'render')
-      msg.should.have.property('Label', 'exit')
-    }
+
+    renderEntry (msg) {
+      msg.should.have.property('Layer', 'vision');
+      msg.should.have.property('Label', 'entry');
+      msg.should.have.property('TemplateLanguage', '.ejs');
+      msg.should.have.property('TemplateFile', helloDotEjs);
+      //msg.should.property('Layer', 'hapi-render');
+      //msg.should.property('Label', 'entry');
+    },
+    renderExit (msg) {
+      msg.should.have.property('Layer', 'vision');
+      msg.should.have.property('Label', 'exit');
+      //msg.should.property('Layer', 'hapi-render');
+      //msg.should.property('Label', 'exit');
+    },
+    zlibEntry (msg) {
+      console.log('zlibEntry', msg);
+    },
+    zlibExit (msg) {
+
+    },
   }
 
   //
@@ -145,35 +163,48 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         _resolve = resolve
       })
 
-      const validations = [
-        function (msg) {
-          check['http-entry'](msg)
-        },
-        function (msg) {
-          check['hapi-entry'](msg)
-          msg.should.not.have.property('Async')
-        },
-        function (msg) {
-          check['hapi-exit'](msg)
-        },
-        function (msg) {
-          check['http-exit'](msg)
-          msg.should.have.property('Controller', 'hapi.hello')
-          msg.should.have.property('Action', method + '/hello/{name}')
-        }
-      ]
+      const validations = [];
+      validations.push(checks.httpEntry);
+      validations.push(function (msg) {
+        checks.hapiEntry(msg);
+        msg.should.not.property('Async');
+      });
+      //validations.push(checks.zlibEntry);
+      //validations.push(checks.zlibExit);
+      validations.push(checks.hapiExit);
+      validations.push(function (msg) {
+        checks.httpExit(msg);
+        msg.should.have.property('Controller', 'hapi.hello');
+        msg.should.have.property('Action', method + '/hello/{name}');
+      });
+
       helper.doChecks(emitter, validations, function () {
         server.listener.close(_resolve)
       })
 
       await server.start()
 
-      request({
-        method: method.toUpperCase(),
-        url: `http://localhost:${port}/hello/world`
+      axios({
+        method,
+        url: `http://localhost:${port}/hello/world`,
+        headers: {'accept-encoding': 'gzip'},
       })
+        .then(r => {
+          console.log('response', r.headers);
+        })
+        .catch(e => {
+          console.log(e);
+        })
 
-      return p
+      //request({
+      //  method: method.toUpperCase(),
+      //  url: `http://localhost:${port}/hello/world`,
+      //  headers: {'accept-encoding': 'gzip'},
+      //}).on('response', function (r) {
+      //  console.log('response', r.headers);
+      //});
+
+      return p;
     }
   }
 
@@ -193,36 +224,20 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       _resolve = resolve
     })
 
-    const validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['hapi-entry'](msg)
-      },
-      //*
-      function (msg) {
-        msg.should.have.property('Label', 'entry')
-        msg.should.have.property('Layer', 'vision')
-        msg.should.have.property('TemplateLanguage', '.ejs')
-        msg.should.have.property('TemplateFile', helloDotEjs)
-      },
-      function (msg) {
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Layer', 'vision')
-      },
-      // */
-      function (msg) {
-        check['hapi-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-        msg.should.have.property('Controller', 'hapi.hello')
-        msg.should.have.property('Action', 'get/hello/{name}')
-      }
-    ]
+    const validations = [];
+    validations.push(checks.httpEntry);
+    validations.push(checks.hapiEntry);
+    validations.push(checks.renderEntry);
+    validations.push(checks.renderExit);
+    validations.push(checks.hapiExit);
+    validations.push(function (msg) {
+      checks.httpExit(msg);
+      msg.should.have.property('Controller', 'hapi.hello');
+      msg.should.have.property('Action', 'get/hello/{name}');
+    });
+
     helper.doChecks(emitter, validations, function () {
-      server.listener.close(_resolve)
+      server.listener.close(_resolve);
     })
 
     await server.start()
@@ -249,20 +264,8 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       _resolve = resolve
     })
 
-    const validations = [
-      function (msg) {
-        check['http-entry'](msg)
-      },
-      function (msg) {
-        check['hapi-entry'](msg)
-      },
-      function (msg) {
-        check['hapi-exit'](msg)
-      },
-      function (msg) {
-        check['http-exit'](msg)
-      }
-    ]
+    const validations = [checks.httpEntry, checks.hapiEntry, checks.hapiExit, checks.httpExit];
+
     helper.doChecks(emitter, validations, function () {
       ao.probes.vision.enabled = true
       server.listener.close(_resolve)
@@ -395,18 +398,14 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       })
 
       const validations = [
+        checks.httpEntry,
         function (msg) {
-          check['http-entry'](msg)
-        },
-        function (msg) {
-          check['hapi-entry'](msg)
+          checks.hapiEntry(msg)
           msg.should.not.have.property('Async')
         },
+        checks.hapiExit,
         function (msg) {
-          check['hapi-exit'](msg)
-        },
-        function (msg) {
-          check['http-exit'](msg)
+          checks.httpExit(msg)
           let expectedCustom = expected('tx')
           if (custom) {
             try {
@@ -415,7 +414,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
                 expectedCustom = expectedCustomName
               }
             } catch (e) {
-              // do nothing
+              // nothing to do if custom name function blows up.
             }
           }
           /*

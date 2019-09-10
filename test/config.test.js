@@ -242,4 +242,102 @@ describe('config', function () {
     expect(config).deep.equal(expected)
   })
 
+  it('should correctly read environment variables', function () {
+    copyKeys(process.env, savedKeys);
+    copyKeys(testKeyValues, process.env);
+
+    const environment = require('../lib/c-lib-env-vars');
+
+    const envValues = environment.fetch();
+
+    expect(envValues.valid).deep.equal(expectedValidValues);
+    expect(envValues.invalid).deep.equal(expectedInvalid);
+
+    copyKeys(savedKeys, process.env);
+  })
+
+  const keys = {
+    SERVICE_KEY: {name: 'serviceKey', type: 's'},
+    TRUSTEDPATH: {name: 'trustedPath', type: 's'},
+    HOSTNAME_ALIAS: {name: 'hostnameAlias', type: 's'},
+    DEBUG_LEVEL: {name: 'logLevel', type: 'i'},
+    TRIGGER_TRACE: {name: 'triggerTrace', type: {enable: 1, disable: 0}},
+    REPORTER: {name: 'reporter', type: 's'},
+    COLLECTOR: {name: 'endpoint', type: 's'},
+    TOKEN_BUCKET_CAPACITY: {name: 'tokenBucketCapacity', type: 'i'},      // file and udp reporter
+    TOKEN_BUCKET_RATE: {name: 'tokenBucketRate', type: 'i'},              // file and udp reporter
+    EC2_METADATA_TIMEOUT: {name: 'ec2MetadataTimeout', type: 'i'},
+    // not used by node agent
+    BUFSIZE: {name: 'bufferSize', type: 'i'},
+    LOGNAME: {name: 'logFilePath', type: 's'},
+    TRACE_METRICS: {name: 'traceMetrics', type: 'b'},
+    HISTOGRAM_PRECISION: {name: 'histogramPrecision', type: 'i'},
+    MAX_TRANSACTIONS: {name: 'maxTransactions', type: 'i'},
+    FLUSH_MAX_WAIT_TIME: {name: 'flushMaxWaitTime', type: 'i'},
+    EVENTS_FLUSH_INTERVAL: {name: 'eventsFlushInterval', type: 'i'},
+    EVENTS_FLUSH_BATCH_SIZE: {name: 'eventsFlushBatchSize', type: 'i'},
+    REPORTER_FILE_SINGLE: {name: 'oneFilePerEvent', type: 'b'},
+    // key for testing only
+    XYZZY: {name: 'xyzzy', type: 's'},
+  };
+
+  const testKeyValues = {
+    APPOPTICS_SERVICE_KEY: 'test-string',
+    APPOPTICS_TRUSTEDPATH: 'test-path',
+    APPOPTICS_HOSTNAME_ALIAS: 'test-name',
+    APPOPTICS_DEBUG_LEVEL: '3',
+    APPOPTICS_TRIGGER_TRACE: 'enable',
+    APPOPTICS_REPORTER: 'udp',
+    //APPOPTICS_COLLECTOR: undefined, // leave out to test endpoint not present
+    APPOPTICS_TOKEN_BUCKET_CAPACITY: '1000',
+    APPOPTICS_TOKEN_BUCKET_RATE: '1000',
+    // not used by node agent
+    APPOPTICS_BUFSIZE: '1000',
+    APPOPTICS_LOGNAME: 'test-unused-log-name',
+    APPOPTICS_TRACE_METRICS: 'no',
+    APPOPTICS_HISTOGRAM_PRECISION: '1000',
+    APPOPTICS_MAX_TRANSACTIONS: '25000',
+    APPOPTICS_FLUSH_MAX_WAIT_TIME: '2000',
+    APPOPTICS_EVENTS_FLUSH_INTERVAL: '4000',
+    APPOPTICS_EVENTS_FLUSH_BATCH_SIZE: '1000',
+    APPOPTICS_REPORTER_FILE_SINGLE: 'yes',
+    APPOPTICS_XYZZY: 'plover',
+  }
+
+  const expectedValidValues = {
+    tokenBucketRate: 1000,
+    serviceKey: 'test-string',
+    //endpoint: 'undefined',
+    reporter: 'udp',
+    tokenBucketCapacity: 1000,
+    trustedPath: 'test-path',
+    hostnameAlias: 'test-name',
+    logLevel: 3,
+    triggerTrace: 1,
+    bufferSize: 1000,
+    logFilePath: 'test-unused-log-name',
+    traceMetrics: false,
+    histogramPrecision: 1000,
+    maxTransactions: 25000,
+    flushMaxWaitTime: 2000,
+    eventsFlushInterval: 4000,
+    eventsFlushBatchSize: 1000,
+    oneFilePerEvent: true
+  }
+
+  const expectedInvalid = ['APPOPTICS_XYZZY=plover'];
+
+  const savedKeys = {};
+
+  function copyKeys (source, destination) {
+    for (const k in keys) {
+      const ak = `APPOPTICS_${k}`;
+      if (ak in source) {
+        destination[ak] = source[ak];
+      } else {
+        delete destination[ak];
+      }
+    }
+  }
+
 })
