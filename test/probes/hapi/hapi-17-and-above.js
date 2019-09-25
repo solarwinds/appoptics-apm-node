@@ -41,13 +41,12 @@ if (semver.gte(visionPkg.version, '5.0.0')) {
   plugins = {plugin: require(visionName)}
   visionText = `${visionName} ${visionPkg.version}`;
 } else {
-  plugins = {}
   visionText = `${visionName} ${visionPkg.version} not compatible (untested)`;
 }
 
 describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   let emitter
-  let port = 3000
+  let port = 3500;
   let clear
 
   //
@@ -105,10 +104,14 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       //msg.should.property('Label', 'exit');
     },
     zlibEntry (msg) {
-      console.log('zlibEntry', msg);
+      msg.should.have.property('Layer', 'zlib');
+      msg.should.have.property('Label', 'entry');
+      msg.should.have.property('Operation', 'Gzip');
+      msg.should.have.property('Async', true);
     },
     zlibExit (msg) {
-
+      msg.should.have.property('Layer', 'zlib');
+      msg.should.have.property('Label', 'exit');
     },
   }
 
@@ -118,7 +121,10 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   async function makeServer (config) {
     config = config || {}
 
-    const server = new hapi.Server({port: ++port})
+    const server = new hapi.Server({port: ++port, compression: {minBytes: 1}});
+    if (!plugins) {
+      return Promise.resolve(server);
+    }
     const p = server.register(plugins)
 
     return p.then(() => {
@@ -138,7 +144,6 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         }
       }
     }
-
     return makeServer(config)
   }
 
@@ -169,8 +174,8 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         checks.hapiEntry(msg);
         msg.should.not.property('Async');
       });
-      //validations.push(checks.zlibEntry);
-      //validations.push(checks.zlibExit);
+      validations.push(checks.zlibEntry);
+      validations.push(checks.zlibExit);
       validations.push(checks.hapiExit);
       validations.push(function (msg) {
         checks.httpExit(msg);
@@ -190,19 +195,12 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         headers: {'accept-encoding': 'gzip'},
       })
         .then(r => {
-          console.log('response', r.headers);
+          // nothing
         })
         .catch(e => {
+          // eslint-disable-next-line no-console
           console.log(e);
         })
-
-      //request({
-      //  method: method.toUpperCase(),
-      //  url: `http://localhost:${port}/hello/world`,
-      //  headers: {'accept-encoding': 'gzip'},
-      //}).on('response', function (r) {
-      //  console.log('response', r.headers);
-      //});
 
       return p;
     }
@@ -215,7 +213,13 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, h) {
-        return h.view(helloDotEjs, {name: request.params.name})
+        // kind of funky test in that nothing really checks the actual
+        // result of the request, but really isn't the point, so it's all
+        // good.
+        if (plugins) {
+          return h.view(helloDotEjs, {name: request.params.name})
+        }
+        return 'hello world';
       }
     })
 
@@ -227,8 +231,10 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const validations = [];
     validations.push(checks.httpEntry);
     validations.push(checks.hapiEntry);
-    validations.push(checks.renderEntry);
-    validations.push(checks.renderExit);
+    if (plugins) {
+      validations.push(checks.renderEntry);
+      validations.push(checks.renderExit);
+    }
     validations.push(checks.hapiExit);
     validations.push(function (msg) {
       checks.httpExit(msg);
@@ -255,7 +261,10 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, h) {
-        return h.view(helloDotEjs, {name: request.params.name})
+        if (plugins) {
+          return h.view(helloDotEjs, {name: request.params.name})
+        }
+        return 'hello worlds';
       }
     })
 
