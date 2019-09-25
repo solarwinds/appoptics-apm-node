@@ -44,7 +44,7 @@ if (semver.gte(pkg.version, '5.0.0')) {
 
 describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   let emitter
-  let port = 3000
+  let port = 3500;
 
   //
   // Intercept appoptics messages for analysis
