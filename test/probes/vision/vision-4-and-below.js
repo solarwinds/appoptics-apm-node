@@ -33,7 +33,7 @@ if (semver.satisfies(nodeVersion, '> 0.8')) {
 
 describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function () {
   let emitter
-  let port = 3000
+  let port = 3500;
 
   //
   // Intercept appoptics messages for analysis
