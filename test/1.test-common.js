@@ -11,7 +11,7 @@ const should = require('should') // eslint-disable-line
 
 const env = process.env
 
-if (env.APPOPTICS_REPORTER === 'udp' && !env.APPOPTICS_TOKEN_BUCKET_CAPACITY) {
+if (env.APPOPTICS_REPORTER === 'udp') {
   ao.loggers.warn('It looks like you need to "source env.sh bash" for tests to work correctly')
 }
 
