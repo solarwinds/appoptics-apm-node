@@ -61,3 +61,18 @@ Features and bug fixes
 - handle more boolean environment variable variations.
 - propagate FilePath KV value correctly in edge case
 - add log setting 'event:create', cassandra-driver now always uses 'patching'
+
+### v6.7.0
+
+Features and bug fixes
+- trigger-trace
+- appoptics-bindings 7.0.0
+- loosen bind-emitter checks
+- warn only when unknown environment variables
+
+### v6.7.1
+
+Bug fixes
+- make TemplateLanguage KV consistent - never include leading dot.
+- bind finalizer in instrumentHttp.
+- fix zlib bind emitter message.
