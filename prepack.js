@@ -67,9 +67,6 @@ if (missing.size) {
 let probeDefaults = [];
 try {
   probeDefaults = Object.keys(require('./lib/probe-defaults'));
-  for (let i = 0; i < probeDefaults.length; i++) {
-    probeDefaults[i] = probeDefaults[i];
-  }
 } catch (e) {
   // eslint-disable-next-line no-console
   console.error('cannot read ./lib/probe-defaults', e.code);
@@ -126,12 +123,9 @@ if (onlyInDefault.size) {
 
 if (onlyInProbesDir.size) {
   // eslint-disable-next-line no-console
-  console.error(`probes with no default ${[...onlyInProbesDir].join(', ')}`);
+  console.error(`probes with no default: ${[...onlyInProbesDir].join(', ')}`);
   errorCount += 1;
 }
-
-
-
 
 //
 // exit appropriately
