@@ -89,23 +89,26 @@ This section is primarily of interest to those implementing custom instrumentati
 
 #### Environment Variables ####
 
+Environment variables with illegal values will generate a warning message and revert to their default values. Variables accepting `'true'` and
+`'false'` as options care case-insensitive.
+
 These environment variables may be set:
 
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
-|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the DEBUG environment variable (deprecated).|
+|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable.|
 |APPOPTICS_APM_CONFIG_NODE|`'$PWD/appoptics-apm'`|The location of the configuration file.|
-|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: ssl, udp, file. This is typically used only for testing.|
-|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port (only used if APPOPTICS_REPORTER = ssl). This is typically changed only for testing.|
+|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: `'ssl'`, `'udp'`. This is used for testing.|
+|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port. This is typically changed only for testing.|
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
 |APPOPTICS_DEBUG_LEVEL|`'2'`|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|
+|APPOPTICS_TRIGGER_TRACE_ENABLED|`'true'`|Enable the trigger-trace feature. Options are `'true'`, `'false'`|
+
+Deprecated environment variables. They will be removed in the future:
+
+| Deprecated Name      | Default  | Description |
+| -------------------- | -------- | ----------- |
+|DEBUG|`'appoptics:error,appoptics:warn'`|This has been replaced with APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each setting.|
 |APPOPTICS_TRIGGER_TRACE|`'enable'`|Enable or disable the trigger-trace feature. Options are `'enable'`, `'disable'`|
-|DEBUG|`'appoptics:error,appoptics:warn'`|Deprecated. While the node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging, it is more convenient to use APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each category.|
 
-Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 
-```
-// no need to set up standard error loggers (error, warn)
-const log = ao.loggers
-log.error('bad error')
-```
