@@ -64,7 +64,7 @@ function doChecks (cfg, overrides = {}) {
   expect(cfg.unusedProbes).an('array').deep.equal(expected, 'unusedProbes mismatch');
 
   expected = overrides.transactionSettings;
-  expect(cfg.transactionSettings).deep.equal(expected);
+  expect(cfg.transactionSettings).deep.equal(expected, 'transactionSettings mismatch');
 
   expected = overrides.settingsErrors || [];
   expect(cfg.settingsErrors).an('array').deep.equal(expected, 'settingsErrors mismatch');
@@ -226,6 +226,20 @@ describe('config', function () {
     doChecks(cfg, {warnings});
   })
 
+  it('should handle a non-default config file correctly', function () {
+    const config = {ec2MetadataTimeout: 4000};
+    const filename = 'non-default.json';
+    fs.writeFileSync(filename, JSON.stringify(config));
+
+    process.env.APPOPTICS_APM_CONFIG_NODE = filename;
+
+    const cfg = guc();
+
+    fs.unlinkSync(filename);
+
+    doChecks(cfg, {file: `${process.cwd()}/${filename}`, global: config});
+  })
+
   //
   // config file errors
   //
@@ -377,7 +391,7 @@ describe('config', function () {
     doChecks(cfg, {settingsErrors});
   })
 
-  it.skip('should allow a RegExp in module-based x-action settings', function () {
+  it('should allow a RegExp in module-based x-action settings', function () {
     const config = {transactionSettings: [
       {type: 'url', regex: /xyzzy/, tracing: 'disabled'},
       {type: 'url', regex: 'hello', tracing: 'disabled'},
@@ -389,14 +403,16 @@ describe('config', function () {
       '  {type: "url", regex: "hello", tracing: "disabled"},',
       '  {type: "url", string: "/xy(zzy", tracing: "disabled"},',
       ']}', ''
-    ]
+    ];
     writeConfigJs(literal.join('\n'));
-    debugger
-    //const x = require(rootConfigName);
+
+    // specify the filename with extension to work around node bug/feature/issue.
+    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm.js';
+
     const cfg = guc();
 
     const transactionSettings = toInternalTransactionSettings(config.transactionSettings);
-    doChecks(cfg, {transactionSettings});
+    doChecks(cfg, {file: `${process.cwd()}/${file}`, transactionSettings});
   })
 
   it('should report invalid transactionSettings entries', function () {
