@@ -249,7 +249,7 @@ describe('config', function () {
 
     const cfg = guc();
 
-    const message = 'Cannot find module \'/home/bruce/solarwinds/ao-agent/xyzzy-bruce.json\'';
+    const message = `Cannot find module '${fullpath}'`;
     const errors = [
       `Cannot read config file ${fullpath}: ${message}`
     ]
@@ -261,10 +261,10 @@ describe('config', function () {
 
     const cfg = guc();
 
-    const errors = [[
-      'Cannot read config file /home/bruce/solarwinds/ao-agent/appoptics-apm: ',
-      '/home/bruce/solarwinds/ao-agent/appoptics-apm.json: Unexpected token \n in JSON at position 11'
-    ].join('')];
+    const message = 'Unexpected token \n in JSON at position 11';
+    const errors = [
+      `Cannot read config file ${rootConfigName}: ${rootConfigName}.json: ${message}`
+    ];
     doChecks(cfg, {errors});
   })
 
@@ -280,7 +280,7 @@ describe('config', function () {
     doChecks(cfg, {unusedEnvVars});
   })
 
-  it('should not set use environment variable values', function () {
+  it('should not use invalid env var values', function () {
     process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 'xyzzy';
 
     const cfg = guc();
