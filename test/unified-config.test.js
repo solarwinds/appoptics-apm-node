@@ -366,7 +366,8 @@ describe('config', function () {
   it('should allow JSON x-action settings', function () {
     const config = {transactionSettings: [
       {type: 'url', string: '/xy(zzy', tracing: 'disabled'},
-      {type: 'url', regex: 'xyzzy', tracing: 'disabled'}
+      {type: 'url', regex: 'xyzzy', tracing: 'disabled'},
+      {type: 'url', string: 'plover', tracing: 'enabled'},
     ]};
     writeConfigJSON(config);
 
