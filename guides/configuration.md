@@ -10,7 +10,7 @@ It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY 
 
 ### The Configuration File ###
 
-The `appoptics-apm` default configuration file is `appoptics-apm.json` and should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. If changing the location `APPOPTICS_APM_CONFIG_NODE` must include the filename, not just the path. The file can also be a node module that exports a single object containing the same information has `appoptics-apm.json` would.
+The `appoptics-apm` default configuration file is either `appoptics-apm.json` or `appoptics-apm.js`. It should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. When using `APPOPTICS_APM_CONFIG_NODE` the path it specifies must include the filename. If the file is a node module it must export a single object containing the same information that `appoptics-apm.json` would; the advantage of using a node module is that the values for configuration properties can be set programmatically.
 
 The configuration file can supply the following properties, showing their defaults:
 
@@ -42,7 +42,7 @@ The configuration file can supply the following properties, showing their defaul
 |domainPrefix|`false`|Prefix transaction names with the domain name.|
 |ignoreConflicts|`false`|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 |traceMode|`'enabled'`|Mode `'enabled'` will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
-|transactionSettings|`undefined`|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only `'url'` is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B., it is not possible to specify a regex in a JSON configuration file. If you wish to specify a regex then the configuration file must be a module that returns the configuration object.|
+|transactionSettings|`undefined`|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only `'url'` is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B. if inserting a regex into a JSON configuration file you must enter the string that is expected by the `RegExp` constructor because JSON has no representation of a `RegExp` object.|
 |ec2MetadataTimeout|`1000`|Milliseconds to wait for the ec2/openstack metadata service to respond|
 |insertTraceIdsIntoLogs|`false`|Insert trace IDs into supported logging packages' output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
 |insertTraceIdsIntoMorgan|`false`|Append trace IDs to morgan log lines. Because morgan does not output JSON the morgan formats must be modified to enable the trace IDs to be appended. This is a more invasive approach than inserting a property in a JSON object so it requires this explicit setting. The options are the same as for `insertTraceIdsIntoLogs`.|
@@ -89,23 +89,26 @@ This section is primarily of interest to those implementing custom instrumentati
 
 #### Environment Variables ####
 
+Environment variables with illegal values will generate a warning message and revert to their default values. Variables accepting `'true'` and
+`'false'` as options care case-insensitive.
+
 These environment variables may be set:
 
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
-|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the DEBUG environment variable (deprecated).|
+|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable.|
 |APPOPTICS_APM_CONFIG_NODE|`'$PWD/appoptics-apm'`|The location of the configuration file.|
-|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: ssl, udp, file. This is typically used only for testing.|
-|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port (only used if APPOPTICS_REPORTER = ssl). This is typically changed only for testing.|
+|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: `'ssl'`, `'udp'`. This is used for testing.|
+|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port. This is typically changed only for testing.|
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
 |APPOPTICS_DEBUG_LEVEL|`'2'`|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|
+|APPOPTICS_TRIGGER_TRACE_ENABLED|`'true'`|Enable the trigger-trace feature. Options are `'true'`, `'false'`|
+
+Deprecated environment variables. They will be removed in the future:
+
+| Deprecated Name      | Default  | Description |
+| -------------------- | -------- | ----------- |
+|DEBUG|`'appoptics:error,appoptics:warn'`|This has been replaced with APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each setting.|
 |APPOPTICS_TRIGGER_TRACE|`'enable'`|Enable or disable the trigger-trace feature. Options are `'enable'`, `'disable'`|
-|DEBUG|`'appoptics:error,appoptics:warn'`|Deprecated. While the node agent uses the [`debug`](https://www.npmjs.com/package/debug) package for logging, it is more convenient to use APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each category.|
 
-Appoptics-specific `debug` loggers are made available via `ao.loggers` without requiring the `appoptics:` prefix. Typical usage is
 
-```
-// no need to set up standard error loggers (error, warn)
-const log = ao.loggers
-log.error('bad error')
-```
