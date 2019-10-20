@@ -149,6 +149,7 @@ function makeTests (db_host, host, isReplicaSet) {
     }
 
     server.on('error', function (err) {
+      // eslint-disable-next-line no-console
       console.log('error connecting', err)
       done()
     })
@@ -707,6 +708,7 @@ function makeTests (db_host, host, isReplicaSet) {
       }
 
       it('should map_reduce', function (done) {
+        // eslint-disable-next-line no-undef
         function map () {emit(this.a, 1)}
         function reduce (k, vals) {return 1}
 
