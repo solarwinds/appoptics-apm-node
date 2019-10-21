@@ -270,7 +270,6 @@ function makeTests (db_host, host, isReplicaSet) {
   //
   const tests = {
     databases: function () {
-      // calls topologies/Server.command()
       it('should drop', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -301,7 +300,6 @@ function makeTests (db_host, host, isReplicaSet) {
     // collections tests
     //
     collections: function () {
-      // calls topologies/Server.command()
       it('should create', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -337,7 +335,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // calls topologies/Server.command()
       it('should rename', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -379,7 +376,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // calls topologies/Server.command()
       it('should drop', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -420,7 +416,6 @@ function makeTests (db_host, host, isReplicaSet) {
     // query tests
     //
     queries: function () {
-      // DOES NOT CALL
       it('should insertMany', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -448,7 +443,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // DOES NOT CALL
       it('should updateOne', function (done) {
         const query = {a: 1}
         const update = {
@@ -520,8 +514,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // not mongodb.Server()
-      // calls topologies/Server.command()
       it('should distinct', function (done) {
         const query = {a: 1}
         const key = 'b'
@@ -556,8 +548,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // not mongodb.Server()
-      // calls topologies/Server.command() - deprecation warning use countDocuments
       it('should count', function (done) {
         const query = {a: 1}
 
@@ -587,9 +577,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // not mongodb.Server()
-      // calls topologies/Server.command()
-      // {aggregate: 'coll-test', pipeline: [{'$match': [Object]}, {'$group': [Object]}], cursor: {}}
       it('should countDocuments', function (done) {
         const query = {a: 1}
         const pipeline = '[{"$match":{"a":1}},{"$group":{"_id":1,"n":{"$sum":1}}}]';
@@ -626,8 +613,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // deprecated: user deleteOne, deleteMany, bulkWrite
-      // DOES NOT CALL
       it('should remove', function (done) {
         const query = {a: 1}
 
@@ -666,8 +651,6 @@ function makeTests (db_host, host, isReplicaSet) {
         return
       }
 
-      // does call topolgies/Server.command()
-      // { createIndexes: 'coll-test', indexes: [{key: [Object], name: 'mimi'}]}
       it('should create_indexes', function (done) {
         const index = {
           key: {a: 1, b: 2},
@@ -701,7 +684,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // does call topolgies/Server.command()
       it('should reindex', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -726,7 +708,6 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      // does call topolgies/Server.command()
       it('should drop_indexes', function (done) {
         function entry (msg) {
           check.entry(msg)
@@ -753,7 +734,6 @@ function makeTests (db_host, host, isReplicaSet) {
     },
 
     cursors: function () {
-      // DOES NOT CALL
       it('should find', function (done) {
         helper.test(emitter, function (done) {
           const cursor = ctx.collection.find(
@@ -774,7 +754,6 @@ function makeTests (db_host, host, isReplicaSet) {
 
     aggregations: function () {
 
-      // does call topolgies/Server.command()
       it('should group', function (done) {
         const group = {
           ns: `${dbn}.data-${dbn}`,
@@ -823,7 +802,6 @@ function makeTests (db_host, host, isReplicaSet) {
         return
       }
 
-      // does call topolgies/Server.command()
       it('should map_reduce', function (done) {
         // eslint-disable-next-line
         function map () {emit(this.a, 1)}
