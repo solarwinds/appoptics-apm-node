@@ -6,6 +6,7 @@ const {ao} = require('../1.test-common.js')
 const noop = helper.noop
 const addon = ao.addon
 
+const expect = require('chai').expect;
 const semver = require('semver')
 const mongodb = require('mongodb-core')
 
@@ -13,6 +14,8 @@ const requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
 const pkg = require('mongodb-core/package.json')
 requirePatch.enable()
+
+const moduleName = 'mongodb-core';
 
 // need to make decisions based on major version
 const majorVersion = semver.major(pkg.version)
@@ -180,18 +183,22 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
       msg.should.have.property('RemoteHost')
-      msg.RemoteHost.should.match(/:\d*$/)
+      //msg.RemoteHost.should.match(/:\d*$/)
+      expect(msg.RemoteHost).oneOf(db_host.split(','));
     },
     common: function (msg) {
       msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
-      msg.should.have.property('Label', 'entry')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      //console.log(`expecting ${moduleName}:entry got ${explicit}`);
+      expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
       check.base(msg)
     },
     exit: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
+      msg.should.have.property('Layer', moduleName)
       msg.should.have.property('Label', 'exit')
     }
   }
