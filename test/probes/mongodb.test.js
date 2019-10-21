@@ -118,6 +118,9 @@ function makeTests (db_host, host, isReplicaSet) {
     if (current.parent && !(current.parent.title in doThese)) {
       this.skip()
     }
+    if (current.title !== 'should distinct' && current.title !== 'should count') {
+      //this.skip();
+    }
 
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
@@ -239,19 +242,24 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
       msg.should.have.property('RemoteHost')
-      msg.RemoteHost.should.match(/:\d*$/)
+      //msg.RemoteHost.should.match(/:\d*$/)
+      expect(msg.RemoteHost).oneOf(db_host.split(','));
     },
     common: function (msg) {
       msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
       const explicit = `${msg.Layer}:${msg.Label}`;
+      //console.log(`expecting ${moduleName}:entry got ${explicit}`);
+      //console.log(msg);
       expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
-      msg.should.have.property('Layer', moduleName)
-      msg.should.have.property('Label', 'entry')
       check.base(msg)
     },
     exit: function (msg) {
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      //console.log(`expecting ${moduleName}:exit got ${explicit}`);
+      //console.log(msg);
+      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
       msg.should.have.property('Layer', moduleName)
       msg.should.have.property('Label', 'exit')
     }
@@ -532,7 +540,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         const steps = [ entry ]
 
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
@@ -565,7 +573,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [ entry ]
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
