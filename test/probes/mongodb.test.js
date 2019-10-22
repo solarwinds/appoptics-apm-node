@@ -250,18 +250,12 @@ function makeTests (db_host, host, isReplicaSet) {
     },
     entry: function (msg) {
       const explicit = `${msg.Layer}:${msg.Label}`;
-      //console.log(`expecting ${moduleName}:entry got ${explicit}`);
-      //console.log(msg);
       expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
       check.base(msg)
     },
     exit: function (msg) {
       const explicit = `${msg.Layer}:${msg.Label}`;
-      //console.log(`expecting ${moduleName}:exit got ${explicit}`);
-      //console.log(msg);
       expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
-      msg.should.have.property('Layer', moduleName)
-      msg.should.have.property('Label', 'exit')
     }
   }
 

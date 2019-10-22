@@ -1,8 +1,8 @@
 'use strict'
 
 //
-// this file defines the versions that will be test when using
-// test-each-version.
+// this file defines the versions that will be tested when using
+// testeachversion.
 //
 
 const {VersionSpec} = require('testeachversion')
