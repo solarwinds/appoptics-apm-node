@@ -361,7 +361,7 @@ describe('config', function () {
   })
 
   it('should handle an fs probe\'s ignoreErrors property', function () {
-    const config = {probes: {fs: {enabled: true, ignoreErrors: {ENOENT: true}}}};
+    const config = {probes: {fs: {enabled: true, ignoreErrors: {open: {ENOENT: true}}}}};
     writeConfigJSON(config);
 
     const cfg = guc();
@@ -378,6 +378,18 @@ describe('config', function () {
     const errors = [`invalid ignoreErrors setting: ${JSON.stringify('i am a shrimp')}`];
     delete config.probes.fs.ignoreErrors;
     doChecks(cfg, {probes: config.probes, errors});
+  })
+
+  it('should verify that an fs probe\'s ignoreErrors object contains objects', function () {
+    const config = {probes: {fs: {ignoreErrors: {open: {ENOENT: true}, readdir: 'and so am i'}}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    const errors = [`invalid error code to ignore: ${JSON.stringify({readdir: 'and so am i'})}`];
+    delete config.probes.fs.ignoreErrors.readdir;
+    doChecks(cfg, {probes: config.probes, errors});
+
   })
 
   //

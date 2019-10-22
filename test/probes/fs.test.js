@@ -562,7 +562,7 @@ describe('probes.fs', function () {
 
   it('should suppress openSync errors when requested', function (done) {
     const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {ENOENT: true};
+    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
     function reset (err) {
       ao.probes.fs.ignoreErrors = previousIgnoreErrors;
       done(err);
@@ -616,7 +616,7 @@ describe('probes.fs', function () {
 
   it('should suppress open errors when requested', function (done) {
     const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {ENOENT: true};
+    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
     function reset (err) {
       ao.probes.fs.ignoreErrors = previousIgnoreErrors;
       done(err);

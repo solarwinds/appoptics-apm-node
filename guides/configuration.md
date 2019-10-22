@@ -52,9 +52,15 @@ The configuration file can supply the following properties, showing their defaul
 
 #### Configuration File Probe Settings ####
 
-Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different configuration options. See `dist/defaults.js` (or `lib/defaults.js` if you've cloned the github repository) for details.
+Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different configuration options. See `lib/defaults.js` for details.
 
-Probe settings in the `appoptics-apm` configuration file will override those in `defaults.js`, so the best approach to changing an option is to add it to `appoptics-apm.json`. For example, here is how to turn off sampling for `fs`:
+There is one particular setting for the `fs` probe that you might want to be aware of: `ignoreErrors`. The only errors that can be ignored are node
+System errors (see the node [docs](https://nodejs.org/api/errors.html#errors_common_system_errors)) returned by the asynchronous functions or thrown
+by the synchronous functions. Note that there is only one setting for the `open` and it ignores errors for both `fs.open()` and `fs.openSync()`.
+
+Ignoring the `ENOENT` error for the `fs.open()` and `fs.openSync()` functions is shown in the examples below.
+
+Probe settings in the `appoptics-apm` configuration file will override those in `defaults.js`, so the safest approach to changing an option is to add it to `appoptics-apm.json`. For example, here is how to turn off sampling for `fs`:
 
 ```
 {
@@ -62,7 +68,12 @@ Probe settings in the `appoptics-apm` configuration file will override those in 
   "serviceKey": "...",
   "probes": {
     "fs": {
-      "enabled": false
+      "enabled": false,
+      "ignoreErrors": {
+        "open": {
+          "ENOENT": true
+        }
+      }
     }
   }
 }
@@ -77,7 +88,12 @@ module.exports = {
   // isn't this much better?
   probes: {
     fs: {
-      enabled: false
+      enabled: false,
+      ignoreErrors: {
+        open: {
+          ENOENT: true,
+        }
+      }
     }
   }
 }
