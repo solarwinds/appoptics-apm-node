@@ -17,6 +17,11 @@ requirePatch.enable()
 
 const moduleName = 'mongodb-core';
 
+// just because it's not really documented particularly well in mongo docs
+// the namespace argument (the first argument, a string, to most calls) is
+// `database-name.collection-name` and the `$cmd` collection is a special
+// collection against which
+
 // need to make decisions based on major version
 const majorVersion = semver.major(pkg.version)
 
