@@ -406,14 +406,11 @@ describe('probes.fs', function () {
         const steps = [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Operation', call.name)
-            switch (call.type) {
-              case 'path':
-                msg.should.have.property('FilePath', args[0])
-                break
-              case 'fd':
-                msg.should.have.property('FileDescriptor', args[0])
-                break
+            msg.should.have.property('Operation', call.name);
+            if (call.type === 'path') {
+              msg.should.have.property('FilePath', args[0]);
+            } else if (call.type === 'fd') {
+              msg.should.have.property('FileDescriptor', args[0]);
             }
           }
         ]
@@ -436,7 +433,10 @@ describe('probes.fs', function () {
 
         // Push the exit check
         steps.push(function (msg) {
-          checks.exit(msg)
+          checks.exit(msg);
+          if (call.name === 'open') {
+            msg.should.have.property('FileDescriptor');
+          }
         })
 
         // Before starting test, run any required tasks
