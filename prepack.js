@@ -111,7 +111,7 @@ const onlyInProbesDir = difference(implementedProbes, commonProbes);
 // clean up known exceptions
 //
 
-// http-client and https-client are implemented in the http.js and https.js probes
+// http-client and https-client are implemented by the http.js and https.js probes
 onlyInDefault.delete('http-client');
 onlyInDefault.delete('https-client');
 

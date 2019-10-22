@@ -1,7 +1,11 @@
 'use strict'
 
+/* eslint-disable no-console */
+
 const helper = require('../helper')
 const {ao} = require('../1.test-common.js')
+
+const expect = require('chai').expect;
 
 const noop = helper.noop
 const addon = ao.addon
@@ -12,11 +16,12 @@ const MongoClient = mongodb.MongoClient
 
 const requirePatch = require('../../lib/require-patch')
 requirePatch.disable()
-const pkg = require('mongodb/package.json')
+const pkg = requirePatch.relativeRequire('mongodb/package.json');
 requirePatch.enable()
 
-// need to make decisions based on major version
-const majorVersion = semver.major(pkg.version)
+// prior to version 3.3.0 mongodb used mongodb-core. from 3.3.0 on mongodb
+// has incorporated those functions into its own codebase.
+const moduleName = semver.gte(pkg.version, '3.3.0') ? 'mongodb' : 'mongodb-core';
 
 let hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
@@ -26,7 +31,7 @@ let hosts = {
 }
 
 // version 3 of mongodb-core removed the 2.4 protocol driver.
-if (majorVersion >= 3) {
+if (semver.gte(pkg.version, '3.0.0')) {
   delete hosts['2.4']
 }
 
@@ -113,6 +118,9 @@ function makeTests (db_host, host, isReplicaSet) {
     if (current.parent && !(current.parent.title in doThese)) {
       this.skip()
     }
+    if (current.title !== 'should distinct' && current.title !== 'should count') {
+      //this.skip();
+    }
 
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
@@ -122,7 +130,7 @@ function makeTests (db_host, host, isReplicaSet) {
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
     }
-    ao.probes['mongodb-core'].collectBacktraces = false
+    ao.probes[moduleName].collectBacktraces = false
   })
   afterEach(function (done) {
     ao.probes.fs.enabled = true
@@ -234,18 +242,25 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
       msg.should.have.property('RemoteHost')
-      msg.RemoteHost.should.match(/:\d*$/)
+      //msg.RemoteHost.should.match(/:\d*$/)
+      expect(msg.RemoteHost).oneOf(db_host.split(','));
     },
     common: function (msg) {
       msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
-      msg.should.have.property('Label', 'entry')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      //console.log(`expecting ${moduleName}:entry got ${explicit}`);
+      //console.log(msg);
+      expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
       check.base(msg)
     },
     exit: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      //console.log(`expecting ${moduleName}:exit got ${explicit}`);
+      //console.log(msg);
+      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
+      msg.should.have.property('Layer', moduleName)
       msg.should.have.property('Label', 'exit')
     }
   }
@@ -401,7 +416,7 @@ function makeTests (db_host, host, isReplicaSet) {
     // query tests
     //
     queries: function () {
-      it('should insert', function (done) {
+      it('should insertMany', function (done) {
         function entry (msg) {
           check.entry(msg)
           check.common(msg)
@@ -428,7 +443,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      it('should update', function (done) {
+      it('should updateOne', function (done) {
         const query = {a: 1}
         const update = {
           $set: {b: 1}
@@ -463,6 +478,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
+      // calls topologies but function is "findAndModify"
       it('should findOneAndUpdate', function (done) {
         const query = {a: 1}
         const update = {$set: {a:1, b: 2}}
@@ -516,7 +532,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         const steps = [ entry ]
 
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
@@ -547,7 +563,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [ entry ]
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
@@ -563,6 +579,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
       it('should countDocuments', function (done) {
         const query = {a: 1}
+        const pipeline = '[{"$match":{"a":1}},{"$group":{"_id":1,"n":{"$sum":1}}}]';
 
         function entry (msg) {
           check.entry(msg)
@@ -571,7 +588,7 @@ function makeTests (db_host, host, isReplicaSet) {
           if (msg.QueryOp === 'count') {
             msg.should.have.property('Query', JSON.stringify(query))
           } else {
-            msg.should.have.property('Pipeline', '[{"$match":{"a":1}},{"$group":{"_id":null,"n":{"$sum":1}}}]')
+            msg.should.have.property('Pipeline', pipeline);
           }
         }
 
@@ -736,6 +753,7 @@ function makeTests (db_host, host, isReplicaSet) {
     },
 
     aggregations: function () {
+
       it('should group', function (done) {
         const group = {
           ns: `${dbn}.data-${dbn}`,

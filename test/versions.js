@@ -1,5 +1,10 @@
 'use strict'
 
+//
+// this file defines the versions that will be test when using
+// test-each-version.
+//
+
 const {VersionSpec} = require('testeachversion')
 const semver = require('semver');
 
@@ -81,6 +86,8 @@ test('koa-router', {
 test('level', node('gte', '12.0.0') ? '>= 5.0.0' : '>= 1.3.0');
 
 test('memcached', '>= 2.2.0')
+// prior to version 3.3.0 mongodb used mongodb-core
+test('mongodb', '>= 3.3.0');
 test('mongodb-core', '>= 2.0.0')
 test('mongoose', '>= 4.6.4')
 test('morgan', '>= 1.6.0')
