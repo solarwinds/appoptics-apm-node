@@ -6,14 +6,12 @@ const {ao} = require('../1.test-common.js')
 const noop = helper.noop
 const addon = ao.addon
 
-const expect = require('chai').expect;
 const semver = require('semver')
 const mongodb = require('mongodb-core')
 
-const requirePatch = require('../../lib/require-patch')
-requirePatch.disable()
+const expect = require('chai').expect;
+
 const pkg = require('mongodb-core/package.json')
-requirePatch.enable()
 
 const moduleName = 'mongodb-core';
 
@@ -21,9 +19,6 @@ const moduleName = 'mongodb-core';
 // the namespace argument (the first argument, a string, to most calls) is
 // `database-name.collection-name` and the `$cmd` collection is a special
 // collection against which
-
-// need to make decisions based on major version
-const majorVersion = semver.major(pkg.version)
 
 let hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
@@ -33,7 +28,7 @@ let hosts = {
 }
 
 // version 3 of mongodb-core removed the 2.4 protocol driver.
-if (majorVersion >= 3) {
+if (semver.gte(pkg.version, '3.0.0')) {
   delete hosts['2.4']
 }
 
@@ -50,7 +45,8 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 // during matrix testing. It's not needed when testing only one instance
 // at a time locally.
 
-const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
+const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '');
+const cn = `coll-${dbn}`;
 
 describe('probes.mongodb-core UDP', function () {
   let emitter
@@ -103,6 +99,24 @@ function makeTests (db_host, host, isReplicaSet) {
     ordered: true
   }
 
+  beforeEach(function () {
+    const current = this.currentTest
+    const doThese = {
+      databases: true,
+      collections: true,
+      queries: true,
+      indexes: true,
+      cursors: true,
+      aggregations: true,
+    }
+    if (current.parent && !(current.parent.title in doThese)) {
+      this.skip()
+    }
+    if (current.title !== 'should distinct' && current.title !== 'should count') {
+      //this.skip();
+    }
+  })
+
   //
   // Intercept appoptics messages for analysis
   //
@@ -115,7 +129,7 @@ function makeTests (db_host, host, isReplicaSet) {
     ao.addon.Context.sampleTrace = function () {
       return {sample: true, source: 6, rate: ao.sampleRate}
     }
-    ao.probes['mongodb-core'].collectBacktraces = false
+    ao.probes[moduleName].collectBacktraces = false
   })
   afterEach(function (done) {
     ao.probes.fs.enabled = true
@@ -136,8 +150,6 @@ function makeTests (db_host, host, isReplicaSet) {
         port: Number(port)
       }
     })
-
-    ao.logLevel = 'error,warn,debug,patching'
 
     ao.loggers.test.debug(`using dbn ${dbn}`)
 
@@ -248,7 +260,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.entry(msg)
           check.common(msg)
           msg.should.have.property('QueryOp', 'create_collection')
-          msg.should.have.property('New_Collection_Name', `coll-${dbn}`)
+          msg.should.have.property('New_Collection_Name', cn)
         }
 
         function exit (msg) {
@@ -265,10 +277,10 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {create: `coll-${dbn}`},
+          db.command(`${dbn}.$cmd`, {create: cn},
             function (e, data) {
               if (e) {
-                ao.loggers.debug(`error creating "coll-${dbn}`, e)
+                ao.loggers.debug(`error creating "${cn}"`, e)
                 done(e)
                 return
               }
@@ -302,13 +314,13 @@ function makeTests (db_host, host, isReplicaSet) {
           db.command(
             'admin.$cmd',
             {
-              renameCollection: `${dbn}.coll-${dbn}`,
+              renameCollection: `${dbn}.${cn}`,
               to: `${dbn}.coll2-${dbn}`,
               dropTarget: true
             },
             function (e, data) {
               if (e) {
-                ao.loggers.debug(`error renaming "coll-${dbn} to ${dbn}.coll2-${dbn}`, e)
+                ao.loggers.debug(`error renaming "${cn}" to "${dbn}.coll2-${dbn}"`, e)
                 done(e)
                 return
               }
