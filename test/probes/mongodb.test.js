@@ -294,7 +294,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         const steps = [entry]
 
-        if (isReplicaSet && moduleName === 'mongodb-core') {
+        if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
@@ -551,7 +551,6 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          debugger
           ctx.collection.distinct(
             key,
             query,
