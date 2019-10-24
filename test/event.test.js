@@ -93,7 +93,7 @@ describe('event', function () {
     const event2 = new Event('test', 'exit', event.event)
 
     const logChecks = [
-      {level: 'error', message: 'Invalid type for KV %s: %s', values: ['Nan', 'NaN']},
+      {level: 'error', message: 'Error: Invalid type for KV Nan: NaN'},
       // there is a stack trace here but issuing the error is enough.
     ]
 
