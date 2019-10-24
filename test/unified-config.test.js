@@ -360,6 +360,38 @@ describe('config', function () {
     doChecks(cfg, {unusedProbes: [config.probes]});
   })
 
+  it('should handle an fs probe\'s ignoreErrors property', function () {
+    const config = {probes: {fs: {enabled: true, ignoreErrors: {open: {ENOENT: true}}}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    doChecks(cfg, {probes: config.probes});
+  })
+
+  it('should verify an fs probe\'s ignoreErrors value is an object', function () {
+    const config = {probes: {fs: {enabled: true, ignoreErrors: 'i am a shrimp'}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    const errors = [`invalid ignoreErrors setting: ${JSON.stringify('i am a shrimp')}`];
+    delete config.probes.fs.ignoreErrors;
+    doChecks(cfg, {probes: config.probes, errors});
+  })
+
+  it('should verify that an fs probe\'s ignoreErrors object contains objects', function () {
+    const config = {probes: {fs: {ignoreErrors: {open: {ENOENT: true}, readdir: 'and so am i'}}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    const errors = [`invalid error code to ignore: ${JSON.stringify({readdir: 'and so am i'})}`];
+    delete config.probes.fs.ignoreErrors.readdir;
+    doChecks(cfg, {probes: config.probes, errors});
+
+  })
+
   //
   // transaction settings
   //
