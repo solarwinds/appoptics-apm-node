@@ -45,8 +45,8 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 // during matrix testing. It's not needed when testing only one instance
 // at a time locally. Save database name and collection name.
 
-const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
-const cn = `coll-${dbn}`
+const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '');
+const cn = `coll-${dbn}`;
 
 describe('probes.mongodb UDP', function () {
   let emitter
@@ -96,7 +96,6 @@ function makeTests (db_host, host, isReplicaSet) {
   const ctx = {}
   let emitter
   let db
-  //let realSampleTrace
 
   const options = {
     writeConcern: {w: 1},
@@ -232,23 +231,6 @@ function makeTests (db_host, host, isReplicaSet) {
       })
     }
   })
-  before(function (done) {
-    /*
-    if (!db) {
-      done()
-      return
-    }
-    db.command(
-      `${dbn}.$cmd`,
-      {dropDatabase: 1},
-      function (err) {
-        ao.loggers.test.debug('before() dropDatabase callback', err)
-        done(err)
-      }
-    )
-    // */
-    done()
-  })
   after(function () {
     if (ctx.client) {
       ctx.client.close()
@@ -336,7 +318,7 @@ function makeTests (db_host, host, isReplicaSet) {
           db.command({create: cn},
             function (e, data) {
               if (e) {
-                ao.loggers.test.debug(`error creating "coll-${dbn}`, e)
+                ao.loggers.error(`error creating "${cn}"`, e)
                 done(e)
                 return
               }
@@ -371,13 +353,13 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           adminDb.command(
             {
-              renameCollection: `${dbn}.coll-${dbn}`,
+              renameCollection: `${dbn}.${cn}`,
               to: `${dbn}.coll2-${dbn}`,
               dropTarget: true
             },
             function (e, data) {
               if (e) {
-                ao.loggers.debug(`error renaming "coll-${dbn} to ${dbn}.coll2-${dbn}`, e)
+                ao.loggers.debug(`error renaming "${cn}" to "${dbn}.coll2-${dbn}"`, e)
                 done(e)
                 return
               }
@@ -607,14 +589,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [entry]
-        /*
-        if (isReplicaSet) {
-          steps.push(entry)
-          steps.push(exit)
-        }
-        // */
-        steps.push(exit)
+        const steps = [entry, exit];
 
         helper.test(emitter, function (done) {
           ctx.collection.countDocuments(

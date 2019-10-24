@@ -13,6 +13,8 @@ const expect = require('chai').expect;
 
 const pkg = require('mongodb-core/package.json')
 
+// this is here just to make the code slightly more similar to the mongodb.test.js
+// code.
 const moduleName = 'mongodb-core';
 
 // just because it's not really documented particularly well in mongo docs
@@ -92,15 +94,34 @@ function makeTests (db_host, host, isReplicaSet) {
   const ctx = {}
   let emitter
   let db
-  let realSampleTrace
 
   const options = {
     writeConcern: {w: 1},
     ordered: true
   }
 
+  //
+  // Intercept appoptics messages for analysis
+  //
+  beforeEach(function (done) {
+    ao.probes.fs.enabled = false
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
+    ao.probes[moduleName].collectBacktraces = false
+    emitter = helper.appoptics(function () {
+      done();
+    });
+  });
+  afterEach(function (done) {
+    ao.probes.fs.enabled = true
+    emitter.close(function () {
+      done();
+    });
+  });
+
+  // skip specific tests to faciliate test debugging.
   beforeEach(function () {
-    const current = this.currentTest
+    const current = this.currentTest;
     const doThese = {
       databases: true,
       collections: true,
@@ -110,32 +131,24 @@ function makeTests (db_host, host, isReplicaSet) {
       aggregations: true,
     }
     if (current.parent && !(current.parent.title in doThese)) {
-      this.skip()
     }
-    if (current.title !== 'should distinct' && current.title !== 'should count') {
-      //this.skip();
+    // skip specific titles
+    const skipTheseTitles = [];
+    if (skipTheseTitles.indexOf(current.title) >= 0) {
     }
-  })
-
-  //
-  // Intercept appoptics messages for analysis
-  //
-  beforeEach(function (done) {
-    ao.probes.fs.enabled = false
-    emitter = helper.appoptics(done)
-    ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+    // do only these specific titles
+    const doTheseTitles = [
+      'should drop',
+      'should distinct',
+      'should count',
+    ];
+    if (doTheseTitles.length && doTheseTitles.indexOf(current.title) >= 0) {
+      //ao.logger.addEnabled('span');
     }
-    ao.probes[moduleName].collectBacktraces = false
-  })
-  afterEach(function (done) {
-    ao.probes.fs.enabled = true
-    ao.addon.Context.sampleTrace = realSampleTrace
-    emitter.close(done)
-  })
+  });
+  afterEach(function () {
+    //ao.logger.removeEnabled('span');
+  });
 
   //
   // Open a fresh mongodb connection for each test
@@ -221,7 +234,7 @@ function makeTests (db_host, host, isReplicaSet) {
   //
   const tests = {
     databases: function () {
-      it('should drop', function (done) {
+      it('should drop', function (tdone) {
         function entry (msg) {
           check.entry(msg)
           check.common(msg)
@@ -232,13 +245,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -247,7 +258,7 @@ function makeTests (db_host, host, isReplicaSet) {
             {dropDatabase: 1},
             done
           )
-        }, steps, done)
+        }, steps, tdone)
       })
     },
 
@@ -268,19 +279,17 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
-
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
           db.command(`${dbn}.$cmd`, {create: cn},
             function (e, data) {
               if (e) {
-                ao.loggers.debug(`error creating "${cn}"`, e)
+                ao.loggers.error(`error creating "${cn}"`, e);
                 done(e)
                 return
               }
@@ -301,13 +310,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -342,12 +349,10 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
-
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -381,12 +386,10 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
-
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -413,12 +416,10 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
-
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -445,13 +446,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -480,13 +479,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -512,13 +509,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -544,12 +539,10 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [entry]
-
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -586,13 +579,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -614,13 +605,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -644,13 +633,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -706,13 +693,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
@@ -744,13 +729,11 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [ entry ]
-
+        const steps = [entry]
         if (isReplicaSet) {
           steps.push(entry)
           steps.push(exit)
         }
-
         steps.push(exit)
 
         helper.test(emitter, function (done) {
