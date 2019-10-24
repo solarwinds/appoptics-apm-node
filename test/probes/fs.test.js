@@ -116,7 +116,7 @@ describe('probes.fs', function () {
   let fd
 
   //
-  // This is used to describe the inputs and behaviour of each function
+  // This describes the inputs and behaviour of each function
   //
   const calls = [
     // fs.mkdir
@@ -406,14 +406,11 @@ describe('probes.fs', function () {
         const steps = [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Operation', call.name)
-            switch (call.type) {
-              case 'path':
-                msg.should.have.property('FilePath', args[0])
-                break
-              case 'fd':
-                msg.should.have.property('FileDescriptor', args[0])
-                break
+            msg.should.have.property('Operation', call.name);
+            if (call.type === 'path') {
+              msg.should.have.property('FilePath', args[0]);
+            } else if (call.type === 'fd') {
+              msg.should.have.property('FileDescriptor', args[0]);
             }
           }
         ]
@@ -436,7 +433,10 @@ describe('probes.fs', function () {
 
         // Push the exit check
         steps.push(function (msg) {
-          checks.exit(msg)
+          checks.exit(msg);
+          if (call.name === 'open') {
+            msg.should.have.property('FileDescriptor');
+          }
         })
 
         // Before starting test, run any required tasks
@@ -532,7 +532,13 @@ describe('probes.fs', function () {
     })
   })
 
-  it('should fail sync calls gracefully', function (done) {
+  it('should fail openSync calls gracefully', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    delete ao.probes.fs.ignoreErrors;
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
     helper.test(emitter, function (done) {
       try {
         fs.openSync('does-not-exist', 'r')
@@ -549,10 +555,88 @@ describe('probes.fs', function () {
         checks.exit(msg)
         msg.should.have.property('ErrorClass', 'Error')
         msg.should.have.property('Backtrace')
-        msg.should.have.property('ErrorMsg')
-          .and.startWith('ENOENT')
+        msg.should.have.property('ErrorMsg').and.startWith('ENOENT')
       }
-    ], done)
+    ], reset)
+  });
+
+  it('should suppress openSync errors when requested', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
+    helper.test(emitter, function (done) {
+      try {
+        fs.openSync('does-not-exist', 'r')
+      }
+      catch (e) {}
+      process.nextTick(done)
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Operation', 'openSync')
+        msg.should.have.property('FilePath', 'does-not-exist')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.not.have.property('ErrorClass');
+        msg.should.not.have.property('Backtrace');
+        msg.should.not.have.property('ErrorMsg');
+      }
+    ], reset)
+  });
+
+  it('should report open errors', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    delete ao.probes.fs.ignoreErrors;
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
+    helper.test(emitter, function (done) {
+      fs.open('does-not-exist', 'r', function (err) {
+        done();
+      })
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Operation', 'open')
+        msg.should.have.property('FilePath', 'does-not-exist')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.have.property('ErrorClass', 'Error')
+        msg.should.have.property('Backtrace')
+        msg.should.have.property('ErrorMsg').and.startWith('ENOENT')
+      }
+    ], reset)
   })
 
+  it('should suppress open errors when requested', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
+    helper.test(emitter, function (done) {
+      fs.open('does-not-exist', 'r', function (err) {
+        done();
+      })
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('Operation', 'open')
+        msg.should.have.property('FilePath', 'does-not-exist')
+      },
+      function (msg) {
+        checks.exit(msg)
+        msg.should.not.have.property('ErrorClass');
+        msg.should.not.have.property('Backtrace');
+        msg.should.not.have.property('ErrorMsg');
+      }
+    ], reset)
+  })
 })
