@@ -176,7 +176,7 @@ describe('config', function () {
       hostnameAlias: 'bruce',
       serviceKey: 'f'.repeat(64),
       ignoreConflicts: true,
-      domainPrefix: 'fubar',
+      domainPrefix: false,
     }
     writeConfigJSON(config);
 
@@ -224,6 +224,50 @@ describe('config', function () {
       'invalid configuration file value ec2MetadataTimeout: hello',
     ];
     doChecks(cfg, {warnings});
+  })
+
+  it('should handle benchmark config file', function () {
+    const literal = [
+      'let serviceKey;',
+      '',
+      'module.exports = {',
+      '  enabled: true,',
+      '  traceMode: 1,',
+      '  hostnameAlias: \'\',',
+      '  domainPrefix: false,',
+      '  serviceKey,',
+      '  insertTraceIdsIntoLogs: undefined,',
+      '  insertTraceIdsIntoMorgan: undefined,',
+      '  createTraceIdsToken: false,',
+      '  probes: {',
+      '    fs: {',
+      '      enabled: true',
+      '    }',
+      '  }',
+      '};',
+    ];
+    const expected = {
+      enabled: true,
+      traceMode: 1,
+      hostnameAlias: '',
+      domainPrefix: false,
+      serviceKey: 'undefined',
+      insertTraceIdsIntoLogs: false,
+      insertTraceIdsIntoMorgan: false,
+    };
+
+    writeConfigJs(literal.join('\n'));
+
+    // specify the filename with extension to work around node bug/feature/issue.
+    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm.js';
+
+    const cfg = guc();
+
+    const warnings = [
+      'invalid configuration file value createTraceIdsToken: false',
+      'traceMode is deprecated; it will be invalid in the future',
+    ];
+    doChecks(cfg, {file: `${process.cwd()}/${file}`, global: expected, warnings});
   })
 
   it('should handle a non-default config file correctly', function () {
@@ -306,7 +350,7 @@ describe('config', function () {
       hostnameAlias: 'bruce',
       serviceKey: 'f'.repeat(64),
       ignoreConflicts: true,
-      domainPrefix: 'fubar',
+      domainPrefix: false,
     }
     writeConfigJSON(config);
     process.env.APPOPTICS_SERVICE_KEY = 'ab'.repeat(32);
