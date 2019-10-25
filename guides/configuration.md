@@ -27,7 +27,7 @@ The configuration file can supply the following properties, showing their defaul
   insertTraceIdsIntoMorgan: false,
   createTraceIdsToken: undefined,
   probes: {
-    // probe-specific defaults. see dist/defaults.js for details
+    // probe-specific defaults. see lib/probe-defaults.js for details
   }
 }
 ```
