@@ -2,6 +2,7 @@
 
 const helper = require('../helper')
 const {ao} = require('../1.test-common')
+const expect = require('chai').expect;
 
 const noop = helper.noop
 
@@ -58,12 +59,12 @@ describe('probes.fs', function () {
   //
   const checks = {
     entry: function (msg) {
-      msg.should.have.property('Layer', 'fs')
-      msg.should.have.property('Label', 'entry')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      expect(explicit).equal('fs:entry', 'Layer and Label must match');
     },
     exit: function (msg) {
-      msg.should.have.property('Layer', 'fs')
-      msg.should.have.property('Label', 'exit')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      expect(explicit).equal('fs:exit', 'Layer and Label must match');
     }
   }
 
