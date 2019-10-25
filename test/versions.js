@@ -86,10 +86,12 @@ test('koa-router', {
 test('level', node('gte', '12.0.0') ? '>= 5.0.0' : '>= 1.3.0');
 
 test('memcached', '>= 2.2.0')
-// prior to version 3.3.0 mongodb used mongodb-core
+// prior to version 3.3.0 mongodb used mongodb-core.
 test('mongodb', '>= 3.3.0');
 test('mongodb-core', '>= 2.0.0')
-test('mongoose', '>= 4.6.4')
+// our agent disables mongodb-core versions less than 3 on node > 11.15.0 due to memory leak.
+// mongoose 5 is the first that uses mongodb-core 3.
+test('mongoose', node('gte', '11.15.0') ? '>= 5.0.0' : '>= 4.6.4')
 test('morgan', '>= 1.6.0')
 test('mysql', '>= 2.1.0')
 
