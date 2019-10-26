@@ -366,10 +366,16 @@ describe('config', function () {
   it('should correctly handle env vars with explicit names', function () {
     process.env.APPOPTICS_DEBUG_LEVEL = 4;
     process.env.APPOPTICS_COLLECTOR = 'collector-stg.appoptics.com';
+    process.env.APPOPTICS_TRUSTEDPATH = './certs/special.cert';
 
     const cfg = guc();
 
-    const config = {logLevel: 4, endpoint: process.env.APPOPTICS_COLLECTOR};
+    const expectedLogLevel = +process.env.APPOPTICS_DEBUG_LEVEL;
+    const config = {
+      logLevel: expectedLogLevel,
+      endpoint: process.env.APPOPTICS_COLLECTOR,
+      trustedPath: process.env.APPOPTICS_TRUSTEDPATH,
+    };
     doChecks(cfg, {global: config});
   })
 
