@@ -76,3 +76,24 @@ Bug fixes
 - make TemplateLanguage KV consistent - never include leading dot.
 - bind finalizer in instrumentHttp.
 - fix zlib bind emitter message.
+
+### v6.8.0
+
+Features
+- fetch container information in Azure App Service environment.
+
+### v6.9.0
+
+Features
+- new `mongodb` probe for versions >= 3.3.0 as it now longer uses `mongodb-core`.
+- allow the `fs` probe to ignore specific errors.
+- `patching` log setting logs the version of patched modules.
+- disable `mongodb-core` versions < 3 for node versions > 11.15.0 due to v8 memory leak.
+
+Bug fixes
+- supply a default `TransactionName` when none is present.
+- log only one message for `getTraceSettings()` errors.
+- log only one message for each incorrect KV pair.
+- reset both count and time windows when a debounced log message is issued.
+- add missing `FileDescriptor` to exit events.
+
