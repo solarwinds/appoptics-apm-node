@@ -4,7 +4,12 @@
     "domainPrefix": "",
     "probes": {
       "fs": {
-        "enabled": true
+        "enabled": true,
+        "ignoreErrors": {
+          "open": {
+            "ENOENT": true
+          }
+        }
       }
     }
 }

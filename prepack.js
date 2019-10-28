@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
+const m = process.version.match(/v(\d+)\.\d+\.\d+/);
+if (+m[1] < 10) {
+  // eslint-disable-next-line no-console
+  console.error(`appoptics-apm must be released using node >= 10; using ${process.version}`);
+  process.exit(1);
+}
+
 const fs = require('fs');
 
 const files = fs.readdirSync('.', 'utf8');
@@ -111,7 +118,7 @@ const onlyInProbesDir = difference(implementedProbes, commonProbes);
 // clean up known exceptions
 //
 
-// http-client and https-client are implemented in the http.js and https.js probes
+// http-client and https-client are implemented by the http.js and https.js probes
 onlyInDefault.delete('http-client');
 onlyInDefault.delete('https-client');
 

@@ -3,6 +3,7 @@
 const helper = require('../helper')
 const {ao} = require('../1.test-common.js')
 
+
 const noop = helper.noop
 const addon = ao.addon
 
@@ -10,13 +11,13 @@ const semver = require('semver')
 const mongodb = require('mongodb')
 const MongoClient = mongodb.MongoClient
 
-const requirePatch = require('../../lib/require-patch')
-requirePatch.disable()
-const pkg = require('mongodb/package.json')
-requirePatch.enable()
+const expect = require('chai').expect;
 
-// need to make decisions based on major version
-const majorVersion = semver.major(pkg.version)
+const pkg = require('mongodb/package.json');
+
+// prior to version 3.3.0 mongodb used mongodb-core. from 3.3.0 on mongodb
+// has incorporated those functions into its own codebase.
+const moduleName = semver.gte(pkg.version, '3.3.0') ? 'mongodb' : 'mongodb-core';
 
 let hosts = {
   '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
@@ -25,8 +26,9 @@ let hosts = {
   'replica set': process.env.AO_TEST_MONGODB_SET
 }
 
-// version 3 of mongodb-core removed the 2.4 protocol driver.
-if (majorVersion >= 3) {
+// version 3 of mongodb-core removed the 2.4 protocol driver. and mongodb 3.0.0
+// uses mongodb-core 3.0.0
+if (semver.gte(pkg.version, '3.0.0')) {
   delete hosts['2.4']
 }
 
@@ -43,8 +45,8 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 // during matrix testing. It's not needed when testing only one instance
 // at a time locally. Save database name and collection name.
 
-const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
-const cn = `coll-${dbn}`
+const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '');
+const cn = `coll-${dbn}`;
 
 describe('probes.mongodb UDP', function () {
   let emitter
@@ -86,11 +88,14 @@ describe('probes/mongodb ' + pkg.version, function () {
   })
 })
 
+
+//
+// make the tests
+//
 function makeTests (db_host, host, isReplicaSet) {
   const ctx = {}
   let emitter
   let db
-  let realSampleTrace
 
   const options = {
     writeConcern: {w: 1},
@@ -101,7 +106,25 @@ function makeTests (db_host, host, isReplicaSet) {
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    const current = this.currentTest
+    ao.probes.fs.enabled = false
+    ao.sampleRate = addon.MAX_SAMPLE_RATE
+    ao.traceMode = 'always'
+    ao.probes[moduleName].collectBacktraces = false
+    emitter = helper.appoptics(function () {
+      done();
+    });
+  });
+  afterEach(function (done) {
+    ao.probes.fs.enabled = true
+    emitter.close(function () {
+      done();
+    });
+  });
+
+
+  // skip specific tests to faciliate test debugging.
+  beforeEach(function () {
+    const current = this.currentTest;
     const doThese = {
       databases: true,
       collections: true,
@@ -111,24 +134,24 @@ function makeTests (db_host, host, isReplicaSet) {
       aggregations: true,
     }
     if (current.parent && !(current.parent.title in doThese)) {
-      this.skip()
     }
-
-    ao.probes.fs.enabled = false
-    emitter = helper.appoptics(done)
-    ao.sampleRate = addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+    // skip specific titles
+    const skipTheseTitles = [];
+    if (skipTheseTitles.indexOf(current.title) >= 0) {
     }
-    ao.probes['mongodb-core'].collectBacktraces = false
-  })
-  afterEach(function (done) {
-    ao.probes.fs.enabled = true
-    ao.addon.Context.sampleTrace = realSampleTrace
-    emitter.close(done)
-  })
+    // do only these specific titles
+    const doTheseTitles = [
+      'should drop',
+      'should distinct',
+      'should count',
+    ];
+    if (doTheseTitles.length && doTheseTitles.indexOf(current.title) >= 0) {
+      //ao.logger.addEnabled('span');
+    }
+  });
+  afterEach(function () {
+    //ao.logger.removeEnabled('span');
+  });
 
   //
   // Open a fresh mongodb connection for each test
@@ -143,8 +166,6 @@ function makeTests (db_host, host, isReplicaSet) {
         port: Number(port)
       }
     })
-
-    //ao.logLevel = 'error,warn,debug,patching'
 
     ao.loggers.test.debug(`using dbn ${dbn}`)
 
@@ -164,6 +185,7 @@ function makeTests (db_host, host, isReplicaSet) {
       mongoClient.connect((err, _client) => {
         ao.loggers.test.debug('mongoClient() connect callback', err)
         if (err) {
+          // eslint-disable-next-line no-console
           console.log('error connecting', err)
           return done(err)
         }
@@ -186,11 +208,14 @@ function makeTests (db_host, host, isReplicaSet) {
       if (semver.gte(pkg.version, '3.0.0')) {
         server = new mongodb.Server(host.host, host.port)
         mongoClient = new MongoClient(server, mongoOptions)
+      } else {
+        throw new Error(`mongodb v${pkg.version} is not supported`);
       }
 
       mongoClient.connect((err, _client) => {
         ao.loggers.test.debug('mongoClient() connect callback', err)
         if (err) {
+          // eslint-disable-next-line no-console
           console.log('error connecting', err)
           return done(err)
         }
@@ -206,23 +231,6 @@ function makeTests (db_host, host, isReplicaSet) {
       })
     }
   })
-  before(function (done) {
-    /*
-    if (!db) {
-      done()
-      return
-    }
-    db.command(
-      `${dbn}.$cmd`,
-      {dropDatabase: 1},
-      function (err) {
-        ao.loggers.test.debug('before() dropDatabase callback', err)
-        done(err)
-      }
-    )
-    // */
-    done()
-  })
   after(function () {
     if (ctx.client) {
       ctx.client.close()
@@ -234,19 +242,19 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
       msg.should.have.property('RemoteHost')
-      msg.RemoteHost.should.match(/:\d*$/)
+      expect(msg.RemoteHost).oneOf(db_host.split(','));
     },
     common: function (msg) {
       msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
-      msg.should.have.property('Label', 'entry')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
       check.base(msg)
     },
     exit: function (msg) {
-      msg.should.have.property('Layer', 'mongodb-core')
-      msg.should.have.property('Label', 'exit')
+      const explicit = `${msg.Layer}:${msg.Label}`;
+      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
     }
   }
 
@@ -255,7 +263,7 @@ function makeTests (db_host, host, isReplicaSet) {
   //
   const tests = {
     databases: function () {
-      it('should drop', function (done) {
+      it('should drop', function (tdone) {
         function entry (msg) {
           check.entry(msg)
           check.common(msg)
@@ -277,7 +285,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         helper.test(emitter, function (done) {
           db.command({dropDatabase: 1}, done)
-        }, steps, done)
+        }, steps, tdone)
       })
     },
 
@@ -310,7 +318,7 @@ function makeTests (db_host, host, isReplicaSet) {
           db.command({create: cn},
             function (e, data) {
               if (e) {
-                ao.loggers.test.debug(`error creating "coll-${dbn}`, e)
+                ao.loggers.error(`error creating "${cn}"`, e)
                 done(e)
                 return
               }
@@ -345,13 +353,13 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           adminDb.command(
             {
-              renameCollection: `${dbn}.coll-${dbn}`,
+              renameCollection: `${dbn}.${cn}`,
               to: `${dbn}.coll2-${dbn}`,
               dropTarget: true
             },
             function (e, data) {
               if (e) {
-                ao.loggers.debug(`error renaming "coll-${dbn} to ${dbn}.coll2-${dbn}`, e)
+                ao.loggers.debug(`error renaming "${cn}" to "${dbn}.coll2-${dbn}"`, e)
                 done(e)
                 return
               }
@@ -401,7 +409,7 @@ function makeTests (db_host, host, isReplicaSet) {
     // query tests
     //
     queries: function () {
-      it('should insert', function (done) {
+      it('should insertMany', function (done) {
         function entry (msg) {
           check.entry(msg)
           check.common(msg)
@@ -428,7 +436,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
-      it('should update', function (done) {
+      it('should updateOne', function (done) {
         const query = {a: 1}
         const update = {
           $set: {b: 1}
@@ -463,6 +471,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }, steps, done)
       })
 
+      // calls topologies but function is "findAndModify"
       it('should findOneAndUpdate', function (done) {
         const query = {a: 1}
         const update = {$set: {a:1, b: 2}}
@@ -516,7 +525,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         const steps = [ entry ]
 
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
@@ -547,7 +556,7 @@ function makeTests (db_host, host, isReplicaSet) {
         }
 
         const steps = [ entry ]
-        if (isReplicaSet) {
+        if (isReplicaSet && moduleName === 'mongodb-core') {
           steps.push(entry)
           steps.push(exit)
         }
@@ -563,6 +572,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
       it('should countDocuments', function (done) {
         const query = {a: 1}
+        const pipeline = '[{"$match":{"a":1}},{"$group":{"_id":1,"n":{"$sum":1}}}]';
 
         function entry (msg) {
           check.entry(msg)
@@ -571,7 +581,7 @@ function makeTests (db_host, host, isReplicaSet) {
           if (msg.QueryOp === 'count') {
             msg.should.have.property('Query', JSON.stringify(query))
           } else {
-            msg.should.have.property('Pipeline', '[{"$match":{"a":1}},{"$group":{"_id":null,"n":{"$sum":1}}}]')
+            msg.should.have.property('Pipeline', pipeline);
           }
         }
 
@@ -579,14 +589,7 @@ function makeTests (db_host, host, isReplicaSet) {
           check.exit(msg)
         }
 
-        const steps = [entry]
-        /*
-        if (isReplicaSet) {
-          steps.push(entry)
-          steps.push(exit)
-        }
-        // */
-        steps.push(exit)
+        const steps = [entry, exit];
 
         helper.test(emitter, function (done) {
           ctx.collection.countDocuments(
@@ -736,6 +739,7 @@ function makeTests (db_host, host, isReplicaSet) {
     },
 
     aggregations: function () {
+
       it('should group', function (done) {
         const group = {
           ns: `${dbn}.data-${dbn}`,

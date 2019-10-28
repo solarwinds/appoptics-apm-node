@@ -354,10 +354,10 @@ describe('span', function () {
     helper.doChecks(emitter, checks, done)
 
     const logChecks = [
-      {level: 'error', message: 'Invalid type for KV'},
-      {level: 'error', message: 'Invalid type for KV'},
-      {level: 'error', message: 'Invalid type for KV'},
-      {level: 'error', message: 'Invalid type for KV'},
+      {level: 'error', message: 'Error: Invalid type for KV'},
+      {level: 'error', message: 'Error: Invalid type for KV'},
+      {level: 'error', message: 'Error: Invalid type for KV'},
+      {level: 'error', message: 'Error: Invalid type for KV'},
     ]
 
     let getCount  // eslint-disable-line

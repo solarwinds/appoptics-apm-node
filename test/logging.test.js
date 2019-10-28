@@ -91,26 +91,26 @@ describe('logging', function () {
   it('should debounce repetitive logging by count', function () {
     const msg = 'test logging'
     const aolevel = 'error'
-    let debounced = new ao.loggers.Debounce('error')
+    let debounced = new ao.loggers.Debounce(aolevel);
     let count = 0
     let i
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
       expect(level).equal('appoptics:' + aolevel)
-      expect(text).equal('[' + (i + 1) + ']' + msg)
-      count += 1
+      expect(text).equal(`[${i + 1}]${msg}`);
+      count += 1;
     }
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    expect(count).equal(11)
+    expect(count).equal(10);
 
-    debounced = new ao.loggers.Debounce('error', {deltaCount: 500})
+    debounced = new ao.loggers.Debounce(aolevel, {deltaCount: 500});
     count = 0
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    expect(count).equal(3)
+    expect(count).equal(2);
   })
 
   it('should debounce repetitive logging by time', function (done) {

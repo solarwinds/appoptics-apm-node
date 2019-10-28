@@ -176,7 +176,7 @@ describe('config', function () {
       hostnameAlias: 'bruce',
       serviceKey: 'f'.repeat(64),
       ignoreConflicts: true,
-      domainPrefix: 'fubar',
+      domainPrefix: false,
     }
     writeConfigJSON(config);
 
@@ -224,6 +224,50 @@ describe('config', function () {
       'invalid configuration file value ec2MetadataTimeout: hello',
     ];
     doChecks(cfg, {warnings});
+  })
+
+  it('should handle benchmark config file', function () {
+    const literal = [
+      'let serviceKey;',
+      '',
+      'module.exports = {',
+      '  enabled: true,',
+      '  traceMode: 1,',
+      '  hostnameAlias: \'\',',
+      '  domainPrefix: false,',
+      '  serviceKey,',
+      '  insertTraceIdsIntoLogs: undefined,',
+      '  insertTraceIdsIntoMorgan: undefined,',
+      '  createTraceIdsToken: false,',
+      '  probes: {',
+      '    fs: {',
+      '      enabled: true',
+      '    }',
+      '  }',
+      '};',
+    ];
+    const expected = {
+      enabled: true,
+      traceMode: 1,
+      hostnameAlias: '',
+      domainPrefix: false,
+      serviceKey: 'undefined',
+      insertTraceIdsIntoLogs: false,
+      insertTraceIdsIntoMorgan: false,
+    };
+
+    writeConfigJs(literal.join('\n'));
+
+    // specify the filename with extension to work around node bug/feature/issue.
+    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm.js';
+
+    const cfg = guc();
+
+    const warnings = [
+      'invalid configuration file value createTraceIdsToken: false',
+      'traceMode is deprecated; it will be invalid in the future',
+    ];
+    doChecks(cfg, {file: `${process.cwd()}/${file}`, global: expected, warnings});
   })
 
   it('should handle a non-default config file correctly', function () {
@@ -306,7 +350,7 @@ describe('config', function () {
       hostnameAlias: 'bruce',
       serviceKey: 'f'.repeat(64),
       ignoreConflicts: true,
-      domainPrefix: 'fubar',
+      domainPrefix: false,
     }
     writeConfigJSON(config);
     process.env.APPOPTICS_SERVICE_KEY = 'ab'.repeat(32);
@@ -322,10 +366,16 @@ describe('config', function () {
   it('should correctly handle env vars with explicit names', function () {
     process.env.APPOPTICS_DEBUG_LEVEL = 4;
     process.env.APPOPTICS_COLLECTOR = 'collector-stg.appoptics.com';
+    process.env.APPOPTICS_TRUSTEDPATH = './certs/special.cert';
 
     const cfg = guc();
 
-    const config = {logLevel: 4, endpoint: process.env.APPOPTICS_COLLECTOR};
+    const expectedLogLevel = +process.env.APPOPTICS_DEBUG_LEVEL;
+    const config = {
+      logLevel: expectedLogLevel,
+      endpoint: process.env.APPOPTICS_COLLECTOR,
+      trustedPath: process.env.APPOPTICS_TRUSTEDPATH,
+    };
     doChecks(cfg, {global: config});
   })
 
@@ -358,6 +408,38 @@ describe('config', function () {
     const cfg = guc();
 
     doChecks(cfg, {unusedProbes: [config.probes]});
+  })
+
+  it('should handle an fs probe\'s ignoreErrors property', function () {
+    const config = {probes: {fs: {enabled: true, ignoreErrors: {open: {ENOENT: true}}}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    doChecks(cfg, {probes: config.probes});
+  })
+
+  it('should verify an fs probe\'s ignoreErrors value is an object', function () {
+    const config = {probes: {fs: {enabled: true, ignoreErrors: 'i am a shrimp'}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    const errors = [`invalid ignoreErrors setting: ${JSON.stringify('i am a shrimp')}`];
+    delete config.probes.fs.ignoreErrors;
+    doChecks(cfg, {probes: config.probes, errors});
+  })
+
+  it('should verify that an fs probe\'s ignoreErrors object contains objects', function () {
+    const config = {probes: {fs: {ignoreErrors: {open: {ENOENT: true}, readdir: 'and so am i'}}}};
+    writeConfigJSON(config);
+
+    const cfg = guc();
+
+    const errors = [`invalid error code to ignore: ${JSON.stringify({readdir: 'and so am i'})}`];
+    delete config.probes.fs.ignoreErrors.readdir;
+    doChecks(cfg, {probes: config.probes, errors});
+
   })
 
   //

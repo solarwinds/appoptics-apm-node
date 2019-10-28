@@ -78,6 +78,19 @@ are many different ways to do so ranging from npm's `link` command, manually cop
 options embedded in the npm `postinstall` script, `install-appoptics-bindings.js`. The primary
 documentation for this advanced feature is the code.
 
+### Testing against all supported versions of the package
+
+When a probe has been updated all supported versions of a package must be tested. The package `testeachversion`
+facilitates this. `test/versions.js` defines the supported versions for each package we supply probes for. `testeachversion`
+uses this file by default. To test all supported versions of a given package use the command:
+
+`node_modules/.bin/testeachversion -p package-name`
+
+If you don't specify the `-p package-name` option, all supported versions of all packages will be tested. That
+takes a while. `testeachversion` writes two files, a details file and a summary file. More information and options
+is available via `testeachversion -h`.
+
+
 
 ## Docs
 
