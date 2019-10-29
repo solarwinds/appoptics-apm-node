@@ -23,13 +23,14 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 }
 
 const major = semver.major(pkg.version)
+const moduleName = semver.gte(pkg.version, '5.7.0') ? 'mongodb' : 'mongodb-core';
 
 // use AO_IX if present. It provides a unique ID to prevent collisions
 // during matrix testing. It's not needed when testing only one instance
 // at a time locally.
 const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
 
-describe('probes/mongoose ' + pkg.version, function () {
+describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
   const mongoOpts = major >= 5 ? {useNewUrlParser: true} : {useMongoClient: true}
 
   const Cat = mongoose.model(dbn, new Schema({
@@ -53,15 +54,15 @@ describe('probes/mongoose ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // make them more readable
-    backtraces = ao.probes['mongodb-core'].collectBacktraces
-    ao.probes['mongodb-core'].collectBacktraces = false
+    backtraces = ao.probes[moduleName].collectBacktraces;
+    ao.probes[moduleName].collectBacktraces = false;
     // and don't let file IO complicate the results
     fsenabled = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
   })
   after(function (done) {
     ao.probes.fs.enabled = fsenabled
-    ao.probes['mongodb-core'].collectBacktraces = backtraces
+    ao.probes[moduleName].collectBacktraces = backtraces;
     emitter.close(done)
   })
 
@@ -88,12 +89,12 @@ describe('probes/mongoose ' + pkg.version, function () {
       expect(msg).to.include({Database: dbn})
     },
     entry: function (msg) {
-      expect(msg).to.include({Layer: 'mongodb-core'})
+      expect(msg).to.include({Layer: moduleName});
       expect(msg).to.include({Label: 'entry'})
       check.base(msg)
     },
     exit: function (msg) {
-      expect(msg).to.include({Layer: 'mongodb-core'})
+      expect(msg).to.include({Layer: moduleName});
       expect(msg).to.include({Label: 'exit'})
     }
   }
@@ -300,6 +301,7 @@ describe('probes/mongoose ' + pkg.version, function () {
       function done (err) {
         doneCalls.push(new Error('done call'))
         if (doneCalls.length > 1) {
+          // eslint-disable-next-line no-console
           console.log(doneCalls)
         }
         realDone(err)
@@ -370,10 +372,10 @@ describe('probes/mongoose ' + pkg.version, function () {
         // the key.
         // so this ignores admin database access and exits that edge back to database accesses.
         ignore: function (m) {
-          if (m.Layer === 'mongodb-core' && m.Database === 'admin' && m.Collection === '$cmd') {
+          if (m.Layer === moduleName && m.Database === 'admin' && m.Collection === '$cmd') {
             return true
           }
-          if (m.Layer === 'mongodb-core' && m.Label === 'exit') {
+          if (m.Layer === moduleName && m.Label === 'exit') {
             return !(m.Edge in this.opIdMap)
           }
           return false
@@ -432,7 +434,7 @@ describe('probes/mongoose ' + pkg.version, function () {
     if (m.Edge) {
       text.push(`\n  ${m.Edge}`)
     }
-    if (m.Layer === 'mongodb-core' && m.Label === 'entry') {
+    if (m.Layer === moduleName && m.Label === 'entry') {
       text.push(`\n  ${m.Spec} - ${m.QueryOp}`)
       if (m.QueryOp === 'insert') {
         const match = m.Insert_Document.match(/"name":".+?"/)
@@ -440,6 +442,7 @@ describe('probes/mongoose ' + pkg.version, function () {
       }
     }
 
+    // eslint-disable-next-line no-console
     console.log(text.join(' '))
   }
 
