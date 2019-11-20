@@ -7,6 +7,9 @@ const aob = ao.addon;
 const Span = ao.Span
 const Event = ao.Event
 
+const Q = require('q');
+const bluebird = require('bluebird');
+
 const makeSettings = helper.makeSettings
 
 //
@@ -30,6 +33,14 @@ function psoon () {
   return new Promise((resolve, reject) => {
     soon(() => resolve())
   })
+}
+
+function qpsoon () {
+  return Q.delay(1);
+}
+
+function bbpsoon () {
+  return bluebird.delay(1);
 }
 
 // Without the native liboboe bindings present,
@@ -155,7 +166,7 @@ describe('custom', function () {
     ], done)
   })
 
-  it('should custom instrument promise code', function (done) {
+  it('should custom instrument native promise code', function (done) {
     helper.test(
       emitter,
       function (done) {
@@ -172,6 +183,44 @@ describe('custom', function () {
           msg.should.have.property('Label', 'exit')
         }
       ], done)
+  })
+
+  it('should custom instrument Q promise code', function (done) {
+    helper.test(
+      emitter,
+      function (done) {
+        ao.pInstrument(main, qpsoon).then(r => {
+          done()
+        })
+      }, [
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'exit')
+      }
+    ], done)
+  })
+
+  it('should custom instrument bluebird promise code', function (done) {
+    helper.test(
+      emitter,
+      function (done) {
+        ao.pInstrument(main, bbpsoon).then(r => {
+          done()
+        })
+      }, [
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', main)
+        msg.should.have.property('Label', 'exit')
+      }
+    ], done)
   })
 
   it('should support spanInfo function', function (done) {
