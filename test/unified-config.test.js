@@ -98,10 +98,14 @@ function toInternalTransactionSettings (settings) {
     translated.push({
       doMetrics: s.tracing !== 'disabled',
       doSample: s.tracing !== 'disabled',
-      pattern: s.string || (s.regex instanceof RegExp ? s.regex : new RegExp(s.regex)),
+      string: s.string,
+      regex: s.regex,
       type: s.type,
-    })
-  })
+    });
+    if (typeof s.regex === 'string') {
+      translated[translated.length - 1].regex = new RegExp(s.regex);
+    }
+  });
 
   return translated;
 }
