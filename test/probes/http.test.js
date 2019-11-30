@@ -104,6 +104,10 @@ describe('probes.http', function () {
   describe('http-server', function () {
     const conf = ao.probes.http
 
+    after(function () {
+      ao.resetRequestStore();
+    });
+
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
     it('UDP might lose a message running locally', function (done) {
@@ -560,7 +564,12 @@ describe('probes.http', function () {
   //
 
   describe('http-client', function () {
-    const conf = ao.probes['http-client']
+    const conf = ao.probes['http-client'];
+
+    after(function () {
+      ao.resetRequestStore();
+    });
+
     it('should trace http request', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')

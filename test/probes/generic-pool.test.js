@@ -66,6 +66,10 @@ describe('probes/generic-pool ' + pkg.version, function () {
     ao.g.testing(__filename)
   })
 
+  after(function () {
+    ao.resetRequestStore();
+  })
+
   ifv2('should trace through generic-pool acquire for versions < 3', function (done) {
     //
     // v2 uses callbacks

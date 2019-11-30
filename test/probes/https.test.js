@@ -85,6 +85,10 @@ describe('probes.https', function () {
     const conf = ao.probes.https
     conf.collectBacktraces = false
 
+    after(function () {
+      ao.resetRequestStore();
+    });
+
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
     it('UDP might lose a message running locally', function (done) {
@@ -427,6 +431,10 @@ describe('probes.https', function () {
   describe('https-client', function () {
     const conf = ao.probes['https-client']
     conf.collectBacktraces = false
+
+    after(function () {
+      ao.resetRequestStore();
+    });
 
     it('should trace https request', function (done) {
       const server = https.createServer(options, function (req, res) {
