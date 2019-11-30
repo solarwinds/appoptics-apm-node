@@ -49,10 +49,10 @@ describe(`probes.restify ${pkg.version}`, function () {
   })
   after(function (done) {
     emitter.close(done)
-    if (ao.requestStore.getGraph) {
+    if (false && ao.requestStore.getMetrics) {
       process.on('exit', function () {
         ao.requestStore._hook.disable();
-        interpretContextGraph(ao.requestStore.getGraph());
+        interpretMetrics(ao.requestStore.getMetrics());
       })
     }
     ao.probes.fs.enabled = fsState
@@ -195,47 +195,62 @@ describe(`probes.restify ${pkg.version}`, function () {
   }
 })
 
-function interpretContextGraph (graph) {
-  const inits = graph.inits;
-  const asyncIds = Reflect.ownKeys(graph.inits);
+function interpretMetrics (metrics) {
+  const hooks = metrics.hooks;
+  const asyncIds = Reflect.ownKeys(metrics.hooks);
   let firstNonBootstrapId = asyncIds[asyncIds.length - 1];
+
+  function log (...args) {
+    /* eslint-disable-next-line no-console */
+    console.log(...args);
+  }
 
   // find the first non-bootstrap ID
   for (let i = 0; i < asyncIds.length; i++) {
-    if (!inits[asyncIds[i]].bootstrap) {
+    if (!hooks[asyncIds[i]].bootstrap) {
       firstNonBootstrapId = asyncIds[i];
       break;
     }
   }
-  console.log('first non-bootstrap ID', firstNonBootstrapId);
+  const s = metrics.stats;
+  log('metrics.stats');
+  log(`  fast ${s.fastExits} slow ${s.slowExits}`);
+  log(`  maxSetLength: ${s.maxSetLength}`);
+  log('  first non-bootstrap ID', firstNonBootstrapId);
+  log(`  total contexts created ${s.totalContextsCreated} active: ${s.activeContexts}`);
+  const ee = `enters ${s.rootContextSwitchEnters} exits ${s.rootContextSwitchExits}`;
+  log(`  root context switches ${s.rootContextSwitches} ${ee}`);
+  log('  active counts', s.activeCounts);
+  log(`  i ${s.inits} b ${s.befores} a ${s.afters} d ${s.destroys}`);
 
   // are any missing inits from non-bootstrap asyncIds?
   ['beforeNoInit', 'afterNoInit', 'destroyNoInit'].forEach(error => {
-    const bad = graph.errors[error].filter(asyncId => asyncId >= firstNonBootstrapId);
+    const bad = metrics.errors[error].filter(asyncId => asyncId >= firstNonBootstrapId);
     if (bad.length) {
-      console.log(`non-bootstrap ${error} ${bad}`);
+      log(`non-bootstrap ${error} ${bad}`);
     }
   });
 
   const odd = asyncIds.filter(id => {
-    return !inits[id].bootstrap && (inits[id].befores !== inits[id].afters || inits[id].inits !== inits[id].destroys);
+    const info = hooks[id];
+    return !info.bootstrap && (info.befores !== info.afters || info.inits !== info.destroys);
   });
 
   if (odd.length) {
-    console.log('asymmetric pairings');
+    log('asymmetric pairings');
     odd.forEach(id => {
       const short = {
-        t: inits[id].type,
-        i: inits[id].inits,
-        b: inits[id].befores,
-        a: inits[id].afters,
-        d: inits[id].destroys,
-        tid: inits[id].triggerId,
-        eaID: inits[id].eaID,
+        t: hooks[id].type,
+        i: hooks[id].inits,
+        b: hooks[id].befores,
+        a: hooks[id].afters,
+        d: hooks[id].destroys,
+        tid: hooks[id].triggerId,
+        eaID: hooks[id].eaID,
       }
-      console.log(id, short);
+      log(id, short);
     })
   }
 
-  //console.log(JSON.stringify(graph));
+  log(JSON.stringify(metrics.hooks));
 }
