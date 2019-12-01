@@ -23,7 +23,7 @@ try {
 
 function noop () {}
 
-describe('probes/co-render ' + pkg.version, function () {
+describe(`probes/co-render ${pkg.version}`, function () {
   let emitter
   const tests = canGenerator && require('./koa')
 
