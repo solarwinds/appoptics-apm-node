@@ -13,7 +13,7 @@ Wherever possible, it is preferred that `ao.instrument(...)` is used, however
 there are some alternatives, which we'll explore later. The `ao.instrument(...)`
 function takes four arguments:
 
-The signature is `ao.instrument (span, fn, config, callback)`.
+The signature is `ao.instrument (span, runner, config, callback)`.
 
 - `span` is either the string name of the span to be created or a function that returns the span to use.
 - `runner` is a function that will run the function to be instrumented.
