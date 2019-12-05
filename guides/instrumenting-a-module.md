@@ -15,8 +15,8 @@ function takes four arguments:
 
 The signature is `ao.instrument (span, runner, config, callback)`.
 
-- `span` is either the string name of the span to be created or a function that returns the span to use.
-- `runner` is a function that will run the function to be instrumented.
+- `span` is either the string name of the span to be created or a function that returns spanInfo (see below).
+- `runner` is a function that will run the function to be instrumented (see below).
 - `config` [optional] allows non-default settings to be specified.
 - `callback` is only present if the function to be instrumented is asynchronous.
 
