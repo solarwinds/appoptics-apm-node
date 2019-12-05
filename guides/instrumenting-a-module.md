@@ -1,61 +1,6 @@
 # Instrumenting a module
 
-Let's say you want to instrument module `abc` to report timing information
-for function `xyz`. First of all, you need a patch file to apply to the
-module. This patch file should go in `lib/probes` as `lib/probes/abc.js`
-and should export a single function as module.exports, which accepts the
-unmodified module as the first input argument and returns the modified
-module.
-
-```js
-module.exports = function (abc) {
-  return abc
-}
-```
-
-## Wrapping functions
-
-To collect the performance data of a given function, we'll need to wrap it
-in another function that collects and reports the relevant data. You can simply
-store the old function reference in a new variable, overwrite the function
-at the original location, and call the stored function within the new one.
-However, there are handy tools to make this process easier. We use shimmer.
-
-### Sync wrapping
-
-To wrap a sync function, you simply need to place some code before and after
-the call of the stored function.
-
-```js
-shimmer.wrap(abc, 'xyz', xyz => {
-  return function () {
-    const before = Date.now()
-    const returnValue = xyz.apply(this, arguments)
-    const after = Date.now()
-    console.log(`xyz took ${after - before}ms`)
-    return returnValue
-  }
-})
-```
-
-### Async wrapping
-
-For async calls, it's a bit harder. You'll need to locate the callback in the
-arguments and wrap that too, so you can inject the second part.
-
-```js
-shimmer.wrap(abc, 'xyz', xyz => {
-  return function w(n, trueCb) {
-    const before = Date.now()
-    function cb () {
-      const after = Date.now()
-      console.log(`xyz took ${after - before}ms`)
-      return trueCb.apply(this, arguments)
-    }
-    return xyz.call(this, n, cb)
-  }
-})
-```
+Using the API is the most direct way to implement custom instrumentation.
 
 ## Using the instrumentation API
 
@@ -68,10 +13,10 @@ Wherever possible, it is preferred that `ao.instrument(...)` is used, however
 there are some alternatives, which we'll explore later. The `ao.instrument(...)`
 function takes four arguments:
 
-The signature is `ao.instrument (span, fn, config, callback)`.
+The signature is `ao.instrument (span, runner, config, callback)`.
 
-- `span` is either the string name of the span to be created or a function that returns the span to use.
-- `fn` is a function that will run the function to be instrumented.
+- `span` is either the string name of the span to be created or a function that returns spanInfo (see below).
+- `runner` is a function that will run the function to be instrumented (see below).
 - `config` [optional] allows non-default settings to be specified.
 - `callback` is only present if the function to be instrumented is asynchronous.
 
@@ -85,13 +30,9 @@ with information on how to build the span. There are two reasons to use a "span-
 - gain access to the created span for deferred actions, e.g., adding a KV pair that is only defined during execution of the span.
 
 The span-info function's signature is `span-info ()` and it returns an object with up to three properties:
-- name (required)
-- kvpairs (optional)
-- finalize (optional function)
-
-name - the name of the span
-kvpairs - a object of key-value pairs that will be added to the span's entry event.
-finalize - a function `finalize(createdSpan, previousSpan)` that is called after the span has been created. Note that previousSpan will not exist for a new trace or a trace that is being continued from an inbound X-Trace ID.
+- name (required) - the name of the span
+- kvpairs (optional) - an object of key-value pairs that will be added to the span's entry event
+- finalize (optional function) - `finalize(createdSpan, previousSpan)` will be called after the span has been created. N.B. `previousSpan` will not exist for a new trace or a trace being continued from an inbound X-Trace ID.
 
 
 ```js
@@ -117,19 +58,28 @@ function spanInfo () {
 
 #### Runner functions
 
-Next up is the runner function. It is used to indirectly run the real function
-you wish the instrument. For a sync call, it should have zero arguments. For an
-async call, it should have one argument: a replacement callback.
+Runner functions are wrappers around the function that you are instrumenting. The
+instrumentation API cannot know the signature and arguments of each function being
+instrumented so it must be wrapped in a "runner" function, i.e., a function that
+runs the real function.
+
+For a sync call it has no arguments.
 
 ```js
 function syncRunner () {
-  return functionToInstrument(some, args, go, here)
+  return yourFunctionToInstrument(your, args, go, here)
 }
 ```
 
+For an async call it has one argument, a replacement callback. The replacement
+callback is supplied by the instrumentation function so it can take actions when
+`yourFunctionToInstrument()` has completed. Your callback, if supplied to one of
+instrumentation functions (`ao.instrument()`, `startOrContinueTrace()`, etc.) will
+be called after the instrumentation function has completed its work.
+
 ```js
 function asyncRunner (done) {
-  return functionToInstrument(some, args, go, here, done)
+  return yourFunctionToInstrument(your, args, go, here, done)
 }
 ```
 
@@ -311,3 +261,72 @@ someAsyncThing(ao.bind(function () {
   })
 }))
 ```
+
+## Auto-instrumentation overview for internal developers
+
+Let's say you want to instrument module `abc` to trace function `xyz`. First,
+you need a file that will patch module `abc` when it is loaded. This patch
+file should go in `lib/probes` and be named the same as the module, e.g.,
+`lib/probes/abc.js`. It should export a single function as module.exports,
+which accepts the unmodified module as the first input argument and returns
+the modified module. The agent modifies node's `require` function so that the
+module that end-users load will be the module returned by this function.
+
+`options.version` contains the version of the module `abc` and can be used
+to make decisions on version-dependent patches.
+
+
+```js
+module.exports = function (abc, options) {
+  return abc;
+}
+```
+
+## Wrapping functions
+
+To collect the performance data of a given function, we'll need to wrap it
+in another function that collects and reports the relevant data. You can simply
+store the old function reference in a new variable, overwrite the function
+at the original location, and call the stored function within the new one.
+However, there are handy tools to make this process easier. We use shimmer.
+
+### Sync wrapping
+
+To wrap a sync function, you simply need to place some code before and after
+the call of the stored function.
+
+```js
+shimmer.wrap(abc, 'xyz', xyz => {
+  return function () {
+    const before = Date.now()
+    const returnValue = xyz.apply(this, arguments)
+    const after = Date.now()
+    console.log(`xyz took ${after - before}ms`)
+    return returnValue
+  }
+})
+```
+
+### Async wrapping
+
+For async calls, it's a bit harder. You'll need to locate the callback in the
+arguments and wrap that too, so you can inject the second part.
+
+```js
+shimmer.wrap(abc, 'xyz', xyz => {
+  return function w(n, trueCb) {
+    const before = Date.now()
+    function cb () {
+      const after = Date.now()
+      console.log(`xyz took ${after - before}ms`)
+      return trueCb.apply(this, arguments)
+    }
+    return xyz.call(this, n, cb)
+  }
+})
+```
+
+### More information
+
+This is just a quick overview of auto-instrumentation mechanics. For more details see
+`lib/require-patch.js` and existing probes in `lib/probes/`.
