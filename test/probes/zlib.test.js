@@ -3,9 +3,14 @@
 const helper = require('../helper')
 const {ao} = require('../1.test-common.js')
 const noop = helper.noop
+const once = require('../../lib/utility').once;
 
 const concat = require('concat-stream')
 const zlib = require('zlib')
+
+const expect = require('chai').expect;
+
+const semver = require('semver');
 
 const classes = [
   'Deflate',
@@ -26,6 +31,13 @@ const methods = [
   'inflateRaw',
   'unzip'
 ]
+
+if (semver.gte(process.version, '11.7.0')) {
+  classes.push('BrotliCompress');
+  classes.push('BrotliDecompress');
+  methods.push('brotliCompress');
+  methods.push('brotliDecompress');
+}
 
 describe('probes.zlib once', function () {
   let emitter
@@ -138,32 +150,47 @@ describe('probes.zlib', function () {
     })
   })
 
+  // Brotli
+  before(function (done) {
+    inputs.BrotliCompress = test;
+    outputs.BrotliDecompress = test;
+    zlib.brotliCompress(test, function (err, res) {
+      if (err) return done(err);
+      inputs.BrotliDecompress = res;
+      outputs.BrotliCompress = res;
+      done();
+    })
+  })
+
   //
   // Tests
   //
   describe('async', function () {
     methods.forEach(function (method) {
       const className = upperFirst(method)
-      if (zlib[method]) {
-        it('should support ' + method, function (done) {
-          helper.test(emitter, function (done) {
-            zlib[method](inputs[className], function (err, buf) {
-              if (err) return done(err)
-              buf.toString().should.equal(outputs[className].toString())
-              done()
-            })
-          }, [
-            function (msg) {
-              checks.entry(msg)
-              msg.should.have.property('Operation', method)
-              msg.should.have.property('Async', true)
-            },
-            function (msg) {
-              checks.exit(msg)
-            }
-          ], done)
-        })
-      }
+
+      it(`should support ${method}`, function (done) {
+        // make sure the function exists
+        expect(zlib).property(method);
+        expect(typeof zlib[method]).equal('function');
+        // run the test
+        helper.test(emitter, function (done) {
+          zlib[method](inputs[className], function (err, buf) {
+            if (err) return done(err)
+            buf.toString().should.equal(outputs[className].toString())
+            done()
+          })
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Operation', method)
+            msg.should.have.property('Async', true)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 
@@ -171,95 +198,109 @@ describe('probes.zlib', function () {
     methods.forEach(function (method) {
       const className = upperFirst(method)
       const syncMethod = method + 'Sync'
-      if (zlib[syncMethod]) {
-        it('should support ' + syncMethod, function (done) {
-          helper.test(emitter, function (done) {
-            try {
-              const buf = zlib[syncMethod](inputs[className])
-              buf.toString().should.equal(outputs[className].toString())
-            } catch (e) {}
-            process.nextTick(done)
-          }, [
-            function (msg) {
-              checks.entry(msg)
-              msg.should.have.property('Operation', syncMethod)
-              msg.should.not.have.property('Async')
-            },
-            function (msg) {
-              checks.exit(msg)
-            }
-          ], done)
-        })
-      }
+      it(`should support ${syncMethod}`, function (done) {
+        // make sure the function exists
+        expect(zlib).property(syncMethod);
+        expect(typeof zlib[syncMethod]).equal('function');
+        // test
+        helper.test(emitter, function (done) {
+          try {
+            const buf = zlib[syncMethod](inputs[className])
+            buf.toString().should.equal(outputs[className].toString())
+          } catch (e) {}
+          process.nextTick(done)
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Operation', syncMethod)
+            msg.should.not.have.property('Async')
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 
   describe('classes', function () {
     classes.forEach(function (name) {
-      if (zlib[name]) {
-        it('should support ' + name, function (done) {
-          helper.test(emitter, function (done) {
-            const inst = new (zlib[name])(options)
-            inst.should.be.an.instanceOf(zlib[name])
+      it(`should support ${name}`, function (done) {
+        // make sure the function exists
+        expect(zlib).property(name);
+        expect(typeof zlib[name]).equal('function');
+        // test
+        helper.test(emitter, function (done) {
+          const inst = new (zlib[name])(options)
+          inst.should.be.an.instanceOf(zlib[name])
 
-            inst.on('error', done)
-            //inst.on('close', nextTick)
-            inst.on('end', done)
+          const oneDone = once(function () {
+            process.nextTick(done);
+          })
 
-            inst.pipe(concat(function (buf) {
-              buf.toString().should.equal(outputs[name].toString())
-            }))
+          inst.on('error', done)
+          inst.on('close', oneDone);
+          inst.on('end', oneDone);
 
-            inst.write(inputs[name])
-            inst.end()
-          }, [
-            function (msg) {
-              checks.entry(msg)
-              msg.should.have.property('Options', JSON.stringify(options))
-              msg.should.have.property('Operation', name)
-              msg.should.have.property('Async', true)
-            },
-            function (msg) {
-              checks.exit(msg)
-            }
-          ], done)
-        })
-      }
+          inst.pipe(concat(function (buf) {
+            buf.toString().should.equal(outputs[name].toString())
+          }))
+
+          inst.write(inputs[name])
+          inst.end()
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Options', JSON.stringify(options))
+            msg.should.have.property('Operation', name)
+            msg.should.have.property('Async', true)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 
   describe('creators', function () {
     classes.forEach(function (name) {
-      const creator = 'create' + name
-      if (zlib[creator]) {
-        it('should support ' + creator, function (done) {
-          helper.test(emitter, function (done) {
-            const inst = new zlib[creator](options)
-            inst.should.be.an.instanceOf(zlib[name])
+      const creator = 'create' + name;
+      it(`should support ${creator}`, function (done) {
+        // make sure the function exists
+        expect(zlib).property(name);
+        expect(typeof zlib[name]).equal('function');
+        // test
+        helper.test(emitter, function (done) {
+          const inst = new zlib[creator](options)
+          inst.should.be.an.instanceOf(zlib[name])
 
-            inst.on('error', done)
-            //inst.on('close', nextTick)
-            inst.on('end', done)
+          const oneDone = once(function () {
+            process.nextTick(done);
+          })
 
-            inst.pipe(concat(function (buf) {
-              buf.toString().should.equal(outputs[name].toString())
-            }))
+          inst.on('error', done)
+          inst.on('close', oneDone);
+          inst.on('end', oneDone);
 
-            inst.write(inputs[name])
-            inst.end()
-          }, [
-            function (msg) {
-              checks.entry(msg)
-              msg.should.have.property('Options', JSON.stringify(options))
-              msg.should.have.property('Operation', name)
-              msg.should.have.property('Async', true)
-            },
-            function (msg) {
-              checks.exit(msg)
-            }
-          ], done)
-        })
-      }
+          inst.pipe(concat(function (buf) {
+            buf.toString().should.equal(outputs[name].toString())
+          }))
+
+          inst.write(inputs[name])
+          inst.end()
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Options', JSON.stringify(options))
+            msg.should.have.property('Operation', name)
+            msg.should.have.property('Async', true)
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 
