@@ -28,9 +28,10 @@ if (semver.satisfies(process.version, '>=8.0.0')) {
   ao.probes.fs.enabled = false
 }
 
-describe('probes.restify ' + pkg.version, function () {
+describe(`probes.restify ${pkg.version}`, function () {
   let emitter
   let fsState
+  let previousTraces;
 
   //
   // Intercept appoptics messages for analysis
@@ -42,11 +43,21 @@ describe('probes.restify ' + pkg.version, function () {
     // restify newer versions of restify use negotiator which does file io
     fsState = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
+    previousTraces = ao.probes.restify.collectBacktraces;
+    ao.probes.restify.collectBacktraces = false;
     ao.g.testing(__filename)
   })
   after(function (done) {
     emitter.close(done)
+    // turn on if desired for testing context
+    if (false && ao.requestStore.getMetrics) {
+      process.on('exit', function () {
+        ao.requestStore._hook.disable();
+        interpretMetrics(ao.requestStore.getMetrics());
+      })
+    }
     ao.probes.fs.enabled = fsState
+    ao.probes.restify.collectBacktraces = previousTraces;
   })
 
   const check = {
@@ -115,7 +126,8 @@ describe('probes.restify ' + pkg.version, function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      server.close(done)
+      server.close(done);
+      server.removeAllListeners('request');
     })
 
     const server = app.listen(function () {
@@ -125,7 +137,7 @@ describe('probes.restify ' + pkg.version, function () {
   }
 
   function testMiddleware (done) {
-    const app = restify.createServer(opts)
+    const app = restify.createServer(opts);
 
     app.get('/hello/:name', function renamer (req, res, next) {
       req.name = req.params.name
@@ -165,7 +177,8 @@ describe('probes.restify ' + pkg.version, function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      server.close(done)
+      server.close(done);
+      server.removeAllListeners('request');
     })
 
     const server = app.listen(function () {
@@ -174,7 +187,7 @@ describe('probes.restify ' + pkg.version, function () {
     })
   }
 
-  if (semver.satisfies(process.version.slice(1), '> 0.8')) {
+  if (semver.gte(process.version, '6.0.0')) {
     it('should forward controller/action', testControllerAction)
     it('should create a span for each middleware', testMiddleware)
   } else {
@@ -182,3 +195,63 @@ describe('probes.restify ' + pkg.version, function () {
     it.skip('should create a span for each middleware', testMiddleware)
   }
 })
+
+function interpretMetrics (metrics) {
+  const hooks = metrics.hooks;
+  const asyncIds = Reflect.ownKeys(metrics.hooks);
+  let firstNonBootstrapId = asyncIds[asyncIds.length - 1];
+
+  function log (...args) {
+    /* eslint-disable-next-line no-console */
+    console.log(...args);
+  }
+
+  // find the first non-bootstrap ID
+  for (let i = 0; i < asyncIds.length; i++) {
+    if (!hooks[asyncIds[i]].bootstrap) {
+      firstNonBootstrapId = asyncIds[i];
+      break;
+    }
+  }
+  const s = metrics.stats;
+  log('metrics.stats');
+  log(`  fast ${s.fastExits} slow ${s.slowExits}`);
+  log(`  maxSetLength: ${s.maxSetLength}`);
+  log('  first non-bootstrap ID', firstNonBootstrapId);
+  log(`  total contexts created ${s.totalContextsCreated} active: ${s.activeContexts}`);
+  const ee = `enters ${s.rootContextSwitchEnters} exits ${s.rootContextSwitchExits}`;
+  log(`  root context switches ${s.rootContextSwitches} ${ee}`);
+  log('  active counts', s.activeCounts);
+  log(`  i ${s.inits} b ${s.befores} a ${s.afters} d ${s.destroys}`);
+
+  // are any missing inits from non-bootstrap asyncIds?
+  ['beforeNoInit', 'afterNoInit', 'destroyNoInit'].forEach(error => {
+    const bad = metrics.errors[error].filter(asyncId => asyncId >= firstNonBootstrapId);
+    if (bad.length) {
+      log(`non-bootstrap ${error} ${bad}`);
+    }
+  });
+
+  const odd = asyncIds.filter(id => {
+    const info = hooks[id];
+    return !info.bootstrap && (info.befores !== info.afters || info.inits !== info.destroys);
+  });
+
+  if (odd.length) {
+    log('asymmetric pairings');
+    odd.forEach(id => {
+      const short = {
+        t: hooks[id].type,
+        i: hooks[id].inits,
+        b: hooks[id].befores,
+        a: hooks[id].afters,
+        d: hooks[id].destroys,
+        tid: hooks[id].triggerId,
+        eaID: hooks[id].eaID,
+      }
+      log(id, short);
+    })
+  }
+
+  log(JSON.stringify(metrics.hooks));
+}

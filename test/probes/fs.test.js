@@ -199,7 +199,9 @@ describe('probes.fs', function () {
           return [span('open'), span('ftruncate'), span('close')]
         } else {
           const expected = [span('open')]
-          if (ao.contextProvider === 'cls-hooked') {
+          // when using continuation-local-storage the 'close' span
+          // doesn't appear.
+          if (ao.contextProvider !== 'continuation-local-storage') {
             expected.push(span('close'))
           }
           return expected

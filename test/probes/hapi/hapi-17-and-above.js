@@ -53,7 +53,6 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    helper.ao.resetRequestStore()
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
