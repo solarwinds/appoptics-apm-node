@@ -49,6 +49,7 @@ describe(`probes.restify ${pkg.version}`, function () {
   })
   after(function (done) {
     emitter.close(done)
+    // turn on if desired for testing context
     if (false && ao.requestStore.getMetrics) {
       process.on('exit', function () {
         ao.requestStore._hook.disable();
