@@ -1,3 +1,5 @@
+'use strict';
+
 exports.data = function (ctx) {
   return {
     hostname: 'localhost',
