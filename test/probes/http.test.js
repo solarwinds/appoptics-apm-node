@@ -69,34 +69,30 @@ describe('probes.http', function () {
   const check = {
     server: {
       entry: function (msg) {
-        expect(msg).property('Layer', 'nodejs')
-        expect(msg).property('Label', 'entry')
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:entry');
       },
       info: function (msg) {
-        expect(msg).property('Label', 'info')
+        expect(`${msg.Layer}:${msg.Label}`).equal('undefined:info');
       },
       error: function (msg) {
-        expect(msg).property('Label', 'error')
+        expect(`${msg.Layer}:${msg.Label}`).equal('undefined:error');
       },
       exit: function (msg) {
-        expect(msg).property('Layer', 'nodejs')
-        expect(msg).property('Label', 'exit')
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:exit');
       }
     },
     client: {
       entry: function (msg) {
-        expect(msg).property('Layer', 'http-client')
-        expect(msg).property('Label', 'entry')
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:entry');
       },
       info: function (msg) {
-        expect(msg).property('Label', 'info')
+        expect(`${msg.Layer}:${msg.Label}`).equal('undefined:info');
       },
       error: function (msg) {
-        expect(msg).property('Label', 'error')
+        expect(`${msg.Layer}:${msg.Label}`).equal('undefined:error');
       },
       exit: function (msg) {
-        expect(msg).property('Layer', 'http-client')
-        expect(msg).property('Label', 'exit')
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:exit');
       }
     },
   }
@@ -695,65 +691,250 @@ describe('probes.http', function () {
       })
     })
 
-    it('should report request errors', function (done) {
+    it('should report socket errors sending request', function (done) {
+      // the handler function should not called because the socket is aborted
+      // by the client end as soon as a socket is assigned.
       const server = http.createServer(function (req, res) {
-        res.end('done')
-        server.close()
-      })
+        throw new Error('unexpected request');
+      });
 
       server.listen(function () {
-        const port = server.address().port
-        const url = 'http://localhost:' + port + '/?foo=bar'
-        const error = new Error('test')
+        const port = server.address().port;
+        const url = `http://localhost:${port}/?foo=bar`;
+        const error = new Error('ECONN-FAKE');
 
-        helper.test(emitter, function (done) {
-          const req = http.get(url, function (res) {
-            res.on('end', done)
-            res.resume()
-          })
-          req.on('error', function () {})
-          req.emit('error', error)
-        }, [
-          function (msg) {
-            check.client.entry(msg)
-            expect(msg).property('RemoteURL', url)
-            expect(msg).property('IsService', 'yes')
-          },
-          function (msg) {
-            check.client.error(msg)
-            expect(msg).property('ErrorClass', 'Error')
-            expect(msg).property('ErrorMsg', error.message)
-            expect(msg).property('Backtrace', error.stack)
-          },
-          function (msg) {
-            check.server.entry(msg)
-          },
-          function (msg) {
-            check.server.exit(msg)
-          },
-          function (msg) {
-            check.client.exit(msg)
-            expect(msg).property('HTTPStatus', 200)
-          }
-        ], done)
-      })
-    })
+        helper.test(
+          emitter,
+          function (done) {
+            const req = http.get(url, function (res) {
+              res.on('end', () => done(error));
+              res.resume();
+            })
+            req.on('error', e => {
+              server.close();
+              done(e !== error ? e : undefined);
+            });
+            // simulate a socket error. just emitting an error doesn't simulate
+            // a socket error because the request completes. when a real socket
+            // error occurs there will be no server response.
+            req.on('socket', socket => {
+              socket.destroy(error);
+            });
+          }, [
+            function (msg) {
+              check.client.entry(msg);
+              expect(msg).property('RemoteURL', url);
+              expect(msg).property('IsService', 'yes');
+            },
+            function (msg) {
+              check.client.error(msg);
+              expect(msg).property('ErrorClass', 'Error');
+              expect(msg).property('ErrorMsg', error.message);
+              expect(msg).property('Backtrace', error.stack);
+            },
+            function (msg) {
+              check.client.exit(msg);
+              // there is no HTTPStatus because the HTTP transaction didn't
+              // complete.
+              //expect(msg).property('HTTPStatus', 200)
+            }
+          ],
+          done
+        )
+      });
+    });
 
-    it('should report response errors', function (done) {
+    it('should report socket errors when no server is listening', function (testDone) {
+      // disable so we don't have to look for/exclude http spans.
+      ao.probes.http.enabled = false;
       const server = http.createServer(function (req, res) {
-        res.end('done')
-        server.close()
+        throw new Error('the server got a request');
       })
+      // reset on exit
+      function done (err) {
+        ao.probes.http.enabled = true;
+        server.close();
+        testDone(err);
+      }
+
+      // fill in on the request 'error' event. it should be ECONNREFUSED.
+      let error;
 
       server.listen(function () {
-        const port = server.address().port
-        const url = 'http://localhost:' + port + '/?foo=bar'
-        const error = new Error('test')
+        // set to a port that is not listening
+        const port = server.address().port + 1;
+        const url = `http://localhost:${port}/?foo=bar`;
+
+        helper.test(
+          emitter,
+          function (done) {
+            const req = http.get(url, function (res) {
+              // the 'end' event should never be emitted.
+              res.on('end', () => done(new Error('unexpected end event')));
+              res.resume()
+            });
+            req.on('error', e => {
+              error = e;
+              // if it is the expected error then it's not an error
+              done(e.code !== 'ECONNREFUSED' ? e : undefined);
+            });
+          }, [
+            function (msg) {
+              check.client.entry(msg)
+              expect(msg).property('RemoteURL', url)
+              expect(msg).property('IsService', 'yes')
+            },
+            function (msg) {
+              check.client.error(msg)
+              expect(msg).property('ErrorClass', 'Error')
+              expect(msg).property('ErrorMsg', error.message)
+              expect(msg).property('Backtrace', error.stack)
+            },
+            function (msg) {
+              check.client.exit(msg);
+              //expect(msg).property('HTTPStatus', 200)
+            }
+          ],
+          done
+        )
+      });
+    });
+
+    it('should report socket errors when the server hangs up', function (testDone) {
+      // disable so we don't have to look for/exclude http spans in the
+      // emitted output.
+      ao.probes.http.enabled = false;
+      const server = http.createServer(function (req, res) {
+        // this should result in ECONNRESET.
+        // https://nodejs.org/api/http.html#http_http_request_url_options_callback
+        req.socket.destroy();
+      });
+      // reset on exit
+      function done (err) {
+        ao.probes.http.enabled = true;
+        server.close();
+        testDone(err);
+      }
+      // fill in on the req 'error' event.
+      let error;
+
+      server.listen(function () {
+        const port = server.address().port;
+        const url = `http://localhost:${port}/?foo=bar`;
+
+        helper.test(
+          emitter,
+          function (done) {
+            const req = http.get(url, function (res) {
+              res.on('end', () => done(new Error('Unexpected end event')));
+              res.resume();
+            })
+            req.on('error', e => {
+              error = e;
+              done(e.code !== 'ECONNRESET' ? e : undefined);
+            });
+          }, [
+            function (msg) {
+              check.client.entry(msg);
+              expect(msg).property('RemoteURL', url);
+              expect(msg).property('IsService', 'yes');
+            },
+            function (msg) {
+              check.client.error(msg);
+              expect(msg).property('ErrorClass', 'Error');
+              expect(msg).property('ErrorMsg', error.message);
+              expect(msg).property('Backtrace', error.stack);
+            },
+            function (msg) {
+              check.client.exit(msg);
+              //expect(msg).property('HTTPStatus', 200);
+            }
+          ],
+          done
+        )
+      });
+    });
+
+    it('should not report an error if req.abort() is called', function (testDone) {
+      // disable so we don't have to look for/exclude http spans in the
+      // emitted output.
+      ao.probes.http.enabled = false;
+      const server = http.createServer(function (req, res) {
+        // send the response
+        res.write('partial response\n');
+        setTimeout(function () {
+          res.write('more stuff\n');
+          res.end();
+        }, 10);
+      });
+      // reset on exit
+      function done (err) {
+        ao.probes.http.enabled = true;
+        server.close();
+        testDone(err);
+      }
+
+      server.listen(function () {
+        const port = server.address().port;
+        const url = `http://localhost:${port}/?foo=bar`;
+
+        helper.test(
+          emitter,
+          function (done) {
+            const req = http.get(url, function (res) {
+              res.on('data', function (err, data) {
+                req.abort();
+              });
+              res.on('end', () => done());
+              res.resume();
+            })
+            req.on('error', e => {
+              done(e);
+            });
+          }, [
+            function (msg) {
+              check.client.entry(msg);
+              expect(msg).property('RemoteURL', url);
+              expect(msg).property('IsService', 'yes');
+            },
+            function (msg) {
+              check.client.exit(msg);
+              expect(msg).property('HTTPStatus', 200);
+            }
+          ],
+          done
+        )
+      });
+    });
+
+    it('should report response errors', function (testDone) {
+      // disable so we don't have to look for/exclude http spans in the
+      // emitted output.
+      ao.probes.http.enabled = false;
+      const server = http.createServer(function (req, res) {
+        // send the response
+        res.write('partial response\n');
+        setTimeout(function () {
+          res.write('more stuff\n');
+          res.end();
+        }, 20);
+      });
+      // reset on exit
+      function done (err) {
+        ao.probes.http.enabled = true;
+        server.close();
+        testDone(err);
+      }
+
+      server.listen(function () {
+        const port = server.address().port;
+        const url = `http://localhost:${port}/?foo=bar`;
+        const error = new Error('FAKE-RESPONSE-ERROR');
 
         helper.test(emitter, function (done) {
-          http.get(url, function (res) {
+          http.get(url, {timeout: 1}, function (res) {
             res.on('error', done.bind(null, null))
-            res.emit('error', error)
+            res.emit('error', error);
           }).on('error', done)
         }, [
           function (msg) {
@@ -762,22 +943,18 @@ describe('probes.http', function () {
             expect(msg).property('IsService', 'yes')
           },
           function (msg) {
-            check.server.entry(msg)
-          },
-          function (msg) {
-            check.server.exit(msg)
-          },
-          function (msg) {
             check.client.exit(msg)
             expect(msg).property('HTTPStatus', 200)
           },
           function (msg) {
-            check.server.error(msg)
-            expect(msg).property('ErrorClass', 'Error')
-            expect(msg).property('ErrorMsg', error.message)
-            expect(msg).property('Backtrace', error.stack)
+            expect(`${msg.Layer}:${msg.Label}`).equal('undefined:error');
+            expect(msg).property('ErrorClass', 'Error');
+            expect(msg).property('ErrorMsg', error.message);
+            expect(msg).property('Backtrace', error.stack);
           }
-        ], done)
+        ],
+        done
+        )
       })
     })
   })
