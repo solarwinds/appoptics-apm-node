@@ -5,7 +5,7 @@ exports.data = function (ctx) {
 }
 
 exports.run = function (ctx, done) {
-  const req = ctx.http.get(ctx.data.url)
+  const req = ctx.driver.get(ctx.data.url)
   req.on('response', function (res) {
     res.resume()
     res.on('end', done.bind(null, null))

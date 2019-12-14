@@ -16,7 +16,7 @@ exports.run = function (ctx, done) {
   // fails because the port is missing in the remoteUrl property. Upgraded node to 8.12.0
   // so simple URL works.
   options = ctx.data.url
-  ctx.http.get(options, function (res) {
+  ctx.driver.get(options, function (res) {
     res.resume()
     res.on('end', done.bind(null, null))
   }).on('error', done)
