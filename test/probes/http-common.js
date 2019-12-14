@@ -20,7 +20,7 @@ if (process.env.AO_TEST_HTTP !== 'http' && process.env.AO_TEST_HTTP !== 'https')
 // p stands for protocol
 const p = process.env.AO_TEST_HTTP;
 
-const http = require(p);
+const driver = require(p);
 
 const httpsOptions = {
   key: '-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9\nKWso/+vHhkp6Cmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5Npzd\nQwNROKN8EPoKjlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQAB\nAoGBAJTD9/r1n5/JZ+0uTIzf7tx1kGJh7xW2xFtFvDIWhV0wAJDjfT/t10mrQNtA\n1oP5Fh2xy9YC+tZ/cCtw9kluD93Xhzg1Mz6n3h+ZnvnlMb9E0JCgyCznKSS6fCmb\naBz99pPJoR2JThUmcuVtbIYdasqxcHStYEXJH89Ehr85uqrBAkEA31JgRxeuR/OF\n96NJFeD95RYTDeN6JpxJv10k81TvRCxoOA28Bcv5PwDALFfi/LDya9AfZpeK3Nt3\nAW3+fqkYdQJBAMVV37vFQpfl0fmOIkMcZKFEIDx23KHTjE/ZPi9Wfcg4aeR4Y9vt\nm2f8LTaUs/buyrCLK5HzYcX0dGXdnFHgCaUCQDSc47HcEmNBLD67aWyOJULjgHm1\nLgIKsBU1jI8HY5dcHvGVysZS19XQB3Zq/j8qMPLVhZBWA5Ek41Si5WJR1EECQBru\nTUpi8WOpia51J1fhWBpqIbwevJ2ZMVz0WPg85Y2dpVX42Cf7lWnrkIASaz0X+bF+\nTMPuYzmQ0xHT3LGP0cECQQCqt4PLmzx5KtsooiXI5NVACW12GWP78/6uhY6FHUAF\nnJl51PB0Lz8F4HTuHhr+zUr+P7my7X3b00LPog2ixKiO\n-----END RSA PRIVATE KEY-----',
@@ -29,12 +29,12 @@ const httpsOptions = {
 
 const options = p === 'https' ? httpsOptions : {};
 
-describe('probes.http', function () {
-  const ctx = {http: http, p};
+describe(`probes.${p}`, function () {
+  const ctx = {driver, p};
   let emitter
   let realSampleTrace
-  const previousHttpEnabled = ao.probes.http.enabled
-  const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled
+  const previousHttpEnabled = ao.probes[p].enabled;
+  const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled;
   let clear
   let originalFlag
 
@@ -151,9 +151,9 @@ describe('probes.http', function () {
     //
     // Test a simple res.end() call in an http server
     //
-    it('should send traces for http routing and response spans', function (done) {
+    it(`should send traces for ${p} routing and response spans`, function (done) {
       let port
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -185,7 +185,7 @@ describe('probes.http', function () {
     // Verify X-Trace header results in a continued trace
     //
     it('should continue tracing when receiving an xtrace id header', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -219,7 +219,7 @@ describe('probes.http', function () {
     // Verify always trace mode forwards sampling data
     //
     it('should forward sampling data in always trace mode', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done');
       })
 
@@ -246,7 +246,7 @@ describe('probes.http', function () {
     // Verify that a bad X-Trace header does not result in a continued trace
     //
     it('should not continue tracing when receiving a bad xtrace id header', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -290,7 +290,7 @@ describe('probes.http', function () {
         throw new Error('unexpected message: ' + util.format(msg))
       }
 
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
           res.on('finish', function () {
@@ -334,7 +334,7 @@ describe('probes.http', function () {
       const previousSendHttpSpan = ao.reporter.sendHttpSpan
       ao.reporter.sendHttpSpan = metricsSender
 
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 10)
@@ -368,7 +368,7 @@ describe('probes.http', function () {
     // Verify behaviour of asyncrony within a request
     //
     it('should trace correctly within asyncrony', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 10)
@@ -402,7 +402,7 @@ describe('probes.http', function () {
       }
 
       conf.includeRemoteUrlParams = false
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
       })
 
@@ -446,7 +446,7 @@ describe('probes.http', function () {
       headers[key] = headerValue
 
       it(`should map ${key} header to event.kv.${kvKey}`, function (done) {
-        const server = http.createServer(options, function (req, res) {
+        const server = driver.createServer(options, function (req, res) {
           res.end('done')
         })
 
@@ -479,7 +479,7 @@ describe('probes.http', function () {
     it('should report request errors', function (done) {
       const error = new Error('test')
       let port
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         req.on('error', noop)
         req.emit('error', error)
         res.end('done')
@@ -514,7 +514,7 @@ describe('probes.http', function () {
     it('should report response errors', function (done) {
       const error = new Error('test')
       let port
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.on('error', noop)
         res.emit('error', error)
         res.end('done')
@@ -547,7 +547,7 @@ describe('probes.http', function () {
     // Validate that server.setTimeout(...) exits correctly
     //
     it('should exit when timed out', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         setTimeout(function () {
           res.end('done')
         }, 20)
@@ -593,7 +593,7 @@ describe('probes.http', function () {
     });
 
     it(`should trace ${p} request`, function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
@@ -623,7 +623,7 @@ describe('probes.http', function () {
     })
 
     it('should support object-based requests', function (done) {
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
@@ -653,8 +653,8 @@ describe('probes.http', function () {
       })
     })
 
-    it('should trace streaming http request', function (done) {
-      const server = http.createServer(options, function (req, res) {
+    it(`should trace streaming ${p} request`, function (done) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
@@ -686,7 +686,7 @@ describe('probes.http', function () {
     it('should support query filtering', function (done) {
       conf.includeRemoteUrlParams = false
 
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         res.end('done')
         server.close()
       })
@@ -720,7 +720,7 @@ describe('probes.http', function () {
     it('should report socket errors sending request', function (done) {
       // the handler function should not called because the socket is aborted
       // by the client end as soon as a socket is assigned.
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         throw new Error('unexpected request');
       });
 
@@ -732,7 +732,7 @@ describe('probes.http', function () {
         helper.test(
           emitter,
           function (done) {
-            const req = http.get(url, function (res) {
+            const req = driver.get(url, function (res) {
               res.on('end', () => done(error));
               res.resume();
             })
@@ -772,13 +772,13 @@ describe('probes.http', function () {
 
     it('should report socket errors when no server is listening', function (testDone) {
       // disable so we don't have to look for/exclude http spans.
-      ao.probes.http.enabled = false;
-      const server = http.createServer(options, function (req, res) {
+      ao.probes[p].enabled = false;
+      const server = driver.createServer(options, function (req, res) {
         throw new Error('the server got a request');
       })
       // reset on exit
       function done (err) {
-        ao.probes.http.enabled = true;
+        ao.probes[p].enabled = true;
         server.close();
         testDone(err);
       }
@@ -794,7 +794,7 @@ describe('probes.http', function () {
         helper.test(
           emitter,
           function (done) {
-            const req = http.get(url, function (res) {
+            const req = driver.get(url, function (res) {
               // the 'end' event should never be emitted.
               res.on('end', () => done(new Error('unexpected end event')));
               res.resume()
@@ -830,7 +830,7 @@ describe('probes.http', function () {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false;
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         // this should result in ECONNRESET.
         // https://nodejs.org/api/http.html#http_http_request_url_options_callback
         req.socket.destroy();
@@ -851,7 +851,7 @@ describe('probes.http', function () {
         helper.test(
           emitter,
           function (done) {
-            const req = http.get(url, function (res) {
+            const req = driver.get(url, function (res) {
               res.on('end', () => done(new Error('Unexpected end event')));
               res.resume();
             })
@@ -885,7 +885,7 @@ describe('probes.http', function () {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false;
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         // send the response
         res.write('partial response\n');
         setTimeout(function () {
@@ -907,7 +907,7 @@ describe('probes.http', function () {
         helper.test(
           emitter,
           function (done) {
-            const req = http.get(url, function (res) {
+            const req = driver.get(url, function (res) {
               res.on('data', function (err, data) {
                 req.abort();
               });
@@ -937,7 +937,7 @@ describe('probes.http', function () {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false;
-      const server = http.createServer(options, function (req, res) {
+      const server = driver.createServer(options, function (req, res) {
         // send the response
         res.write('partial response\n');
         setTimeout(function () {
@@ -958,7 +958,7 @@ describe('probes.http', function () {
         const error = new Error('FAKE-RESPONSE-ERROR');
 
         helper.test(emitter, function (done) {
-          http.get(url, {timeout: 1}, function (res) {
+          driver.get(url, {timeout: 1}, function (res) {
             res.on('error', done.bind(null, null))
             res.emit('error', error);
           }).on('error', done)
