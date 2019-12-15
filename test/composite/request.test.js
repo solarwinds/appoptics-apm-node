@@ -8,8 +8,10 @@ const request = require('request')
 const requestpn = require('request-promise-native')
 const http = require('http')
 
+const expect = require('chai').expect;
+
 describe('probes.request', function () {
-  const ctx = {http: http}
+  const ctx = {driver: http, p: 'http'};
   let emitter
   let realSampleTrace
 
@@ -41,8 +43,7 @@ describe('probes.request', function () {
     },
     server: {
       entry: function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'entry')
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:entry');
       },
       info: function (msg) {
         msg.should.have.property('Label', 'info')
@@ -51,14 +52,12 @@ describe('probes.request', function () {
         msg.should.have.property('Label', 'error')
       },
       exit: function (msg) {
-        msg.should.have.property('Layer', 'nodejs')
-        msg.should.have.property('Label', 'exit')
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:exit');
       }
     },
     client: {
       entry: function (msg) {
-        msg.should.have.property('Layer', 'http-client')
-        msg.should.have.property('Label', 'entry')
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:entry');
       },
       info: function (msg) {
         msg.should.have.property('Label', 'info')
@@ -67,8 +66,7 @@ describe('probes.request', function () {
         msg.should.have.property('Label', 'error')
       },
       exit: function (msg) {
-        msg.should.have.property('Layer', 'http-client')
-        msg.should.have.property('Label', 'exit')
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:exit');
       }
     }
   }
@@ -690,49 +688,59 @@ describe('probes.request', function () {
       })
     })
 
-    it('should report request errors', function (done) {
-      const server = http.createServer(function (req, res) {
-        res.end('done')
-        server.close()
-      })
+    it('should report socket errors sending request', function (done) {
+      // the handler function should not called because the socket is aborted
+      // by the client end as soon as a socket is assigned.
+      const server = http.createServer({}, function (req, res) {
+        throw new Error('unexpected request');
+      });
 
       server.listen(function () {
-        const port = server.address().port
-        const url = 'http://localhost:' + port + '/?foo=bar'
-        const error = new Error('test')
+        const port = server.address().port;
+        const url = `http://localhost:${port}/?foo=bar`;
+        const error = new Error('ECONN-FAKE');
 
-        helper.test(emitter, function (done) {
-          const req = http.get(url, function (res) {
-            res.on('end', done)
-            res.resume()
-          })
-          req.on('error', function () {})
-          req.emit('error', error)
-        }, [
-          function (msg) {
-            check.client.entry(msg)
-            msg.should.have.property('RemoteURL', url)
-            msg.should.have.property('IsService', 'yes')
-          },
-          function (msg) {
-            check.client.error(msg)
-            msg.should.have.property('ErrorClass', 'Error')
-            msg.should.have.property('ErrorMsg', error.message)
-            msg.should.have.property('Backtrace', error.stack)
-          },
-          function (msg) {
-            check.server.entry(msg)
-          },
-          function (msg) {
-            check.server.exit(msg)
-          },
-          function (msg) {
-            check.client.exit(msg)
-            msg.should.have.property('HTTPStatus', 200)
-          }
-        ], done)
-      })
-    })
+        helper.test(
+          emitter,
+          function (done) {
+            const req = request(url, function (err, res) {
+              done(err.message === 'ECONN-FAKE' ? undefined : err);
+              //res.on('end', () => done(error));
+              //res.resume();
+            })
+            req.on('error', e => {
+              server.close();
+              done(e !== error ? e : undefined);
+            });
+            // simulate a socket error. just emitting an error doesn't simulate
+            // a socket error because the request completes. when a real socket
+            // error occurs there will be no server response.
+            req.on('socket', socket => {
+              socket.destroy(error);
+            });
+          }, [
+            function (msg) {
+              check.client.entry(msg);
+              expect(msg).property('RemoteURL', url);
+              expect(msg).property('IsService', 'yes');
+            },
+            function (msg) {
+              check.client.error(msg);
+              expect(msg).property('ErrorClass', 'Error');
+              expect(msg).property('ErrorMsg', error.message);
+              expect(msg).property('Backtrace', error.stack);
+            },
+            function (msg) {
+              check.client.exit(msg);
+              // there is no HTTPStatus because the HTTP transaction didn't
+              // complete.
+              //expect(msg).property('HTTPStatus', 200)
+            }
+          ],
+          done
+        )
+      });
+    });
 
     it('should report response errors', function (done) {
       const server = http.createServer(function (req, res) {
