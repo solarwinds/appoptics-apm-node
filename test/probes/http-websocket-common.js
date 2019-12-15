@@ -234,7 +234,8 @@ describe(`probes.${p} websocket`, function () {
         [
           function (msg) {
             check.client.entry(msg);
-            expect(msg).property('RemoteURL', url);
+            // WebSocket makes the port explicit
+            expect(msg).property('RemoteURL', url.replace('.org/', '.org:443/'));
             expect(msg).property('IsService', 'yes');
           },
           function (msg) {
