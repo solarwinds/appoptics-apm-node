@@ -83,6 +83,13 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   })
 
   //
+  // remove any leftover context
+  //
+  after(function () {
+    ao.resetRequestStore();
+  });
+
+  //
   // database cleanup at end
   //
 
