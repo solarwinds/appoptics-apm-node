@@ -395,6 +395,7 @@ HTTP headers or message queue headers.
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
+| [opts.forceNewTrace] | <code>boolean</code> |  | force a new trace, ignoring any existing context (but not xtrace) |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 
 **Example**  
@@ -454,6 +455,7 @@ source, e.g., HTTP headers or message queue headers.
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
+| [opts.forceNewTrace] | <code>boolean</code> |  | ignore any existing context and force a new trace |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 
 **Example**  
@@ -905,6 +907,11 @@ Send this event to the reporter
 | edge | <code>boolean</code> | whether to edge back to metadata |
 | source | <code>number</code> | the sample decision source |
 | rate | <code>number</code> | the sample rate used |
+| mode | <code>number</code> | local mode to use for decision |
+| ttRequested | <code>boolean</code> | trigger trace requested |
+| ttOptions | <code>string</code> | X-Trace-Options header value |
+| ttSignature | <code>string</code> | X-Trace-Options-Signature header value |
+| ttTimestamp | <code>integer</code> | UNIX timestamp value from X-Trace-Options |
 
 <a name="spanInfo"></a>
 
