@@ -44,7 +44,7 @@
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
     * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
     * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
-    * [.startOrContinueTrace(xtrace, span, run, [opts])](#ao.startOrContinueTrace) ⇒ <code>value</code>
+    * [.startOrContinueTrace(xtrace, span, runner, [opts], [callback])](#ao.startOrContinueTrace) ⇒ <code>value</code>
     * [.pStartOrContinueTrace(xtrace, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
@@ -379,7 +379,7 @@ ao.pInstrument(spanInfo, run).then(...)
 ```
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, span, run, [opts]) ⇒ <code>value</code>
+### ao.startOrContinueTrace(xtrace, span, runner, [opts], [callback]) ⇒ <code>value</code>
 Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
@@ -391,12 +391,13 @@ HTTP headers or message queue headers.
 | --- | --- | --- | --- |
 | xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
-| run | <code>function</code> |  | run this function. sync if no arguments, async if one. |
+| runner | <code>function</code> |  | run this function. sync if no arguments, async if one. |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
 | [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | force a new trace, ignoring any existing context (but not xtrace) |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
+| [callback] | <code>function</code> |  | this is supplied as the callback if runner is async. |
 
 **Example**  
 ```js
