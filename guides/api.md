@@ -395,7 +395,7 @@ HTTP headers or message queue headers.
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
-| [opts.forceNewTrace] | <code>boolean</code> |  | force a new trace, ignoring any existing context (but not xtrace) |
+| [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | force a new trace, ignoring any existing context (but not xtrace) |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 
 **Example**  
@@ -455,7 +455,7 @@ source, e.g., HTTP headers or message queue headers.
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
-| [opts.forceNewTrace] | <code>boolean</code> |  | ignore any existing context and force a new trace |
+| [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | ignore any existing context and force a new trace |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 
 **Example**  
