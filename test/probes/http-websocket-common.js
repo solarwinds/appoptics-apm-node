@@ -353,8 +353,8 @@ describe(`probes.${p} websocket`, function () {
             res.resume();
           })
           req.on('error', e => {
-            // expect ECONNRESET
-            xdone(e.code === 'ECONNREFUSED' ? undefined : e);
+            // there should not be a socket error.
+            xdone(e.code);
           });
           req.on('response', res => {
             expect(res.statusCode).equal(400);
