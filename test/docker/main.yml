@@ -20,9 +20,18 @@ RUN apt-get update && apt-get -y install gcc-4.9 g++-4.9 \
   git \
   wget \
   unzip \
+  libaio-dev \
   libpq-dev \
   libkrb5-dev \
 && rm -rf /var/lib/apt/lists/*
+
+# get oracle library
+RUN curl -LO https://download.oracle.com/otn_software/linux/instantclient/195000/instantclient-basic-linux.x64-19.5.0.0.0dbru.zip
+RUN mkdir /opt/oracle
+RUN unzip instantclient-basic-linux.x64-19.5.0.0.0dbru.zip -d /opt/oracle/
+RUN rm instantclient-basic-linux.x64-19.5.0.0.0dbru.zip
+RUN echo 'export LD_LIBRARY_PATH=/opt/oracle/instantclient_19_5:$LD_LIBRARY_PATH' >> ~/.bashrc
+RUN echo 'export LD_LIBRARY_PATH=/opt/oracle/instantclient_19_5:$LD_LIBRARY_PATH' >> ~/.profile
 
 # get node
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -

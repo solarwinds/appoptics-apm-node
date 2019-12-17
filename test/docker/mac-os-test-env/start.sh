@@ -10,4 +10,7 @@ echo "*** Run 'debug' or 'debug <path-to-test-file>' to get into debug mode."
 echo "*** In Chrome open chrome://inspect to access the debugging tools."
 echo
 
+npm install
+npm install -g mocha
+
 /bin/bash
