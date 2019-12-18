@@ -2,4 +2,4 @@
 
 process.env.AO_TEST_HTTP = 'https';
 
-require('./http-common.js');
+require('./http-websocket-common.js');

@@ -152,6 +152,10 @@ describe('probes.zlib', function () {
 
   // Brotli
   before(function (done) {
+    if (semver.lt(process.version, '11.7.0')) {
+      done();
+      return;
+    }
     inputs.BrotliCompress = test;
     outputs.BrotliDecompress = test;
     zlib.brotliCompress(test, function (err, res) {

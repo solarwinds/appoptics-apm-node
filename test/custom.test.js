@@ -2,6 +2,7 @@
 const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
+const expect = require('chai').expect;
 const ao = require('..')
 const aob = ao.addon;
 const Span = ao.Span
@@ -193,15 +194,15 @@ describe('custom', function () {
           done()
         })
       }, [
-      function (msg) {
-        msg.should.have.property('Layer', main)
-        msg.should.have.property('Label', 'entry')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', main)
-        msg.should.have.property('Label', 'exit')
-      }
-    ], done)
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], done)
   })
 
   it('should custom instrument bluebird promise code', function (done) {
@@ -212,15 +213,15 @@ describe('custom', function () {
           done()
         })
       }, [
-      function (msg) {
-        msg.should.have.property('Layer', main)
-        msg.should.have.property('Label', 'entry')
-      },
-      function (msg) {
-        msg.should.have.property('Layer', main)
-        msg.should.have.property('Label', 'exit')
-      }
-    ], done)
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', main)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], done)
   })
 
   it('should support spanInfo function', function (done) {
@@ -821,55 +822,63 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace continues from existing traces,
   // when already tracing, whether or not an xtrace is provided.
-  it('should continue outer traces when already tracing', function (done) {
-    let prev, outer, sub
-
-    helper.doChecks(emitter, [
-      function (msg) {
-        msg.should.have.property('Layer', 'previous')
-        msg.should.have.property('Label', 'entry')
-        msg.should.not.have.property('Edge')
-        prev = msg['X-Trace'].substr(42, 16)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'continue-outer')
-        msg.should.have.property('Label', 'entry')
-        // SampleSource and SampleRate should NOT be here due to continuation
-        msg.should.not.have.property('SampleSource')
-        msg.should.not.have.property('SampleRate')
-        msg.should.have.property('Edge', prev)
-        outer = msg['X-Trace'].substr(42, 16)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'entry')
-        // SampleSource and SampleRate should NOT be here due to continuation
-        msg.should.not.have.property('SampleSource')
-        msg.should.not.have.property('SampleRate')
-        msg.should.have.property('Edge', outer)
-        sub = msg['X-Trace'].substr(42, 16)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'inner')
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Edge', sub)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'continue-outer')
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Edge', outer)
-      },
-      function (msg) {
-        msg.should.have.property('Layer', 'previous')
-        msg.should.have.property('Label', 'exit')
-        msg.should.have.property('Edge', prev)
-      }
-    ], done)
-
+  it('should continue outer traces unless forceNewTrace is true', function (done) {
+    // make the container span.
     const previous = Span.makeEntrySpan('previous', makeSettings())
     // don't let this act like a real entry span
     delete previous.topSpan
+
     const entry = previous.events.entry
+    const taskId = previous.events.entry.taskId;
+    let prevOpId, outerOpId, innerOpId
+
+    helper.doChecks(emitter, [
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('previous:entry');
+        msg.should.not.have.property('Edge')
+        prevOpId = msg['X-Trace'].substr(42, 16)
+      },
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:entry');
+        // SampleSource and SampleRate should NOT be here due to continuation
+        msg.should.not.have.property('SampleSource')
+        msg.should.not.have.property('SampleRate')
+        msg.should.have.property('Edge', prevOpId)
+        outerOpId = msg['X-Trace'].substr(42, 16)
+      },
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('inner:entry');
+        // SampleSource and SampleRate should NOT be here due to continuation
+        msg.should.not.have.property('SampleSource')
+        msg.should.not.have.property('SampleRate')
+        msg.should.have.property('Edge', outerOpId)
+        innerOpId = msg['X-Trace'].substr(42, 16)
+      },
+      // there should be a new trace here
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:entry');
+        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId);
+        expect(msg.Edge).not.exist;
+      },
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:exit');
+        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId);
+      },
+      // back to the previous trace
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('inner:exit');
+        expect(msg['X-Trace'].substr(2, 40)).equal(taskId);
+        msg.should.have.property('Edge', innerOpId)
+      },
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:exit');
+        msg.should.have.property('Edge', outerOpId)
+      },
+      function (msg) {
+        expect(`${msg.Layer}:${msg.Label}`).equal('previous:exit');
+        msg.should.have.property('Edge', prevOpId)
+      }
+    ], done)
 
     previous.run(function (wrap) {
       // Verify ID-less calls continue
@@ -883,7 +892,19 @@ describe('custom', function () {
               entry.toString(),     // xtrace-id
               'inner',              // span name
               function (cb) {       // runner pseudo-async
-                cb()
+                soon(function () {
+                  // Verify newContext calls DO NOT continue
+                  ao.startOrContinueTrace(
+                    //entry.toString(),     // xtrace-id
+                    '',
+                    'new-trace',          // span name
+                    function (cb) {       // runner pseudo-async
+                      cb()
+                    },
+                    Object.assign({forceNewTrace: true}, conf),                 // config
+                    cb                    // done
+                  )
+                })
               },
               conf,                 // config
               cb                    // done
@@ -1055,8 +1076,7 @@ describe('custom', function () {
         msg.Edge.should.equal(last)
       }
     ], done)
-  })
-
+  });
 
   // Verify startOrContinue trace doesn't sample or do metrics when sampling is false
   it('should not send events or metrics - unsampled x-trace, async', function (done) {
@@ -1079,7 +1099,7 @@ describe('custom', function () {
     const xtrace = ao.addon.Metadata.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
-      main,                        // span name
+      main,                          // span name
       function (cb) {                // runner
         setTimeout(function () {cb(1, 2, 3, 5)}, 100)
         return test

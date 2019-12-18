@@ -97,7 +97,7 @@ When instrumenting an async function, a callback should be provided for the
 runner to call when it completes. It can be in the fourth argument position,
 if optional configs are included or the third position if configs are omitted.
 
-The signature of the callback is unconstrained. It should match the signature of
+The signature of the callback is unconstrained but should match the signature of
 the callback in the runner function. The only assumption made is that
 the callback may have an error to report in the first argument position, but
 this is not required. If it is something other than an error object, it will

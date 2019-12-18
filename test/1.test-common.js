@@ -42,6 +42,8 @@ const debugOptions = {
   enable: false,
 }
 
+
+// TODO BAM update these settings for ace-context.
 function applyOptions (options) {
   // work when using standard cls-hooked.
   if (!ao.requestStore.setDebugOptions) {
