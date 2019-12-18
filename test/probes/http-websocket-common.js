@@ -155,7 +155,6 @@ describe(`probes.${p} websocket`, function () {
   const prefix = p === 'http' ? 'ws' : 'wss';
   const url = `${p}://echo.websocket.org/`;
   const wsUrl = `${prefix}://echo.websocket.org/`
-  const port = p === 'http' ? '80' : '443';
   const parsedUrl = new URL(wsUrl);
 
   describe(`${p}-client`, function () {
@@ -235,8 +234,7 @@ describe(`probes.${p} websocket`, function () {
         [
           function (msg) {
             check.client.entry(msg);
-            // WebSocket makes the port explicit
-            expect(msg).property('RemoteURL', url.replace('.org/', `.org:${port}/`));
+            expect(msg).property('RemoteURL', url);
             expect(msg).property('IsService', 'yes');
           },
           function (msg) {
