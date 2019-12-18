@@ -721,7 +721,7 @@ describe('probes.request', function () {
           }, [
             function (msg) {
               check.client.entry(msg);
-              expect(msg).property('RemoteURL', url);
+              expect(msg).property('RemoteURL', url.replace(`:${port}`,''));
               expect(msg).property('IsService', 'yes');
             },
             function (msg) {
