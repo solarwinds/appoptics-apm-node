@@ -30,7 +30,10 @@ host. The code can be edited in the usual IDE and the changes tested in the
 ## Testing
 
 In the shell in `node_main` type `mocha` or `mocha <path-to-test-file>` to 
-run tests.
+run tests. To run all tests `mocha test/probes/*.test.js`
+
+This warning can be ignored: `appoptics:warn environment variables not recognized: APPOPTICS_REPORTER_UDP=localhost:7832, APPOPTICS_TOKEN_BUCKET_RATE=1000, APPOPTICS_TOKEN_BUCKET_CAPACITY=1000`
+
 
 ## Debugging
 
