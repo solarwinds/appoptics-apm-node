@@ -195,7 +195,7 @@ describe('probes.tedious ' + pkg.version, function () {
 
   // Query helper
   function query (fn) {
-    const options = {
+    const settings = {
       userName: user,
       password: pass,
       server: addr.host,
@@ -206,9 +206,9 @@ describe('probes.tedious ' + pkg.version, function () {
       }
     };
     if (dbname) {
-      options.options.database = dbname;
+      settings.options.database = dbname;
     }
-    const connection = new Connection(options);
+    const connection = new Connection(settings);
 
     connection.on('connect', function () {
       connection.execSql(fn())
