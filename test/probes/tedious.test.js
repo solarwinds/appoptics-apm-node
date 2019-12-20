@@ -12,6 +12,7 @@ if (!process.env.AO_TEST_SQLSERVER_EX) {
 
 const helper = require('../helper')
 const {ao} = require('../1.test-common')
+const expect = require('chai').expect;
 
 const conf = ao.probes.tedious
 
@@ -20,6 +21,9 @@ const tedious = require('tedious')
 const Connection = tedious.Connection
 const Request = tedious.Request
 const TYPES = tedious.TYPES
+
+// test with and without a database name
+let dbname;
 
 let addr
 if (process.env.AO_TEST_SQLSERVER_EX) {
@@ -79,7 +83,9 @@ describe('probes.tedious ' + pkg.version, function () {
     'mssql-entry': function (msg) {
       msg.should.have.property('Layer', 'mssql')
       msg.should.have.property('Label', 'entry')
-      msg.should.have.property('Database', 'test')
+      if (dbname) {
+        expect(msg).property('Database', dbname);
+      }
       msg.should.have.property('Flavor', 'mssql')
       msg.should.have.property('RemoteHost', addr.toString())
     },
@@ -90,9 +96,14 @@ describe('probes.tedious ' + pkg.version, function () {
   }
 
   if (addr) {
-    it('should support basic queries', test_basic)
-    it('should support parameters', test_parameters)
-    it('should support sanitization', test_sanitization)
+    dbname = 'test';
+    it('should support basic queries with a database name', test_basic)
+    it('should support parameters with a database name', test_parameters)
+    it('should support sanitization with a database name', test_sanitization)
+    dbname = undefined;
+    it('should support basic queries with no database name', test_basic)
+    it('should support parameters with no database name', test_parameters)
+    it('should support sanitization with no database name', test_sanitization)
   } else {
     it.skip('should support basic queries', test_basic)
     it.skip('should support parameters', test_parameters)
@@ -184,17 +195,20 @@ describe('probes.tedious ' + pkg.version, function () {
 
   // Query helper
   function query (fn) {
-    const connection = new Connection({
+    const options = {
       userName: user,
       password: pass,
       server: addr.host,
       port: addr.port,
       options: {
-        database: 'test',
         tdsVersion: '7_1',
         encrypt: false
       }
-    })
+    };
+    if (dbname) {
+      options.options.database = dbname;
+    }
+    const connection = new Connection(options);
 
     connection.on('connect', function () {
       connection.execSql(fn())
