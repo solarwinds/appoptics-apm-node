@@ -1012,7 +1012,9 @@ describe(`probes.${p}`, function () {
       })
     });
 
-    // not clear exactly what behavior should be here.
+    // not clear exactly what behavior should be here. i don't see how the
+    // response object can emit an error except a socket error, already tested.
+    // https://nodejs.org/api/http.html#http_event_clienterror
     it.skip('should report response errors handling request', function (testDone) {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
