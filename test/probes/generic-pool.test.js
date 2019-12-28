@@ -141,7 +141,8 @@ describe(`probes.generic-pool ${pkg.version}`, function () {
 
     function bothDone (e) {
       count += 1
-      error = e;
+      // save only the first error
+      if (!error) error = e;
       gpDebug(`bothDone count: ${count}`);
     }
 
