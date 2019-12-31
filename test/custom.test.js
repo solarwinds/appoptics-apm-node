@@ -13,22 +13,7 @@ const bluebird = require('bluebird');
 
 const makeSettings = helper.makeSettings
 
-//
-//                 ^     ^
-//            __--| \:::/ |___
-//    __---```   /    ;;;  \  ``---___
-//      -----__ |   (@  \\  )       _-`
-//             ```--___   \\ \   _-`
-//                     ````----``
-//     /````\  /```\   /```\  |`\   ||
-//     ||``\| |/```\| |/```\| ||\\  ||
-//      \\    ||   || ||   || || || ||
-//        \\  ||   || ||   || || || ||
-//     |\__|| |\___/| |\___/| ||  \\||
-//     \____/  \___/   \___/  ||   \_|
-//
-
-const soon = global.setImmediate || process.nextTick
+const soon = global.setImmediate || process.nextTick;
 
 function psoon () {
   return new Promise((resolve, reject) => {
@@ -793,10 +778,10 @@ describe('custom', function () {
 
     ao.startOrContinueTrace(
       '',                           // no xtrace ID, start a trace
-      'x-previous',                   // span name
-      function (pcb) {               // runner function, creates a new span
+      'x-previous',                 // span name
+      function (pcb) {              // runner function, creates a new span
         ao.startOrContinueTrace(
-          Span.last.events.entry.toString(),    // xtrace ID for last span
+          Span.last.events.entry.toString(),    // continue from the last span's id.
           () => {
             return {
               name: main,
@@ -822,7 +807,7 @@ describe('custom', function () {
 
   // Verify startOrContinueTrace continues from existing traces,
   // when already tracing, whether or not an xtrace is provided.
-  it('should continue outer traces unless forceNewTrace is true', function (done) {
+  it('should create new traces and contexts when forceNewTrace is true', function (done) {
     // make the container span.
     const previous = Span.makeEntrySpan('previous', makeSettings())
     // don't let this act like a real entry span
@@ -892,13 +877,16 @@ describe('custom', function () {
               entry.toString(),     // xtrace-id
               'inner',              // span name
               function (cb) {       // runner pseudo-async
+                ao.requestStore.set('linger', true);
                 soon(function () {
-                  // Verify newContext calls DO NOT continue
+                  expect(ao.requestStore.get('linger')).equal(true);
+                  // Verify newContext calls DO NOT continue when no xtrace
                   ao.startOrContinueTrace(
-                    //entry.toString(),     // xtrace-id
+                    //entry.toString(),     // xtrace-id (supply this to continue)
                     '',
                     'new-trace',          // span name
                     function (cb) {       // runner pseudo-async
+                      expect(ao.requestStore.get('linger')).not.exist;
                       cb()
                     },
                     Object.assign({forceNewTrace: true}, conf),                 // config
