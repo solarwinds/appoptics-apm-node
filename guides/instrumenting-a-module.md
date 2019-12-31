@@ -100,8 +100,9 @@ if optional configs are included or the third position if configs are omitted.
 The signature of the callback is unconstrained but should match the signature of
 the callback in the runner function. The only assumption made is that
 the callback may have an error to report in the first argument position, but
-this is not required. If it is something other than an error object, it will
-simply be passed through as expected, without trying to report it.
+this is not required. If it is something other than a string or an error object,
+it will simply be passed through as expected, without trying to report it. An
+error is reported as is while a string is converted to an error then reported.
 
 #### Putting all that together
 
