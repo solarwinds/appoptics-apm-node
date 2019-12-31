@@ -8,8 +8,15 @@ const os = require('os');
 const semver = require('semver');
 
 const pino = require('pino');
-
 const {version} = require('pino/package.json');
+
+// NOTE - context pino 5.12.2 with flatstr 1.0.9
+// this test sometimes fails with "SyntaxError: Unexpected token '%'" which is
+// the result of flatstr failing intermittently. Running the most recent
+// version of pino which updates the flatstr dependency has prevented this
+// error so far. It's not obvious from looking at the code why the error was
+// not handled by the try-catch clauses in flatstr.
+// https://github.com/davidmarkclements/flatstr/issues/5
 
 const major = semver.major(version);
 let streamSym;
