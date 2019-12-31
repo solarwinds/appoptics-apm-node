@@ -1,6 +1,6 @@
 {
   "name": "appoptics-apm",
-  "version": "6.9.0",
+  "version": "7.0.0",
   "description": "Agent for AppOptics APM",
   "main": "lib/index.js",
   "bin": {
@@ -15,7 +15,8 @@
   "author": "Bruce A. MacNaughton <bruce@solarwinds.cloud>",
   "contributors": [
     "Stephen Belanger <admin@stephenbelanger.com>",
-    "Ross Hendry <rh@kpv-lab.co.uk>"
+    "Ross Hendry <rh@kpv-lab.co.uk>",
+    "Jiri Tomek <jiri.tomek@solarwinds.com>"
   ],
   "keywords": [
     "tracing",
@@ -28,10 +29,7 @@
     "metrics",
     "apm"
   ],
-  "license": {
-    "name": "Librato Open License, Version 1.0",
-    "url": "http://docs.traceview.solarwinds.com/Instrumentation/librato-open-license.html"
-  },
+  "license": "SEE LICENSE IN https://docs.appoptics.com/kb/apm_tracing/librato-open-license/",
   "repository": {
     "type": "git",
     "url": "https://github.com/appoptics/appoptics-apm-node"
@@ -40,9 +38,9 @@
     "url": "https://github.com/appoptics/appoptics-apm-node/issues"
   },
   "dependencies": {
+    "ace-context": "^1.0.1",
     "array-flatten": "^2.1.2",
     "cls-hooked": "^4.2.2",
-    "continuation-local-storage": "^3.2.1",
     "debug-custom": "^1.0.5",
     "glob": "^7.0.3",
     "methods": "~1.1.0",
@@ -57,7 +55,7 @@
     "amqplib": "^0.5.3",
     "aws-sdk": "^2.440.0",
     "axios": "^0.19.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^3.0.7",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "bson": "^0.4.11",
@@ -71,7 +69,7 @@
     "director": "^1.2.8",
     "ejs": "^2.4.1",
     "express": "^4.16.4",
-    "generic-pool": "^3.6.1",
+    "generic-pool": "^3.7.1",
     "hapi": "^18.1.0",
     "jsdoc-to-markdown": "^4.0.1",
     "koa": "^2.7.0",
@@ -97,16 +95,17 @@
     "redis": "^2.8.0",
     "request": "^2.61.0",
     "request-promise-native": "^1.0.7",
-    "restify": "^6.4.0",
+    "restify": "^7.7.0",
     "should": "^8.3.1",
     "supertest": "^3.4.2",
-    "tedious": "^4.2.0",
+    "tedious": "^6.6.2",
     "testeachversion": "^8.2.0",
     "vision": "^5.4.4",
     "winston": "^3.2.1",
-    "winston-transport": "^4.3.0"
+    "winston-transport": "^4.3.0",
+    "ws": "^7.2.0"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "^7.1.0"
+    "appoptics-bindings": "^8.0.0"
   }
 }

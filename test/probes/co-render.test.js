@@ -23,7 +23,7 @@ try {
 
 function noop () {}
 
-describe('probes/co-render ' + pkg.version, function () {
+describe(`probes/co-render ${pkg.version}`, function () {
   let emitter
   const tests = canGenerator && require('./koa')
 
@@ -31,7 +31,6 @@ describe('probes/co-render ' + pkg.version, function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    ao.resetRequestStore()
     ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
@@ -41,6 +40,7 @@ describe('probes/co-render ' + pkg.version, function () {
   after(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(done)
+    ao.resetRequestStore();
   })
 
   // this test exists only to fix a problem with oboe not reporting a UDP

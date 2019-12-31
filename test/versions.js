@@ -117,7 +117,7 @@ test('q', '>= 0.9.0')
 
 test('raw-body')
 test('redis', '>= 0.8.0')
-test('restify', '>= 2.0.0 < 2.0.2 || >= 2.0.3')
+test('restify', '>= 4.1.0');
 
 test('tedious', '>= 0.1.5')
 

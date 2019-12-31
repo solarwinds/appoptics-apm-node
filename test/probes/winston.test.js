@@ -178,6 +178,10 @@ describe(`winston v${version}`, function () {
 
   before(function () {
     ao.probes.fs.enabled = false;
+    if (ao.lastEvent) {
+      ao.loggers.debug(`resetting request store due to ${ao.lastEvent}`);
+      ao.resetRequestStore();
+    }
   })
 
   before(function () {
