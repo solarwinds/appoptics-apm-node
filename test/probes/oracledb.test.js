@@ -21,8 +21,13 @@ const config = {
   password: process.env.AO_TEST_ORACLE_PASSWORD || 'oracle',
   connectString: host + '/' + database,
 }
+let descValid = describe.skip;
 
-describe('probes.oracledb ' + pkg.version, function () {
+if (oracledb && host && database && config.user && config.password) {
+  descValid = describe;
+}
+
+descValid(`probes.oracledb ${pkg.version}`, function () {
   let emitter
   let realSampleTrace
   let lastConnection;
