@@ -77,7 +77,7 @@ describe('probes.mongodb UDP', function () {
   })
 })
 
-describe('probes/mongodb ' + pkg.version, function () {
+describe(`probes.mongodb ${pkg.version}`, function () {
   Object.keys(hosts).forEach(function (host) {
     const db_host = hosts[host]
     if (!db_host) return

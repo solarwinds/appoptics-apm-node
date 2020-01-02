@@ -88,7 +88,7 @@ const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
 //=================================
 // morgan tests
 //=================================
-describe(`morgan v${version}`, function () {
+describe(`probes.morgan ${version}`, function () {
   let logger;
   let emitter;
   let counter = 0;
