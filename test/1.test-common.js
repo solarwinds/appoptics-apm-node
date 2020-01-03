@@ -43,7 +43,6 @@ const debugOptions = {
 }
 
 
-// TODO BAM update these settings for ace-context.
 function applyOptions (options) {
   // work when using standard cls-hooked.
   if (!ao.requestStore.setDebugOptions) {
@@ -53,7 +52,6 @@ function applyOptions (options) {
   let opts = Object.assign({}, options)
 
   // handle different name
-  // TODO BAM coalesce.
   if (opts.customFormatter) {
     opts.ctxFmtter = formatters[opts.customFormatter]
     delete opts.customFormatter
