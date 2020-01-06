@@ -531,8 +531,6 @@ describe('span', function () {
     })
   })
 
-  // TODO BAM fix this brittle test. 'inner-2' sometimes shows up instead
-  // of 'inner-3'. Until then skip it for false negatives.
   it('should properly attribute dangling info/error events', function (done) {
     const span = new Span.makeEntrySpan('outer', makeSettings(), {})
 
