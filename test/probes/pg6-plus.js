@@ -352,8 +352,6 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
       // use the pooled interface without knowing it. the
       // subtests all call client.get() to get a client that
       // acts sort of like a pg client.
-      // TODO BAM it's not a great abstraction but it works for
-      // testing.
       //
       const poolPretendingToBeClient = {
         query: pooledClient,

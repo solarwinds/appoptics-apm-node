@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-const m = process.version.match(/v(\d+)\.\d+\.\d+/);
-if (+m[1] < 10) {
+// add this check because withFileTypes was added in 10.10.0. for simplicity
+// just require node 12.
+if (process.versions.node.split('.').shift() < 12) {
   // eslint-disable-next-line no-console
-  console.error(`appoptics-apm must be released using node >= 10; using ${process.version}`);
+  console.error(`appoptics-apm must be released using node >= 12; using ${process.version}`);
   process.exit(1);
 }
 
@@ -70,7 +71,6 @@ if (missing.size) {
 //
 // make sure that the probe-defaults file has a default for each probe.
 //
-// now get the probe defaults
 let probeDefaults = [];
 try {
   probeDefaults = Object.keys(require('./lib/probe-defaults'));

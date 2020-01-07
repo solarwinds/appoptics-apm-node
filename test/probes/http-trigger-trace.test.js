@@ -53,7 +53,7 @@ const tests = [
     expectedKeys: {PDKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val'}},
   {desc: 'report and log ignored keys',
     options: 'what_is_this=value_thing;and_that=otherval;whoot',
-    sample: true,       // TODO BAM may need to check return of getTracingDecisions() to know what to do
+    sample: true,       // maybe needs to be determined by getTracingDecisions() in the future
     expected: 'trigger-trace=not-requested;ignored=what_is_this,and_that,whoot'},
   {desc: 'ignore and report trigger-trace with a value',
     options: 'trigger-trace=1;custom-something=value_thing',

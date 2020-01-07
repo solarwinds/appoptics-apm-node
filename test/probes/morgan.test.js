@@ -29,10 +29,12 @@ function checkEventInfo (eventInfo, req, res, traceId) {
   const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[A-F0-9]{40}-(0|1)))?`;
   const re = new RegExp(reString);
   const m = eventInfo.match(re);
-  if (debugging && !m) {
+  // output some debugging help if these don't match
+  if (!m) {
     // eslint-disable-next-line no-console
     console.log('eventInfo', eventInfo, 'match', m);
   }
+
   expect(m).ok;
   expect(m.length).equal(4);
   if (traceId) {
@@ -86,7 +88,7 @@ const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
 //=================================
 // morgan tests
 //=================================
-describe(`morgan v${version}`, function () {
+describe(`probes.morgan ${version}`, function () {
   let logger;
   let emitter;
   let counter = 0;

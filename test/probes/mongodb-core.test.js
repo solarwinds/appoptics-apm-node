@@ -35,7 +35,6 @@ if (semver.gte(pkg.version, '3.0.0')) {
 }
 
 // if travis reset for now.
-// TODO BAM handle via env vars.
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   hosts = {
     '3+': process.env.AO_TEST_MONGODB_3 || 'localhost:27017',
@@ -80,7 +79,7 @@ describe('probes.mongodb-core UDP', function () {
   })
 })
 
-describe('probes/mongodb-core ' + pkg.version, function () {
+describe(`probes.mongodb-core ${pkg.version}`, function () {
   Object.keys(hosts).forEach(function (host) {
     const db_host = hosts[host]
     if (!db_host) return

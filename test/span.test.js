@@ -531,10 +531,8 @@ describe('span', function () {
     })
   })
 
-  // TODO BAM fix this brittle test. 'inner-2' sometimes shows up instead
-  // of 'inner-3'. Until then skip it for false negatives.
-  it.skip('should properly attribute dangling info/error events', function (done) {
-    const span = new Span('outer', {inbound: true, doSample: true}, {})
+  it('should properly attribute dangling info/error events', function (done) {
+    const span = new Span.makeEntrySpan('outer', makeSettings(), {})
 
     const before = {state: 'before'}
     const after = {state: 'after'}
@@ -545,6 +543,9 @@ describe('span', function () {
     const trackInner2 = helper.edgeTracker(trackInner1)
     const trackInner3 = helper.edgeTracker(trackInner1)
     const trackInner4 = helper.edgeTracker(trackInner3)
+
+    // evaluate brittleness using different timers
+    const timeout = callback => setTimeout(callback, 1);
 
     // The weird indentation is to match depth of trigerring code,
     // it might make it easier to match a span entry to its exit.
@@ -587,18 +588,18 @@ describe('span', function () {
 
     ao.requestStore.run(function () {
       span.enter()
-      const sub1 = span.descend('inner-1')
-      sub1.run(function () {
-        ao.reportInfo(before)
+      const sub1 = span.descend('inner-1');
+      sub1.run(function () {                            // inner 1 entry
+        ao.reportInfo(before);                          // info
 
         const sub2 = span.descend('inner-3')
-        sub2.run(function (wrap) {
-          setImmediate(wrap(function () {
-            ao.reportError(error)
+        sub2.run(function (wrap) {                      // inner 3 entry
+          timeout(wrap(function () {
+            ao.reportError(error);                      // deferred error
 
-            const sub2 = span.descend('inner-4')
-            sub2.run(function (wrap) {
-              setImmediate(wrap(function () {}))
+            const sub2 = span.descend('inner-4');
+            sub2.run(function (wrap) {                  // inner 4 entry
+              timeout(wrap(function () {}))
             })
           }))
         })
@@ -608,9 +609,9 @@ describe('span', function () {
 
       const sub2 = span.descend('inner-2')
       sub2.run(function (wrap) {
-        setTimeout(wrap(function () {
+        timeout(wrap(function () {
           span.exit()
-        }), 1)
+        }))
       })
     })
   })

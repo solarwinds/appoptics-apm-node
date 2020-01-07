@@ -24,7 +24,6 @@ mocha test/token/*.test.js
 # this tests the http client through using the request package with promises. it's
 # a step in the direction of end-to-end testing that should incorporate a server and
 # verifying that the appoptics.com collector received the traces.
-# TODO BAM
 #
 mocha test/composite/*.test.js
 
