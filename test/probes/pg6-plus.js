@@ -235,8 +235,9 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
               },
               release: function () {}
             }
-            done()
+            return results;
           })
+          .then(done);
       })
 
       //
