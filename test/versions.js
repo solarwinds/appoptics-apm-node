@@ -103,7 +103,7 @@ test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
 
 test('pino', '>= 2.3.0');
-test('pg', '>= 4.5.5')
+test('pg', '>= 4.5.5 < 7.0.0 || >= 7.5.0')
 /*
 test('pg', {
   ranges: [
