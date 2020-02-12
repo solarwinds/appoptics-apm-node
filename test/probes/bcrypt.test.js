@@ -5,7 +5,7 @@ const {ao, startTest, endTest} = require('../1.test-common.js')
 const bcrypt = require('bcrypt')
 const pkg = require('bcrypt/package')
 
-describe('probes/bcrypt ' + pkg.version, function () {
+describe('probes.bcrypt ' + pkg.version, function () {
   let prevll
   before(function () {
     startTest(__filename, {enable: false, customFormatter: 'terse'})
