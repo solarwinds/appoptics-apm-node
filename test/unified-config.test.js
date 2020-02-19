@@ -15,6 +15,7 @@ const expectedGlobalDefaults = {
   triggerTraceEnabled: true,
   traceMode: 1,
   logLevel: 2,
+  runtimeMetrics: true,
 }
 
 const expectedProbeDefaults = require(`${relativeDir}/lib/probe-defaults`);
@@ -121,7 +122,7 @@ function toTransactionSettingsError (settings, message) {
 //==============
 // start testing
 //==============
-describe('config', function () {
+describe('unified-config', function () {
   //
   // save the configuration
   //
