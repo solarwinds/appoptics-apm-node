@@ -22,6 +22,7 @@ The configuration file can supply the following properties, showing their defaul
   domainPrefix: false,
   ignoreConflicts: false,
   traceMode: 'enabled',
+  runtimeMetrics: true,
   transactionSettings: undefined,
   insertTraceIdsIntoLogs: false,
   insertTraceIdsIntoMorgan: false,
@@ -42,6 +43,7 @@ The configuration file can supply the following properties, showing their defaul
 |domainPrefix|`false`|Prefix transaction names with the domain name.|
 |ignoreConflicts|`false`|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 |traceMode|`'enabled'`|Mode `'enabled'` will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
+|runtimeMetrics|`true`|Collect runtime metrics characterizing the performance of node and v8|
 |transactionSettings|`undefined`|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only `'url'` is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B. if inserting a regex into a JSON configuration file you must enter the string that is expected by the `RegExp` constructor because JSON has no representation of a `RegExp` object. `trace-setting` is either `'enabled'` or `'disabled'`.|
 |ec2MetadataTimeout|`1000`|Milliseconds to wait for the ec2/openstack metadata service to respond|
 |insertTraceIdsIntoLogs|`false`|Insert trace IDs into supported logging packages' output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
@@ -121,6 +123,7 @@ These environment variables may be set:
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
 |APPOPTICS_DEBUG_LEVEL|`'2'`|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|
 |APPOPTICS_TRIGGER_TRACE_ENABLED|`'true'`|Enable the trigger-trace feature. Options are `'true'`, `'false'`|
+|APPOPTICS_RUNTIME_METRICS|`'true'`|Enable runtime metrics. Options are `'true'`, `'false'`|
 
 Deprecated environment variables. They will be removed in the future:
 

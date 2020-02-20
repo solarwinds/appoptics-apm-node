@@ -25,7 +25,12 @@ test('zlib')
 //test('amqp', '>= 0.2.0')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
-test('bcrypt', '>= 0.8.6')
+test('bcrypt', selectone(process.version, [
+  {selector: '>= 8.0.0 < 10.0.0', targetSelector: '>= 1.0.3 < 3.0.0 || > 3.0.0'},
+  {selector: '>= 10.0.0 < 12.0.0', targetSelector: '>= 3.0.0'},
+  {selector: '>= 12.0.0', targetSelector: '>= 3.0.6'}
+]));
+
 test('bluebird', '>= 2.0.0')
 test('bunyan', '>= 1.0.0')
 
@@ -98,7 +103,7 @@ test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
 
 test('pino', '>= 2.3.0');
-test('pg', '>= 4.5.5')
+test('pg', '>= 4.5.5 < 7.0.0 || >= 7.5.0')
 /*
 test('pg', {
   ranges: [
@@ -166,4 +171,19 @@ function test (name, ranges) {
 
 function node (op, version) {
   return semver[op](process.version, version);
+}
+
+//
+// selectone(process.version, [
+//   {selector: '> 9.0.0 < 13.0.0', targetSelector: '> 1.0.3'}
+// ])
+//
+function selectone (version, ranges) {
+  for (let i = 0; i < ranges.length; i++) {
+    if (semver.satisfies(version, ranges[i].selector)) {
+      return ranges[i].targetSelector;
+    }
+  }
+  // if nothing matches choose the last one
+  return ranges[ranges.length - 1].targetSelector;
 }

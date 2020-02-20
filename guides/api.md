@@ -18,6 +18,10 @@
 <dd></dd>
 <dt><a href="#spanInfoFunction">spanInfoFunction</a> ⇒ <code><a href="#spanInfo">spanInfo</a></code></dt>
 <dd></dd>
+<dt><a href="#metric">metric</a> : <code>object</code></dt>
+<dd></dd>
+<dt><a href="#SendMetricsReturn">SendMetricsReturn</a> : <code>object</code></dt>
+<dd></dd>
 </dl>
 
 <a name="ao"></a>
@@ -48,7 +52,8 @@
     * [.pStartOrContinueTrace(xtrace, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
-    * [.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>
+    * ~~[.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>~~
+    * [.sendMetrics(metrics, [gopts])](#ao.sendMetrics) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
     * [.getFormattedTraceId()](#ao.getFormattedTraceId) ⇒ <code>string</code>
     * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
 
@@ -503,14 +508,11 @@ Report an info event in the current trace.
 
 <a name="ao.sendMetric"></a>
 
-### ao.sendMetric(name, [options]) ⇒ <code>number</code>
-Send a custom metric. There are two types of metrics:
-1) count-based - the number of times something has occurred (no value is associated with this type)
-2) value-based - a specific value (or sum of values).
-If options.value is present the metric being reported is value-based.
+### ~~ao.sendMetric(name, [options]) ⇒ <code>number</code>~~
+***Deprecated***
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>number</code> - - -1 for success else an error code.  
+**Returns**: <code>number</code> - - (-1) for success else an error code.  
 **Throws**:
 
 - <code>TypeError</code> - if an invalid argument is supplied
@@ -540,6 +542,68 @@ ao.sendMetric('my.little.count', {tags: {status: error}})
 
 // to have a host name tag added automatically
 ao.sendMetric('my.little.count', {addHostTag: true, tags: {status: error}})
+```
+<a name="ao.sendMetrics"></a>
+
+### ao.sendMetrics(metrics, [gopts]) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
+Send custom metrics. There are two types of metrics:
+1) count-based - the number of times something has occurred (no
+                 value is associated with this type)
+2) value-based - a specific value (or sum of values if count > 1).
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| metrics | [<code>metric</code>](#metric) \| [<code>Array.&lt;metric&gt;</code>](#metric) |  | a metric or an array of metrics |
+| [gopts] | <code>object</code> |  | supply defaults to be applied to each metric. |
+| [gopts.addHostTag] | <code>boolean</code> | <code>false</code> | add a hostname tag |
+| [gopts.tags] | <code>object</code> |  | tags to add to each metric. the tags are     added as "metric.tags = Object.assign({}, gopts.tags, metric.tags)" |
+
+**Example**  
+```js
+// send a single metric
+ao.sendMetrics({name: 'my.counts.basic'});
+ao.sendMetrics({name: 'my.values.some', value: 42.42});
+
+// send multiple metrics (most efficient)
+ao.sendMetrics([
+  // default count is 1
+  {name: 'my.counts.defaulted'},
+  {name: 'my.counts.multiple', count: 3},
+  {name: 'my.values.xyzzy', value: 10},
+  // report two values for which the sum is 25.
+  {name: 'my.values.xyzzy', count: 2, value: 25}
+]);
+
+// add tags that can be used for filtering on the host
+ao.sendMetrics([
+  {name: 'my.metric.end-of-file', tags: {class: 'error', subsystem: 'fs'}}
+]);
+
+// add a hostname tag automatically.
+ao.sendMetrics([
+  {name: 'my.metric.end-of-file', tags: {class: 'error'}, addHostTag: true}
+]);
+
+// add a hostname tag and an application tag to each metric.
+ao.sendMetrics(
+  [
+    {name: 'my.metric', tags: {class: 'status'}},
+    {name: 'my.time', value: 33.3, tags: {class: 'performance'}}
+   ],
+  {addHostTag: true, tags: {application: 'x'}}
+);
+
+// default class to 'status' for metrics that don't supply a class
+// tag.
+ao.sendMetrics(
+  [
+    {name: 'my.metric'},
+    {name: 'my.time', value: 33.3, tags: {class: 'performance'}}
+  ],
+  {tags: {class: 'status'}}
+);
 ```
 <a name="ao.getFormattedTraceId"></a>
 
@@ -930,3 +994,30 @@ Send this event to the reporter
 
 ## spanInfoFunction ⇒ [<code>spanInfo</code>](#spanInfo)
 **Kind**: global typedef  
+<a name="metric"></a>
+
+## metric : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| name | <code>string</code> |  | name of the metric |
+| [count] | <code>integer</code> | <code>1</code> | count of the metric |
+| [value] | <code>number</code> |  | if summary, value or sum of values |
+| [addHostTag] | <code>boolean</code> | <code>false</code> | add a hostname tag |
+| [tags] | <code>object</code> |  | key-value pairs that can be used for filtering |
+| [testing] | <code>boolean</code> | <code>false</code> | return array of correct metrics in addition     to an array of metrics with errors. |
+| [noop] | <code>boolean</code> | <code>false</code> | do not actually send the metrics to the collector |
+
+<a name="SendMetricsReturn"></a>
+
+## SendMetricsReturn : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| errors | <code>array</code> | an array of metrics for which an error occurred |
+| [correct] | <code>array</code> | if globalOption.testing specified the correctly                               processed metrics are returned in this array. |
+

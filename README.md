@@ -13,7 +13,7 @@ is a great way to start.
 ## Dependencies
 
 - Linux
-- Node.js v6+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
+- Node.js v8+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
 
 The agent compiles a C++ addon during install, so you’ll need to have the following on the system prior to installing the agent:
 

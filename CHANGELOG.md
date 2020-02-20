@@ -97,3 +97,25 @@ Bug fixes
 - reset both count and time windows when a debounced log message is issued.
 - add missing `FileDescriptor` to exit events.
 
+### v7.0.0
+
+Features
+- add forceNewTrace option to `startOrContinueTrace()`
+- support brotli compressin in `zlib`
+- support restify v7+
+- use `ace-context`; remove `continuation-local-storage`
+
+Bug fixes
+- force new context on inbound HTTP requests.
+- fix http `RemoteURL` KV when search/query is present
+- exit http/s client spans correctly on socket errors
+- exit http/s client spans on upgrade events
+- don't add undefined `Database` KV
+- use new http_parser values if present
+
+### v7.1.0
+
+Features
+- runtime metrics
+- new function `sendMetrics()`; deprecate `sendMetric()`
+- requires `appoptics-bindings@9`
