@@ -11,7 +11,6 @@ const makeSettings = helper.makeSettings
 
 describe('span', function () {
   let emitter
-  let realSampleTrace
   let clear
 
   //
@@ -21,13 +20,8 @@ describe('span', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
   afterEach(function () {

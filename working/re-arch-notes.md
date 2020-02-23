@@ -21,7 +21,7 @@ same (many)
 - should Event constructor accept both Events and Metabuf-metadata?
 - pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
 
-## details
+## details - items to do
 
 - ~~unix time in microseconds~~ done. see api.js/getUnixTimeMicroseconds().
 
@@ -38,6 +38,8 @@ same (many)
 - rename requestStore => context.
 
 - rename Event.set() => Event.addKV()
+
+- remove already gone bindings.Context.sampleTrace() references (testing, api-sim).
 
 - get rid of Event.sendStatus() - used only for init message. replace with optional second arg that
   determines channel. more in event.cc (bindings).
