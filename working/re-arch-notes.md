@@ -1,23 +1,34 @@
-* implementation strategy
-  - implement Metabuf class (may get renamed to Metadata when complete).
-  - create Metabuf tests
-  - don't require changes to bindings until the agent functions (as much as possible). one example:
-    ignore the metadata (wrong format) returned by getTraceSettings() and just supply the metabuf
-    that will be used in the new system. this may not be viable but it's worth a try.
-  - rewrite test/basics.test.js to test new metabuf functionality - first milestone is passing this
-  - rewrite test/event.test.js and re-evaluate whether various properties (e.g., .taskId, .opId, etc. are useful)
-  - BIG find all metadata references. consider converting internal use but keeping docs the same (many)
-  - requires moving much of addon-sim to addon.
-  - apis, api-sims, index.js (init msg), http (xtrace checks)
 
-- unix time in microseconds
-  combination of hrtime and date.now() - https://github.com/sazze/node-nanotime/blob/master/index.js.
-  can have single date.now() * 1000 at startup of C++ send routine and make the event timestamp using the
-  hrtime delta at startup, converted to microseconds. check Number.MAX_SAFE_INTEGER and range for overflow.
-  event can probably just capture the hdtime delta (compared to startup) and set a property, not a KV,
-  because it will need to be adjusted by adding it to the base unix timestamp (gettimeofday). Question: how
-  to get two bases (unix ts and hrtime) as close as possible so the time is not skewed. Maybe a C++ call
-  that is only called once at startup - sets static unix ts base and returns hrtime base.
+## implementation strategy
+
+- implement Metabuf class (may get renamed to Metadata when complete).
+- create Metabuf tests
+- don't require changes to bindings until the agent functions (as much as possible). one
+example: ignore the metadata (wrong format) returned by getTraceSettings() and just
+supply the metabuf that will be used in the new system. this may not be viable but it's
+worth a try.
+- rewrite test/basics.test.js to test new metabuf functionality - first milestone is passing
+this
+- rewrite test/event.test.js and re-evaluate whether various properties (e.g., .taskId, .opId,
+ etc. are useful)
+- BIG find all metadata references. consider converting internal use but keeping docs the
+same (many)
+- requires moving much of addon-sim to addon.
+- apis, api-sims, index.js (init msg), http (xtrace checks)
+
+## questions
+
+- should Event constructor accept both Events and Metabuf-metadata?
+- pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
+
+## details
+
+- ~~unix time in microseconds~~ done. see api.js/getUnixTimeMicroseconds().
+
+- provide initialization time check that verifies aob metadata constants are the same
+  as Metabuf uses.
+
+- make sure nothing but a Metabuf goes into Event._edges.
 
 - abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
   getters/setters.
@@ -26,8 +37,10 @@
 
 - rename requestStore => context.
 
+- rename Event.set() => Event.addKV()
+
 - get rid of Event.sendStatus() - used only for init message. replace with optional second arg that
-  determines channel. more in event-2.cc (bindings).
+  determines channel. more in event.cc (bindings).
 
 - repurpose event completely - all javascript until event.send()
   constructor expects metadata, not event, or both? capture edges, KVs, etc.

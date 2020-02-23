@@ -1,7 +1,7 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-const addon = ao.addon
+//const aob = ao.addon
 const Event = ao.Event
 
 const expect = require('chai').expect
