@@ -1,13 +1,12 @@
 'use strict';
 
-console.log(require.resolve('tap'));
 const tap = require('tap');
 const test = tap.test;
 
 const MB = require('../lib/metabuf.js');
 
 test('metabuf core functions', function (t) {
-  t.plan(5);
+  t.plan(7);
 
   let mb1;
 
@@ -17,6 +16,15 @@ test('metabuf core functions', function (t) {
     mb1 = new MB();
     t.type(mb1, MB);
     t.ok(headerGood(mb1));
+  });
+
+  t.test('the Metabuf constructor throws with a bad argument', function (t) {
+    t.plan(1);
+
+    function throws () {
+      new MB('i am not a Metabuf instance');
+    }
+    t.throws(throws, 'Metabuf constructor argument must be a Metabuf instance');
   });
 
   t.test('Metabuf.makeRandom() works', function (t) {
@@ -54,11 +62,62 @@ test('metabuf core functions', function (t) {
   });
 
   t.test('toString() works correctly', function (t) {
-    t.plan(1);
-    const text = mb1.toString();
-    const tt = `${headerHex(mb1)}:${tidHex(mb1)}:${oidHex(mb1)}:${flagsHex(mb1)}`;
+    t.plan(6);
+    // format control bits
+    // header = 1;        (but as argument interpreted as fmtHuman)
+    // task = 2;
+    // op = 4;
+    // flags = 8;          // include all flags (2 hex chars)
+    // sample = 16;        // sample bit only (0 or 1)
+    // separators = 32;    // separate fields with '-'
+    // lowercase = 64;     // lowercase alpha hex chars
 
-    t.equal(text, tt, `should format as expected (${text} !== ${tt})`);
+    let text = mb1.toString();
+    let tt = `${headerHexU(mb1)}${tidHexU(mb1)}${oidHexU(mb1)}${flagsHexU(mb1)}`;
+    t.equal(text, tt, 'should format with no argument');
+
+    text = mb1.toString(1);
+    tt = `${headerHex(mb1)}-${tidHex(mb1)}-${oidHex(mb1)}-${flagsHex(mb1)}`;
+    t.equal(text, tt, 'toString(1) should format correctly');
+
+    text = mb1.toString(MB.fmtLog);
+    tt = `${tidHexU(mb1)}-${mb1.mb[29] & 1 ? '1' : '0'}`;
+    t.equal(text, tt, 'toString(fmtLog) should format correctly');
+
+    text = mb1.toString(2 | 64);
+    tt = `${tidHex(mb1)}`;
+    t.equal(text, tt, 'toString(task|lowercase) should format correctly');
+
+    text = mb1.toString(2);
+    tt = `${tidHexU(mb1)}`;
+    t.equal(text, tt, 'toString(task) should format correctly');
+
+    text = mb1.toString(1 | 2 | 4 | 8);
+    tt = `${headerHexU(mb1)}${tidHexU(mb1)}${oidHexU(mb1)}${flagsHexU(mb1)}`;
+    t.equal(text, tt, 'toString(header|task|op|flags should format correctly');
+  });
+
+  t.test('stringToMetabuf() works correctly', function (t) {
+    const bad = [
+      'xyzzy',
+      '2b' + 'f'.repeat(40) + '0'.repeat(16) + '00',  // 0s in op id
+      '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '001', // too long
+      '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '0x'   // invalid char
+    ];
+    const good = [
+      '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '00',
+      '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '01'
+    ];
+    bad.forEach(b => {
+      const result = MB.stringToMetabuf(b);
+      t.notOk(result, `${b} should fail to convert`);
+    });
+    good.forEach(g => {
+      const result = MB.stringToMetabuf(g);
+      t.ok(result, `${g} should convert successfully`);
+    });
+
+    t.done();
   });
 });
 
@@ -110,4 +169,17 @@ function oidHex (mb) {
 }
 function flagsHex (mb) {
   return flags(mb).toString('hex');
+}
+
+function headerHexU (mb) {
+  return headerHex(mb).toUpperCase();
+}
+function tidHexU (mb) {
+  return tidHex(mb).toUpperCase();
+}
+function oidHexU (mb) {
+  return oidHex(mb).toUpperCase();
+}
+function flagsHexU (mb) {
+  return flagsHex(mb).toUpperCase();
 }
