@@ -1,3 +1,15 @@
+* implementation strategy
+  - implement Metabuf class (may get renamed to Metadata when complete).
+  - create Metabuf tests
+  - don't require changes to bindings until the agent functions (as much as possible). one example:
+    ignore the metadata (wrong format) returned by getTraceSettings() and just supply the metabuf
+    that will be used in the new system. this may not be viable but it's worth a try.
+  - rewrite test/basics.test.js to test new metabuf functionality - first milestone is passing this
+  - rewrite test/event.test.js and re-evaluate whether various properties (e.g., .taskId, .opId, etc. are useful)
+  - BIG find all metadata references. consider converting internal use but keeping docs the same (many)
+  - requires moving much of addon-sim to addon.
+  - apis, api-sims, index.js (init msg), http (xtrace checks)
+
 - unix time in microseconds
   combination of hrtime and date.now() - https://github.com/sazze/node-nanotime/blob/master/index.js.
   can have single date.now() * 1000 at startup of C++ send routine and make the event timestamp using the
@@ -6,6 +18,16 @@
   because it will need to be adjusted by adding it to the base unix timestamp (gettimeofday). Question: how
   to get two bases (unix ts and hrtime) as close as possible so the time is not skewed. Maybe a C++ call
   that is only called once at startup - sets static unix ts base and returns hrtime base.
+
+- abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
+  getters/setters.
+
+- deprecate Event.last in favor of ao.lastEvent.
+
+- rename requestStore => context.
+
+- get rid of Event.sendStatus() - used only for init message. replace with optional second arg that
+  determines channel. more in event-2.cc (bindings).
 
 - repurpose event completely - all javascript until event.send()
   constructor expects metadata, not event, or both? capture edges, KVs, etc.
@@ -47,4 +69,14 @@ oboe_raw_send(&event);
 
 
 - formatters - log-formatters and toString() functions for low-level bindings metadata.
+
+
+perf notes
+
+js => c++ transitions
+- getTraceSettings()
+- create Event
+- every KV pair
+- every edge
+- send Event
 

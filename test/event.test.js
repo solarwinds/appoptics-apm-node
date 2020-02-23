@@ -9,7 +9,7 @@ const expect = require('chai').expect
 describe('event', function () {
   let emitter
   let event
-  let md
+  let md;
   let mdTaskId
 
   //
@@ -25,7 +25,8 @@ describe('event', function () {
   })
 
   beforeEach(function () {
-    md = addon.Metadata.makeRandom(1)
+    md = ao.MB.makeRandom(1);
+    //md = addon.Metadata.makeRandom(1)
     const mds = md.toString(1).split('-')
     mdTaskId = mds[1].toUpperCase()
   })
@@ -58,22 +59,26 @@ describe('event', function () {
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
     ao.traceMode = 'never'
-    md = addon.Metadata.makeRandom(0)
-    event = new Event('test', 'entry', md)
-    expect(ao.sampling(event)).equal(false)
-    expect(ao.sampling(event.toString())).equal(false)
+    md = ao.MB.makeRandom(0);
+    event = new Event('test', 'entry', md);
+    expect(event.mb.getFlags() & 1).equal(0);
+    expect(event.sampling).equal(false);
+    expect(ao.sampling(event)).equal(false);
+    expect(ao.sampling(event.toString())).equal(false);
 
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    md = addon.Metadata.makeRandom(1)
-    event = new Event('test', 'entry', md)
-    expect(ao.sampling(event)).equal(true)
-    expect(ao.sampling(event.toString())).equal(true)
+    md = ao.MB.makeRandom(1);
+    event = new Event('test', 'entry', md);
+    expect(event.mb.getFlags() & 1).equal(1);
+    expect(event.sampling).equal(true);
+    expect(ao.sampling(event)).equal(true);
+    expect(ao.sampling(event.toString())).equal(true);
   })
 
   it('should send the event', function (done) {
     const edge = true
-    const event2 = new Event('test', 'exit', event.event, edge)
+    const event2 = new Event('test', 'exit', event.mb, edge)
 
     emitter.once('message', function (msg) {
       expect(msg).property('X-Trace', event2.toString())
@@ -85,12 +90,12 @@ describe('event', function () {
 
     // NOTE: events must be sent within a request store context
     ao.requestStore.run(function () {
-      event2.sendReport()
+      event2.send()
     })
   })
 
   it('should not allow setting a NaN value', function () {
-    const event2 = new Event('test', 'exit', event.event)
+    const event2 = new Event('test', 'exit', event.mb)
 
     const logChecks = [
       {level: 'error', message: 'Error: Invalid type for KV Nan: NaN'},
@@ -118,7 +123,7 @@ describe('event', function () {
       done()
     })
     ao.requestStore.run(function () {
-      event.sendReport({Foo: 'fubar'})
+      event.send({Foo: 'fubar'})
     })
   })
 })

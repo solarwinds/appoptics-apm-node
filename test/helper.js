@@ -277,7 +277,11 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const template = {doSample: ao.traceMode === 'enabled', doMetrics: ao.traceMode === 'enabled'};
+    const template = {
+      doSample: ao.traceMode === 'enabled',
+      doMetrics: ao.traceMode === 'enabled',
+      metadata: ao.MB.makeRandom(ao.traceMode === 'enabled'),
+    };
     const span = ao.Span.makeEntrySpan('outer', exports.makeSettings(template))
     // span.async = true
     log.test.span('helper.test outer: %l', span)

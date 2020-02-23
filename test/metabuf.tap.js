@@ -48,7 +48,7 @@ test('metabuf core functions', function (t) {
   t.test('the Metabuf construct uses a prototype', function (t) {
     t.plan(5);
 
-    const copy = Buffer.from(mb1.mb);
+    const copy = Buffer.from(mb1.buf);
 
     const mb2 = new MB(mb1);
     t.ok(headerGood(mb2));
@@ -57,7 +57,7 @@ test('metabuf core functions', function (t) {
     t.ok(isSampled(mb2), 'sample flag should be set');
 
     // verify that the source buffer wasn't modified
-    const same = copy.compare(mb1.mb) === 0;
+    const same = copy.compare(mb1.buf) === 0;
     t.ok(same, 'the prototype shouldn\'t be modified');
   });
 
@@ -81,7 +81,7 @@ test('metabuf core functions', function (t) {
     t.equal(text, tt, 'toString(1) should format correctly');
 
     text = mb1.toString(MB.fmtLog);
-    tt = `${tidHexU(mb1)}-${mb1.mb[29] & 1 ? '1' : '0'}`;
+    tt = `${tidHexU(mb1)}-${mb1.buf[29] & 1 ? '1' : '0'}`;
     t.equal(text, tt, 'toString(fmtLog) should format correctly');
 
     text = mb1.toString(2 | 64);
@@ -126,36 +126,36 @@ test('metabuf core functions', function (t) {
 //
 
 function headerGood (mb) {
-  return mb.mb[0] === 0x2b;
+  return mb.buf[0] === 0x2b;
 }
 
 function tidEqual (mb1, mb2) {
-  return !mb1.mb.compare(mb2.mb, 1, 21, 1, 21);
+  return !mb1.buf.compare(mb2.buf, 1, 21, 1, 21);
 }
 
 function oidEqual (mb1, mb2) {
-  return !mb1.mb.compare(mb2.mb, 21, 29, 21, 29);
+  return !mb1.buf.compare(mb2.buf, 21, 29, 21, 29);
 }
 
 function isSampled (mb) {
-  return mb.mb[29] & 0x01;
+  return mb.buf[29] & 0x01;
 }
 
 function header (mb) {
-  return Buffer.from([mb.mb[0]]);
+  return Buffer.from([mb.buf[0]]);
 }
 function tid (mb) {
   const tid = Buffer.allocUnsafe(20);
-  mb.mb.copy(tid, 0, 1, 21);
+  mb.buf.copy(tid, 0, 1, 21);
   return tid;
 }
 function oid (mb) {
   const oid = Buffer.allocUnsafe(8);
-  mb.mb.copy(oid, 0, 21, 29);
+  mb.buf.copy(oid, 0, 21, 29);
   return oid;
 }
 function flags (mb) {
-  return Buffer.from([mb.mb[29]]);
+  return Buffer.from([mb.buf[29]]);
 }
 
 function headerHex (mb) {
