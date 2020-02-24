@@ -23,6 +23,7 @@ same (many)
 
 - should Event constructor accept both Events and Metabuf-metadata?
 - pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
+- span._internal() - why are internal events kept in span.internal[]?
 
 ## details - items to do
 
@@ -32,7 +33,7 @@ same (many)
 - make sure nothing but a Metabuf goes into Event._edges.
 
 - abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
-  getters/setters.
+  getters/setters. OPEN ISSUE: should addEdge accept Metabuf or both Metabuf and Event?
 
 - deprecate Event.last in favor of ao.lastEvent.
 

@@ -86,7 +86,7 @@ describe('custom', function () {
     // provide up to 100 tests with a unique prefix
     pfx = ('0' + counter++).slice(-2)
     main = `${pfx}-test`
-    if (this.currentTest.title === 'x-should continue from previous trace id') {
+    if (this.currentTest.title === 'x-should include backtrace when collectBacktraces is on') {
       ao.logLevelAdd('test:messages,event:*')
     } else {
       ao.logLevelRemove('test:messages,event:*')
@@ -252,12 +252,11 @@ describe('custom', function () {
   })
 
   it('should include backtrace when collectBacktraces is on', function (done) {
-    debugger
-    helper.test(emitter, function (done) {
+    helper.test(emitter, function (tdone) {
       ao.instrument(main, soon, {
         collectBacktraces: true,
         enabled: true
-      }, done)
+      }, tdone)
     }, [
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -272,10 +271,10 @@ describe('custom', function () {
   })
 
   it('should skip when not enabled', function (done) {
-    helper.test(emitter, function (done) {
+    helper.test(emitter, function (tdone) {
       ao.instrument(main, soon, {
         enabled: false
-      }, done)
+      }, tdone)
     }, [], done)
   })
 
@@ -283,13 +282,13 @@ describe('custom', function () {
     const data = {Foo: 'bar'}
     let last
 
-    helper.test(emitter, function (done) {
+    helper.test(emitter, function (tdone) {
       ao.instrument(function (span) {
         return {name: main}
       }, function (callback) {
         ao.reportInfo(data)
         callback()
-      }, conf, done)
+      }, conf, tdone)
     }, [
       function (msg) {
         msg.should.have.property('Layer', main)
