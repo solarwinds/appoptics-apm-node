@@ -14,8 +14,8 @@ this - worked.
  etc. are useful) - worked
 
 remaining
-- BIG find all metadata references. consider converting internal use but keeping docs the
-same (many)
+- BIG find all metadata references. Metadata.makeRandom() is in many tests.
+- consider converting internal use but keeping docs the same (many)
 - requires moving much of addon-sim to addon.
 - apis, api-sims, index.js (init msg), http (xtrace checks)
 

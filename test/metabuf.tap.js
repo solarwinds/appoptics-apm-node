@@ -6,7 +6,7 @@ const test = tap.test;
 const MB = require('../lib/metabuf.js');
 
 test('metabuf core functions', function (t) {
-  t.plan(8);
+  t.plan(9);
 
   let mb1;
 
@@ -56,6 +56,21 @@ test('metabuf core functions', function (t) {
     t.equal(mb0.getFlags(), 0xFF, 'should allow setting any flag bits');
     mb0.assignFlags(0x00);
     t.equal(mb0.getFlags(), 0, 'should clear flags too');
+  });
+
+  t.test('Metabuf.taskIdsMatch() works', function (t) {
+    t.plan(2);
+    // 2b-6c412b824d4fc2486c8021a7ccaf747f70633ace-d716bf6b03d44ad8-01
+    const re = /-/g;
+    const x0 = '2b-6c412b824d4fc2486c8021a7ccaf747f70633ace-d716bf6b03d44ad8-01'.replace(re, '');
+    const x1 = '2b-6c412b824d4fcccccc8021a7ccaf747f70633ace-d716bf6b03d44ad8-01'.replace(re, '');
+
+    const mb0 = MB.stringToMetabuf(x0);
+    const mb1 = MB.stringToMetabuf(x1);
+
+    t.ok(mb0.taskIdsMatch(mb0), 'should match identical task IDs');
+    t.notOk(mb1.taskIdsMatch(mb0), 'should detect non-matching task IDs');
+
   });
 
   t.test('the Metabuf constructor uses a prototype', function (t) {
@@ -113,7 +128,7 @@ test('metabuf core functions', function (t) {
   t.test('stringToMetabuf() works correctly', function (t) {
     const bad = [
       'xyzzy',
-      '2b' + 'f'.repeat(40) + '0'.repeat(16) + '00',  // 0s in op id
+      '2b' + 'f'.repeat(40) + '0'.repeat(16) + '01',  // 0s in op id
       '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '001', // too long
       '2b' + 'f'.repeat(40) + 'a'.repeat(16) + '0x'   // invalid char
     ];
@@ -129,6 +144,12 @@ test('metabuf core functions', function (t) {
       const result = MB.stringToMetabuf(g);
       t.ok(result, `${g} should convert successfully`);
     });
+
+    // 2b-6c412b824d4fc2486c8021a7ccaf747f70633ace-d716bf6b03d44ad8-01
+    const re = /-/g;
+    const x = '2b-6c412b824d4fc2486c8021a7ccaf747f70633ace-d716bf6b03d44ad8-01'.replace(re, '');
+    const mb = MB.stringToMetabuf(x);
+    t.equal(mb.toString(), x.toUpperCase(), 'should convert a known x-trace correctly');
 
     t.done();
   });
