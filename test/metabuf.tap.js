@@ -6,7 +6,7 @@ const test = tap.test;
 const MB = require('../lib/metabuf.js');
 
 test('metabuf core functions', function (t) {
-  t.plan(7);
+  t.plan(8);
 
   let mb1;
 
@@ -36,7 +36,7 @@ test('metabuf core functions', function (t) {
     t.notOk(isSampled(mb1), 'the sample flag isn\'t set');
   });
 
-  t.test('Metabug.makeRandom(1) works', function (t) {
+  t.test('Metabuf.makeRandom(1) works', function (t) {
     t.plan(3);
 
     mb1 = MB.makeRandom(1);
@@ -45,7 +45,20 @@ test('metabuf core functions', function (t) {
     t.ok(isSampled(mb1), 'the sample flag is set');
   });
 
-  t.test('the Metabuf construct uses a prototype', function (t) {
+  t.test('Metabuf flag operations work', function (t) {
+    t.plan(4);
+
+    const mb0 = MB.makeRandom(0);
+    t.equal(mb0.getFlags(), 0, 'no flags should be set');
+    mb0.assignFlags(1);
+    t.equal(mb0.getFlags(), 1, 'should set the sample bit');
+    mb0.assignFlags(0xFF);
+    t.equal(mb0.getFlags(), 0xFF, 'should allow setting any flag bits');
+    mb0.assignFlags(0x00);
+    t.equal(mb0.getFlags(), 0, 'should clear flags too');
+  });
+
+  t.test('the Metabuf constructor uses a prototype', function (t) {
     t.plan(5);
 
     const copy = Buffer.from(mb1.buf);

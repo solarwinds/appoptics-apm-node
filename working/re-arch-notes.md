@@ -33,7 +33,7 @@ same (many)
 - make sure nothing but a Metabuf goes into Event._edges.
 
 - abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
-  getters/setters. OPEN ISSUE: should addEdge accept Metabuf or both Metabuf and Event?
+  getters/setters.
 
 - deprecate Event.last in favor of ao.lastEvent.
 
@@ -49,23 +49,24 @@ same (many)
 
 ## details - done##
 
-- ~~unix time in microseconds~~ done. see api.js/getUnixTimeMicroseconds().
-- ~~agent: rework event code to use Metabuf. (only 3 "new Event" calls)~~
-- ~~bindings: getTraceSettings() changes - creates Metabuf, not oboe metadata.~~
-- ~~repurpose event completely - all javascript until event.send()
-  constructor expects metadata, not event, or both? capture edges, KVs, etc.~~
-- ~~get rid of Event.sendStatus() - used only for init message. replace with optional second arg that
-  determines channel. more in event.cc (bindings).~~
-- ~~there will be no oboe metadata, just events which contain a Buffer that holds the x-trace form of metadata.
+- event.addEdge() accepts both Metabuf and Event arguments - topLevel only has Metabuf but most code works at event-level.
+- unix time in microseconds done. see api.js/getUnixTimeMicroseconds().
+- agent: rework event code to use Metabuf. (only 3 "new Event" calls)
+- bindings: getTraceSettings() changes - creates Metabuf, not oboe metadata.
+- repurpose event completely - all javascript until event.send()
+  constructor expects metadata, not event, or both? capture edges, KVs, etc.
+- get rid of Event.sendStatus() - used only for init message. replace with optional second arg that
+  determines channel. more in event.cc (bindings).
+- there will be no oboe metadata, just events which contain a Buffer that holds the x-trace form of metadata.
   the only time an oboe event or metadata will be constructed is in the bindings Event.send() function -
   completely new. actually an oboe event is nothing more than metadata with a bson buffer and string. and the
   metadata object carries along lengths which are constant for any given build/version combination, so no need
-  to carry that redundant information. a version will suffice if there is ever a change.~~
-- ~~bindings - Event & Metadata will go away. New function in Event namespace (most likely, or Reporter) that
+  to carry that redundant information. a version will suffice if there is ever a change.
+- bindings - Event & Metadata will go away. New function in Event namespace (most likely, or Reporter) that
   will send an array of events. Each event will have all the KV pairs, edges, and metadata (in a Metabuf)
-  required to construct an oboe event and then send it.~~
-- ~~bindings: might need an hrtime/unix-time base function.~~
-- ~~agent: validates x-trace strings~~
+  required to construct an oboe event and then send it.
+- bindings: might need an hrtime/unix-time base function.
+- agent: validates x-trace strings
 
 perf notes
 

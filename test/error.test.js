@@ -71,7 +71,7 @@ describe('error', function () {
   // Tests
   //
   it('should add error properties to event', function () {
-    const md = ao.addon.Metadata.makeRandom(1)
+    const md = ao.MB.makeRandom(1)
     const event = new Event('error-test', 'info', md)
     const err = new Error('test')
     event.error = err
@@ -82,7 +82,7 @@ describe('error', function () {
   })
 
   it('should set error multiple times (keeping last)', function () {
-    const md = ao.addon.Metadata.makeRandom(1)
+    const md = ao.MB.makeRandom(1)
     const event = new Event('error-test', 'info', md)
     const first = new Error('first')
     const second = new Error('second')
