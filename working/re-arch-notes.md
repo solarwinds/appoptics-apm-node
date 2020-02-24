@@ -1,8 +1,16 @@
 
 ## implementation strategy
 
+remaining
+- consider converting internal use but keeping docs the same (many)
+- move appropriate addon-sim to addon (far less in addon)
+- add internal metrics - # events, #spans generated, # sent, average size, time of event, spans/trace, etc.
+- scrub
+- matrix tests
+- benchmark
+
 done
-- implement Metabuf class (may get renamed to Metadata when complete). worked well
+- implement Metabuf class (~~may get renamed to Metadata when complete~~). worked well
 - create Metabuf tests - worked well
 - don't require changes to bindings until the agent functions (as much as possible). one
 example: ignore the metadata (wrong format) returned by getTraceSettings() and just
@@ -12,44 +20,35 @@ worth a try. - worked but minor
 this - worked.
 - rewrite test/event.test.js and re-evaluate whether various properties (e.g., .taskId, .opId,
  etc. are useful) - worked
+- BIG find all metadata references. Metadata.makeRandom() is in many tests. - worked
+- apis, api-sims, index.js (init msg), http (xtrace checks) - were details really.
 
-remaining
-- BIG find all metadata references. Metadata.makeRandom() is in many tests.
-- consider converting internal use but keeping docs the same (many)
-- requires moving much of addon-sim to addon.
-- apis, api-sims, index.js (init msg), http (xtrace checks)
-- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing' context error. prevent?
+## questions - open
 
-## questions
-
-- should Event constructor accept both Events and Metabuf-metadata?
 - pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
 - span._internal() - why are internal events kept in span.internal[]?
 
+### questions - closed
+
+- should Event constructor accept both Events and Metabuf-metadata? NO. There are only 4 places that
+call `new Event()`; they can get it right and one additional instanceof check is avoided.
+
 ## details - items to do
 
+- remove metadata & metadataFromXtrace from getTraceSettings() return.
+- rework bindings tests (almost completely).
 - provide initialization time check that verifies aob metadata constants are the same
   as Metabuf uses.
-
-- make sure nothing but a Metabuf goes into Event._edges.
-
 - abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
   getters/setters.
-
 - deprecate Event.last in favor of ao.lastEvent.
-
 - rename requestStore => context.
-
 - rename Event.set() => Event.addKV()
+- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing' context error. prevent?
+
+### details - done##
 
 - remove already gone bindings.Context.sampleTrace() references (testing, api-sim).
-
-- agent: rework getTraceSettings()
-- agent: span changes TBD
-- formatters - log-formatters and toString() functions for low-level bindings metadata.
-
-## details - done##
-
 - event.addEdge() accepts both Metabuf and Event arguments - topLevel only has Metabuf but most code works at event-level.
 - unix time in microseconds done. see api.js/getUnixTimeMicroseconds().
 - agent: rework event code to use Metabuf. (only 3 "new Event" calls)
@@ -69,6 +68,10 @@ remaining
 - bindings: might need an hrtime/unix-time base function.
 - agent: validates x-trace strings
 - replaced bindings.event.getSampleFlag() with event.sampling - simple property.
+- formatters - log-formatters and toString() functions for low-level bindings metadata.
+- agent: span changes TBD
+- agent: rework getTraceSettings()
+- make sure nothing but a Metabuf goes into Event._edges.
 
 perf notes
 

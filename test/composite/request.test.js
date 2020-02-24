@@ -13,7 +13,6 @@ const expect = require('chai').expect;
 describe('probes.request', function () {
   const ctx = {driver: http, p: 'http'};
   let emitter
-  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -22,13 +21,9 @@ describe('probes.request', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
+
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 

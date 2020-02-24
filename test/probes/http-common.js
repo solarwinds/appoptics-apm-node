@@ -44,7 +44,6 @@ const options = p === 'https' ? httpsOptions : {};
 describe(`probes.${p}`, function () {
   const ctx = {driver, p};
   let emitter
-  let realSampleTrace
   const previousHttpEnabled = ao.probes[p].enabled;
   const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled;
   let clear
@@ -57,14 +56,9 @@ describe(`probes.${p}`, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
     ao.g.testing(__filename)
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
   after(function () {

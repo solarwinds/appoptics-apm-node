@@ -40,7 +40,6 @@ try {
 
 describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   let emitter
-  let realSampleTrace
   const ctx = {ao, tName, addr}
 
   it('should sanitize SQL by default', function () {
@@ -70,15 +69,9 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   // basic test setup and teardown
   //
   before(function () {
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
-
     ao.g.testing(__filename)
   })
   after(function () {
-    ao.addon.Context.sampleTrace = realSampleTrace
     ao.probes.fs.enabled = true
   })
 
