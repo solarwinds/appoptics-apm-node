@@ -18,6 +18,7 @@ remaining
 - consider converting internal use but keeping docs the same (many)
 - requires moving much of addon-sim to addon.
 - apis, api-sims, index.js (init msg), http (xtrace checks)
+- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing' context error. prevent?
 
 ## questions
 
@@ -67,6 +68,7 @@ remaining
   required to construct an oboe event and then send it.
 - bindings: might need an hrtime/unix-time base function.
 - agent: validates x-trace strings
+- replaced bindings.event.getSampleFlag() with event.sampling - simple property.
 
 perf notes
 

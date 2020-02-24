@@ -77,7 +77,7 @@ function getTraceIdString () {
   if (!topSpan) {
     return `${'0'.repeat(40)}-0`;
   }
-  const firstEvent = topSpan.events.entry.event;
+  const firstEvent = topSpan.events.entry;
   // 2 task, 16 sample bit, 32 separators
   return firstEvent.toString(2 | 16 | 32);
 }
@@ -284,7 +284,7 @@ describe(`probes.morgan ${version}`, function () {
         return 'test-done';
       }
 
-      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const xtrace = ao.MB.makeRandom(0).toString()
       const result = ao.startOrContinueTrace(xtrace, spanName, test);
       expect(result).equal('test-done');
     })
