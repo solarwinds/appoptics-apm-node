@@ -252,6 +252,7 @@ describe('custom', function () {
   })
 
   it('should include backtrace when collectBacktraces is on', function (done) {
+    debugger
     helper.test(emitter, function (done) {
       ao.instrument(main, soon, {
         collectBacktraces: true,
@@ -639,7 +640,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = ao.MB.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
 
     res.should.equal(test)
@@ -1084,7 +1085,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = ao.MB.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
       main,                          // span name
