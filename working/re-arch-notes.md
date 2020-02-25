@@ -3,6 +3,7 @@
 
 remaining
 - scrub in process
+- publish bindings v10-alpha
 - matrix tests
 - benchmark
 
@@ -23,11 +24,17 @@ this - worked.
 
 ## questions - open
 
-- pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
-for testing. not sure that anything else does; if not can substitute wrapper on reportInfo() function.
+-
 
 ### questions - closed
 
+- pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
+for testing. not sure that anything else does; if not can substitute wrapper on reportInfo() function.
+RESOLUTION - compromise. Metabuf.init() checks to make sure hardcoded numbers match. It should never
+encounter a mismatch with the bindings/agent release process but if it does it should blow up during
+testing. And Event::send() knowing the js structure is slightly more complicated than decomposing it
+at the js end and passing separate arguments but that's not really any more bullet proof. Event::send()
+does call `validEvent()` which makes a pretty good duck-type check on the Event object passed to it.
 - span._internal() - why are internal events kept in span.internal[]? custom.test.js depends on it. RESOLUTION
 was used only for custom.test.js. replaced with placeholder noop that won't keep info events alive for the
 life of the span; custom.test.js replaces the noop for it's purposes.
@@ -39,8 +46,6 @@ call `new Event()`; they can get it right and one additional instanceof check is
 
 ## details - items to do
 
-- provide initialization-time check that verifies aob metadata constants are the same
-  as Metabuf uses.
 - bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing generates
 context error. preventable?
 - weave metadata/Metabuf into documentation. e.g., settings returned by getTraceSettings() contains
@@ -49,6 +54,8 @@ metabuf referenceable via event.mb.
 
 ### details - done ##
 
+- provide initialization-time check that verifies aob metadata constants are the same
+  as Metabuf uses.
 - deprecate Event.last in favor of ao.lastEvent. why? most places don't need access
 to Event except for this single purpose and all have/need access to ao. Ditto for Span.last.
 - add internal metrics - # events, #spans generated, # sent, average size, time of event, spans/trace, etc.
@@ -78,7 +85,7 @@ to Event except for this single purpose and all have/need access to ao. Ditto fo
   metadata object carries along lengths which are constant for any given build/version combination, so no need
   to carry that redundant information. a version will suffice if there is ever a change.
 - bindings - Event & Metadata will go away. New function in Event namespace (most likely, or Reporter) that
-  will send an array of events. Each event will have all the KV pairs, edges, and metadata (in a Metabuf)
+  will send an event in one call. Each event will have all the KV pairs, edges, and metadata (in a Metabuf)
   required to construct an oboe event and then send it.
 - bindings: might need an hrtime/unix-time base function.
 - agent: validates x-trace strings
