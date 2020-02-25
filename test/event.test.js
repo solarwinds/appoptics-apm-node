@@ -108,9 +108,9 @@ describe('event', function () {
     expect(getCount()).equal(1, 'incorrect log message count')
   })
 
-  it('should support set function', function () {
+  it('should support .addKVs()', function () {
     const event = new Event('test', 'entry', md)
-    event.set({Foo: 'bar'})
+    event.addKVs({Foo: 'bar'})
     expect(event.kv).property('Foo', 'bar')
   })
 
