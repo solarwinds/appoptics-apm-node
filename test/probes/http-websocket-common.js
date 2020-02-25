@@ -156,7 +156,7 @@ describe(`probes.${p} websocket`, function () {
     const conf = ao.probes[p];
 
     after(function () {
-      ao.resetRequestStore();
+      ao.resetTContext();
     });
 
     // it's possible for a local UDP send to fail but oboe doesn't report

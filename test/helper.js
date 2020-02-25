@@ -22,7 +22,7 @@ Error.stackTraceLimit = 25
 const log = ao.loggers
 
 exports.clsCheck = function () {
-  const c = ao.requestStore
+  const c = ao.tContext
   if (!c || !c.active) {
     throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
   }
@@ -276,7 +276,7 @@ exports.test = function (emitter, test, validations, done) {
     exports.doChecks(emitter, validations, done)
   }
 
-  ao.requestStore.run(function () {
+  ao.tContext.run(function () {
     const template = {
       doSample: ao.traceMode === 'enabled',
       doMetrics: ao.traceMode === 'enabled',

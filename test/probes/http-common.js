@@ -137,7 +137,7 @@ describe(`probes.${p}`, function () {
     const conf = ao.probes[p];
 
     after(function () {
-      ao.resetRequestStore();
+      ao.resetTContext();
     });
 
     // it's possible for a local UDP send to fail but oboe doesn't report
@@ -595,7 +595,7 @@ describe(`probes.${p}`, function () {
     const conf = ao.probes[`${p}-client`];
 
     after(function () {
-      ao.resetRequestStore();
+      ao.resetTContext();
     });
 
     it(`should trace ${p} request`, function (done) {

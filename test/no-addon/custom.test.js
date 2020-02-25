@@ -115,8 +115,8 @@ describe('custom (without native bindings present)', function () {
     assert(ao.traceId === undefined);
     assert(ao.lastEvent === undefined);
     assert(ao.lastSpan === undefined);
-    assert(ao.requestStore && typeof ao.requestStore.get === 'function');
-    assert(typeof ao.resetRequestStore === 'function');
+    assert(ao.tContext && typeof ao.tContext.get === 'function');
+    assert(typeof ao.resetTContext === 'function');
     assert(ao.clsCheck() === false);
     assert(ao.stack() === '');
     assert(ao.bind('x') === 'x');

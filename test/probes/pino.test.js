@@ -92,7 +92,7 @@ function checkEventInfo (eventInfo, level, message, traceId) {
 // get a trace string via a different function than the logging insertion uses.
 //
 function getTraceIdString () {
-  const firstEvent = ao.requestStore.get('topSpan').events.entry;
+  const firstEvent = ao.tContext.get('topSpan').events.entry;
   // 2 task, 16 sample bit, 32 separators
   return firstEvent.toString(2 | 16 | 32);
 }

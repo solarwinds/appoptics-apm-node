@@ -73,7 +73,7 @@ class TestStream extends EventEmitter {
 // get a trace string via a different function than the logging insertion uses.
 //
 function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan');
+  const topSpan = ao.tContext.get('topSpan');
   if (!topSpan) {
     return `${'0'.repeat(40)}-0`;
   }

@@ -52,7 +52,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   //
   before(function (done) {
     if (ao.lastEvent) {
-      const c = ao.requestStore.active ? ao.requestStore.active.id : null
+      const c = ao.tContext.active ? ao.tContext.active.id : null
       ao.loggers.debug(`id ${c} event.last at startup %e`, ao.lastEvent)
     }
 
@@ -79,7 +79,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   // remove any leftover context
   //
   after(function () {
-    ao.resetRequestStore();
+    ao.resetTContext();
   });
 
   //

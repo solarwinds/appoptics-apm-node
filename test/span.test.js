@@ -580,7 +580,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    ao.requestStore.run(function () {
+    ao.tContext.run(function () {
       span.enter()
       const sub1 = span.descend('inner-1');
       sub1.run(function () {                            // inner 1 entry

@@ -88,7 +88,7 @@ describe('event', function () {
     })
 
     // NOTE: events must be sent within a request store context
-    ao.requestStore.run(function () {
+    ao.tContext.run(function () {
       event2.send()
     })
   })
@@ -103,7 +103,7 @@ describe('event', function () {
 
     const [getCount, clear] = helper.checkLogMessages(logChecks) // eslint-disable-line
 
-    event2.set({Nan: NaN})
+    event2.addKVs({Nan: NaN})
 
     expect(getCount()).equal(1, 'incorrect log message count')
   })
@@ -121,7 +121,7 @@ describe('event', function () {
       expect(msg).property('Foo', 'fubar')
       done()
     })
-    ao.requestStore.run(function () {
+    ao.tContext.run(function () {
       event.send({Foo: 'fubar'})
     })
   })

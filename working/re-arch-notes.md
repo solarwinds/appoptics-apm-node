@@ -49,14 +49,14 @@ call `new Event()`; they can get it right and one additional instanceof check is
 - provide initialization-time check that verifies aob metadata constants are the same
   as Metabuf uses.
 - get rid of getters/setters. RESOLUTION - not really viable without breaking too much documented api.
-- rename requestStore => context.
 - bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing'
 context error. prevent?
 - deprecate Event.last in favor of ao.lastEvent. why? most places don't need access
 to Event except for this single purpose and all have/need access to ao.
 
-### details - done##
+### details - done ##
 
+- rename requestStore => tContext.
 - rename Event.set() => Event.addKVs(). deprecate Event.set(). DO NOT remove all direct accesses to event.kv - too many.
 - remove metadata & metadataFromXtrace from getTraceSettings() return.
 - abstract edges better. create addEdge() method. remove all event.edges.push(...) instances.
@@ -86,7 +86,7 @@ to Event except for this single purpose and all have/need access to ao.
 - agent: rework getTraceSettings()
 - make sure nothing but a Metabuf goes into Event._edges.
 
-perf notes
+## perf notes
 
 initial js => c++ transitions
 - inbound xtrace validation
@@ -110,4 +110,4 @@ the probes. event.set() is really just deprecated but good enough.
 can be only Metabuf now.
 - edges must be added using event.addEdge() now. They can no longer be pushed on to edges
 property.
-- requestStore => context. if you use ao.requestStore change it.
+- requestStore => tContext. if you use ao.requestStore change it.

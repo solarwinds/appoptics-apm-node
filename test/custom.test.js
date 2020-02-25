@@ -889,16 +889,16 @@ describe('custom', function () {
               entry.toString(),     // xtrace-id
               'inner',              // span name
               function (cb) {       // runner pseudo-async
-                ao.requestStore.set('linger', true);
+                ao.tContext.set('linger', true);
                 soon(function () {
-                  expect(ao.requestStore.get('linger')).equal(true);
+                  expect(ao.tContext.get('linger')).equal(true);
                   // Verify newContext calls DO NOT continue when no xtrace
                   ao.startOrContinueTrace(
                     //entry.toString(),     // xtrace-id (supply this to continue)
                     '',
                     'new-trace',          // span name
                     function (cb) {       // runner pseudo-async
-                      expect(ao.requestStore.get('linger')).not.exist;
+                      expect(ao.tContext.get('linger')).not.exist;
                       cb()
                     },
                     Object.assign({forceNewTrace: true}, conf),                 // config
@@ -968,12 +968,12 @@ describe('custom', function () {
   })
 
   // it should handle bad bind arguments gracefully and issue warnings.
-  it('should bind functions to requestStore', function () {
-    const bind = ao.requestStore.bind
+  it('should bind functions to tContext', function () {
+    const bind = ao.tContext.bind
     let threw = false
     let called = false
 
-    ao.requestStore.bind = function () {
+    ao.tContext.bind = function () {
       called = true
     }
 
@@ -1001,17 +1001,17 @@ describe('custom', function () {
       threw = true
     }
 
-    ao.requestStore.bind = bind
+    ao.tContext.bind = bind
 
     threw.should.equal(false)
   })
 
-  it('should bind emitters to requestStore', function () {
-    const bindEmitter = ao.requestStore.bindEmitter
+  it('should bind emitters to tContext', function () {
+    const bindEmitter = ao.tContext.bindEmitter
     let threw = false
     let called = false
 
-    ao.requestStore.bindEmitter = function () {
+    ao.tContext.bindEmitter = function () {
       called = true
     }
 
@@ -1040,7 +1040,7 @@ describe('custom', function () {
       threw = true
     }
 
-    ao.requestStore.bindEmitter = bindEmitter
+    ao.tContext.bindEmitter = bindEmitter
 
     threw.should.equal(false)
   })

@@ -208,31 +208,31 @@ tracking past events to connect edges to.
 ### Accessing the context
 
 The context is available as an object with `get(key)` and `set(key, value)`
-methods at `ao.requestStore`. You can store whatever data you need in the store,
+methods at `ao.tContext`. You can store whatever data you need in the store,
 but it is *only* available within the specific branch of the continuation in
 which the data was set. The continuation tracking begins when a call is made to
-`ao.requestStore.run(functionToRunInContext)`.
+`ao.tContext.run(functionToRunInContext)`.
 
 ```js
-ao.requestStore.run(function () {
-  ao.requestStore.set('foo', 'bar')
+ao.tContext.run(function () {
+  ao.tContext.set('foo', 'bar')
   var called = false
 
   setImmediate(function () {
-    assert('bar', ao.requestStore.get('foo'))
-    ao.requestStore.set('baz', 'buz')
+    assert('bar', ao.tContext.get('foo'))
+    ao.tContext.set('baz', 'buz')
     called = true
 
     setImmediate(after)
   })
 
   function after () {
-    assert('buz', ao.requestStore.get('baz'))
+    assert('buz', ao.tContext.get('baz'))
   }
 
   setTimeout(function () {
-    assert('bar', ao.requestStore.get('foo'))
-    assert(null, ao.requestStore.get('baz'))
+    assert('bar', ao.tContext.get('foo'))
+    assert(null, ao.tContext.get('baz'))
     assert(called, true)
   })
 })
@@ -254,11 +254,11 @@ context at the point which they are wrapped with.
 ao.bindEmitter(request)
 ao.bindEmitter(response)
 
-ao.requestStore.set('it works', true)
+ao.tContext.set('it works', true)
 
 someAsyncThing(ao.bind(function () {
   res.on('end', function () {
-    assert(true, ao.requestStore.get('it works'))
+    assert(true, ao.tContext.get('it works'))
   })
 }))
 ```
