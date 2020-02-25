@@ -313,6 +313,8 @@ describe('custom', function () {
   it('should link info events correctly', function (done) {
     let outer
     const inner = []
+    const spanToEvents = new Map();
+
 
     const checks = [
       // Outer entry
@@ -330,7 +332,7 @@ describe('custom', function () {
       },
       // Inner info #1 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[0].events.internal[0].toString())
+        msg.should.have.property('X-Trace', spanToEvents.get(inner[0])[0].toString())
         msg.should.have.property('Edge', inner[0].events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -338,7 +340,7 @@ describe('custom', function () {
       },
       // Outer info
       function (msg) {
-        msg.should.have.property('X-Trace', outer.events.internal[0].toString())
+        msg.should.have.property('X-Trace', spanToEvents.get(outer)[0].toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -347,13 +349,13 @@ describe('custom', function () {
       // Inner entry #2 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[1].events.entry.toString())
-        msg.should.have.property('Edge', outer.events.internal[0].opId)
+        msg.should.have.property('Edge', spanToEvents.get(outer)[0].opId)
         msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'entry')
       },
       // Inner info #2 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[1].events.internal[0].toString())
+        msg.should.have.property('X-Trace', spanToEvents.get(inner[1])[0].toString())
         msg.should.have.property('Edge', inner[1].events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -362,21 +364,21 @@ describe('custom', function () {
       // Outer exit
       function (msg) {
         msg.should.have.property('X-Trace', outer.events.exit.toString())
-        msg.should.have.property('Edge', outer.events.internal[0].opId)
+        msg.should.have.property('Edge', spanToEvents.get(outer)[0].opId)
         msg.should.have.property('Layer', 'link-test')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #1 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[0].events.exit.toString())
-        msg.should.have.property('Edge', inner[0].events.internal[0].opId)
+        msg.should.have.property('Edge', spanToEvents.get(inner[0])[0].opId)
         msg.should.have.property('Layer', 'inner-0')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #2 (async)
       function (msg) {
         msg.should.have.property('X-Trace', inner[1].events.exit.toString())
-        msg.should.have.property('Edge', inner[1].events.internal[0].opId)
+        msg.should.have.property('Edge', spanToEvents.get(inner[1])[0].opId)
         msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'exit')
       },
@@ -395,6 +397,11 @@ describe('custom', function () {
       function makeInner (data, done) {
         const name = 'inner-' + data.Index
         const span = Span.last.descend(name)
+        const events = [];
+        spanToEvents.set(span, events);
+        span.events.internal.push = function (event) {
+          events.push(event);
+        };
         inner.push(span)
         span.run(function (wrap) {
           const delayed = wrap(done)
@@ -406,6 +413,11 @@ describe('custom', function () {
       }
 
       outer = Span.last.descend('link-test')
+      const events = [];
+      spanToEvents.set(outer, events);
+      outer.events.internal.push = function (event) {
+        events.push(event);
+      };
       outer.run(function () {
         const cb = after(2, done)
         makeInner({

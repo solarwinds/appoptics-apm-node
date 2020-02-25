@@ -2,14 +2,19 @@
 ## implementation strategy
 
 remaining
-- consider converting internal use but keeping docs the same (many)
-- move appropriate addon-sim to addon (far less in addon)
 - add internal metrics - # events, #spans generated, # sent, average size, time of event, spans/trace, etc.
+  - event.count at Event constructor.
+  - span.count at span.constructor
+  - events.sent at event.send()
+  - size - must be recorded in bindings.Event.send() (only place bson buffer size is calculated)
+  - timing for spans - from span.entry to span.exit. useful?
+  - capture trace timing too.
 - scrub
 - matrix tests
 - benchmark
 
 done
+- move appropriate addon-sim to addon (far less in addon)
 - implement Metabuf class (~~may get renamed to Metadata when complete~~). worked well
 - create Metabuf tests - worked well
 - don't require changes to bindings until the agent functions (as much as possible). one
@@ -26,28 +31,36 @@ this - worked.
 ## questions - open
 
 - pretty tight coupling between bindings Event::send(), OBOE_* constants, and Metabuf. another way?
-- span._internal() - why are internal events kept in span.internal[]?
+for testing. not sure that anything else does; if not can substitute wrapper on reportInfo() function.
 
 ### questions - closed
 
+- span._internal() - why are internal events kept in span.internal[]? custom.test.js depends on it. RESOLUTION
+was used only for custom.test.js. replaced with placeholder noop that won't keep info events alive for the
+life of the span; custom.test.js replaces the noop for it's purposes.
+- consider converting internal use but keeping docs the same. RESOLVED - keep term metadata in user docs
+but refer to it, when necessary, as metadata in the form of a Metabuf. will keep current usage ao.MB so
+it can't be confused with Metadata. Metabuf is not documented for end-users/developers.
 - should Event constructor accept both Events and Metabuf-metadata? NO. There are only 4 places that
 call `new Event()`; they can get it right and one additional instanceof check is avoided.
 
 ## details - items to do
 
-- remove metadata & metadataFromXtrace from getTraceSettings() return.
-- rework bindings tests (almost completely).
-- provide initialization time check that verifies aob metadata constants are the same
+- provide initialization-time check that verifies aob metadata constants are the same
   as Metabuf uses.
-- abstract edges better. create addEdge() method. remove all event.edges.push(...) instances. get rid of
-  getters/setters.
-- deprecate Event.last in favor of ao.lastEvent.
+- get rid of getters/setters. RESOLUTION - not really viable without breaking too much documented api.
 - rename requestStore => context.
-- rename Event.set() => Event.addKV()
-- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing' context error. prevent?
+- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing'
+context error. prevent?
+- deprecate Event.last in favor of ao.lastEvent. why? most places don't need access
+to Event except for this single purpose and all have/need access to ao.
 
 ### details - done##
 
+- rename Event.set() => Event.addKVs(). deprecate Event.set(). DO NOT remove all direct accesses to event.kv - too many.
+- remove metadata & metadataFromXtrace from getTraceSettings() return.
+- abstract edges better. create addEdge() method. remove all event.edges.push(...) instances.
+- rework bindings tests (mostly removals).
 - remove already gone bindings.Context.sampleTrace() references (testing, api-sim).
 - event.addEdge() accepts both Metabuf and Event arguments - topLevel only has Metabuf but most code works at event-level.
 - unix time in microseconds done. see api.js/getUnixTimeMicroseconds().
@@ -82,8 +95,19 @@ initial js => c++ transitions
 - every KV pair
 - edges (2) set edge, send edge
 - every toString() - log insertion, outbound x-trace headers, logging.
+- every string => metadata conversion.
 - send Event
 
 trash-metadata js => c++ transitions
 - getTraceSettings()
 - send Event()
+
+## breaking changes
+
+- event.set() => event.addKVs(). would like to remove event.kv but it is used throughout
+the probes. event.set() is really just deprecated but good enough.
+- Event constructor used to allow the parent argument to be Event or Metadata. The parent
+can be only Metabuf now.
+- edges must be added using event.addEdge() now. They can no longer be pushed on to edges
+property.
+- requestStore => context. if you use ao.requestStore change it.
