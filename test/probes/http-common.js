@@ -62,7 +62,8 @@ describe(`probes.${p}`, function () {
     emitter.close(done)
   })
   after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+    const {spansTopSpanEnters, spansTopSpanExits} = ao.Span.getMetrics();
+    ao.loggers.debug(`enters ${spansTopSpanEnters} exits ${spansTopSpanExits}`);
   })
 
   //
@@ -403,8 +404,8 @@ describe(`probes.${p}`, function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      if (ao.Event.last) {
-        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.Event.last);
+      if (ao.lastEvent) {
+        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.lastEvent);
       }
 
       conf.includeRemoteUrlParams = false

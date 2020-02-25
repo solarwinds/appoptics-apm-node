@@ -53,7 +53,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   before(function (done) {
     if (ao.lastEvent) {
       const c = ao.tContext.active ? ao.tContext.active.id : null
-      ao.loggers.debug(`id ${c} event.last at startup %e`, ao.lastEvent)
+      ao.loggers.debug(`id ${c} ao.lastEvent at startup %e`, ao.lastEvent)
     }
 
     emitter = helper.appoptics(done)

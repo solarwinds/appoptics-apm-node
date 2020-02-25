@@ -2,14 +2,7 @@
 ## implementation strategy
 
 remaining
-- add internal metrics - # events, #spans generated, # sent, average size, time of event, spans/trace, etc.
-  - event.count at Event constructor.
-  - span.count at span.constructor
-  - events.sent at event.send()
-  - size - must be recorded in bindings.Event.send() (only place bson buffer size is calculated)
-  - timing for spans - from span.entry to span.exit. useful?
-  - capture trace timing too.
-- scrub
+- scrub in process
 - matrix tests
 - benchmark
 
@@ -40,7 +33,7 @@ was used only for custom.test.js. replaced with placeholder noop that won't keep
 life of the span; custom.test.js replaces the noop for it's purposes.
 - consider converting internal use but keeping docs the same. RESOLVED - keep term metadata in user docs
 but refer to it, when necessary, as metadata in the form of a Metabuf. will keep current usage ao.MB so
-it can't be confused with Metadata. Metabuf is not documented for end-users/developers.
+it can't be confused with Metadata.
 - should Event constructor accept both Events and Metabuf-metadata? NO. There are only 4 places that
 call `new Event()`; they can get it right and one additional instanceof check is avoided.
 
@@ -48,14 +41,23 @@ call `new Event()`; they can get it right and one additional instanceof check is
 
 - provide initialization-time check that verifies aob metadata constants are the same
   as Metabuf uses.
-- get rid of getters/setters. RESOLUTION - not really viable without breaking too much documented api.
-- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing'
-context error. prevent?
-- deprecate Event.last in favor of ao.lastEvent. why? most places don't need access
-to Event except for this single purpose and all have/need access to ao.
+- bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing generates
+context error. preventable?
+- weave metadata/Metabuf into documentation. e.g., settings returned by getTraceSettings() contains
+the metadata required to construct the top-level span. and all events contain their metadata in a
+metabuf referenceable via event.mb.
 
 ### details - done ##
 
+- deprecate Event.last in favor of ao.lastEvent. why? most places don't need access
+to Event except for this single purpose and all have/need access to ao. Ditto for Span.last.
+- add internal metrics - # events, #spans generated, # sent, average size, time of event, spans/trace, etc.
+  - eventsCreated, eventsSampled, eventsSent, eventsSendFailed ✔
+  - spansCreated, spansSampled, spansTopSpanEnters, spansTopSpanExits ✔
+  - eventsBytesSent - must be recorded in bindings.Event.send() (only place bson buffer size is calculated) ✔
+  - timing for spans - from span.entry to span.exit. useful? RESOLVED, NO, unless capture buckets by span name. ✔
+  - capture trace timing too (in span.js) ✔
+- get rid of getters/setters. RESOLUTION - not really viable without breaking too much documented api.
 - rename requestStore => tContext.
 - rename Event.set() => Event.addKVs(). deprecate Event.set(). DO NOT remove all direct accesses to event.kv - too many.
 - remove metadata & metadataFromXtrace from getTraceSettings() return.
@@ -110,4 +112,7 @@ the probes. event.set() is really just deprecated but good enough.
 can be only Metabuf now.
 - edges must be added using event.addEdge() now. They can no longer be pushed on to edges
 property.
-- requestStore => tContext. if you use ao.requestStore change it.
+- requestStore => tContext. if you use ao.requestStore change ao.requestStore => ao.tContext
+and ao.resetRequestStore => ao.resetTContext.
+- Event.last => ao.lastEvent
+- Span.last => ao.lastSpan

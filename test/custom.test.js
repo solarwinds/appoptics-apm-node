@@ -79,7 +79,8 @@ describe('custom', function () {
   let main
 
   after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+    const {spansTopSpanEnters, spansTopSpanExits} = ao.Span.getMetrics();
+    ao.loggers.debug(`enters ${spansTopSpanEnters} exits ${spansTopSpanExits}`);
   })
 
   beforeEach(function () {
@@ -396,7 +397,7 @@ describe('custom', function () {
 
       function makeInner (data, done) {
         const name = 'inner-' + data.Index
-        const span = Span.last.descend(name)
+        const span = ao.lastSpan.descend(name)
         const events = [];
         spanToEvents.set(span, events);
         span.events.internal.push = function (event) {
@@ -412,7 +413,7 @@ describe('custom', function () {
         })
       }
 
-      outer = Span.last.descend('link-test')
+      outer = ao.lastSpan.descend('link-test')
       const events = [];
       spanToEvents.set(outer, events);
       outer.events.internal.push = function (event) {
@@ -793,7 +794,7 @@ describe('custom', function () {
       'x-previous',                 // span name
       function (pcb) {              // runner function, creates a new span
         ao.startOrContinueTrace(
-          Span.last.events.entry.toString(),    // continue from the last span's id.
+          ao.lastSpan.events.entry.toString(),    // continue from the last span's id.
           () => {
             return {
               name: main,
@@ -926,7 +927,7 @@ describe('custom', function () {
       return makeSettings({source: 0, rate: 0})
     }
 
-    // because a span is created and entered then Span.last & Event.last
+    // because a span is created and entered then ao.lastSpan & ao.lastEvent
     // are cleared ao.startOrContinueTrace creates a new context, so the
     // next two errors should be generated.
     const logChecks = [
@@ -938,7 +939,7 @@ describe('custom', function () {
     helper.test(
       emitter,
       function (done) {             // test function
-        Span.last = Event.last = null
+        ao.lastSpan = ao.lastEvent = null;
         ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done)
       },
       [],                           // checks

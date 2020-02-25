@@ -154,7 +154,7 @@ describe('span', function () {
     delete outer.topSpan
 
     outer.run(function () {
-      inner = Span.last.descend('inner', innerData)
+      inner = ao.lastSpan.descend('inner', innerData)
       inner.run(function () {})
     })
   })
@@ -192,7 +192,7 @@ describe('span', function () {
     delete outer.topSpan
 
     outer.run(function () {
-      inner = Span.last.descend('inner', innerData)
+      inner = ao.lastSpan.descend('inner', innerData);
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
           should.not.exist(err)
@@ -244,7 +244,7 @@ describe('span', function () {
         should.exist(res)
         res.should.equal('foo')
 
-        inner = Span.last.descend('inner', innerData)
+        inner = ao.lastSpan.descend('inner', innerData);
         inner.run(function () {
 
         })

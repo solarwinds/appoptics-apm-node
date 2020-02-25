@@ -340,13 +340,12 @@ describe(`probes.morgan ${version}`, function () {
   //
   it('mode=\'always\' should always insert a trace ID even if not tracing', function (done) {
     const traceId = getTraceIdString();
-    ao.Event.last = undefined;
+    ao.lastEvent = undefined;
 
     ao.cfg.insertTraceIdsIntoMorgan = 'always';
     logger = makeLogger();
     ao.traceMode = 0;
     ao.sampleRate = 0;
-    //console.log(ao.Event.last);
 
     logger(fakeReq, fakeRes, function (err) {
       expect(err).not.ok;

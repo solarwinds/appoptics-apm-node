@@ -314,7 +314,8 @@ describe('probes.http trigger-trace', function () {
     emitter.close(done)
   })
   after(function () {
-    testdebug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+    const {spansTopSpanEnters, spansTopSpanExits} = ao.Span.getMetrics();
+    ao.loggers.debug(`enters ${spansTopSpanEnters} exits ${spansTopSpanExits}`);
   })
 
   // from test/http.test.js

@@ -286,7 +286,7 @@ describe(`bunyan v${version}`, function () {
   it('mode=\'always\' should always insert a trace ID even if not tracing', function () {
     const level = 'info';
     const message = 'always insert';
-    ao.Event.last = undefined;
+    ao.lastEvent = undefined;
 
     ao.cfg.insertTraceIdsIntoLogs = 'always';
 
