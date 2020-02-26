@@ -6,7 +6,7 @@ const test = tap.test;
 const MB = require('../lib/metabuf.js');
 
 test('metabuf core functions', function (t) {
-  t.plan(9);
+  t.plan(10);
 
   let mb1;
 
@@ -152,6 +152,31 @@ test('metabuf core functions', function (t) {
     t.equal(mb.toString(), x.toUpperCase(), 'should convert a known x-trace correctly');
 
     t.done();
+  });
+
+  t.test('the Metabuf.init() checks correctly', function (t) {
+    t.plan(4);
+
+    const fakeAo = {
+      addon: {
+        Event: {xtraceIdVersion: 2},
+        MAX_TASK_ID_LEN: 20,
+        MAX_OP_ID_LEN: 8,
+      }
+    };
+
+    function test () {MB.init(fakeAo)}
+
+    t.doesNotThrow(test, 'does not throw with current defines');
+
+    fakeAo.addon.Event.xtraceIdVersion = 3;
+    t.throws(test, 'throws when X-TraceId version is not 2');
+    fakeAo.addon.Event.xtraceIdVersion = 2;
+    fakeAo.addon.MAX_TASK_ID_LEN = 26;
+    t.throws(test, 'throws when MAX_TASK_ID_LEN is not 20');
+    fakeAo.addon.MAX_TASK_ID_LEN = 20;
+    fakeAo.addon.MAX_OP_ID_LEN = 9;
+    t.throws(test, 'throws when MAX_OP_ID_LEN is not 8');
   });
 });
 
