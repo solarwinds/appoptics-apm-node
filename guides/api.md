@@ -27,7 +27,7 @@
 <a name="ao"></a>
 
 ## ao
-**Kind**: global class
+**Kind**: global class  
 
 * [ao](#ao)
     * [.logLevel](#ao.logLevel)
@@ -36,6 +36,8 @@
     * [.traceMode](#ao.traceMode)
     * [.tracing](#ao.tracing)
     * [.traceId](#ao.traceId)
+    * [.lastEvent](#ao.lastEvent)
+    * [.lastSpan](#ao.lastSpan)
     * [.logLevelAdd(levels)](#ao.logLevelAdd) ⇒ <code>string</code> \| <code>undefined</code>
     * [.logLevelRemove(levels)](#ao.logLevelRemove) ⇒ <code>string</code> \| <code>undefined</code>
     * [.backtrace()](#ao.backtrace) ⇒ <code>string</code>
@@ -44,7 +46,7 @@
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
     * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
-    * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
+    * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>Metabuf</code> \| <code>null</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
     * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
     * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
@@ -60,25 +62,25 @@
 <a name="ao.logLevel"></a>
 
 ### ao.logLevel
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
 | --- | --- |
 | <code>string</code> | comma separated list of log settings |
 
-**Example** *(Sets the log settings)*
+**Example** *(Sets the log settings)*  
 ```js
 ao.logLevel = 'warn,error'
 ```
-**Example** *(Get the log settings)*
+**Example** *(Get the log settings)*  
 ```js
 var settings = ao.logLevel
 ```
 <a name="ao.serviceKey"></a>
 
 ### ao.serviceKey
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -91,7 +93,7 @@ var settings = ao.logLevel
 Expose debug logging global and create a function to turn
 logging on/off.
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -103,7 +105,7 @@ logging on/off.
 ### ao.traceMode
 Get and set the trace mode
 
-**Kind**: static property of [<code>ao</code>](#ao)
+**Kind**: static property of [<code>ao</code>](#ao)  
 **Properties**
 
 | Type | Description |
@@ -115,40 +117,64 @@ Get and set the trace mode
 ### ao.tracing
 Return whether or not the current code path is being traced.
 
-**Kind**: static property of [<code>ao</code>](#ao)
-**Read only**: true
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Read only**: true  
 **Properties**
 
 | Type |
 | --- |
-| <code>boolean</code> |
+| <code>boolean</code> | 
 
 <a name="ao.traceId"></a>
 
 ### ao.traceId
 Get X-Trace ID of the last event
 
-**Kind**: static property of [<code>ao</code>](#ao)
-**Read only**: true
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Read only**: true  
 **Properties**
 
 | Type | Description |
 | --- | --- |
 | <code>string</code> | the trace ID as a string or undefined if not tracing. |
 
+<a name="ao.lastEvent"></a>
+
+### ao.lastEvent
+The last reported event in the active context
+
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Properties**
+
+| Type | Description |
+| --- | --- |
+| [<code>Event</code>](#Event) | the last event sent in the active context. |
+
+<a name="ao.lastSpan"></a>
+
+### ao.lastSpan
+The last span that was entered in the active context
+
+**Kind**: static property of [<code>ao</code>](#ao)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| ao.lastSpan | [<code>Span</code>](#Span) | 
+
 <a name="ao.logLevelAdd"></a>
 
 ### ao.logLevelAdd(levels) ⇒ <code>string</code> \| <code>undefined</code>
 Add log levels to the existing set of log levels.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>string</code> \| <code>undefined</code> - - the current log levels or undefined if an error
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> \| <code>undefined</code> - - the current log levels or undefined if an error  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | levels | <code>string</code> | comma separated list of levels to add |
 
-**Example**
+**Example**  
 ```js
 ao.logLevelAdd('warn,debug')
 ```
@@ -157,15 +183,15 @@ ao.logLevelAdd('warn,debug')
 ### ao.logLevelRemove(levels) ⇒ <code>string</code> \| <code>undefined</code>
 Remove log levels from the current set.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>string</code> \| <code>undefined</code> - - log levels after removals or undefined if an
-                             error.
+                             error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | levels | <code>string</code> | comma separated list of levels to remove |
 
-**Example**
+**Example**  
 ```js
 var previousLogLevel = ao.logLevel
 ao.logLevelAdd('debug')
@@ -176,16 +202,16 @@ ao.logLevelRemove(previousLogLevel)
 ### ao.backtrace() ⇒ <code>string</code>
 Generate a backtrace string
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>string</code> - the backtrace
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> - the backtrace  
 <a name="ao.bind"></a>
 
 ### ao.bind(fn) ⇒ <code>function</code>
 Bind a function to the CLS context if tracing.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>function</code> - The bound function or the unmodified argument if it can't
-  be bound.
+  be bound.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -196,8 +222,8 @@ Bind a function to the CLS context if tracing.
 ### ao.bindEmitter(em) ⇒ <code>EventEmitter</code>
 Bind an emitter if tracing
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>EventEmitter</code> - The bound emitter or the original emitter if an error.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -209,15 +235,15 @@ Bind an emitter if tracing
 Set a custom transaction name function for a specific probe. This is
 most commonly used when setting custom names for all or most routes.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>boolean</code> - true if successfully set else false
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - true if successfully set else false  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | probe | <code>string</code> | The probe to set the function for |
 | fn | <code>function</code> | A function that returns a string custom name or a                        falsey value indicating the default should be used.                        Pass a falsey value for the function to clear. |
 
-**Example**
+**Example**  
 ```js
 // custom transaction function signatures for supported probes:
 express: customFunction (req, res)
@@ -229,8 +255,8 @@ hapi: customFunction (request)
 Check whether the appoptics agent is ready to sample. It will wait up to
 the specified number of milliseconds before returning.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>boolean</code> - - true if ready to sample; false if not
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - - true if ready to sample; false if not  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -243,21 +269,20 @@ the specified number of milliseconds before returning.
 Determine if the sample flag is set for the various forms of
 metadata.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>boolean</code> - - true if the sample flag is set else false.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>boolean</code> - - true if the sample flag is set else false.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metadata</code> | the item to get the sampling flag of |
+| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metabuf</code> | the item to get the sampling flag of |
 
 <a name="ao.stringToMetadata"></a>
 
-### ao.stringToMetadata(xtrace) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
-Convert an xtrace ID to a metadata object.
+### ao.stringToMetadata(xtrace) ⇒ <code>Metabuf</code> \| <code>null</code>
+Convert an xtrace ID to metadata in the form of Metabuf.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>bindings.Metadata</code> \| <code>undefined</code> - - bindings.Metadata object if
-                                        successful.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>Metabuf</code> \| <code>null</code> - - Metabuf object if successful, else null.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -268,8 +293,8 @@ Convert an xtrace ID to a metadata object.
 ### ao.instrumentHttp(span, run, [options], res) ⇒
 Instrument HTTP request/response
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: the value returned by the run function or undefined if it can't be run.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: the value returned by the run function or undefined if it can't be run.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -285,8 +310,8 @@ Instrument HTTP request/response
 ### ao.instrument(span, run, [options], [callback]) ⇒ <code>value</code>
 Apply custom instrumentation to a synchronous or async-callback function.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -297,7 +322,7 @@ Apply custom instrumentation to a synchronous or async-callback function.
 | [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
 | [callback] | <code>function</code> |  | optional callback, if async |
 
-**Example**
+**Example**  
 ```js
 //
 // A synchronous `run` function.
@@ -317,7 +342,7 @@ function run () {
 
 ao.instrument(spanInfo, run)
 ```
-**Example**
+**Example**  
 ```js
 //
 // An asynchronous `run` function.
@@ -349,8 +374,8 @@ ao.instrument(spanInfo, run, callback)
 ### ao.pInstrument(span, run, [options]) ⇒ <code>Promise</code>
 Apply custom instrumentation to a promise-returning asynchronous function.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -360,7 +385,7 @@ Apply custom instrumentation to a promise-returning asynchronous function.
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
 
-**Example**
+**Example**  
 ```js
 //
 // A synchronous `run` function.
@@ -389,8 +414,8 @@ Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>value</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -404,7 +429,7 @@ HTTP headers or message queue headers.
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 | [callback] | <code>function</code> |  | this is supplied as the callback if runner is async. |
 
-**Example**
+**Example**  
 ```js
 ao.startOrContinueTrace(
   null,
@@ -413,7 +438,7 @@ ao.startOrContinueTrace(
   {customTxName: 'special-span-name'}
 )
 ```
-**Example**
+**Example**  
 ```js
 ao.startOrContinueTrace(
   null,
@@ -424,7 +449,7 @@ ao.startOrContinueTrace(
   {customTxName: customNameFunction}
 )
 ```
-**Example**
+**Example**  
 ```js
 // this is the function that should be instrumented
 request('https://www.google.com', function realCallback (err, res, body) {...})
@@ -450,8 +475,8 @@ Start or continue a trace running a function that returns a promise. Continue is
 the sense of continuing a trace based on an X-Trace ID received from an external
 source, e.g., HTTP headers or message queue headers.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>Promise</code> - the value returned by the run function or undefined if it can't be run  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -464,7 +489,7 @@ source, e.g., HTTP headers or message queue headers.
 | [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | ignore any existing context and force a new trace |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 
-**Example**
+**Example**  
 ```js
 function spanInfo () {
   return {name: 'custom', kvpairs: {Foo: 'bar'}}
@@ -489,7 +514,7 @@ ao.pStartOrContinueTrace(
 ### ao.reportError(error)
 Report an error event in the current trace.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -500,7 +525,7 @@ Report an error event in the current trace.
 ### ao.reportInfo(data)
 Report an info event in the current trace.
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -511,8 +536,8 @@ Report an info event in the current trace.
 ### ~~ao.sendMetric(name, [options]) ⇒ <code>number</code>~~
 ***Deprecated***
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>number</code> - - (-1) for success else an error code.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>number</code> - - (-1) for success else an error code.  
 **Throws**:
 
 - <code>TypeError</code> - if an invalid argument is supplied
@@ -527,7 +552,7 @@ Report an info event in the current trace.
 | [options.addHostTag] | <code>boolean</code> |  | add {host: hostname} to tags |
 | [options.tags] | <code>object</code> |  | an object containing {tag: value} pairs |
 
-**Example**
+**Example**  
 ```js
 // simplest forms
 ao.sendMetric('my.little.count')
@@ -551,7 +576,7 @@ Send custom metrics. There are two types of metrics:
                  value is associated with this type)
 2) value-based - a specific value (or sum of values if count > 1).
 
-**Kind**: static method of [<code>ao</code>](#ao)
+**Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -560,7 +585,7 @@ Send custom metrics. There are two types of metrics:
 | [gopts.addHostTag] | <code>boolean</code> | <code>false</code> | add a hostname tag |
 | [gopts.tags] | <code>object</code> |  | tags to add to each metric. the tags are     added as "metric.tags = Object.assign({}, gopts.tags, metric.tags)" |
 
-**Example**
+**Example**  
 ```js
 // send a single metric
 ao.sendMetrics({name: 'my.counts.basic'});
@@ -610,9 +635,9 @@ ao.sendMetrics(
 ### ao.getFormattedTraceId() ⇒ <code>string</code>
 Get the abbreviated trace ID format used for logs.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>string</code> - - 40 character trace identifier - sample flag
-**Example**
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> - - 40 character trace identifier - sample flag  
+**Example**  
 ```js
 //
 // using morgan in express
@@ -637,14 +662,14 @@ Insert the appoptics object containing a trace ID into an object. The primary in
 to auto-insert traceIds into JSON-like logs; it's documented so it can be used for unsupported logging
 packages or by those wishing a higher level of control.
 
-**Kind**: static method of [<code>ao</code>](#ao)
-**Returns**: <code>object</code> - - the object with the an additional property, ao, e.g., object.ao === {traceId: ...}.
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>object</code> - - the object with the an additional property, ao, e.g., object.ao === {traceId: ...}.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | [object] | <code>object</code> | inserts an ao log object containing a traceId property when conditions are met. |
 
-**Example**
+**Example**  
 ```js
 const ao = require('appoptics-apm');
 const logger = require('pino')();
@@ -652,7 +677,7 @@ const logger = require('pino')();
 // with no object as an argument ao.insertLogObject returns {ao: {traceId: ...}}
 logger.info(ao.insertLogObject(), 'not-so-important message');
 ```
-**Example**
+**Example**  
 ```js
 const ao = require('appoptics-apm');
 const winston = require('winston');
@@ -674,7 +699,7 @@ logger.info(ao.insertLogObject({
 <a name="Span"></a>
 
 ## Span
-**Kind**: global class
+**Kind**: global class  
 
 * [Span](#Span)
     * [new Span(name, settings, [data])](#new_Span_new)
@@ -706,7 +731,7 @@ Create an execution span.
 | [settings.edge] | <code>boolean</code> | <code>true</code> | the entry event of this span should edge back to the     metadata. The only time this is not true is when the span being created is a new top     level span not being continued from an inbound X-Trace ID. This must be set explicitly     to a falsey value; it's absence is true. |
 | [data] | <code>object</code> |  | Key/Value pairs of info to add to event |
 
-**Example**
+**Example**  
 ```js
 var span = new Span('fs', ao.lastEvent, {
   File: file
@@ -717,15 +742,15 @@ var span = new Span('fs', ao.lastEvent, {
 ### span.descend(name, data) ⇒ [<code>Span</code>](#Span)
 Create a new span descending from the current span
 
-**Kind**: instance method of [<code>Span</code>](#Span)
-**Returns**: [<code>Span</code>](#Span) - the created span
+**Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: [<code>Span</code>](#Span) - the created span  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>string</code> | Span name |
 | data | <code>object</code> | Key/Value pairs of info to add to the entry event |
 
-**Example**
+**Example**  
 ```js
 var inner = outer.descend('fs', {
   File: file
@@ -737,20 +762,20 @@ var inner = outer.descend('fs', {
 Run a function within the context of this span. Similar to mocha, this
 identifies asynchronicity by function arity and invokes runSync or runAsync
 
-**Kind**: instance method of [<code>Span</code>](#Span)
-**Returns**: the value returned by fn()
+**Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | function to run within the span context |
 
-**Example**
+**Example**  
 ```js
 span.run(function () {
   syncCallToTrace()
 })
 ```
-**Example**
+**Example**  
 ```js
 span.run(function (wrap) {
   asyncCallToTrace(wrap(callback))
@@ -761,14 +786,14 @@ span.run(function (wrap) {
 ### span.runAsync(fn) ⇒
 Run an async function within the context of this span.
 
-**Kind**: instance method of [<code>Span</code>](#Span)
-**Returns**: the value returned by fn()
+**Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | async function to run within the span context |
 
-**Example**
+**Example**  
 ```js
 span.runAsync(function (wrap) {
   asyncCallToTrace(wrap(callback))
@@ -779,14 +804,14 @@ span.runAsync(function (wrap) {
 ### span.runSync(fn) ⇒
 Run a sync function within the context of this span.
 
-**Kind**: instance method of [<code>Span</code>](#Span)
-**Returns**: the value returned by fn()
+**Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> | sync function to run withing the span context |
 
-**Example**
+**Example**  
 ```js
 span.runSync(function () {
   syncCallToTrace()
@@ -797,19 +822,19 @@ span.runSync(function () {
 ### span.enter(data)
 Send the enter event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | Key/Value pairs of info to add to event |
 
-**Example**
+**Example**  
 ```js
 span.enter()
 syncCallToTrace()
 span.exit()
 ```
-**Example**
+**Example**  
 ```js
 // If using enter/exit to trace async calls, you must flag it as async
 // manually and bind the callback to maintain the trace context
@@ -825,7 +850,7 @@ asyncCallToTrace(ao.bind(function (err, res) {
 ### span.exit(data)
 Send the exit event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -836,7 +861,7 @@ Send the exit event
 ### span.exitWithError(err, data)
 Send the exit event with an error status
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -848,7 +873,7 @@ Send the exit event with an error status
 ### span.setExitError(err)
 Set an error to be sent with the exit event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -859,13 +884,13 @@ Set an error to be sent with the exit event
 ### span.info(data)
 Create and send an info event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | key-value pairs to add to event |
 
-**Example**
+**Example**  
 ```js
 span.info({Foo: 'bar'})
 ```
@@ -874,13 +899,13 @@ span.info({Foo: 'bar'})
 ### span.error(data)
 Create and send an error event
 
-**Kind**: instance method of [<code>Span</code>](#Span)
+**Kind**: instance method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>object</code> | Key/Value pairs to add to event |
 
-**Example**
+**Example**  
 ```js
 span.error(error)
 ```
@@ -891,7 +916,7 @@ Create a new entry span. An entry span is the top span in a new trace in
 this process. It might be continued from another process, e.g., an X-Trace-ID
 header was attached to an inbound HTTP/HTTPS request.
 
-**Kind**: static method of [<code>Span</code>](#Span)
+**Kind**: static method of [<code>Span</code>](#Span)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -902,34 +927,44 @@ header was attached to an inbound HTTP/HTTPS request.
 <a name="Event"></a>
 
 ## Event
-**Kind**: global class
+**Kind**: global class  
 
 * [Event](#Event)
     * [new Event(span, label, parent, edge)](#new_Event_new)
-    * [.set(data)](#Event+set)
+    * [.getSampleFlag()](#Event+getSampleFlag)
+    * [.addKVs(data)](#Event+addKVs)
     * [.enter()](#Event+enter)
     * [.toString()](#Event+toString)
-    * [.sendReport(data)](#Event+sendReport)
+    * [.send(data)](#Event+send)
 
 <a name="new_Event_new"></a>
 
 ### new Event(span, label, parent, edge)
 Create an event
 
+An event is agent metadata with all the KV pairs and edges for the event.
+
 
 | Param | Type | Description |
 | --- | --- | --- |
 | span | <code>string</code> | name of the event's span |
 | label | <code>string</code> | Event label (usually entry or exit) |
-| parent | <code>addon.Event</code> \| <code>addon.Metadata</code> | Metadata to construct the event from. |
-| edge | <code>boolean</code> | This should edge back to the parent |
+| parent | <code>Metabuf</code> | Metadata to use to construct the event. |
+| edge | <code>boolean</code> | Add an edge back to the parent. |
 
-<a name="Event+set"></a>
+<a name="Event+getSampleFlag"></a>
 
-### event.set(data)
-Set key-value pairs on this event
+### event.getSampleFlag()
+Get sample flag from the event. Compatibility function.
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
+<a name="Event+addKVs"></a>
+
+### event.addKVs(data)
+Add key-value pairs to this event. They will be sent when the
+event is exited.
+
+**Kind**: instance method of [<code>Event</code>](#Event)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -940,19 +975,19 @@ Set key-value pairs on this event
 ### event.enter()
 Enter the context of this event
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 <a name="Event+toString"></a>
 
 ### event.toString()
 Get the X-Trace ID string of the event
 
-**Kind**: instance method of [<code>Event</code>](#Event)
-<a name="Event+sendReport"></a>
+**Kind**: instance method of [<code>Event</code>](#Event)  
+<a name="Event+send"></a>
 
-### event.sendReport(data)
+### event.send(data)
 Send this event to the reporter
 
-**Kind**: instance method of [<code>Event</code>](#Event)
+**Kind**: instance method of [<code>Event</code>](#Event)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -961,7 +996,7 @@ Send this event to the reporter
 <a name="TraceSettings"></a>
 
 ## TraceSettings : <code>object</code>
-**Kind**: global typedef
+**Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
@@ -981,7 +1016,7 @@ Send this event to the reporter
 <a name="spanInfo"></a>
 
 ## spanInfo : <code>object</code>
-**Kind**: global typedef
+**Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
@@ -993,11 +1028,11 @@ Send this event to the reporter
 <a name="spanInfoFunction"></a>
 
 ## spanInfoFunction ⇒ [<code>spanInfo</code>](#spanInfo)
-**Kind**: global typedef
+**Kind**: global typedef  
 <a name="metric"></a>
 
 ## metric : <code>object</code>
-**Kind**: global typedef
+**Kind**: global typedef  
 **Properties**
 
 | Name | Type | Default | Description |
@@ -1013,7 +1048,7 @@ Send this event to the reporter
 <a name="SendMetricsReturn"></a>
 
 ## SendMetricsReturn : <code>object</code>
-**Kind**: global typedef
+**Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |

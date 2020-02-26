@@ -46,7 +46,7 @@ you don't have them installed globally then you'll need to add them as devDepenc
 
 Under the `test` directory all test files end with either `.test.js` (`mocha`) or
 `.tap.js` (`tap`). Other files are support files for testing and should not be directly
-executed by mocha.
+executed by `mocha` or `tap`.
 
 Testing the probes requires that `docker-compose up -d` has been executed to
 start back-end services. You can use `env.sh` enables setting up the environment

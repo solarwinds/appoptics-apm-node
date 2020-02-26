@@ -24,7 +24,6 @@ this - worked.
 
 ## questions - open
 
--
 
 ### questions - closed
 
@@ -34,7 +33,7 @@ RESOLUTION - compromise. Metabuf.init() checks to make sure hardcoded numbers ma
 encounter a mismatch with the bindings/agent release process but if it does it should blow up during
 testing. And Event::send() knowing the js structure is slightly more complicated than decomposing it
 at the js end and passing separate arguments but that's not really any more bullet proof. Event::send()
-does call `validEvent()` which makes a pretty good duck-type check on the Event object passed to it.
+does call `validEvent()` which makes a pretty deep duck-type check on the Event object passed to it.
 - span._internal() - why are internal events kept in span.internal[]? custom.test.js depends on it. RESOLUTION
 was used only for custom.test.js. replaced with placeholder noop that won't keep info events alive for the
 life of the span; custom.test.js replaces the noop for it's purposes.
@@ -48,9 +47,6 @@ call `new Event()`; they can get it right and one additional instanceof check is
 
 - bunyan test 'mode=\'always\' should always insert a trace ID even if not tracing generates
 context error. preventable?
-- weave metadata/Metabuf into documentation. e.g., settings returned by getTraceSettings() contains
-the metadata required to construct the top-level span. and all events contain their metadata in a
-metabuf referenceable via event.mb.
 
 ### details - done ##
 
@@ -94,6 +90,9 @@ to Event except for this single purpose and all have/need access to ao. Ditto fo
 - agent: span changes TBD
 - agent: rework getTraceSettings()
 - make sure nothing but a Metabuf goes into Event._edges.
+- weave metadata/Metabuf into documentation. e.g., settings returned by getTraceSettings() contains
+the metadata required to construct the top-level span. and all events contain their metadata in a
+metabuf referenceable via event.mb.
 
 ## perf notes
 
@@ -123,3 +122,7 @@ property.
 and ao.resetRequestStore => ao.resetTContext.
 - Event.last => ao.lastEvent
 - Span.last => ao.lastSpan
+- any references to `lastEvent.event` will need to be changed - there is no longer an `event`
+property on `lastEvent`. most code should have been accessing properties and methods on
+`lastEvent` already but any that haven't need to change. e.g., `lastEvent.event.getSampleFlag()`
+needs to be changed to `lastEvent.sampling`. this includes `const {last} = Event` references.
