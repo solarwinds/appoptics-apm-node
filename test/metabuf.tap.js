@@ -104,7 +104,7 @@ test('metabuf core functions', function (t) {
     let tt = `${headerHexU(mb1)}${tidHexU(mb1)}${oidHexU(mb1)}${flagsHexU(mb1)}`;
     t.equal(text, tt, 'should format with no argument');
 
-    text = mb1.toString(MB.fmtHuman);
+    text = mb1.toString(1);
     tt = `${headerHex(mb1)}-${tidHex(mb1)}-${oidHex(mb1)}-${flagsHex(mb1)}`;
     t.equal(text, tt, 'toString(1) should format correctly');
 
