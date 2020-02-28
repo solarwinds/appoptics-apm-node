@@ -67,8 +67,6 @@ if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
   ao.logLevel = 'none'
 }
 
-//const BSON = new bson.BSONPure.BSON()
-
 let udpPort = 7832
 
 if (process.env.APPOPTICS_REPORTER_UDP) {

@@ -1,7 +1,6 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-//const aob = ao.addon
 const Event = ao.Event
 
 const expect = require('chai').expect
@@ -26,7 +25,7 @@ describe('event', function () {
 
   beforeEach(function () {
     md = ao.MB.makeRandom(1);
-    const mds = md.toString(1).split('-')
+    const mds = md.toString(ao.MB.fmtHuman).split('-')
     mdTaskId = mds[1].toUpperCase()
   })
 
