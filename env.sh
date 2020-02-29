@@ -67,10 +67,13 @@ elif [[ "$ARG" = "bash" ]]; then
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN}:ao-node-test
     export APPOPTICS_REPORTER=udp
 
+    # the following two exports are not needed any longer unless running
+    # very old versions of oboe.
+    #
     # and the buckets need to be adjusted if using UDP because the defaults
     # result in lost messages without notification.
-    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
-    export APPOPTICS_TOKEN_BUCKET_RATE=1000
+    #export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    #export APPOPTICS_TOKEN_BUCKET_RATE=1000
 
     # the following are used primarily to run the full appoptics-apm test suite.
     # presumes docker containers are running and their ports are addressable
