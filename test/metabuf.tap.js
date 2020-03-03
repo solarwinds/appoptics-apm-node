@@ -5,10 +5,29 @@ const test = tap.test;
 
 const MB = require('../lib/metabuf.js');
 
+let resolve;
+const p = new Promise(res => {
+  resolve = res;
+});
+
+setTimeout(resolve, 250);
+
 test('metabuf core functions', function (t) {
-  t.plan(10);
+  t.plan(11);
 
   let mb1;
+
+  t.test('let the buffers get seeded', function (t) {
+    p.then(r => {
+      const getRBF = MB.getRandomBytesFactory || MB.Metabuf.getRandomBytesFactory;
+      const rbf = getRBF();
+      t.equal(rbf.available.length, rbf.bufferCount, 'there should be 2 buffers available');
+      for (let i = 0; i < rbf.bufferCount; i++) {
+        t.equal(rbf.available[i].remaining, rbf.bufferSize, 'the buffers should be full');
+      }
+      t.done();
+    });
+  });
 
   t.test('the Metabuf constructor works', function (t) {
     t.plan(2);
@@ -108,7 +127,7 @@ test('metabuf core functions', function (t) {
     tt = `${headerHex(mb1)}-${tidHex(mb1)}-${oidHex(mb1)}-${flagsHex(mb1)}`;
     t.equal(text, tt, 'toString(1) should format correctly');
 
-    text = mb1.toString(MB.fmtLog);
+    text = mb1.toString(MB.fmtLog || MB.Metabuf.fmtLog);
     tt = `${tidHexU(mb1)}-${mb1.buf[29] & 1 ? '1' : '0'}`;
     t.equal(text, tt, 'toString(fmtLog) should format correctly');
 
