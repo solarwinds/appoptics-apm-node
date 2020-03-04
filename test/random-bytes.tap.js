@@ -17,7 +17,7 @@ test('random-bytes', function (t) {
     rb1 = new RB({bufferSize: 512, bufferCount: 4});
     t.type(rb1, RB);
     t.equal(rb1.bufferSize, 512, 'buffer size is 512');
-    t.equal(rb1.bufferCount, 4, 'default buffer count is 4');
+    t.equal(rb1.bufferCount, 4, 'buffer count is 4');
 
     t.done();
   });
@@ -38,7 +38,7 @@ test('random-bytes', function (t) {
       for (let i = 0; i < rb1.bufferCount; i++) {
         t.equal(rb1.available[i].remaining, rb1.bufferSize, 'buffers should be full');
       }
-      // fill up with using all bytes exactly
+      // use precisely all bytes
       const bSize = 512;
       const b = Buffer.allocUnsafe(bSize);
       for (let i = 0; i < rb1.bufferSize * rb1.bufferCount / bSize; i++) {
