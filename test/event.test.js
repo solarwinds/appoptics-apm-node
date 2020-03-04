@@ -15,12 +15,12 @@ describe('event', function () {
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
+    emitter = helper.appoptics(done)
   })
   after(function (done) {
-    emitter.close(done)
+    done();
   })
 
   beforeEach(function () {
@@ -86,13 +86,13 @@ describe('event', function () {
       done()
     })
 
-    // NOTE: events must be sent within a request store context
+    // NOTE: events must be sent within a trace context
     ao.tContext.run(function () {
       event2.send()
     })
   })
 
-  it('should not allow setting a NaN value', function () {
+  it('should not allow setting a NaN valued KV', function () {
     const event2 = new Event('test', 'exit', event.mb)
 
     const logChecks = [
@@ -112,6 +112,11 @@ describe('event', function () {
     event.addKVs({Foo: 'bar'})
     expect(event.kv).property('Foo', 'bar')
   })
+
+  it('should support .addKVs() with an empty object', function () {
+    const event = new Event('test', 'entry', md);
+    event.addKVs();
+  });
 
   it('should support data in send function', function (done) {
     const event = new Event('test', 'entry', md)
