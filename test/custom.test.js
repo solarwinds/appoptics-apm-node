@@ -31,7 +31,7 @@ function bbpsoon () {
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if (ao.addon.version === 'not loaded') {
+if (aob.version === 'not loaded') {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
       let counter = 0
@@ -97,7 +97,7 @@ describe('custom', function () {
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     emitter = helper.appoptics(done)
   })
@@ -639,7 +639,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = aob.Event.makeRandom(0).toString();
     const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
 
     res.should.equal(test)
@@ -1084,7 +1084,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = aob.Event.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
       main,                          // span name
