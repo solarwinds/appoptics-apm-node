@@ -1,0 +1,19 @@
+{
+  "port":8181,
+  "settingsLocation":"/settings.db",
+  "defaultCollectors": [{
+    "name": "uxpanapa-java-collector",
+      "protocol": "thrift",
+      "port":12222,
+      "queueCapacity": 25000,
+      "output" : {
+        "console": {},
+        "thrift": {
+          "METRIC": {
+            "host": "collector.appoptics.com",
+            "port": 443
+          }
+        }
+      }
+    }]
+}
