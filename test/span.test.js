@@ -2,6 +2,8 @@
 
 const helper = require('./helper')
 const should = require('should')
+const expect = require('chai').expect;
+
 const ao = require('..')
 const addon = ao.addon
 const Span = ao.Span
@@ -11,7 +13,6 @@ const makeSettings = helper.makeSettings
 
 describe('span', function () {
   let emitter
-  let realSampleTrace
   let clear
 
   //
@@ -21,13 +22,8 @@ describe('span', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
   afterEach(function () {
@@ -59,12 +55,17 @@ describe('span', function () {
     const span = Span.makeEntrySpan('test', makeSettings())
 
     span.should.have.property('events')
-    const events = ['entry', 'exit']
-    events.forEach(function (event) {
-      span.events.should.have.property(event)
-      span.events[event].taskId.should.not.match(/^0*$/)
-      span.events[event].opId.should.not.match(/^0*$/)
-    })
+
+    expect(span.events.entry).property('event');
+    const taskId = span.events.entry.taskId;
+    expect(taskId).not.equal('0'.repeat(40));
+    expect(span.events.entry.opId).not.equal('0'.repeat(16));
+    expect(span.events.entry.event.toString()).match(/2B[0-9A-F]{56}01/);
+
+    expect(span.events.exit).property('event');
+    expect(span.events.exit.taskId).equal(taskId);
+    expect(span.events.exit.opId).not.equal('0'.repeat(16));
+    expect(span.events.exit.opId).not.equal(span.events.entry.opId);
   })
 
   //
@@ -74,7 +75,6 @@ describe('span', function () {
     const name = 'test'
     const data = {Foo: 'bar'}
     const span = Span.makeEntrySpan(name, makeSettings(), data)
-    delete span.topSpan
 
     const e = span.events
 
@@ -90,15 +90,13 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    span.runSync(function () {
-    })
+    span.runSync(function () {});
   })
 
   it('should report async boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
     const span = Span.makeEntrySpan(name, makeSettings(), data)
-    delete span.topSpan
 
     const e = span.events
 
@@ -156,8 +154,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
-    delete outer.topSpan
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
@@ -194,8 +191,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
-    delete outer.topSpan
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     outer.run(function () {
       inner = Span.last.descend('inner', innerData)
@@ -217,8 +213,7 @@ describe('span', function () {
     const outerData = {Foo: 'bar'}
     const innerData = {Baz: 'buz'}
     let inner
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
-    delete outer.topSpan
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     const checks = [
       // Outer entry (async)
@@ -251,9 +246,7 @@ describe('span', function () {
         res.should.equal('foo')
 
         inner = Span.last.descend('inner', innerData)
-        inner.run(function () {
-
-        })
+        inner.run(function () {});
       })
 
       process.nextTick(function () {
@@ -287,7 +280,6 @@ describe('span', function () {
 
   it('should send error events', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
-    delete span.topSpan
     const err = new Error('nopeconst')
 
     const checks = [
@@ -326,7 +318,6 @@ describe('span', function () {
   //
   it('should only send valid properties', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
-    delete span.topSpan
 
     const data = {
       Array: [],
@@ -392,7 +383,6 @@ describe('span', function () {
 
   it('should allow sending the same info data multiple times', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
-    delete span.topSpan
 
     const data = {
       Foo: 'bar'
@@ -433,7 +423,6 @@ describe('span', function () {
   it('should chain internal event edges', function (done) {
     const n = 10 + Math.floor(Math.random() * 10)
     const span = Span.makeEntrySpan('test', makeSettings(), {})
-    delete span.topSpan
 
     const tracker = helper.edgeTracker()
 
@@ -461,7 +450,6 @@ describe('span', function () {
 
   it('should chain internal events around sync sub span', function (done) {
     const span = Span.makeEntrySpan('outer', makeSettings(), {})
-    delete span.topSpan
 
     const before = {state: 'before'}
     const after = {state: 'after'}

@@ -435,9 +435,9 @@ function edgeTracker (parent, fn) {
 exports.checkEntry = checkEntry
 function checkEntry (name, fn) {
   return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'entry')
-    msg.should.have.property('Layer', name)
+    expect(msg).property('X-Trace');
+    const pair = `${msg.Layer}:${msg.Label}`;
+    expect(pair).equal(`${name}:entry`);
     if (fn) fn(msg)
   }
 }
@@ -445,9 +445,9 @@ function checkEntry (name, fn) {
 exports.checkExit = checkExit
 function checkExit (name, fn) {
   return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'exit')
-    msg.should.have.property('Layer', name)
+    expect(msg).property('X-Trace');
+    const pair = `${msg.Layer}:${msg.Label}`;
+    expect(pair).equal(`${name}:exit`);
     if (fn) fn(msg)
   }
 }
@@ -563,5 +563,8 @@ exports.makeSettings = function (settings) {
     source: 1,              // local agent config
     rate: ao.sampleRate,
   }
-  return Object.assign(s, settings)
+
+  Object.assign(s, settings);
+  s.metadata = ao.addon.Event.makeRandom(s.doSample);
+  return s;
 }
