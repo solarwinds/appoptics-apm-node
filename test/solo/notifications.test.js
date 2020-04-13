@@ -42,7 +42,7 @@ notifications.on('message', function (msg) {
 
 const expect = require('chai').expect;
 
-describe('notification function tests', function () {
+describe('notification function tests (long tests)', function () {
   it('should receive a variety of messages over 60 seconds', function (done) {
     this.timeout(70000);
     setTimeout(function () {
@@ -61,7 +61,7 @@ describe('notification function tests', function () {
         }
       });
       expect(sources.oboe.config, 'oboe-config').equal(1);
-      expect(sources.oboe['keep-alive'], 'oboe-keep-alive').gt(4);
+      expect(sources.oboe['keep-alive'], 'oboe-keep-alive').gt(0);
       expect(sources.oboe.logging, 'oboe-logging').gt(175);
       expect(sources.collector['remote-config'], 'remote-config').eq(2);
       expect(sources.collector['remote-warning'], 'remote-warning').eq(0);
@@ -83,12 +83,9 @@ describe('notification function tests', function () {
 
   it('should restart the notifier correctly', function () {
     this.timeout(20000);
-    return notifications.restart()
-      .then(status => {
-        messages.length = 0;
-        expect(status).eq(-2, 'status should be initializing');
-        return status;
-      });
+    const status = notifications.restart();
+    messages.length = 0;
+    expect(status).eq(-2, 'status should be initializing');
   });
 
   it('should receive messages again after restarting', function (done) {
@@ -101,9 +98,4 @@ describe('notification function tests', function () {
     }, 60000);
   });
 
-  it('should shut down correctly', function () {
-    this.timeout(10000);
-    return notifications.stopNotifier()
-      .then(() => notifications.stopServer());
-  });
 });
