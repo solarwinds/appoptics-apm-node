@@ -194,12 +194,12 @@ describe('span', function () {
     const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     outer.run(function () {
-      inner = Span.last.descend('inner', innerData)
+      inner = Span.last.descend('inner', innerData);
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
-          should.not.exist(err)
-          should.exist(res)
-          res.should.equal('foo')
+          expect(err).not.exist;
+          expect(res).exist;
+          expect(res).equal('foo');
         })
 
         process.nextTick(function () {
@@ -241,9 +241,9 @@ describe('span', function () {
 
     outer.run(function (wrap) {
       const delayed = wrap(function (err, res) {
-        should.not.exist(err)
-        should.exist(res)
-        res.should.equal('foo')
+        expect(err).not.exist;
+        expect(res).exist;
+        expect(res).equal('foo');
 
         inner = Span.last.descend('inner', innerData)
         inner.run(function () {});
@@ -260,7 +260,6 @@ describe('span', function () {
   //
   it('should send info events', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
-    delete span.topSpan
     const data = {
       Foo: 'bar'
     }
@@ -478,7 +477,6 @@ describe('span', function () {
 
   it('should chain internal events around async sub span', function (done) {
     const span = Span.makeEntrySpan('outer', makeSettings(), {})
-    delete span.topSpan
 
     const before = {state: 'before'}
     const after = {state: 'after'}
