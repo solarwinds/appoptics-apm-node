@@ -81,11 +81,14 @@ describe('notification function tests (long tests)', function () {
     }, 60000);
   });
 
-  it('should restart the notifier correctly', function () {
+  it('should restart the notifier correctly', function (done) {
     this.timeout(20000);
-    const status = notifications.restart();
     messages.length = 0;
-    expect(status).eq(-2, 'status should be initializing');
+    const p = notifications.restart();
+    p.then(status => {
+      expect(status).eq(-2, 'status should be initializing');
+      done();
+    })
   });
 
   it('should receive messages again after restarting', function (done) {
