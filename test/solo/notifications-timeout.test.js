@@ -1,7 +1,10 @@
 'use strict';
 
-// oboe's notifier will send all log messages
+// oboe's notifier will send default log messages
 process.env.APPOPTICS_DEBUG_LEVEL = 3;
+process.env.APPOPTICS_COLLECTOR = '';
+process.env.APPOPTICS_REPORTER = 'ssl';
+process.env.APPOPTICS_SERVICE_KEY = `${process.env.AO_SWOKEN_PROD}:node-notifications-test`;
 
 const ao = require('../..');
 const notifications = ao.notifications;
@@ -39,7 +42,7 @@ describe('notification function tests (long tests)', function () {
       notifications.lastMessageTimestamp = 0;
       if (Date.now() > timeToStop) {
         clearInterval(iid);
-        throw new Error('exceeded wait time');
+        throw new Error('exceeded wait time for restart count to increment');
       }
       if (notifications.startCount > 1) {
         clearInterval(iid);

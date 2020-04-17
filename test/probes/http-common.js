@@ -44,9 +44,7 @@ const options = p === 'https' ? httpsOptions : {};
 describe(`probes.${p}`, function () {
   const ctx = {driver, p};
   let emitter
-  let realSampleTrace
   const previousHttpEnabled = ao.probes[p].enabled;
-  const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled;
   let clear
   let originalFlag
 
@@ -57,14 +55,9 @@ describe(`probes.${p}`, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
     ao.g.testing(__filename)
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
   after(function () {
@@ -81,26 +74,6 @@ describe(`probes.${p}`, function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
   })
 
-
-  beforeEach(function () {
-    if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
-      ao.probes[p].enabled = false
-      ao.probes[`${p}-client`].enabled = false
-    } else if (this.currentTest.title === 'should trace correctly within asyncrony') {
-      //this.skip()
-    } else if (this.currentTest.title === 'should not send a span or metrics when there is a filter for it') {
-      //this.skip()
-    }
-  })
-
-  afterEach(function () {
-    if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
-      ao.probes[p].enabled = previousHttpEnabled
-      ao.probes[`${p}-client`].enabled = previousHttpClientEnabled
-    } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
-      ao.specialUrls = undefined
-    }
-  })
   afterEach(function () {
     if (clear) {
       clear()
@@ -139,12 +112,36 @@ describe(`probes.${p}`, function () {
     },
   }
 
+  //================================================================================================
+  // server tests
+  //================================================================================================
   describe(`${p}-server`, function () {
     const conf = ao.probes[p];
 
-    after(function () {
-      ao.resetRequestStore();
+    // turn off http-client so the request is not part of the test.
+    before(function () {
+      ao.probes[`${p}-client`].enabled = false;
     });
+
+    after(function () {
+      ao.probes[`${p}-client`].enabled = true;
+      //ao.resetRequestStore();
+    });
+
+    // disable the probe for the test that requires it.
+    beforeEach(function () {
+      if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
+        ao.probes[p].enabled = false;
+      }
+    })
+
+    afterEach(function () {
+      if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
+        ao.probes[p].enabled = previousHttpEnabled;
+      } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
+        ao.specialUrls = undefined;
+      }
+    })
 
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
@@ -201,7 +198,7 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const md = addon.Event.makeRandom(1)
+      const md = addon.Event.makeRandom(1);
       const origin = new ao.Event('span-name', 'label-name', md)
 
       helper.doChecks(emitter, [

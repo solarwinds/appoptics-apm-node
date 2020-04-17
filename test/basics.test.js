@@ -94,10 +94,9 @@ describe('basics', function () {
   ifaob('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
     const span = Span.makeEntrySpan('test', makeSettings())
-    delete span.topSpan
 
     span.run(function () {
-      ao.tracing.should.be.true
+      expect(ao.tracing).equal(true);
     })
   })
 
