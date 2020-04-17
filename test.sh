@@ -9,6 +9,7 @@
 #
 
 ERRORS=( )
+PASSED=0
 
 #
 # run unit tests with the addon enabled
@@ -21,6 +22,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -38,6 +41,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -58,6 +63,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -77,6 +84,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -91,6 +100,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -112,6 +123,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -133,6 +146,8 @@ do
     if [ $? -ne 0 ]
     then
         NEW_ERRORS="$NEW_ERRORS $F"
+    else
+        PASSED=`expr $PASSED + 1`
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
@@ -140,8 +155,10 @@ if [ ! -z "$NEW_ERRORS" ]; then
 fi
 
 
-# if any tests failed output which ones and give an error exit
+# provide a summary of the test results.
 if [ ${#ERRORS[*]} -ne 0 ]; then
+    echo "$PASSED tests passed"
+    echo "${#ERRORS[*]} tests failed"
     for ix in ${!ERRORS[@]}
     do
         echo ${ERRORS[$ix]}
@@ -149,5 +166,5 @@ if [ ${#ERRORS[*]} -ne 0 ]; then
 
     exit 1
 else
-    echo "No errors - all tests passed"
+    echo "No errors - $PASSED tests passed"
 fi
