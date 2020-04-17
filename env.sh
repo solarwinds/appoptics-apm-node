@@ -64,8 +64,9 @@ elif [[ "$ARG" = "bash" ]]; then
 
     # and the buckets need to be adjusted if using UDP because the defaults
     # result in lost messages without notification.
-    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
-    export APPOPTICS_TOKEN_BUCKET_RATE=1000
+    # NOTE - no longer required after oboe changes.
+    #export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    #export APPOPTICS_TOKEN_BUCKET_RATE=1000
 
     # the following are used primarily to run the full appoptics-apm test suite.
     # presumes docker containers are running and their ports are addressable
@@ -147,8 +148,8 @@ elif [[ "$ARG" = "debug" ]]; then
     export APPOPTICS_DEBUG_LEVEL=2
     # see lib/loggers.js for all the options
     export APPOPTICS_LOG_SETTINGS=error,warn,debug,patching,bind
-    export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
-    export APPOPTICS_TOKEN_BUCKET_RATE=1000
+    #export APPOPTICS_TOKEN_BUCKET_CAPACITY=1000
+    #export APPOPTICS_TOKEN_BUCKET_RATE=1000
 elif [[ "$ARG" = "bindings" ]]; then
     # this is no longer used as appoptics is now public, open source software.
     ## use these to provide authentication and specify an alternate branch/tag
