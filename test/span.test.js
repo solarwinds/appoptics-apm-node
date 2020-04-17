@@ -68,9 +68,9 @@ describe('span', function () {
     expect(span.events.exit.opId).not.equal(span.events.entry.opId);
   })
 
-  //
+  //===========================
   // Verify base span reporting
-  //
+  //===========================
   it('should report sync boundaries', function (done) {
     const name = 'test'
     const data = {Foo: 'bar'}
@@ -126,9 +126,9 @@ describe('span', function () {
     })
   })
 
-  //
+  //=============================================
   // Verify behaviour when reporting nested spans
-  //
+  //=============================================
   it('should report nested sync boundaries', function (done) {
     const outerData = {Foo: 'bar'}
     const innerData = {Baz: 'buz'}
@@ -161,51 +161,6 @@ describe('span', function () {
       inner.run(function () {})
     })
   })
-
-  it('should skeletonize unsampled sync boundaries', function (done) {
-    const outerData = {Foo: 'bar'};
-    const innerData = {Baz: 'buz'};
-    let inner;
-
-    const checks = [
-      function () {throw new Error('no messages should be sent')}
-    ];
-
-    helper.doChecks(
-      emitter,
-      checks,
-      function () {throw new Error('helper should not call done')}
-    );
-
-    let sendReportCalls = 0;
-    let sendCalls = 0;
-
-    const originalSendReport = Event.prototype.sendReport;
-    Event.prototype.sendReport = function testSendReport (...args) {
-      if (!this.ignore) {
-        ao.lastEvent = this;
-      }
-      sendReportCalls += 1;
-    };
-    const originalSend = Event.prototype.send;
-    Event.prototype.send = function testSend (...args) {
-      sendCalls += 1;
-    };
-
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan('outer', settings, outerData);
-
-    outer.run(function () {
-      inner = Span.last.descend('inner', innerData);
-      inner.run(function () {});
-    });
-
-    expect(sendReportCalls).equal(4);
-    expect(sendCalls).equal(0);
-    Event.prototype.sendReport = originalSendReport;
-    Event.prototype.send = originalSend;
-    done();
-  });
 
   it('should report nested boundaries of async event within sync event', function (done) {
     const outerData = {Foo: 'bar'}
@@ -300,9 +255,254 @@ describe('span', function () {
     })
   })
 
+  //========================================================================
+  //========================================================================
+  // skeletonized span handling. these are unsampled traces that create an
+  // entry span and a single skeleton span that is used for all other spans.
+  //========================================================================
+  //========================================================================
+
+  // unsampled messages should not be sent but the skeleton span should
+  // allow everything to work through to calling sendReport(). if there is
+  // an error before sendReport() is called then the skeleton span is not
+  // working correctly. sendReport() should not call send() because all
+  // skeleton spans are unsampled. this helper replaces the sending
+  // functions to verify that the skeleton span is working correctly and
+  // that it's not actually being sent.
   //
+  // set options.verbose to print what's going to be tested.
+  function setupMockEventSending (sequencing, options = {}) {
+    let sendReportCalls = 0;
+    let sendCalls = 0;
+    let counter = 0;
+
+    const originalSendReport = Event.prototype.sendReport;
+    Event.prototype.sendReport = function testSendReport (...args) {
+      if (!this.ignore) {
+        ao.lastEvent = this;
+      }
+      if (options.verbose) {
+        // eslint-disable-next-line no-console
+        console.log('checking', sequencing[counter]);
+      }
+      for (const key in sequencing[counter]) {
+        expect(this[key] = sequencing[counter][key]);
+      }
+      counter += 1;
+      sendReportCalls += 1;
+    };
+    const originalSend = Event.prototype.send;
+    Event.prototype.send = function testSend (...args) {
+      sendCalls += 1;
+    };
+
+    return function getResults () {
+      Event.prototype.sendReport = originalSendReport;
+      Event.prototype.send = originalSend;
+      return {
+        sendReportCalls,
+        sendCalls,
+      };
+    }
+  }
+
+  //
+  // base span reporting
+  //
+  it('should skeletonize unsampled sync boundaries', function (done) {
+    const outerData = {Foo: 'bar'};
+    const innerData = {Baz: 'buz'};
+    let inner;
+    const settings = makeSettings({doSample: false});
+    const outer = Span.makeEntrySpan('outer', settings, outerData);
+
+    const sequencing = [
+      {Layer: 'outer', Label: 'entry', Foo: 'bar'},
+      {Layer: 'skeleton', Label: 'entry', Baz: 'buz'},
+      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: 'outer', Label: 'exit'},
+    ];
+
+    const getResults = setupMockEventSending(sequencing, {verbose: false});
+
+    outer.run(function () {
+      inner = Span.last.descend('inner', innerData);
+      inner.run(function () {});
+    });
+
+    const {sendReportCalls, sendCalls} = getResults();
+    expect(sendReportCalls).equal(4);
+    expect(sendCalls).equal(0);
+
+    done();
+  });
+
+  it('should skeletonize unsampled async boundaries', function (done) {
+    const name = 'test-async-boundaries';
+    const data = {Foo: 'bar'};
+    const settings = makeSettings({doSample: false});
+    const span = Span.makeEntrySpan(name, settings, data);
+
+    const sequencing = [
+      {Layer: name, Label: 'entry', Foo: 'bar'},
+      {Layer: 'skeleton', Label: 'entry'},
+      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: name, Label: 'exit'},
+    ];
+
+    const getResults = setupMockEventSending(sequencing, {verbose: false});
+
+    span.runAsync(function (wrap) {
+      const cb = wrap(function (err, res) {
+        expect(err).not.exist;
+        res.should.equal('foo');
+        const {sendReportCalls, sendCalls} = getResults();
+        expect(sendReportCalls).equal(4);
+        expect(sendCalls).equal(0);
+        done();
+      })
+
+      // our async span invokes a synchronous span
+      process.nextTick(function () {
+        const inner = ao.lastSpan.descend('inner');
+        inner.run(() => {});
+        cb(null, 'foo')
+      })
+    })
+  })
+
+  //
+  // Verify behaviour when reporting nested spans
+  //
+  it.skip('should report nested sync boundaries', function (done) {
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    let inner
+
+    const checks = [
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+      })),
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId.toString())
+      })),
+      helper.checkExit('inner', function (msg) {
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId.toString())
+      }),
+      helper.checkExit('outer', function (msg) {
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.exit.opId.toString())
+      })
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+
+    outer.run(function () {
+      inner = Span.last.descend('inner', innerData)
+      inner.run(function () {})
+    })
+  })
+
+  it.skip('should report nested boundaries of async event within sync event', function (done) {
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    let inner
+
+    const checks = [
+      // Outer entry
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+      })),
+      // Inner entry (async)
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+      })),
+      // Outer exit
+      helper.checkExit('outer', function (msg) {
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+      }),
+      // Inner exit (async)
+      helper.checkExit('inner', function (msg) {
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId)
+      })
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+
+    outer.run(function () {
+      inner = Span.last.descend('inner', innerData);
+      inner.run(function (wrap) {
+        const delayed = wrap(function (err, res) {
+          expect(err).not.exist;
+          expect(res).exist;
+          expect(res).equal('foo');
+        })
+
+        process.nextTick(function () {
+          delayed(null, 'foo')
+        })
+      })
+    })
+  })
+
+  it.skip('should report nested boundaries of sync event within async event', function (done) {
+    const outerData = {Foo: 'bar'}
+    const innerData = {Baz: 'buz'}
+    let inner
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+
+    const checks = [
+      // Outer entry (async)
+      helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
+        msg.should.have.property('X-Trace', outer.events.entry.toString())
+      })),
+      // Outer exit (async)
+      helper.checkExit('outer', function (msg) {
+        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('Edge', outer.events.entry.opId)
+      }),
+      // Inner entry
+      helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
+        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('Edge', outer.events.exit.opId)
+      })),
+      // Inner exit
+      helper.checkExit('inner', function (msg) {
+        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('Edge', inner.events.entry.opId)
+      })
+    ]
+
+    helper.doChecks(emitter, checks, done)
+
+    outer.run(function (wrap) {
+      const delayed = wrap(function (err, res) {
+        expect(err).not.exist;
+        expect(res).exist;
+        expect(res).equal('foo');
+
+        inner = Span.last.descend('inner', innerData)
+        inner.run(function () {});
+      })
+
+      process.nextTick(function () {
+        delayed(null, 'foo')
+      })
+    })
+  })
+
+  //===========================================================
   // Special events
-  //
+  //===========================================================
   it('should send info events', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
     const data = {
@@ -357,9 +557,9 @@ describe('span', function () {
     bExit.kv.should.have.property('ErrorMsg', 'Exit error string')
   })
 
-  //
+  //===================================================
   // Safety and correctness
-  //
+  //===================================================
   it('should only send valid properties', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
 
@@ -461,9 +661,9 @@ describe('span', function () {
     span.info(1)
   })
 
-  //
+  //=====================================================
   // Structural integrity
-  //
+  //=====================================================
   it('should chain internal event edges', function (done) {
     const n = 10 + Math.floor(Math.random() * 10)
     const span = Span.makeEntrySpan('test', makeSettings(), {})
