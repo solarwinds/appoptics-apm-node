@@ -162,6 +162,51 @@ describe('span', function () {
     })
   })
 
+  it('should skeletonize unsampled sync boundaries', function (done) {
+    const outerData = {Foo: 'bar'};
+    const innerData = {Baz: 'buz'};
+    let inner;
+
+    const checks = [
+      function () {throw new Error('no messages should be sent')}
+    ];
+
+    helper.doChecks(
+      emitter,
+      checks,
+      function () {throw new Error('helper should not call done')}
+    );
+
+    let sendReportCalls = 0;
+    let sendCalls = 0;
+
+    const originalSendReport = Event.prototype.sendReport;
+    Event.prototype.sendReport = function testSendReport (...args) {
+      if (!this.ignore) {
+        ao.lastEvent = this;
+      }
+      sendReportCalls += 1;
+    };
+    const originalSend = Event.prototype.send;
+    Event.prototype.send = function testSend (...args) {
+      sendCalls += 1;
+    };
+
+    const settings = makeSettings({doSample: false});
+    const outer = Span.makeEntrySpan('outer', settings, outerData);
+
+    outer.run(function () {
+      inner = Span.last.descend('inner', innerData);
+      inner.run(function () {});
+    });
+
+    expect(sendReportCalls).equal(4);
+    expect(sendCalls).equal(0);
+    Event.prototype.sendReport = originalSendReport;
+    Event.prototype.send = originalSend;
+    done();
+  });
+
   it('should report nested boundaries of async event within sync event', function (done) {
     const outerData = {Foo: 'bar'}
     const innerData = {Baz: 'buz'}

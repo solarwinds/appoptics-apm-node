@@ -481,7 +481,11 @@ function checkData (data, fn) {
     Object.keys(data).forEach(function (key) {
       msg.should.have.property(key, data[key])
     })
-    if (fn) fn(msg)
+    // does the caller want the message to perform additional checks,
+    // logging, or something else?
+    if (fn) {
+      fn(msg);
+    }
   }
 }
 
