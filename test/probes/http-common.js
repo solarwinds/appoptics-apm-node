@@ -201,7 +201,7 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const md = addon.Metadata.makeRandom(1)
+      const md = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', md)
 
       helper.doChecks(emitter, [
@@ -262,7 +262,7 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const originMetadata = addon.Metadata.makeRandom(1)
+      const originMetadata = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', originMetadata)
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 

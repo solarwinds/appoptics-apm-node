@@ -284,7 +284,7 @@ describe(`probes.morgan ${version}`, function () {
         return 'test-done';
       }
 
-      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const xtrace = ao.addon.Event.makeRandom(0).toString()
       const result = ao.startOrContinueTrace(xtrace, spanName, test);
       expect(result).equal('test-done');
     })

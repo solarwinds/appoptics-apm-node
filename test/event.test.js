@@ -1,7 +1,7 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-const addon = ao.addon
+const aob = ao.addon;
 const Event = ao.Event
 
 const expect = require('chai').expect
@@ -9,15 +9,16 @@ const expect = require('chai').expect
 describe('event', function () {
   let emitter
   let event
-  let md
+  let ev0;
   let mdTaskId
+  let mdOpId;
 
   //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE;
     ao.traceMode = 'always'
   })
   after(function (done) {
@@ -25,9 +26,10 @@ describe('event', function () {
   })
 
   beforeEach(function () {
-    md = addon.Metadata.makeRandom(1)
-    const mds = md.toString(1).split('-')
+    ev0 = aob.Event.makeRandom(1);
+    const mds = ev0.toString(1).split('-');
     mdTaskId = mds[1].toUpperCase()
+    mdOpId = mds[2].toUpperCase();
   })
 
   it('UDP might lose a message', function (done) {
@@ -42,31 +44,34 @@ describe('event', function () {
     ], done)
   })
 
-  it('should construct valid event', function () {
-    event = new Event('test', 'entry', md)
+  it('should construct valid event inheriting from the parent', function () {
+    event = new Event('test', 'entry', ev0);
     expect(event).property('Layer', 'test')
     expect(event).property('Label', 'entry')
-    expect(event).property('taskId').and.match(/^[0-9A-F]{40}$/)
-    expect(event).property('opId').and.match(/^[0-9A-F]{16}$/)
-    expect(event).property('taskId', mdTaskId)
-  })
+    expect(event).property('taskId', mdTaskId);
+    expect(event).property('opId').not.equal(mdOpId);
+    expect(event).property('opId').match(/^[0-9A-F]{16}$/);
+  });
 
   it('should convert an event to a string', function () {
-    event.toString().should.match(/^2B[0-9A-F]{58}$/)
+    event = new Event('test', 'entry', ev0);
+    expect(event.toString()).match(/^2B[0-9A-F]{56}01$/);
+    expect(event.toString().substr(2, 40)).equal(mdTaskId, 'task id must match');
+    expect(event.toString().substr(42, 16)).not.equal(mdOpId, 'op id must not match');
   })
 
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
     ao.traceMode = 'never'
-    md = addon.Metadata.makeRandom(0)
-    event = new Event('test', 'entry', md)
+    ev0 = aob.Event.makeRandom(0);
+    event = new Event('test', 'entry', ev0);
     expect(ao.sampling(event)).equal(false)
     expect(ao.sampling(event.toString())).equal(false)
 
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE;
     ao.traceMode = 'always'
-    md = addon.Metadata.makeRandom(1)
-    event = new Event('test', 'entry', md)
+    ev0 = aob.Event.makeRandom(1);
+    event = new Event('test', 'entry', ev0);
     expect(ao.sampling(event)).equal(true)
     expect(ao.sampling(event.toString())).equal(true)
   })
@@ -105,13 +110,13 @@ describe('event', function () {
   })
 
   it('should support set function', function () {
-    const event = new Event('test', 'entry', md)
+    const event = new Event('test', 'entry', ev0);
     event.set({Foo: 'bar'})
     expect(event.kv).property('Foo', 'bar')
   })
 
   it('should support data in send function', function (done) {
-    const event = new Event('test', 'entry', md)
+    const event = new Event('test', 'entry', ev0);
 
     emitter.once('message', function (msg) {
       expect(msg).property('Foo', 'fubar')

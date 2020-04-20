@@ -1,0 +1,21 @@
+{
+    "port":8181,
+    "settingsLocation":"settings.db",
+    "defaultCollectors": [{
+        "port":12222,
+        "queueCapacity": 25000,
+        "output" : {
+            "console": {
+              "EVENT": {},
+              "METRIC": {},
+              "STATUS": {}
+            },
+            "thrift": {
+              "METRIC": {
+                "host": "collector.appoptics.com",
+                "port": 443
+              }
+           }
+        }
+    }]
+}

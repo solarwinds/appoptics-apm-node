@@ -24,11 +24,14 @@ const assert = require('assert');
 
 const soon = global.setImmediate || process.nextTick
 
+// eslint-disable-next-line no-unused-vars
 function psoon () {
   return new Promise((resolve, reject) => {
-    soon(() => resolve())
+    soon(resolve)
   })
 }
+
+const xtrace = '2B4FC9017BA3404828F253638A697DC7CF1A6BB1A4A544D5B98159B55501';
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
@@ -127,7 +130,8 @@ describe('custom (without native bindings present)', function () {
     assert(ao.readyToSample() === false);
     assert(ao.getTraceSettings().doSample === false);
     assert(ao.sampling() === false);
-    assert(ao.stringToMetadata('') instanceof aob.Metadata);
+    assert(ao.stringToMetadata('') === undefined);
+    assert(ao.stringToMetadata(xtrace) instanceof aob.Event);
     assert(ao.patchResponse('x') === undefined);
     assert(ao.addResponseFinalizer('x') === undefined);
     assert(ao.traceId === undefined);

@@ -1,6 +1,7 @@
 'use strict'
 
 const ao = require('../..');
+const aob = ao.addon;
 
 const helper = require('../helper');
 const expect = require('chai').expect;
@@ -189,7 +190,7 @@ describe(`bunyan v${version}`, function () {
   //
   beforeEach(function (done) {
     // make sure we get sampled traces
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // default to the simple 'true'
     ao.cfg.insertTraceIdsIntoLogs = true;
@@ -275,7 +276,7 @@ describe(`bunyan v${version}`, function () {
         return 'test-done';
       }
 
-      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const xtrace = aob.Event.makeRandom(0).toString()
       const result = ao.startOrContinueTrace(xtrace, spanName, test);
 
       expect(result).equal('test-done');
