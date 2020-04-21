@@ -15,6 +15,13 @@ mocha test/*.test.js
 mocha test/no-addon/*.test.js
 
 #
+# it's not possible to change oboe logging level on the fly so these
+# have to be run one-at-a-time.
+#
+mocha test/solo/notifications.test.js
+mocha test/solo/notifications-timeout.test.js
+
+#
 # verify that both types of tokens work
 #
 mocha test/swoken/*.test.js
