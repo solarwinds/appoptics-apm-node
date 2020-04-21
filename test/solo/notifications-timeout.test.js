@@ -37,7 +37,7 @@ describe('notification function tests (long tests)', function () {
 
     const timeToStop = Date.now() + 30 * 1000;
     const iid = setInterval(function () {
-      // fake keep-alives not arriving my setting the last message time to
+      // fake keep-alives not arriving by setting the last message time to
       // the distant past.
       notifications.lastMessageTimestamp = 0;
       if (Date.now() > timeToStop) {
