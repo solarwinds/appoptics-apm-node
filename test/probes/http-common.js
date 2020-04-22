@@ -406,8 +406,8 @@ describe(`probes.${p}`, function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      if (ao.Event.last) {
-        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.Event.last);
+      if (ao.lastEvent) {
+        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.lastEvent);
       }
 
       conf.includeRemoteUrlParams = false

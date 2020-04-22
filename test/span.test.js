@@ -158,7 +158,7 @@ describe('span', function () {
     const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     outer.run(function () {
-      inner = Span.last.descend('inner', innerData)
+      inner = ao.lastSpan.descend('inner', innerData)
       inner.run(function () {})
     })
   })
@@ -195,7 +195,7 @@ describe('span', function () {
     const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
 
     outer.run(function () {
-      inner = Span.last.descend('inner', innerData);
+      inner = ao.lastSpan.descend('inner', innerData);
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
           expect(err).not.exist;
@@ -246,7 +246,7 @@ describe('span', function () {
         expect(res).exist;
         expect(res).equal('foo');
 
-        inner = Span.last.descend('inner', innerData)
+        inner = ao.lastSpan.descend('inner', innerData)
         inner.run(function () {});
       })
 
@@ -338,7 +338,7 @@ describe('span', function () {
     const getResults = setupMockEventSending(sequencing, {verbose: false});
 
     outer.run(function () {
-      inner = Span.last.descend('inner');
+      inner = ao.lastSpan.descend('inner');
       inner.run(function () {});
     });
 
@@ -401,7 +401,7 @@ describe('span', function () {
     const outer = Span.makeEntrySpan(name, settings);
 
     outer.run(function () {
-      inner = Span.last.descend('inner');
+      inner = ao.lastSpan.descend('inner');
       inner.run(function () {});
     });
 
@@ -430,7 +430,7 @@ describe('span', function () {
     const outer = Span.makeEntrySpan(name, settings);
 
     outer.run(function () {
-      inner = Span.last.descend('inner');
+      inner = ao.lastSpan.descend('inner');
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
           expect(err).not.exist;
@@ -472,7 +472,7 @@ describe('span', function () {
         expect(err).not.exist;
         expect(res).equal('foo');
 
-        inner = Span.last.descend('inner')
+        inner = ao.lastSpan.descend('inner')
         inner.run(function () {});
 
         const {sendReportCalls, sendCalls, errors} = getResults();
@@ -569,7 +569,7 @@ describe('span', function () {
           return;
         }
 
-        const span = Span.last.descend(`inner-${depth}`);
+        const span = ao.lastSpan.descend(`inner-${depth}`);
         span.run(asyncDigDeeper);
       });
 
@@ -665,7 +665,7 @@ describe('span', function () {
           return;
         }
 
-        const span = Span.last.descend(`inner-${depth}`);
+        const span = ao.lastSpan.descend(`inner-${depth}`);
         alternatingRunner(span);
       });
 
@@ -678,7 +678,7 @@ describe('span', function () {
     const outer = Span.makeEntrySpan(name, settings);
 
     outer.run(function (wrapper) {
-      const span = Span.last.descend(`inner-${depth}`);
+      const span = ao.lastSpan.descend(`inner-${depth}`);
       span.run(asyncDigDeeper);
       const outerAsyncWrapped = wrapper(function (err, res) {
         expect(err).not.exist;
