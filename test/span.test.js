@@ -587,7 +587,7 @@ describe('span', function () {
 
   });
 
-  it.only('should skeletonize multiple levels of sync and async events', function () {
+  it('should skeletonize multiple levels of sync and async events', function () {
     const name = 'multiple-sync-async';
     const maxDepth = 3;
     let depth = 0;
@@ -610,7 +610,7 @@ describe('span', function () {
     const p = new Promise(resolve => {
       resolver = resolve;
     });
-    const verbose = true;
+    const verbose = false;
 
     const getResults = setupMockEventSending(sequencing, {verbose});
 
