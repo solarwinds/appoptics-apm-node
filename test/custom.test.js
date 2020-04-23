@@ -956,7 +956,7 @@ describe('custom', function () {
   })
 
   // it should handle bad bind arguments gracefully and issue warnings.
-  it('should bind functions to requestStore', function () {
+  it('should handle bad bind arguments correctly', function () {
     const bind = ao.requestStore.bind
     let threw = false
     let called = false
@@ -978,7 +978,7 @@ describe('custom', function () {
       called.should.equal(false)
       const span = Span.makeEntrySpan(main, makeSettings())
       // don't let it try to send metrics
-      delete span.topSpan
+      span.doMetrics = false;
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -1017,7 +1017,6 @@ describe('custom', function () {
       ao.bindEmitter(emitter)
       called.should.equal(false)
       const span = Span.makeEntrySpan(main, makeSettings())
-      delete span.topSpan
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)

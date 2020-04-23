@@ -2,6 +2,9 @@
 
 // oboe's notifier will send all log messages
 process.env.APPOPTICS_DEBUG_LEVEL = 6;
+process.env.APPOPTICS_COLLECTOR = '';
+process.env.APPOPTICS_REPORTER = 'ssl';
+process.env.APPOPTICS_SERVICE_KEY = `${process.env.AO_SWOKEN_PROD}:node-notifications-test`;
 
 const ao = require('../..');
 const notifications = ao.notifications;
