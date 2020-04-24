@@ -178,7 +178,7 @@ describe('logging', function () {
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted, 'metadata').equal(`xtrace ${md.toString(1)}`);
+    expect(formatted, '%x formatted').equal(`xtrace ${md.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
     debug.log = logger

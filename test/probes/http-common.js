@@ -198,8 +198,8 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const md = addon.Event.makeRandom(1);
-      const origin = new ao.Event('span-name', 'label-name', md)
+      const ev = addon.Event.makeRandom(1);
+      const origin = new ao.Event('span-name', 'label-name', ev);
 
       helper.doChecks(emitter, [
         function (msg) {
