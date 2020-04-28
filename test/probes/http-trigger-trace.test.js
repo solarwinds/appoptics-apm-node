@@ -265,7 +265,7 @@ function wrapGTS () {
     settings.doSample = false;
     settings.doMetrics = false;
     // the event that getTraceSettings returned isn't important.
-    settings.metadata = aob.Event.makeRandom(0);
+    settings.traceTaskId = aob.Event.makeRandom(0);
     return settings;
   }
 }

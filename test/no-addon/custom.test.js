@@ -130,8 +130,8 @@ describe('custom (without native bindings present)', function () {
     assert(ao.readyToSample() === false);
     assert(ao.getTraceSettings().doSample === false);
     assert(ao.sampling() === false);
-    assert(ao.stringToMetadata('') === undefined);
-    assert(ao.stringToMetadata(xtrace) instanceof aob.Event);
+    assert(ao.xtraceToEvent('') === undefined);
+    assert(ao.xtraceToEvent(xtrace) instanceof aob.Event);
     assert(ao.patchResponse('x') === undefined);
     assert(ao.addResponseFinalizer('x') === undefined);
     assert(ao.traceId === undefined);

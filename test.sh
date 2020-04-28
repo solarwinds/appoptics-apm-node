@@ -164,8 +164,8 @@ fi
 
 # provide a summary of the test results.
 if [ ${#ERRORS[*]} -ne 0 ]; then
-    echo "$PASSED tests passed"
-    echo "${#ERRORS[*]} tests failed"
+    echo "$PASSED test suites passed"
+    echo "${#ERRORS[*]} test suites failed"
     for ix in ${!ERRORS[@]}
     do
         echo ${ERRORS[$ix]}
@@ -173,5 +173,5 @@ if [ ${#ERRORS[*]} -ne 0 ]; then
 
     exit 1
 else
-    echo "No errors - $PASSED tests passed"
+    echo "No errors - $PASSED test suites passed"
 fi

@@ -198,8 +198,8 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const md = addon.Event.makeRandom(1);
-      const origin = new ao.Event('span-name', 'label-name', md)
+      const ev = addon.Event.makeRandom(1);
+      const origin = new ao.Event('span-name', 'label-name', ev);
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -406,8 +406,8 @@ describe(`probes.${p}`, function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      if (ao.Event.last) {
-        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.Event.last);
+      if (ao.lastEvent) {
+        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.lastEvent);
       }
 
       conf.includeRemoteUrlParams = false

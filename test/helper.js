@@ -569,6 +569,6 @@ exports.makeSettings = function (settings) {
   }
 
   Object.assign(s, settings);
-  s.metadata = ao.addon.Event.makeRandom(s.doSample);
+  s.traceTaskId = s.metadata = ao.addon.Event.makeRandom(s.doSample);
   return s;
 }
