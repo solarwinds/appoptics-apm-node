@@ -44,7 +44,7 @@
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
     * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
-    * [.stringToMetadata(xtrace)](#ao.stringToMetadata) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
+    * [.xtraceToEvent(xtrace)](#ao.xtraceToEvent) ⇒ <code>bindings.Event</code> \| <code>undefined</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
     * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
     * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
@@ -241,27 +241,30 @@ the specified number of milliseconds before returning.
 
 ### ao.sampling(item) ⇒ <code>boolean</code>
 Determine if the sample flag is set for the various forms of
-metadata.
+xtrace data.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>boolean</code> - - true if the sample flag is set else false.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>Metadata</code> | the item to get the sampling flag of |
+| item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>addon.Event</code> | the item to get the sampling flag of |
 
-<a name="ao.stringToMetadata"></a>
+<a name="ao.xtraceToEvent"></a>
 
-### ao.stringToMetadata(xtrace) ⇒ <code>bindings.Metadata</code> \| <code>undefined</code>
-Convert an xtrace ID to a metadata object.
+### ao.xtraceToEvent(xtrace) ⇒ <code>bindings.Event</code> \| <code>undefined</code>
+Convert an xtrace ID to an event containing the task ID and op ID.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>bindings.Metadata</code> \| <code>undefined</code> - - bindings.Metadata object if
-                                        successful.  
+**Returns**: <code>bindings.Event</code> \| <code>undefined</code> - - bindings.Event object
+                                     containing an internal
+                                     format of the xtrace ID
+                                     if valid or undefined
+                                     if not.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| xtrace | <code>string</code> | X-Trace ID, string version of Metadata. |
+| xtrace | <code>string</code> | X-Trace ID |
 
 <a name="ao.instrumentHttp"></a>
 
@@ -685,7 +688,7 @@ logger.info(ao.insertLogObject({
         * [.runSync(fn)](#Span+runSync) ⇒
         * [.enter(data)](#Span+enter)
         * [.exit(data)](#Span+exit)
-        * [.exitWithError(err, data)](#Span+exitWithError)
+        * [.exitCheckingError(err, data)](#Span+exitCheckingError)
         * [.setExitError(err)](#Span+setExitError)
         * [.info(data)](#Span+info)
         * [.error(data)](#Span+error)
@@ -702,13 +705,13 @@ Create an execution span.
 | --- | --- | --- | --- |
 | name | <code>string</code> |  | Span name |
 | settings | <code>object</code> |  | Settings returned from getTraceSettings() |
-| [settings.metadata] | <code>metadata</code> |  | an addon.Metadata instance to create the events from.     Events will have the same task ID and sample bit but unique op IDs. This value is set     by getTraceSettings() and must be present. |
-| [settings.edge] | <code>boolean</code> | <code>true</code> | the entry event of this span should edge back to the     metadata. The only time this is not true is when the span being created is a new top     level span not being continued from an inbound X-Trace ID. This must be set explicitly     to a falsey value; it's absence is true. |
+| [settings.traceTaskId] | [<code>Event</code>](#Event) |  | an addon.Event instance to create the events from.     Events will have the same task ID and sample bit but unique op IDs. This value is set     by getTraceSettings() and must be present. |
+| [settings.edge] | <code>boolean</code> | <code>true</code> | the entry event of this span should edge back to the     op id associated with settings.traceTaskId. The only time this is not true is when the     span being created is a new top level span not being continued from an inbound X-Trace     ID. This must be set explicitly to a falsey value; it's absence is true. |
 | [data] | <code>object</code> |  | Key/Value pairs of info to add to event |
 
 **Example**  
 ```js
-var span = new Span('fs', Event.last, {
+var span = new Span('fs', ao.lastEvent, {
   File: file
 })
 ```
@@ -831,9 +834,9 @@ Send the exit event
 | --- | --- | --- |
 | data | <code>object</code> | key-value pairs of info to add to event |
 
-<a name="Span+exitWithError"></a>
+<a name="Span+exitCheckingError"></a>
 
-### span.exitWithError(err, data)
+### span.exitCheckingError(err, data)
 Send the exit event with an error status
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
@@ -921,7 +924,7 @@ Create an event
 | --- | --- | --- |
 | span | <code>string</code> | name of the event's span |
 | label | <code>string</code> | Event label (usually entry or exit) |
-| parent | <code>addon.Event</code> \| <code>addon.Metadata</code> | Metadata to construct the event from. |
+| parent | <code>aob.Event</code> | supplies the taskId to construct the event from. |
 | edge | <code>boolean</code> | This should edge back to the parent |
 
 <a name="Event+set"></a>
@@ -968,8 +971,8 @@ Send this event to the reporter
 | --- | --- | --- |
 | doSample | <code>boolean</code> | the sample decision |
 | doMetrics | <code>boolean</code> | the metrics decision |
-| metadata | <code>Metadata</code> | the metadata to use |
-| edge | <code>boolean</code> | whether to edge back to metadata |
+| traceTaskId | [<code>Event</code>](#Event) | the parent event to get task id from |
+| edge | <code>boolean</code> | true to edge back to parent op id |
 | source | <code>number</code> | the sample decision source |
 | rate | <code>number</code> | the sample rate used |
 | mode | <code>number</code> | local mode to use for decision |
