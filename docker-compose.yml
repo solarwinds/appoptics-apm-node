@@ -55,12 +55,12 @@ services:
   # the benchmark. java-collector default config:
   # https://github.com/librato/apm-agent-test-collector/blob/master/config.json
   #----------------------------------------------------------------------------
-  java-collector-grpc:
+  java-collector-both:
     image: 'traceqa/test-collector:java-collector'
     mem_limit: 1G
     #cpus: 1.0
     volumes:
-      - ./test/java-collector/config-grpc.json:/config.json
+      - ./test/java-collector/config-grpc-thrift.json:/config.json
       - ./test/java-collector/settings.db.high-throughput:/settings.db
     #environment:
     #  - "JAVA_OPTS=-Dlog4j.configuration=log4j-debug.properties"
@@ -71,6 +71,7 @@ services:
     ports:
       - '8181:8181'
       - '12223:12223'
+      - '12222:12222'
 
   #
   # second java-collector for benchmarking purposes if
