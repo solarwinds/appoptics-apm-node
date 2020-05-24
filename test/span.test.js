@@ -967,7 +967,7 @@ describe('span', function () {
     })
   })
 
-  it('should properly attribute dangling info/error events', function (done) {
+  it('should properly attribute dangling info/error events', function (tdone) {
     const span = new Span.makeEntrySpan('outer', makeSettings(), {})
 
     const before = {state: 'before'}
@@ -1020,6 +1020,10 @@ describe('span', function () {
       helper.checkExit('inner-4', trackInner4),
     ]
 
+    function done () {
+      tdone();
+    }
+
     helper.doChecks(emitter, checks, done)
 
     ao.requestStore.run(function () {
@@ -1050,6 +1054,14 @@ describe('span', function () {
         }))
       })
     })
+  })
+
+  it('should generate the expected stats', function () {
+    const stats = ao._stats.span;
+    expect(stats.topSpansActive).equal(0, 'no topSpans should be active');
+    expect(stats.otherSpansActive).equal(0, 'no spans should be active');
+    expect(stats.spansCreated).equal(45, 'total spans created should be correct');
+    expect(stats.topSpansCreated).equal(27, 'total traces created should be correct');
   })
 
 })
