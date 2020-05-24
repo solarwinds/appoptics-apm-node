@@ -6,6 +6,8 @@ const Event = ao.Event
 
 const expect = require('chai').expect
 
+let baseStats;
+
 describe('event', function () {
   let emitter
   let event
@@ -30,6 +32,12 @@ describe('event', function () {
     const mds = ev0.toString(1).split('-');
     mdTaskId = mds[1].toUpperCase()
     mdOpId = mds[2].toUpperCase();
+  });
+
+  afterEach(function () {
+    if (this.currentTest.title === 'UDP might lose a message') {
+      baseStats = Object.assign({}, ao._stats.event);
+    }
   })
 
   it('UDP might lose a message', function (done) {
@@ -44,6 +52,7 @@ describe('event', function () {
     ], done)
   })
 
+  // net 1
   it('should construct valid event inheriting from the parent', function () {
     event = new Event('test', 'entry', ev0);
     expect(event).property('Layer', 'test')
@@ -53,6 +62,7 @@ describe('event', function () {
     expect(event).property('opId').match(/^[0-9A-F]{16}$/);
   });
 
+  // net 2
   it('should convert an event to a string', function () {
     event = new Event('test', 'entry', ev0);
     expect(event.toString()).match(/^2B[0-9A-F]{56}01$/);
@@ -60,6 +70,7 @@ describe('event', function () {
     expect(event.toString().substr(42, 16)).not.equal(mdOpId, 'op id must not match');
   })
 
+  // net 4
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
     ao.traceMode = 'never'
@@ -76,6 +87,7 @@ describe('event', function () {
     expect(ao.sampling(event.toString())).equal(true)
   })
 
+  // net 4, sent 1
   it('should send the event', function (done) {
     const edge = true
     const event2 = new Event('test', 'exit', event.event, edge)
@@ -94,6 +106,7 @@ describe('event', function () {
     })
   })
 
+  // net 5
   it('should not allow setting a NaN value', function () {
     const event2 = new Event('test', 'exit', event.event)
 
@@ -109,12 +122,14 @@ describe('event', function () {
     expect(getCount()).equal(1, 'incorrect log message count')
   })
 
+  // net 6
   it('should support set function', function () {
     const event = new Event('test', 'entry', ev0);
     event.set({Foo: 'bar'})
     expect(event.kv).property('Foo', 'bar')
   })
 
+  // create 6, sent 2
   it('should support data in send function', function (done) {
     const event = new Event('test', 'entry', ev0);
 
@@ -125,5 +140,12 @@ describe('event', function () {
     ao.requestStore.run(function () {
       event.sendReport({Foo: 'fubar'})
     })
+  })
+
+  it('should generate the expected stats', function () {
+    // this suite creates 8 events and sends 2 after the UDP test
+    const stats = ao._stats.event;
+    expect(stats.eventsCreated).equal(baseStats.eventsCreated + 8, 'events created');
+    expect(stats.eventsActive).equal(baseStats.eventsActive + 6, 'events active');
   })
 })
