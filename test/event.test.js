@@ -6,7 +6,6 @@ const Event = ao.Event
 
 const expect = require('chai').expect
 
-let baseStats;
 
 describe('event', function () {
   let emitter
@@ -14,6 +13,7 @@ describe('event', function () {
   let ev0;
   let mdTaskId
   let mdOpId;
+  let baseStats;
 
   //
   // Intercept appoptics messages for analysis
@@ -145,7 +145,7 @@ describe('event', function () {
   it('should generate the expected stats', function () {
     // this suite creates 8 events and sends 2 after the UDP test
     const stats = ao._stats.event;
-    expect(stats.eventsCreated).equal(baseStats.eventsCreated + 8, 'events created');
-    expect(stats.eventsActive).equal(baseStats.eventsActive + 6, 'events active');
+    expect(stats.created).equal(baseStats.created + 8, 'events created');
+    expect(stats.active).equal(baseStats.active + 6, 'events active');
   })
 })
