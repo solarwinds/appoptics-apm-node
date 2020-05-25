@@ -1060,7 +1060,7 @@ describe('span', function () {
     const stats = ao._stats.span;
     expect(stats.topSpansActive).equal(0, 'no topSpans should be active');
     expect(stats.otherSpansActive).equal(0, 'no spans should be active');
-    expect(stats.spansCreated).equal(45, 'total spans created should be correct');
+    expect(stats.totalCreated).equal(45, 'total spans created should be correct');
     expect(stats.topSpansCreated).equal(27, 'total traces created should be correct');
   })
 
