@@ -44,7 +44,7 @@
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
     * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
-    * [.xtraceToEvent(xtrace)](#ao.xtraceToEvent) ⇒ <code>bindings.Event</code> \| <code>undefined</code>
+    * [.xtraceToEvent(xtrace)](#ao.xtraceToEvent) ⇒ <code>addon.Event</code> \| <code>undefined</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
     * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
     * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
@@ -252,11 +252,11 @@ xtrace data.
 
 <a name="ao.xtraceToEvent"></a>
 
-### ao.xtraceToEvent(xtrace) ⇒ <code>bindings.Event</code> \| <code>undefined</code>
+### ao.xtraceToEvent(xtrace) ⇒ <code>addon.Event</code> \| <code>undefined</code>
 Convert an xtrace ID to an event containing the task ID and op ID.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>bindings.Event</code> \| <code>undefined</code> - - bindings.Event object
+**Returns**: <code>addon.Event</code> \| <code>undefined</code> - - addon.Event object
                                      containing an internal
                                      format of the xtrace ID
                                      if valid or undefined

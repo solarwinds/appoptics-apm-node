@@ -16,7 +16,7 @@ as separate objects. v10 of `appoptics-bindings` exposes only `events`, so
 any references to `metadata` or the `Metadata` class need to be replaced.
 
 In this section `ao` refers to the module `appoptics-apm`, e.g.,
-`const ao = require('appoptics-apm')` and `aob` refers to `ao.bindings`,
+`const ao = require('appoptics-apm')` and `aob` refers to `ao.addon`,
 the `appoptics-bindings` module.
 
 ### Summary of changes
