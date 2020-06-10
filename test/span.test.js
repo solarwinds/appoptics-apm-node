@@ -23,6 +23,10 @@ describe('span', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
+    // don't count from any previous tests.
+    ao._stats.span.totalCreated = 0;
+    ao._stats.span.topSpansCreated = 0;
+
   })
   after(function (done) {
     emitter.close(done)
@@ -330,8 +334,8 @@ describe('span', function () {
 
     const sequencing = [
       {Layer: 'outer', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
       {Layer: 'outer', Label: 'exit'},
     ];
 
@@ -354,8 +358,8 @@ describe('span', function () {
 
     const sequencing = [
       {Layer: name, Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
       {Layer: name, Label: 'exit'},
     ];
 
@@ -390,8 +394,8 @@ describe('span', function () {
 
     const sequencing = [
       {Layer: name, Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
       {Layer: name, Label: 'exit'},
     ];
 
@@ -419,9 +423,9 @@ describe('span', function () {
     // completing first.
     const sequencing = [
       {Layer: name, Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'entry'},
       {Layer: name, Label: 'exit'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'exit'},
     ];
 
     const getResults = setupMockEventSending(sequencing, {verbose: false});
@@ -458,8 +462,8 @@ describe('span', function () {
     const sequencing = [
       {Layer: name, Label: 'entry'},
       {Layer: name, Label: 'exit'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
     ];
 
     const getResults = setupMockEventSending(sequencing, {verbose: false});
@@ -496,12 +500,12 @@ describe('span', function () {
 
     const sequencing = [
       {Layer: name, Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
-      {Layer: 'skeleton', Label: 'exit'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'exit'},
       {Layer: name, Label: 'exit'},
     ];
 
@@ -536,12 +540,12 @@ describe('span', function () {
     const sequencing = [
       {Layer: name, Label: 'entry'},
       {Layer: name, Label: 'exit'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
-      {Layer: 'skeleton', Label: 'entry'},
-      {Layer: 'skeleton', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
+      {Layer: '__skeleton__', Label: 'entry'},
+      {Layer: '__skeleton__', Label: 'exit'},
     ];
 
     let resolver;
@@ -594,14 +598,14 @@ describe('span', function () {
 
     const sequencing = [
       {Layer: name, Label: 'entry'},          // enter outer
-      {Layer: 'skeleton', Label: 'entry'},    // unconditional asyncDigDeeper
-      {Layer: 'skeleton', Label: 'exit'},     // exit unconditional asyncDigDeeper
-      {Layer: 'skeleton', Label: 'entry'},    // enter depth 1 sync
-      {Layer: 'skeleton', Label: 'entry'},    // enter depth 2 async
-      {Layer: 'skeleton', Label: 'exit'},     // exit depth 1 sync
-      {Layer: 'skeleton', Label: 'exit'},     // exit depth 2 async
-      {Layer: 'skeleton', Label: 'entry'},    // enter depth 3 sync
-      {Layer: 'skeleton', Label: 'exit'},     // exit depth 3 sync
+      {Layer: '__skeleton__', Label: 'entry'},    // unconditional asyncDigDeeper
+      {Layer: '__skeleton__', Label: 'exit'},     // exit unconditional asyncDigDeeper
+      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 1 sync
+      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 2 async
+      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 1 sync
+      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 2 async
+      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 3 sync
+      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 3 sync
       {Layer: name, Label: 'exit'},           // exit outer
     ];
 
@@ -1060,7 +1064,7 @@ describe('span', function () {
     const stats = ao._stats.span;
     expect(stats.topSpansActive).equal(0, 'no topSpans should be active');
     expect(stats.otherSpansActive).equal(0, 'no spans should be active');
-    expect(stats.totalCreated).equal(45, 'total spans created should be correct');
+    expect(stats.totalCreated).equal(46, 'total spans created should be correct');
     expect(stats.topSpansCreated).equal(27, 'total traces created should be correct');
   })
 
