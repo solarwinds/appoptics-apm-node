@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # script to run tests
 #
