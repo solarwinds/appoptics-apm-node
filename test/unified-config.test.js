@@ -16,6 +16,7 @@ const expectedGlobalDefaults = {
   traceMode: 1,
   logLevel: 2,
   runtimeMetrics: true,
+  unifiedLogging: 'preferred',
 }
 
 const expectedProbeDefaults = require(`${relativeDir}/lib/probe-defaults`);
@@ -331,10 +332,14 @@ describe('unified-config', function () {
 
   it('should not use invalid env var values', function () {
     process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 'xyzzy';
+    process.env.APPOPTICS_UNIFIED_LOGGING = 'maybe';
 
     const cfg = guc();
 
-    const warnings = ['invalid environment variable value APPOPTICS_EC2_METADATA_TIMEOUT=xyzzy'];
+    const warnings = [
+      'invalid environment variable value APPOPTICS_EC2_METADATA_TIMEOUT=xyzzy',
+      'invalid environment variable value APPOPTICS_UNIFIED_LOGGING=maybe',
+    ];
     doChecks(cfg, {warnings});
   })
 
@@ -356,15 +361,18 @@ describe('unified-config', function () {
       serviceKey: 'f'.repeat(64),
       ignoreConflicts: true,
       domainPrefix: false,
+      unifiedLogging: 'never',
     }
     writeConfigJSON(config);
     process.env.APPOPTICS_SERVICE_KEY = 'ab'.repeat(32);
     process.env.APPOPTICS_HOSTNAME_ALIAS = 'macnaughton';
+    process.env.APPOPTICS_UNIFIED_LOGGING = 'always';
 
     const cfg = guc();
 
     config.hostnameAlias = process.env.APPOPTICS_HOSTNAME_ALIAS;
     config.serviceKey = process.env.APPOPTICS_SERVICE_KEY;
+    config.unifiedLogging = process.env.APPOPTICS_UNIFIED_LOGGING;
     doChecks(cfg, {global: config});
   })
 
