@@ -20,7 +20,7 @@ describe('notifier (without native bindings present)', function () {
   let notifications;
 
   it('should initialize without error', function () {
-    notifications = new Notifications(msg => messages.push(msg), {aob});
+    notifications = new Notifications(msg => messages.push(msg), aob);
     expect(notifications.serverStatus).equal('listening', 'serverStatus should be "listening"');
   });
 

@@ -9,6 +9,19 @@ process.env.APPOPTICS_SERVICE_KEY = `${process.env.AO_SWOKEN_PROD}:node-notifica
 const ao = require('../..');
 const notifications = ao.notifications;
 
+// handle notifications disabled. it prints a lot of oboe messages
+// but there isn't really any way around that.
+let desc = describe;
+let descMessage = 'notification function tests (long tests)';
+if (!notifications) {
+  desc = describe.skip;
+  descMessage = 'notifications disabled, skipping'
+} else {
+  notifications.on('message', function (msg) {
+    messages.push(msg);
+  });
+}
+
 const sources = {
   oboe: {
     config: 0,
@@ -39,13 +52,10 @@ const logLevelCounts = {
 
 const messages = [];
 
-notifications.on('message', function (msg) {
-  messages.push(msg);
-})
-
 const expect = require('chai').expect;
 
-describe('notification function tests (long tests)', function () {
+desc(descMessage, function () {
+
   it('should receive a variety of messages over 60 seconds', function (done) {
     this.timeout(70000);
     setTimeout(function () {
