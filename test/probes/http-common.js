@@ -60,9 +60,6 @@ describe(`probes.${p}`, function () {
   after(function (done) {
     emitter.close(done)
   })
-  after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
-  })
 
   //
   before(function () {
@@ -897,10 +894,11 @@ describe(`probes.${p}`, function () {
       const server = createServer(options, function (req, res) {
         // send the response
         res.write('partial response\n');
-        setTimeout(function () {
+        // but delay before finishing
+        setImmediate(function () {
           res.write('more stuff\n');
           res.end();
-        }, 10);
+        });
       });
       // reset on exit
       function done (err) {
@@ -917,10 +915,13 @@ describe(`probes.${p}`, function () {
           emitter,
           function (done) {
             const req = driver.get(url, function (res) {
+              // when we get data abort the request
               res.on('data', function (err, data) {
                 req.abort();
               });
-              res.on('end', () => done());
+              res.on('end', () => {
+                done();
+              });
               res.resume();
             })
             req.on('error', e => {
