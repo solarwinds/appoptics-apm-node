@@ -32,8 +32,8 @@ property instead of the `metadata` property.
 - the `Span` class method `exitWithError()` is now `exitCheckingError()` to
 better describe what it is doing.
 - `ao.stringToMetadata()` => `ao.xtraceToEvent()`
-- `Span.last` is deprecated. Use `ao.lastSpan`.
-- `Event.last` is deprecated. Use `ao.lastEvent`.
+- `Span.last` has been removed. Use `ao.lastSpan`.
+- `Event.last` has been removed. Use `ao.lastEvent`.
 
 
 <a name="v5tov6"></a>
