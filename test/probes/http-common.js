@@ -60,9 +60,6 @@ describe(`probes.${p}`, function () {
   after(function (done) {
     emitter.close(done)
   })
-  after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
-  })
 
   //
   before(function () {
@@ -73,6 +70,8 @@ describe(`probes.${p}`, function () {
   after(function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
   })
+  beforeEach(function () {
+  });
 
   afterEach(function () {
     if (clear) {
@@ -265,9 +264,9 @@ describe(`probes.${p}`, function () {
 
       const logChecks = [
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
-      ]
-      let getCount  // eslint-disable-line
-      [getCount, clear] = helper.checkLogMessages(logChecks)
+      ];
+
+      [, clear] = helper.checkLogMessages(logChecks);
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -894,13 +893,16 @@ describe(`probes.${p}`, function () {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false;
+
       const server = createServer(options, function (req, res) {
         // send the response
         res.write('partial response\n');
+        // but delay before finishing to give the client time to abort
+        // the request.
         setTimeout(function () {
           res.write('more stuff\n');
           res.end();
-        }, 10);
+        }, 100);
       });
       // reset on exit
       function done (err) {
@@ -917,13 +919,30 @@ describe(`probes.${p}`, function () {
           emitter,
           function (done) {
             const req = driver.get(url, function (res) {
+              // when we get data abort the request
               res.on('data', function (err, data) {
+                // req.abort() is deprecated as of 14.1.0; use
+                // req.destroy() in the future but all current
+                // code uses req.abort() so leave that for now.
+                //req.destroy();
                 req.abort();
               });
-              res.on('end', () => done());
+              res.on('end', () => {
+                // end is not emitted when errors occur or when the
+                // client aborts the connection. in any case it is
+                // not the end of the request, so ignore it.
+                // https://nodejs.org/api/http.html#http_event_close_2
+              });
               res.resume();
-            })
+            });
+            // if there is an error the test fails
             req.on('error', e => {
+              done(e);
+            });
+            // done when the socket is closed. the test should succeed.
+            req.on('close', e => {
+              // node 14 https://nodejs.org/api/http.html#http_request_destroy_error
+              //console.log('close', req.aborted, req.destroyed, req.writableEnded);
               done(e);
             });
           }, [

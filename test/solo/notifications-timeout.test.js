@@ -10,14 +10,21 @@ const ao = require('../..');
 const notifications = ao.notifications;
 const expect = require('chai').expect;
 
+let desc = describe;
+let descMessage = 'notification function tests (long tests)';
+if (!notifications) {
+  desc = describe.skip;
+  descMessage = 'notifications disabled, skipping'
+} else {
+  notifications.on('message', function (msg) {
+    messages.push(msg);
+  });
+}
+
 const messages = [];
 
-notifications.on('message', function (msg) {
-  messages.push(msg);
-})
 
-
-describe('notification function tests (long tests)', function () {
+desc(descMessage, function () {
   it('should receive at least 4 keep-alive messages in a minute', function (done) {
     let keepAliveCount = 0;
     this.timeout(70000);
