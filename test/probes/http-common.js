@@ -266,7 +266,7 @@ describe(`probes.${p}`, function () {
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
       ];
 
-      [, clear] = helper.checkLogMessages(logChecks); // eslint-disable-line no-unused-vars
+      [, clear] = helper.checkLogMessages(logChecks);
 
       helper.doChecks(emitter, [
         function (msg) {
