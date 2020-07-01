@@ -44,9 +44,7 @@ const options = p === 'https' ? httpsOptions : {};
 describe(`probes.${p}`, function () {
   const ctx = {driver, p};
   let emitter
-  let realSampleTrace
   const previousHttpEnabled = ao.probes[p].enabled;
-  const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled;
   let clear
   let originalFlag
 
@@ -57,18 +55,10 @@ describe(`probes.${p}`, function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
     ao.g.testing(__filename)
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
-  })
-  after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
   })
 
   //
@@ -80,27 +70,9 @@ describe(`probes.${p}`, function () {
   after(function () {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalFlag
   })
-
-
   beforeEach(function () {
-    if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
-      ao.probes[p].enabled = false
-      ao.probes[`${p}-client`].enabled = false
-    } else if (this.currentTest.title === 'should trace correctly within asyncrony') {
-      //this.skip()
-    } else if (this.currentTest.title === 'should not send a span or metrics when there is a filter for it') {
-      //this.skip()
-    }
-  })
+  });
 
-  afterEach(function () {
-    if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
-      ao.probes[p].enabled = previousHttpEnabled
-      ao.probes[`${p}-client`].enabled = previousHttpClientEnabled
-    } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
-      ao.specialUrls = undefined
-    }
-  })
   afterEach(function () {
     if (clear) {
       clear()
@@ -139,12 +111,36 @@ describe(`probes.${p}`, function () {
     },
   }
 
+  //================================================================================================
+  // server tests
+  //================================================================================================
   describe(`${p}-server`, function () {
     const conf = ao.probes[p];
 
-    after(function () {
-      ao.resetRequestStore();
+    // turn off http-client so the request is not part of the test.
+    before(function () {
+      ao.probes[`${p}-client`].enabled = false;
     });
+
+    after(function () {
+      ao.probes[`${p}-client`].enabled = true;
+      //ao.resetRequestStore();
+    });
+
+    // disable the probe for the test that requires it.
+    beforeEach(function () {
+      if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
+        ao.probes[p].enabled = false;
+      }
+    })
+
+    afterEach(function () {
+      if (this.currentTest.title === `should not report anything when ${p} probe is disabled`) {
+        ao.probes[p].enabled = previousHttpEnabled;
+      } else if (this.currentTest.title === 'should not send a span when there is a filter for it') {
+        ao.specialUrls = undefined;
+      }
+    })
 
     // it's possible for a local UDP send to fail but oboe doesn't report
     // it, so compensate for it.
@@ -201,8 +197,8 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const md = addon.Metadata.makeRandom(1)
-      const origin = new ao.Event('span-name', 'label-name', md)
+      const ev = addon.Event.makeRandom(1);
+      const origin = new ao.Event('span-name', 'label-name', ev);
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -262,15 +258,15 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      const originMetadata = addon.Metadata.makeRandom(1)
+      const originMetadata = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', originMetadata)
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
         {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
-      ]
-      let getCount  // eslint-disable-line
-      [getCount, clear] = helper.checkLogMessages(logChecks)
+      ];
+
+      [, clear] = helper.checkLogMessages(logChecks);
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -409,8 +405,8 @@ describe(`probes.${p}`, function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      if (ao.Event.last) {
-        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.Event.last);
+      if (ao.lastEvent) {
+        ao.loggers.debug(`${p}.test: before creating server lastEvent = %e`, ao.lastEvent);
       }
 
       conf.includeRemoteUrlParams = false
@@ -897,13 +893,16 @@ describe(`probes.${p}`, function () {
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false;
+
       const server = createServer(options, function (req, res) {
         // send the response
         res.write('partial response\n');
+        // but delay before finishing to give the client time to abort
+        // the request.
         setTimeout(function () {
           res.write('more stuff\n');
           res.end();
-        }, 10);
+        }, 100);
       });
       // reset on exit
       function done (err) {
@@ -920,13 +919,30 @@ describe(`probes.${p}`, function () {
           emitter,
           function (done) {
             const req = driver.get(url, function (res) {
+              // when we get data abort the request
               res.on('data', function (err, data) {
+                // req.abort() is deprecated as of 14.1.0; use
+                // req.destroy() in the future but all current
+                // code uses req.abort() so leave that for now.
+                //req.destroy();
                 req.abort();
               });
-              res.on('end', () => done());
+              res.on('end', () => {
+                // end is not emitted when errors occur or when the
+                // client aborts the connection. in any case it is
+                // not the end of the request, so ignore it.
+                // https://nodejs.org/api/http.html#http_event_close_2
+              });
               res.resume();
-            })
+            });
+            // if there is an error the test fails
             req.on('error', e => {
+              done(e);
+            });
+            // done when the socket is closed. the test should succeed.
+            req.on('close', e => {
+              // node 14 https://nodejs.org/api/http.html#http_request_destroy_error
+              //console.log('close', req.aborted, req.destroyed, req.writableEnded);
               done(e);
             });
           }, [

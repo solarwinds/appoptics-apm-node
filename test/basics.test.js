@@ -81,9 +81,9 @@ describe('basics', function () {
     ao.serviceKey.should.be.a.String
   })
 
-  ifaob('should be able to check metadata\'s sample flag', function () {
-    const md0 = new ao.addon.Metadata.makeRandom()
-    const md1 = new ao.addon.Metadata.makeRandom(1)
+  ifaob('should be able to check an Event\'s sample flag', function () {
+    const md0 = new ao.addon.Event.makeRandom()
+    const md1 = new ao.addon.Event.makeRandom(1)
 
     expect(ao.sampling(md0)).equal(false)
     expect(ao.sampling(md0.toString())).equal(false)
@@ -94,10 +94,9 @@ describe('basics', function () {
   ifaob('should be able to detect if it is in a trace', function () {
     ao.tracing.should.be.false
     const span = Span.makeEntrySpan('test', makeSettings())
-    delete span.topSpan
 
     span.run(function () {
-      ao.tracing.should.be.true
+      expect(ao.tracing).equal(true);
     })
   })
 

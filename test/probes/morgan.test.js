@@ -284,7 +284,7 @@ describe(`probes.morgan ${version}`, function () {
         return 'test-done';
       }
 
-      const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+      const xtrace = ao.addon.Event.makeRandom(0).toString()
       const result = ao.startOrContinueTrace(xtrace, spanName, test);
       expect(result).equal('test-done');
     })
@@ -339,25 +339,27 @@ describe(`probes.morgan ${version}`, function () {
   // verify that mode 'always' inserts even when not tracing
   //
   it('mode=\'always\' should always insert a trace ID even if not tracing', function (done) {
-    const traceId = getTraceIdString();
-    ao.Event.last = undefined;
+    ao.requestStore.run(function () {
+      const traceId = getTraceIdString();
+      ao.lastEvent = undefined;
 
-    ao.cfg.insertTraceIdsIntoMorgan = 'always';
-    logger = makeLogger();
-    ao.traceMode = 0;
-    ao.sampleRate = 0;
-    //console.log(ao.Event.last);
+      ao.cfg.insertTraceIdsIntoMorgan = 'always';
+      logger = makeLogger();
+      ao.traceMode = 0;
+      ao.sampleRate = 0;
+      //console.log(ao.lastEvent);
 
-    logger(fakeReq, fakeRes, function (err) {
-      expect(err).not.ok;
-      // let the listener run
-      setImmediate(function () {
-        checkEventInfo(eventInfo, fakeReq, fakeRes, traceId);
-        done();
-      })
-      fakeRes.writeHead(200);
-      fakeRes.finished = true;
-    })
+      logger(fakeReq, fakeRes, function (err) {
+        expect(err).not.ok;
+        // let the listener run
+        setImmediate(function () {
+          checkEventInfo(eventInfo, fakeReq, fakeRes, traceId);
+          done();
+        })
+        fakeRes.writeHead(200);
+        fakeRes.finished = true;
+      });
+    }, {newContext: true});
   })
 
 

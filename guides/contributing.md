@@ -45,12 +45,13 @@ mocha is not a devDependency because mocha is a installed globally in our
 development environment.
 
 Under the `test` directory all test files end with `.test.js`. Other files
-are support files for testing and are not to be executed by mocha.
+and directories are support files for testing and are not to be executed by
+mocha.
 
 Testing the probes requires that `docker-compose up -d` has been executed to
-start back-end services. You can use `env.sh` enables setting up the environment
-for testing by sourcing it like `. env.sh bash`. It provides a little bit of
-documentation of various setups that can be used.
+start back-end services. You can use `env.sh` to set up the environment
+for testing by sourcing it like `. env.sh bash`. `env.sh` provides a bit
+of documentation on various setups.
 
 ## Compiling the C extension
 

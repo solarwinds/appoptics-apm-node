@@ -1,11 +1,49 @@
+### Table of Contents
+[Migrating v7 => v8](#v7tov8)<br>
+[Migrating v5 => v6](#v5tov6)
 
+<a name="v7tov8"></a>
+## appoptics-apm migration guide v7 => v8
+
+If you using `appoptics-apm` out-of-the-box with no custom instrumentation
+then no migration is necessary. You can stop reading now.
+
+### Background
+
+Prior to v8 `appoptics-apm` used a different version of the low-level
+`appoptics-bindings` library that exposed low-level `metadata` and `events`
+as separate objects. v10 of `appoptics-bindings` exposes only `events`, so
+any references to `metadata` or the `Metadata` class need to be replaced.
+
+In this section `ao` refers to the module `appoptics-apm`, e.g.,
+`const ao = require('appoptics-apm')` and `aob` refers to `ao.addon`,
+the `appoptics-bindings` module.
+
+### Summary of changes
+
+- the class `aob.Metadata` has been incorporated into the class `aob.Event`.
+  - `aob.Metadata.makeRandom()` => `aob.Event.makeRandom()`
+  - `aob.Metadata.sampleFlagIsSet()` => `ao.sampling()`
+- `aob.Reporter.sendReport()` is now an `aob.Event` class method
+  - use `event.sendReport()`
+- the log format `%m` (metadata) no longer exists.
+- `ao.getTraceSettings()` now returns a settings object with the `traceTaskId`
+property instead of the `metadata` property.
+- the `Span` class method `exitWithError()` is now `exitCheckingError()` to
+better describe what it is doing.
+- `ao.stringToMetadata()` => `ao.xtraceToEvent()`
+- `Span.last` has been removed. Use `ao.lastSpan`.
+- `Event.last` has been removed. Use `ao.lastEvent`.
+
+
+<a name="v5tov6"></a>
 ## appoptics-apm migration guide v5 => v6
 
 ### Background
 
 Prior to v6 `appoptics-apm` made the decision whether to sample or not in the `Event` constructor. `appoptics-apm` now makes the decision at the starting point of a trace, e.g., the `http` probe. This change simplifies the code but introduces breaking changes if you are using custom-instrumentation.
 
-N.B. If you are only using instrumentation out of the box, i.e., you have not written any custom instrumentation, no changes are necessary to migrate to v6.
+If you are using instrumentation out-of-the-box, i.e., you have not written any custom instrumentation, no changes are necessary to migrate to v6.
 
 If you are using custom instrumentation read on!
 

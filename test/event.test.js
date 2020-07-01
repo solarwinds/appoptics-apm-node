@@ -1,23 +1,26 @@
 'use strict'
 const helper = require('./helper')
 const ao = helper.ao
-const addon = ao.addon
+const aob = ao.addon;
 const Event = ao.Event
 
 const expect = require('chai').expect
 
+
 describe('event', function () {
   let emitter
   let event
-  let md
+  let ev0;
   let mdTaskId
+  let mdOpId;
+  let baseStats;
 
   //
   // Intercept appoptics messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE;
     ao.traceMode = 'always'
   })
   after(function (done) {
@@ -25,9 +28,16 @@ describe('event', function () {
   })
 
   beforeEach(function () {
-    md = addon.Metadata.makeRandom(1)
-    const mds = md.toString(1).split('-')
+    ev0 = aob.Event.makeRandom(1);
+    const mds = ev0.toString(1).split('-');
     mdTaskId = mds[1].toUpperCase()
+    mdOpId = mds[2].toUpperCase();
+  });
+
+  afterEach(function () {
+    if (this.currentTest.title === 'UDP might lose a message') {
+      baseStats = Object.assign({}, ao._stats.event);
+    }
   })
 
   it('UDP might lose a message', function (done) {
@@ -42,35 +52,42 @@ describe('event', function () {
     ], done)
   })
 
-  it('should construct valid event', function () {
-    event = new Event('test', 'entry', md)
+  // net 1
+  it('should construct valid event inheriting from the parent', function () {
+    event = new Event('test', 'entry', ev0);
     expect(event).property('Layer', 'test')
     expect(event).property('Label', 'entry')
-    expect(event).property('taskId').and.match(/^[0-9A-F]{40}$/)
-    expect(event).property('opId').and.match(/^[0-9A-F]{16}$/)
-    expect(event).property('taskId', mdTaskId)
-  })
+    expect(event).property('taskId', mdTaskId);
+    expect(event).property('opId').not.equal(mdOpId);
+    expect(event).property('opId').match(/^[0-9A-F]{16}$/);
+  });
 
+  // net 2
   it('should convert an event to a string', function () {
-    event.toString().should.match(/^2B[0-9A-F]{58}$/)
+    event = new Event('test', 'entry', ev0);
+    expect(event.toString()).match(/^2B[0-9A-F]{56}01$/);
+    expect(event.toString().substr(2, 40)).equal(mdTaskId, 'task id must match');
+    expect(event.toString().substr(42, 16)).not.equal(mdOpId, 'op id must not match');
   })
 
+  // net 4
   it('should fetch an event\'s sample flag', function () {
     ao.sampleRate = 0
     ao.traceMode = 'never'
-    md = addon.Metadata.makeRandom(0)
-    event = new Event('test', 'entry', md)
+    ev0 = aob.Event.makeRandom(0);
+    event = new Event('test', 'entry', ev0);
     expect(ao.sampling(event)).equal(false)
     expect(ao.sampling(event.toString())).equal(false)
 
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE;
     ao.traceMode = 'always'
-    md = addon.Metadata.makeRandom(1)
-    event = new Event('test', 'entry', md)
+    ev0 = aob.Event.makeRandom(1);
+    event = new Event('test', 'entry', ev0);
     expect(ao.sampling(event)).equal(true)
     expect(ao.sampling(event.toString())).equal(true)
   })
 
+  // net 4, sent 1
   it('should send the event', function (done) {
     const edge = true
     const event2 = new Event('test', 'exit', event.event, edge)
@@ -89,6 +106,7 @@ describe('event', function () {
     })
   })
 
+  // net 5
   it('should not allow setting a NaN value', function () {
     const event2 = new Event('test', 'exit', event.event)
 
@@ -104,14 +122,16 @@ describe('event', function () {
     expect(getCount()).equal(1, 'incorrect log message count')
   })
 
+  // net 6
   it('should support set function', function () {
-    const event = new Event('test', 'entry', md)
+    const event = new Event('test', 'entry', ev0);
     event.set({Foo: 'bar'})
     expect(event.kv).property('Foo', 'bar')
   })
 
+  // create 6, sent 2
   it('should support data in send function', function (done) {
-    const event = new Event('test', 'entry', md)
+    const event = new Event('test', 'entry', ev0);
 
     emitter.once('message', function (msg) {
       expect(msg).property('Foo', 'fubar')
@@ -120,5 +140,12 @@ describe('event', function () {
     ao.requestStore.run(function () {
       event.sendReport({Foo: 'fubar'})
     })
+  })
+
+  it('should generate the expected stats', function () {
+    // this suite creates 8 events and sends 2 after the UDP test
+    const stats = ao._stats.event;
+    expect(stats.created).equal(baseStats.created + 8, 'events created');
+    expect(stats.active).equal(baseStats.active + 6, 'events active');
   })
 })

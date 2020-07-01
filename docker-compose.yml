@@ -1,7 +1,7 @@
 #
 # supporting backends for node-appoptics testing
 #
-version: '2.1'
+version: '2.4'
 
 services:
 #  main:
@@ -48,34 +48,53 @@ services:
 #    links:
 #      - wait
 
-  #
-  # extend the collector services into this composition.
-  # NOTE: extend goes away in version 3.0 of docker-compose.yml
-  #
-  # undocumented low-level internal testing tools
-  # requires copying ../oboe-test/collectors/<collector-name>/<name>.crt
-  # to test/certs/<collector-name>.crt
-  #
-  #scribe-collector:
-  #  extends:
-  #    file: "../oboe-test/collectors/docker-compose.yml"
-  #    service: "scribe-collector"
-  #java-collector:
-  #  extends:
-  #    file: "../oboe-test/collectors/docker-compose.yml"
-  #    service: "java-collector"
+  #----------------------------------------------------------------------------
+  # test collector - instrumented test apps report to this instead of the real
+  # backend. in addition to not flooding the backend with data, this allows us
+  # to control the sampling and limiting settings sent down to agents during
+  # the benchmark. java-collector default config:
+  # https://github.com/librato/apm-agent-test-collector/blob/master/config.json
+  #----------------------------------------------------------------------------
+  java-collector-both:
+    image: 'traceqa/test-collector:java-collector'
+    mem_limit: 1G
+    #cpus: 1.0
+    volumes:
+      - ./test/java-collector/config-grpc-thrift.json:/config.json
+      - ./test/java-collector/settings.db.high-throughput:/settings.db
+    #environment:
+    #  - "JAVA_OPTS=-Dlog4j.configuration=log4j-debug.properties"
+    logging:
+      options:
+        max-file: '1'
+        max-size: 100m
+    ports:
+      - '8181:8181'
+      - '12223:12223'
+      - '12222:12222'
 
   #
-  # Not used with appoptics.
+  # second java-collector for benchmarking purposes if
+  # needed.
   #
-  #tracelyzer:
-  #  extends:
-  #    file: "../oboe-test/collectors/docker-compose.yml"
-  #    service: "tracelyzer"
-  #logalyzer:
-  #   build:
-  #    context: test/docker
-  #    dockerfile: logalyzer.yml
+  #java-collector-thrift:
+  #  image: 'traceqa/test-collector:java-collector'
+  #  mem_limit: 1G
+  #  cpus: 1.0
+  #  volumes:
+  #    - ./test/java-collector/config-thrift.json:/config.json
+  #    - ./test/java-collector/settings.db.high-throughput:/settings.db
+  #  #environment:
+  #  #  - "JAVA_OPTS=-Dlog4j.configuration=log4j-debug.properties"
+  #  logging:
+  #    options:
+  #      max-file: '1'
+  #      max-size: 100m
+  #  ports:
+  #    - '8182:8181'
+  #    - '12222:12222'
+
+
 
 
   #

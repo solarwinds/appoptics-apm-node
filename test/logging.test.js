@@ -173,12 +173,12 @@ describe('logging', function () {
   it('should handle the appoptics extended xtrace (%x) format', function () {
     let [logger, getter] = makeLogHandler()
     debug.log = logger
-    const md = new ao.addon.Metadata.makeRandom()
+    const md = new ao.addon.Event.makeRandom()
     ao.loggers.error('xtrace %x', md)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted, 'metadata').equal(`xtrace ${md.toString(1)}`);
+    expect(formatted, '%x formatted').equal(`xtrace ${md.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
     debug.log = logger
@@ -223,21 +223,7 @@ describe('logging', function () {
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
     expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`);
-
-  })
-
-  it('should handle the appoptics extended metadata (%m) format', function () {
-    // this only needs to verify that %m works; the previous test verified
-    // that all forms of this function work.
-    const [logger, getter] = makeLogHandler()
-    debug.log = logger
-    const md = new ao.addon.Metadata.makeRandom()
-    ao.loggers.error('metadata %m', md)
-    const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
-    expect(called).equal(true)
-    expect(level).equal('appoptics:error')
-    expect(formatted).equal(`metadata ${md.toString(1)}`);
-  })
+  });
 
   // check span formatting (%l). it was done when they were called layers and %s already
   // means string.
@@ -259,7 +245,7 @@ describe('logging', function () {
   })
 
   it('should handle the appoptics extended event (%e) format', function () {
-    const md = new ao.addon.Metadata.makeRandom()
+    const md = new ao.addon.Event.makeRandom()
     const edge = false
     const event = new ao.Event('log-event', 'entry', md, edge)
     const name = 'log-event:entry'

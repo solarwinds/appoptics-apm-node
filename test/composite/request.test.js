@@ -13,7 +13,6 @@ const expect = require('chai').expect;
 describe('probes.request', function () {
   const ctx = {driver: http, p: 'http'};
   let emitter
-  let realSampleTrace
 
   //
   // Intercept appoptics messages for analysis
@@ -22,13 +21,8 @@ describe('probes.request', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
-    }
   })
   after(function (done) {
-    ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
   })
 
@@ -132,7 +126,7 @@ describe('probes.request', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', addon.Metadata.makeRandom(1))
+      const origin = new ao.Event('span-name', 'label-name', addon.Event.makeRandom(1))
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -165,7 +159,7 @@ describe('probes.request', function () {
         res.end('done')
       })
 
-      const origin = new ao.Event('span-name', 'label-name', addon.Metadata.makeRandom(1))
+      const origin = new ao.Event('span-name', 'label-name', addon.Event.makeRandom(1))
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
@@ -256,6 +250,7 @@ describe('probes.request', function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
+      ao.probes['http-client'].enabled = false;
       conf.includeRemoteUrlParams = false
       const server = http.createServer(function (req, res) {
         res.end('done')
@@ -270,14 +265,15 @@ describe('probes.request', function () {
           check.server.exit(msg)
         }
       ], function (err) {
-        conf.includeRemoteUrlParams = true
+        conf.includeRemoteUrlParams = true;
+        ao.probes['http-client'].enabled = true;
         server.close(done.bind(null, err))
       })
 
       server.listen(function () {
         const port = server.address().port
-        request('http://localhost:' + port + '/foo?bar=baz')
-      })
+        request(`http://localhost:${port}/foo?bar=baz`);
+      });
     })
 
     //
@@ -299,7 +295,7 @@ describe('probes.request', function () {
       const headers = {}
       headers[key] = 'test'
 
-      it('should map ' + key + ' header to event.' + val, function (done) {
+      it(`should map ${key} header to event.` + val, function (done) {
         const server = http.createServer(function (req, res) {
           res.end('done')
         })

@@ -30,8 +30,9 @@ if (semver.satisfies(process.version, '>=8.0.0')) {
 
 describe(`probes.restify ${pkg.version}`, function () {
   let emitter
-  let fsState
+  let fsState;
   let previousTraces;
+  const previousHttpClient = ao.probes['http-client'].enabled;
 
   //
   // Intercept appoptics messages for analysis
@@ -45,6 +46,7 @@ describe(`probes.restify ${pkg.version}`, function () {
     ao.probes.fs.enabled = false
     previousTraces = ao.probes.restify.collectBacktraces;
     ao.probes.restify.collectBacktraces = false;
+    ao.probes['http-client'].enabled = false;
     ao.g.testing(__filename)
   })
   after(function (done) {
@@ -58,6 +60,7 @@ describe(`probes.restify ${pkg.version}`, function () {
     }
     ao.probes.fs.enabled = fsState
     ao.probes.restify.collectBacktraces = previousTraces;
+    ao.probes['http-client'].enabled = previousHttpClient;
   })
 
   const check = {
@@ -188,7 +191,7 @@ describe(`probes.restify ${pkg.version}`, function () {
   }
 
   if (semver.gte(process.version, '6.0.0')) {
-    it('should forward controller/action', testControllerAction)
+    it('should forward controller/action', testControllerAction);
     it('should create a span for each middleware', testMiddleware)
   } else {
     it.skip('should forward controller/action', testControllerAction)

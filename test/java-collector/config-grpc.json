@@ -1,0 +1,19 @@
+{
+  "port":8181,
+  "settingsLocation":"/settings.db",
+  "defaultCollectors": [{
+    "name": "uxpanapa-grpc-collector",
+      "protocol": "grpc",
+      "port":12223,
+      "queueCapacity": 25000,
+      "output" : {
+        "console": {},
+        "thrift": {
+          "METRIC": {
+            "host": "collector.appoptics.com",
+            "port": 443
+          }
+        }
+      }
+    }]
+}

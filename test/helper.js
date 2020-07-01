@@ -8,7 +8,7 @@ ao.skipSample = true
 
 const Emitter = require('events').EventEmitter
 const extend = require('util')._extend
-const bson = require('bson')
+const BSON = require('bson')
 const dgram = require('dgram')
 const https = require('https')
 const http = require('http')
@@ -67,8 +67,6 @@ if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
   ao.logLevel = 'none'
 }
 
-const BSON = new bson.BSONPure.BSON()
-
 let udpPort = 7832
 
 if (process.env.APPOPTICS_REPORTER_UDP) {
@@ -101,7 +99,12 @@ exports.appoptics = function (done) {
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
     const port = server.address().port
-    const parsed = BSON.deserialize(msg)
+    const parsed = BSON.deserialize(msg, {promoteBuffers: true});
+    for (const key in parsed) {
+      if (parsed[key] instanceof Buffer) {
+        parsed[key] = parsed[key].toString('utf8');
+      }
+    }
     log.test.messages('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed)     // eslint-disable-line no-console
@@ -432,9 +435,9 @@ function edgeTracker (parent, fn) {
 exports.checkEntry = checkEntry
 function checkEntry (name, fn) {
   return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'entry')
-    msg.should.have.property('Layer', name)
+    expect(msg).property('X-Trace');
+    const pair = `${msg.Layer}:${msg.Label}`;
+    expect(pair).equal(`${name}:entry`);
     if (fn) fn(msg)
   }
 }
@@ -442,9 +445,9 @@ function checkEntry (name, fn) {
 exports.checkExit = checkExit
 function checkExit (name, fn) {
   return function (msg) {
-    msg.should.have.property('X-Trace')
-    msg.should.have.property('Label', 'exit')
-    msg.should.have.property('Layer', name)
+    expect(msg).property('X-Trace');
+    const pair = `${msg.Layer}:${msg.Label}`;
+    expect(pair).equal(`${name}:exit`);
     if (fn) fn(msg)
   }
 }
@@ -478,7 +481,11 @@ function checkData (data, fn) {
     Object.keys(data).forEach(function (key) {
       msg.should.have.property(key, data[key])
     })
-    if (fn) fn(msg)
+    // does the caller want the message to perform additional checks,
+    // logging, or something else?
+    if (fn) {
+      fn(msg);
+    }
   }
 }
 
@@ -560,5 +567,8 @@ exports.makeSettings = function (settings) {
     source: 1,              // local agent config
     rate: ao.sampleRate,
   }
-  return Object.assign(s, settings)
+
+  Object.assign(s, settings);
+  s.traceTaskId = s.metadata = ao.addon.Event.makeRandom(s.doSample);
+  return s;
 }

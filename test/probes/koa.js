@@ -417,7 +417,8 @@ exports.render = function (emitter, done) {
 }
 
 exports.render_disabled = function (emitter, done) {
-  ao.probes['co-render'].enabled = false
+  ao.probes['co-render'].enabled = false;
+  ao.probes['http-client'].enabled = false;
   const app = koa()
 
   app.use(function* () {
@@ -442,7 +443,8 @@ exports.render_disabled = function (emitter, done) {
   ]
 
   helper.doChecks(emitter, validations, function () {
-    ao.probes['co-render'].enabled = true
+    ao.probes['co-render'].enabled = true;
+    ao.probes['http-client'].enabled = true;
     server.close(done)
   })
 

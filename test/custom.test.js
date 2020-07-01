@@ -31,7 +31,7 @@ function bbpsoon () {
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
-if (ao.addon.version === 'not loaded') {
+if (aob.version === 'not loaded') {
   describe('custom (without native bindings present)', function () {
     it('should passthrough sync instrument', function () {
       let counter = 0
@@ -97,7 +97,7 @@ describe('custom', function () {
   // Intercept appoptics messages for analysis
   //
   beforeEach(function (done) {
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
+    ao.sampleRate = aob.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     emitter = helper.appoptics(done)
   })
@@ -394,7 +394,7 @@ describe('custom', function () {
 
       function makeInner (data, done) {
         const name = 'inner-' + data.Index
-        const span = Span.last.descend(name)
+        const span = ao.lastSpan.descend(name)
         inner.push(span)
         span.run(function (wrap) {
           const delayed = wrap(done)
@@ -405,7 +405,7 @@ describe('custom', function () {
         })
       }
 
-      outer = Span.last.descend('link-test')
+      outer = ao.lastSpan.descend('link-test')
       outer.run(function () {
         const cb = after(2, done)
         makeInner({
@@ -475,6 +475,7 @@ describe('custom', function () {
         {level: 'error', message: 'ao.runInstrument found no span name or span-info function'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'no name supplied to runInstrument by span-maker function'},
       ]
       helper.checkLogMessages(logChecks)
 
@@ -523,6 +524,7 @@ describe('custom', function () {
         {level: 'error', message: 'ao.runInstrument found no span name or span-info function'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
         {level: 'error', message: 'ao.runInstrument failed to build span'},
+        {level: 'error', message: 'no name supplied to runInstrument by span-maker function'},
       ]
       helper.checkLogMessages(logChecks)
 
@@ -639,7 +641,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = aob.Event.makeRandom(0).toString();
     const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
 
     res.should.equal(test)
@@ -781,7 +783,7 @@ describe('custom', function () {
       'x-previous',                 // span name
       function (pcb) {              // runner function, creates a new span
         ao.startOrContinueTrace(
-          Span.last.events.entry.toString(),    // continue from the last span's id.
+          ao.lastSpan.events.entry.toString(),    // continue from the last span's id.
           () => {
             return {
               name: main,
@@ -914,7 +916,7 @@ describe('custom', function () {
       return makeSettings({source: 0, rate: 0})
     }
 
-    // because a span is created and entered then Span.last & Event.last
+    // because a span is created and entered then ao.lastSpan & ao.lastEvent
     // are cleared ao.startOrContinueTrace creates a new context, so the
     // next two errors should be generated.
     const logChecks = [
@@ -926,7 +928,7 @@ describe('custom', function () {
     helper.test(
       emitter,
       function (done) {             // test function
-        Span.last = Event.last = null
+        ao.lastSpan = ao.lastEvent = null
         ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done)
       },
       [],                           // checks
@@ -956,7 +958,7 @@ describe('custom', function () {
   })
 
   // it should handle bad bind arguments gracefully and issue warnings.
-  it('should bind functions to requestStore', function () {
+  it('should handle bad bind arguments correctly', function () {
     const bind = ao.requestStore.bind
     let threw = false
     let called = false
@@ -978,7 +980,7 @@ describe('custom', function () {
       called.should.equal(false)
       const span = Span.makeEntrySpan(main, makeSettings())
       // don't let it try to send metrics
-      delete span.topSpan
+      span.doMetrics = false;
       span.run(function () {
         ao.bind(null)
         called.should.equal(false)
@@ -1017,7 +1019,6 @@ describe('custom', function () {
       ao.bindEmitter(emitter)
       called.should.equal(false)
       const span = Span.makeEntrySpan(main, makeSettings())
-      delete span.topSpan
       span.run(function () {
         ao.bindEmitter(null)
         called.should.equal(false)
@@ -1084,7 +1085,7 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = ao.addon.Metadata.makeRandom(0).toString()
+    const xtrace = aob.Event.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
       main,                          // span name

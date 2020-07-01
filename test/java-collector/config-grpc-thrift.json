@@ -1,0 +1,37 @@
+{
+  "port":8181,
+  "settingsLocation":"/settings.db",
+  "defaultCollectors": [{
+    "name": "uxpanapa-grpc-collector",
+      "protocol": "grpc",
+      "port":12223,
+      "queueCapacity": 25000,
+      "output" : {
+        "console": {},
+        "thrift": {
+          "METRIC": {
+            "host": "collector.appoptics.com",
+            "port": 443
+          }
+        }
+      }
+    }, {
+      "name": "uxpanapa-thrift-collector",
+      "port": 12222,
+      "protocol": "thrift",
+      "queueCapacity": 25000,
+      "output": {
+        "console": {
+          "EVENT": {},
+          "METRIC": {},
+          "STATUS": {}
+        },
+        "thrift": {
+          "METRIC": {
+            "host": "collector.appoptics.com",
+            "port": 443
+          }
+        }
+      }
+  }]
+}

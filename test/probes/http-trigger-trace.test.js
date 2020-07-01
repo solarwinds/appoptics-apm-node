@@ -4,6 +4,7 @@ const helper = require('../helper')
 const {ao} = require('../1.test-common')
 const expect = require('chai').expect
 const addon = ao.addon
+const aob = addon;
 const testdebug = ao.logger.make('testdebug');
 
 const http = require('http');
@@ -200,9 +201,9 @@ function makeSignedHeaders (test) {
     headers['x-trace-options-signature'] = hexString;
   }
 
-  // add an xtrace with appropriate sample bit if requezted
+  // add an xtrace with appropriate sample bit if requested
   if ('xtrace' in test) {
-    headers['x-trace'] = ao.addon.Metadata.makeRandom(test.xtrace).toString();
+    headers['x-trace'] = ao.addon.Event.makeRandom(test.xtrace).toString();
   }
 
   return headers;
@@ -263,7 +264,8 @@ function wrapGTS () {
     settings.message = 'rate-exceeded';
     settings.doSample = false;
     settings.doMetrics = false;
-    settings.metadata.setSampleFlagTo(0);
+    // the event that getTraceSettings returned isn't important.
+    settings.traceTaskId = aob.Event.makeRandom(0);
     return settings;
   }
 }
@@ -430,7 +432,7 @@ describe('probes.http trigger-trace', function () {
         expect(xtrace.length).equal(60);
         // if expecting
         if ('xtrace' in t) {
-          const mdSampleBit = +ao.addon.Metadata.sampleFlagIsSet(xtrace);
+          const mdSampleBit = ao.sampling(xtrace) ? 1 : 0;
           // if the signature is bad then the expected bit should be 0.
           const expectedBit = (t.sig === 'bad' || (t.ts && t.ts !== 'ts')) ? 0 : t.xtrace;
           expect(mdSampleBit).equal(expectedBit, 'returned x-trace header must have correct sample bit');
