@@ -27,6 +27,7 @@ The configuration file can supply the following properties, showing their defaul
   insertTraceIdsIntoLogs: false,
   insertTraceIdsIntoMorgan: false,
   createTraceIdsToken: undefined,
+  proxy: undefined,
   probes: {
     // probe-specific defaults. see lib/probe-defaults.js for details
   }
@@ -39,6 +40,7 @@ The configuration file can supply the following properties, showing their defaul
 | -------------------- | -------- | ----------- |
 |serviceKey||As described above.|
 |enabled|`true`|If set to false the `appoptics-apm` agent will disable itself.|
+|proxy||Proxy that does not require authentication: `http://proxy-server:3306`. Proxy that does require Basic Authentication: `http://user:password@proxy-server:3306`.|
 |hostnameAlias||A logical hostname that can be used to easily identify the host.|
 |domainPrefix|`false`|Prefix transaction names with the domain name.|
 |ignoreConflicts|`false`|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
@@ -117,13 +119,14 @@ These environment variables may be set:
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
 |APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable.|
+|APPOPTICS_PROXY||Proxy that does not require authentication: `http://proxy-server:3306`. Proxy that does require Basic Authentication: `http://user:password@proxy-server:3306`.|
 |APPOPTICS_APM_CONFIG_NODE|`'$PWD/appoptics-apm'`|The location of the configuration file.|
-|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: `'ssl'`, `'udp'`. This is used for testing.|
-|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port. This is typically changed only for testing.|
-|APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
 |APPOPTICS_DEBUG_LEVEL|`'2'`|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|
 |APPOPTICS_TRIGGER_TRACE_ENABLED|`'true'`|Enable the trigger-trace feature. Options are `'true'`, `'false'`|
 |APPOPTICS_RUNTIME_METRICS|`'true'`|Enable runtime metrics. Options are `'true'`, `'false'`|
+|APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: `'ssl'`, `'udp'`. This is used for testing.|
+|APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port. This is typically changed only for testing.|
+|APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
 
 Deprecated environment variables. They will be removed in the future:
 
