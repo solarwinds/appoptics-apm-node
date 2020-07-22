@@ -12,6 +12,7 @@ const guc = require(`${relativeDir}/lib/get-unified-config`);
 //
 const expectedGlobalDefaults = {
   enabled: true,
+  serviceKey: '',
   triggerTraceEnabled: true,
   traceMode: 1,
   logLevel: 2,
@@ -36,7 +37,7 @@ const expectedProbeDefaults = require(`${relativeDir}/lib/probe-defaults`);
 //  warnings: [],                       // general warnings
 //}
 
-const rootConfigName = `${process.cwd()}/appoptics-apm`;
+const rootConfigName = `${process.cwd()}/appoptics-apm-config`;
 
 //
 // core function to check results
@@ -48,6 +49,9 @@ function doChecks (cfg, overrides = {}) {
   expect(cfg.file).equal(expected);
 
   expected = Object.assign({}, expectedGlobalDefaults, overrides.global);
+  // special to allow undefined serviceKey/serviceName to remove key
+  if (expected.serviceKey === undefined) delete expected.serviceKey;
+  if (expected.serviceName === undefined) delete expected.serviceName;
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
   expected = Object.assign({}, expectedProbeDefaults);
@@ -70,6 +74,9 @@ function doChecks (cfg, overrides = {}) {
 
   expected = overrides.settingsErrors || [];
   expect(cfg.settingsErrors).an('array').deep.equal(expected, 'settingsErrors mismatch');
+
+  expected = overrides.fatals || ['not a valid serviceKey: '];
+  expect(cfg.fatals).an('array').deep.equal(expected, 'fatals mismatch');
 
   expected = overrides.errors || [];
   expect(cfg.errors).an('array').deep.equal(expected, 'errors mismatch');
@@ -123,7 +130,7 @@ function toTransactionSettingsError (settings, message) {
 //==============
 // start testing
 //==============
-describe('unified-config', function () {
+describe('get-unified-config', function () {
   //
   // save the configuration
   //
@@ -147,6 +154,9 @@ describe('unified-config', function () {
         delete process.env[k];
       }
     }
+    delete process.env.LAMBDA_TASK_ROOT;
+    delete process.env.AWS_LAMBDA_FUNCTION_NAME;
+
     // remove any files created with the default names
     try {fs.unlinkSync(`${rootConfigName}.json`)} catch (e) {}
     try {fs.unlinkSync(`${rootConfigName}.js`)} catch (e) {}
@@ -185,10 +195,11 @@ describe('unified-config', function () {
       domainPrefix: false,
     }
     writeConfigJSON(config);
-
     const cfg = guc();
 
-    doChecks(cfg, {global: config});
+    const expected = Object.assign({}, config, {serviceKey: ''});
+    const fatals = [`not a valid serviceKey: ${'f'.repeat(64)}`];
+    doChecks(cfg, {global: expected, fatals});
   })
 
   it('should warn about deprecated config file keys', function () {
@@ -204,7 +215,6 @@ describe('unified-config', function () {
     config.traceMode = 1;
     const warnings = [
       'traceMode is deprecated; it will be invalid in the future',
-      'sampleRate is deprecated; it will be invalid in the future',
     ];
     doChecks(cfg, {global: config, warnings});
   })
@@ -257,7 +267,7 @@ describe('unified-config', function () {
       traceMode: 1,
       hostnameAlias: '',
       domainPrefix: false,
-      serviceKey: 'undefined',
+      serviceKey: '',
       insertTraceIdsIntoLogs: false,
       insertTraceIdsIntoMorgan: false,
     };
@@ -265,7 +275,7 @@ describe('unified-config', function () {
     writeConfigJs(literal.join('\n'));
 
     // specify the filename with extension to work around node bug/feature/issue.
-    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm.js';
+    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm-config.js';
 
     const cfg = guc();
 
@@ -273,7 +283,13 @@ describe('unified-config', function () {
       'invalid configuration file value createTraceIdsToken: false',
       'traceMode is deprecated; it will be invalid in the future',
     ];
-    doChecks(cfg, {file: `${process.cwd()}/${file}`, global: expected, warnings});
+    const overrides = {
+      file: `${process.cwd()}/${file}`,
+      global: expected,
+      fatals: ['not a valid serviceKey: undefined'],
+      warnings,
+    };
+    doChecks(cfg, overrides);
   })
 
   it('should handle a non-default config file correctly', function () {
@@ -300,9 +316,7 @@ describe('unified-config', function () {
     const cfg = guc();
 
     const message = `Cannot find module '${fullpath}'`;
-    const errors = [
-      `Cannot read config file ${fullpath}: ${message}`
-    ]
+    const errors = [`Cannot read config file ${fullpath}: ${message}`];
     doChecks(cfg, {file: fullpath, errors});
   })
 
@@ -312,11 +326,9 @@ describe('unified-config', function () {
     const cfg = guc();
 
     const message = 'Unexpected token \n in JSON at position 11';
-    const errors = [
-      `Cannot read config file ${rootConfigName}: ${rootConfigName}.json: ${message}`
-    ];
+    const errors = [`Cannot read config file ${rootConfigName}: ${rootConfigName}.json: ${message}`];
     doChecks(cfg, {errors});
-  })
+  });
 
   //
   // env vars
@@ -373,8 +385,25 @@ describe('unified-config', function () {
     config.hostnameAlias = process.env.APPOPTICS_HOSTNAME_ALIAS;
     config.serviceKey = process.env.APPOPTICS_SERVICE_KEY;
     config.unifiedLogging = process.env.APPOPTICS_UNIFIED_LOGGING;
-    doChecks(cfg, {global: config});
+
+    const expected = Object.assign(config, {serviceKey: ''});
+    doChecks(cfg, {global: expected, fatals: [`not a valid serviceKey: ${'ab'.repeat(32)}`]});
   })
+
+  it('should use environment variables when the config file is invalid', function () {
+    writeConfigLiteral('{"i am: bad\n');
+    process.env.APPOPTICS_SERVICE_KEY = `${'ac'.repeat(32)}:valid-service-key`;
+
+    const cfg = guc();
+
+    const message = 'Unexpected token \n in JSON at position 11';
+    const errors = [
+      `Cannot read config file ${rootConfigName}: ${rootConfigName}.json: ${message}`,
+    ];
+    // it's a valid service key so clear fatals which expects an invalid key
+    const fatals = [];
+    doChecks(cfg, {global: {serviceKey: process.env.APPOPTICS_SERVICE_KEY}, errors, fatals});
+  });
 
   it('should correctly handle env vars with explicit names', function () {
     process.env.APPOPTICS_DEBUG_LEVEL = 4;
@@ -438,7 +467,9 @@ describe('unified-config', function () {
 
     const cfg = guc();
 
-    const errors = [`invalid ignoreErrors setting: ${JSON.stringify('i am a shrimp')}`];
+    const errors = [
+      `invalid ignoreErrors setting: ${JSON.stringify('i am a shrimp')}`,
+    ];
     delete config.probes.fs.ignoreErrors;
     doChecks(cfg, {probes: config.probes, errors});
   })
@@ -449,11 +480,74 @@ describe('unified-config', function () {
 
     const cfg = guc();
 
-    const errors = [`invalid error code to ignore: ${JSON.stringify({readdir: 'and so am i'})}`];
+    const errors = [
+      `invalid error code to ignore: ${JSON.stringify({readdir: 'and so am i'})}`
+    ];
     delete config.probes.fs.ignoreErrors.readdir;
     doChecks(cfg, {probes: config.probes, errors});
 
   })
+
+  //
+  // verify that serviceName and serviceKey are handled correctly.
+  //
+  it('should not check or supply a serviceKey in the lambda environment', function () {
+    const serviceName = 'service-name';
+
+    process.env.AWS_LAMBDA_FUNCTION_NAME = 'bruce';
+    process.env.LAMBDA_TASK_ROOT = '/';
+    process.env.APPOPTICS_SERVICE_NAME = serviceName;
+    process.env.APPOPTICS_SERVICE_KEY = 'red-shoes';
+
+    const cfg = guc();
+
+    // there is a valid serviceName so the bad service key should not matter.
+    const fatals = [];
+    const expected = Object.assign({global: {serviceName, serviceKey: undefined}, fatals});
+    doChecks(cfg, expected);
+  });
+
+  it('should not check or supply a serviceName in a non-lambda environment', function () {
+    const serviceKey = `${'f'.repeat(64)}:service-name`;
+    process.env.APPOPTICS_SERVICE_NAME = '';
+    process.env.APPOPTICS_SERVICE_KEY = serviceKey;
+
+    const cfg = guc();
+
+    // there is a valid serviceName so not fatal should be detected
+    const fatals = [];
+    const expected = Object.assign({global: {serviceName: undefined, serviceKey}, fatals});
+    doChecks(cfg, expected);
+  });
+
+  it('an invalid serviceName in a lambda environment is a fatal error', function () {
+    const serviceName = '';
+
+    process.env.AWS_LAMBDA_FUNCTION_NAME = 'bruce';
+    process.env.LAMBDA_TASK_ROOT = '/';
+    process.env.APPOPTICS_SERVICE_NAME = serviceName;
+    process.env.APPOPTICS_SERVICE_KEY = `${'f'.repeat(64)}:red-shoes`;
+
+    const cfg = guc();
+
+    // there is a val
+    const fatals = ['not a valid serviceName: '];
+    const expected = Object.assign({global: {serviceName, serviceKey: undefined}, fatals});
+    doChecks(cfg, expected);
+  });
+
+  it('an invalid serviceKey in a non-lambda environment is a fatal error', function () {
+    const serviceKey = `${'f'.repeat(32)}:service-name`;
+    process.env.APPOPTICS_SERVICE_NAME = 'i-am-valid';
+    process.env.APPOPTICS_SERVICE_KEY = serviceKey;
+
+    const cfg = guc();
+
+    // the serviceKey is not valid and should be reported
+    const fatals = [`not a valid serviceKey: ${serviceKey}`];
+    const expected = Object.assign({global: {serviceName: undefined, serviceKey: ''}, fatals});
+    doChecks(cfg, expected);
+  });
 
   //
   // transaction settings
@@ -503,7 +597,7 @@ describe('unified-config', function () {
     writeConfigJs(literal.join('\n'));
 
     // specify the filename with extension to work around node bug/feature/issue.
-    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm.js';
+    const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm-config.js';
 
     const cfg = guc();
 

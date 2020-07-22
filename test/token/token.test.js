@@ -16,11 +16,11 @@ const assert = require('assert');
 
 describe('verify that a legacy token is handled correctly', function () {
   it('the service name should be lower case', function () {
-    assert(ao.serviceKey === `${token}:${name.toLowerCase()}`);
+    assert.equal(ao.cfg.serviceKey, `${token}:${name.toLowerCase()}`);
   });
 
   it('shouldn\'t change the environment variable', function () {
-    assert(process.env.APPOPTICS_SERVICE_KEY === `${token}:${name}`);
+    assert.equal(process.env.APPOPTICS_SERVICE_KEY, `${token}:${name}`);
   });
 
   it('should validate with the collector using the token', function () {

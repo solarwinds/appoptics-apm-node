@@ -16,11 +16,11 @@ const assert = require('assert');
 
 describe('verify that a swoken is handled correctly', function () {
   it('the service name should be lower case', function () {
-    assert(ao.serviceKey === `${swoken}:${name.toLowerCase()}`);
+    assert.equal(ao.cfg.serviceKey, `${swoken}:${name.toLowerCase()}`);
   });
 
   it('shouldn\'t change the environment variable', function () {
-    assert(process.env.APPOPTICS_SERVICE_KEY === `${swoken}:${name}`);
+    assert.equal(process.env.APPOPTICS_SERVICE_KEY, `${swoken}:${name}`);
   });
 
   it('should validate with the collector using the swoken', function () {
