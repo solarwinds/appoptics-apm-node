@@ -15,6 +15,13 @@ else
     AO_COLLECTOR=collector-stg.appoptics.com
 fi
 
+global_path="$NVM_DIR/versions/node/`node -v`/lib/node_modules"
+if [ -d "$global_path" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="${PATH:+"$PATH:"}$global_path"
+elif [ ! -d "$global_path" ]; then
+    echo "$global_path is not a directory, skipping"
+fi
+
 if [[ -z "$ARG" ]]; then
     echo "source this script with an argument of docker, docker-scribe, bash,"
     echo "bash-testing, or travis\n"
