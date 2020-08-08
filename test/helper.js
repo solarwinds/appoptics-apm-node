@@ -169,8 +169,8 @@ exports.doChecks = function (emitter, checks, done) {
     }
 
     // Always verify that X-Trace and Edge values are valid
-    msg.should.have.property('X-Trace').and.match(/^2B[0-9A-F]{58}$/)
-    if (msg.Edge) msg.Edge.should.match(/^[0-9A-F]{16}$/)
+    expect(msg).property('X-Trace').and.match(/^2B[0-9A-F]{58}$/)
+    if (msg.Edge) expect(msg.Edge).match(/^[0-9A-F]{16}$/)
 
     log.test.info(checks.length + ' checks left')
     if (!checks.length) {
@@ -186,13 +186,13 @@ exports.doChecks = function (emitter, checks, done) {
 
 const check = {
   'http-entry': function (msg) {
-    msg.should.have.property('Layer', 'nodejs')
-    msg.should.have.property('Label', 'entry')
+    expect(msg).property('Layer', 'nodejs')
+    expect(msg).property('Label', 'entry')
     log.test.info('entry is valid')
   },
   'http-exit': function (msg) {
-    msg.should.have.property('Layer', 'nodejs')
-    msg.should.have.property('Label', 'exit')
+    expect(msg).property('Layer', 'nodejs')
+    expect(msg).property('Label', 'exit')
     log.test.info('exit is valid')
   }
 }
@@ -252,12 +252,12 @@ exports.test = function (emitter, test, validations, done) {
   // noops skip testing the 'outer' span.
   /*
   function outerEntry (msg) {
-    msg.should.have.property('Layer', 'outer')
-    msg.should.have.property('Label', 'entry')
+    expect(msg).property('Layer', 'outer')
+    expect(msg).property('Label', 'entry')
   }
   function outerExit (msg) {
-    msg.should.have.property('Layer', 'outer')
-    msg.should.have.property('Label', 'exit')
+    expect(msg).property('Layer', 'outer')
+    expect(msg).property('Label', 'exit')
   }
   // */
   // copy the caller's array so we can modify it without surprising
@@ -405,7 +405,7 @@ exports.setUntil = function (obj, prop, value, done) {
 
 exports.linksTo = linksTo
 function linksTo (a, b) {
-  a.Edge.should.eql(b['X-Trace'].substr(42, 16))
+  expect(a.Edge).eql(b['X-Trace'].substr(42, 16))
 }
 
 exports.edgeTracker = edgeTracker
@@ -457,7 +457,7 @@ function checkInfo (data, fn) {
   const withData = checkData(data)
   return function (msg) {
     msg.should.not.have.property('Layer')
-    msg.should.have.property('Label', 'info')
+    expect(msg).property('Label', 'info')
     withData(msg)
     if (fn) fn(msg)
   }
@@ -467,10 +467,10 @@ exports.checkError = checkError
 function checkError (error, fn) {
   return function (msg) {
     msg.should.not.have.property('Layer')
-    msg.should.have.property('Label', 'error')
-    msg.should.have.property('ErrorClass', 'Error')
-    msg.should.have.property('ErrorMsg', error.message)
-    msg.should.have.property('Backtrace', error.stack)
+    expect(msg).property('Label', 'error')
+    expect(msg).property('ErrorClass', 'Error')
+    expect(msg).property('ErrorMsg', error.message)
+    expect(msg).property('Backtrace', error.stack)
     if (fn) fn(msg)
   }
 }
@@ -479,7 +479,7 @@ exports.checkData = checkData
 function checkData (data, fn) {
   return function (msg) {
     Object.keys(data).forEach(function (key) {
-      msg.should.have.property(key, data[key])
+      expect(msg).property(key, data[key])
     })
     // does the caller want the message to perform additional checks,
     // logging, or something else?
