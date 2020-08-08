@@ -3,6 +3,7 @@
 # script to run tests
 #
 
+#
 # various tests are separated because mocha consolidates all tests in each command as one
 # so they are not truly independent. e.g., every require across all tests is required at
 # the start of tests. that makes it impossible to run tests without the addon loaded when
@@ -10,7 +11,23 @@
 #
 
 ERRORS=( )
+SKIPPED=( )
 PASSED=0
+
+# if one of the strings in SKIP is found in a test file that file will be skipped.
+SKIP=${SKIP:-"test/solo/notifications"}
+
+function skipThis() {
+    for s in $SKIP
+    do
+        if [[ "$1" == *"$s"* ]]; then
+            return 1
+        fi
+    done
+    return 0
+}
+
+
 
 #
 # run unit tests with the addon enabled
@@ -57,29 +74,30 @@ fi
 # have to be run one-at-a-time.
 #
 NEW_ERRORS=""
+NEW_SKIPPED=""
 FS=$(ls test/solo/*.test.js)
 for F in $FS
 do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
+    skipThis $F
+    if [ $? -eq 1 ]; then
+        NEW_SKIPPED="$NEW_SKIPPED $F"
     else
-        PASSED=`expr $PASSED + 1`
+        mocha $F
+        if [ $? -ne 0 ]
+        then
+            NEW_ERRORS="$NEW_ERRORS $F"
+        else
+            PASSED=`expr $PASSED + 1`
+        fi
     fi
 done
 if [ ! -z "$NEW_ERRORS" ]; then
     ERRORS+=( "SOLO_ERRORS:$NEW_ERRORS" )
 fi
-#mocha test/solo/notifications.test.js
-#mocha test/solo/notifications-timeout.test.js
+if [ ! -z "$NEW_SKIPPED" ]; then
+    SKIPPED+=( "SOLO_SKIPPED:$NEW_SKIPPED" )
+fi
 
-#
-# it's not possible to change oboe logging level on the fly so these
-# have to be run one-at-a-time.
-#
-mocha test/solo/notifications.test.js
-mocha test/solo/notifications-timeout.test.js
 
 #
 # verify that both types of tokens work
@@ -163,13 +181,20 @@ if [ ! -z "$NEW_ERRORS" ]; then
 fi
 
 
+
+
 # provide a summary of the test results.
 if [ ${#ERRORS[*]} -ne 0 ]; then
-    echo "$PASSED test suites passed"
-    echo "${#ERRORS[*]} test suites failed"
+    echo "$PASSED suites passed"
+    echo "${#ERRORS[*]} suites failed"
     for ix in ${!ERRORS[@]}
     do
         echo ${ERRORS[$ix]}
+    done
+    echo "${#SKIPPED[*]} suites skipped"
+    for ix in ${!SKIPPED[@]}
+    do
+        echo ${SKIPPED[$ix]}
     done
 
     exit 1
