@@ -10,9 +10,15 @@
 # some tests do load the addon.
 #
 
-ERRORS=( )
-SKIPPED=( )
-PASSED=0
+ERRORS=( )          # list of "GROUP test test test GROUP ..." which failed
+SKIPPED=( )         # as above for tests that were skipped
+
+GROUPS_PASSED=0
+GROUPS_FAILED=0
+
+TESTS_PASSED=0
+TESTS_FAILED=0
+TESTS_SKIPPED=0
 
 # if one of the strings in SKIP is found in a test file that file will be skipped.
 SKIP=${SKIP:-"test/solo/notifications"}
@@ -27,136 +33,73 @@ function skipThis() {
     return 0
 }
 
+# executeTests name pattern
+function executeTestGroup() {
+    local group_name=$1
+    local test_pattern=$2
+
+    local new_errors=""
+    local new_skipped=""
+
+    local FS=$(ls $test_pattern)
+    for F in $FS
+    do
+        skipThis $F
+        if [ $? -eq 1 ]; then
+            new_skipped="$new_skipped $F"
+            TESTS_SKIPPED=`expr $TESTS_SKIPPED + 1`
+        else
+            mocha $F
+            if [ $? -ne 0 ]; then
+                new_errors="$new_errors $F"
+                TESTS_FAILED=`expr $TESTS_FAILED + 1`
+            else
+                TESTS_PASSED=`expr $TESTS_PASSED + 1`
+            fi
+        fi
+    done
+    if [ -z "$new_errors" ]; then
+        GROUPS_PASSED=`expr $GROUPS_PASSED + 1`
+    else
+        GROUPS_FAILED=`expr $GROUPS_FAILED + 1`
+        ERRORS+=( "$group_name:$new_errors" )
+    fi
+    if [ -n "$new_skipped" ]; then
+        SKIPPED+=( "$group_name:$new_skipped" )
+    fi
+}
 
 
 #
 # run unit tests with the addon enabled
 #
-NEW_ERRORS=""
-FS=$(ls test/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "CORE_ERRORS:$NEW_ERRORS" )
-fi
+executeTestGroup "CORE" "test/*.test.js"
 
 #
-# run unit tests without the addon enabled
+# run unit tests without the addon disabled
 #
-NEW_ERRORS=""
-FS=$(ls test/no-addon/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "NO_ADDON_ERRORS:$NEW_ERRORS" )
-fi
-#mocha test/*.test.js
-#mocha test/no-addon/*.test.js
+executeTestGroup "NO-ADDON" "test/no-addon/*.test.js"
 
 #
-# it's not possible to change oboe logging level on the fly so these
-# have to be run one-at-a-time.
+# originally these tests were the only ones to run one-at-a-time
+# because it's not possible to change the oboe logging level after
+# initialization time. now they don't really need to be separate.
 #
-NEW_ERRORS=""
-NEW_SKIPPED=""
-FS=$(ls test/solo/*.test.js)
-for F in $FS
-do
-    skipThis $F
-    if [ $? -eq 1 ]; then
-        NEW_SKIPPED="$NEW_SKIPPED $F"
-    else
-        mocha $F
-        if [ $? -ne 0 ]
-        then
-            NEW_ERRORS="$NEW_ERRORS $F"
-        else
-            PASSED=`expr $PASSED + 1`
-        fi
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "SOLO_ERRORS:$NEW_ERRORS" )
-fi
-if [ ! -z "$NEW_SKIPPED" ]; then
-    SKIPPED+=( "SOLO_SKIPPED:$NEW_SKIPPED" )
-fi
+executeTestGroup "SOLO" "test/solo/*.test.js"
 
 
 #
 # verify that both types of tokens work
 #
-NEW_ERRORS=""
-FS=$(ls test/swoken/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "SWOKEN_ERRORS:$NEW_ERRORS" )
-fi
-
-NEW_ERRORS=""
-FS=$(ls test/token/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "TOKEN_ERRORS:$NEW_ERRORS" )
-fi
-#mocha test/swoken/*.test.js
-#mocha test/token/*.test.js
+executeTestGroup "SWOKEN" "test/swoken/*.test.js"
+executeTestGroup "TOKEN" "test/token/*.test.js"
 
 #
 # this tests the http client through using the request package with promises. it's
 # a step in the direction of end-to-end testing that should incorporate a server and
 # verifying that the appoptics.com collector received the traces.
 #
-NEW_ERRORS=""
-FS=$(ls test/composite/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "COMPOSITE_ERRORS:$NEW_ERRORS" )
-fi
-#mocha test/composite/*.test.js
+executeTestGroup "COMPOSITE" "test/composite/*.test.js"
 
 #
 # run the probe tests
@@ -164,40 +107,36 @@ fi
 # they are last because at least one test might not close emitters or timers. that test causes
 # node to hang.
 #
-NEW_ERRORS=""
-FS=$(ls test/probes/*.test.js)
-for F in $FS
-do
-    mocha $F
-    if [ $? -ne 0 ]
-    then
-        NEW_ERRORS="$NEW_ERRORS $F"
-    else
-        PASSED=`expr $PASSED + 1`
-    fi
-done
-if [ ! -z "$NEW_ERRORS" ]; then
-    ERRORS+=( "COMPOSITE_ERRORS:$NEW_ERRORS" )
-fi
+executeTestGroup "PROBES" "test/probes/*.test.js"
 
 
-
-
+#=======================================
 # provide a summary of the test results.
+#=======================================
 if [ ${#ERRORS[*]} -ne 0 ]; then
-    echo "$PASSED suites passed"
-    echo "${#ERRORS[*]} suites failed"
+    echo "$TESTS_PASSED tests in $GROUPS_PASSED groups passed"
+    echo "$TESTS_FAILED tests in ${#ERRORS[*]} groups failed"
     for ix in ${!ERRORS[@]}
     do
-        echo ${ERRORS[$ix]}
+        echo "    ${ERRORS[$ix]}"
     done
-    echo "${#SKIPPED[*]} suites skipped"
-    for ix in ${!SKIPPED[@]}
-    do
-        echo ${SKIPPED[$ix]}
-    done
+    if [ $TESTS_SKIPPED -ne 0 ]; then
+        echo "$TESTS_SKIPPED tests in ${#SKIPPED[*]} groups skipped"
+        for ix in ${!SKIPPED[@]}
+        do
+            echo "    ${SKIPPED[$ix]}"
+        done
+    fi
 
     exit 1
 else
-    echo "No errors - $PASSED test suites passed"
+    echo "No errors - $TESTS_PASSED tests in $GROUPS_PASSED groups passed"
+    if [ $TESTS_SKIPPED -ne 0 ]; then
+        echo "$TESTS_SKIPPED tests in ${#SKIPPED[*]} groups skipped"
+        for ix in ${!SKIPPED[@]}
+        do
+            echo "    ${SKIPPED[$ix]}"
+        done
+    fi
+    exit 0
 fi
