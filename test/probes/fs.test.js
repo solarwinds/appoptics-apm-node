@@ -28,7 +28,7 @@ describe('probes.fs once', function () {
   })
 
   // fake test to work around UDP dropped message issue
-  it.only('UDP might lose a message', function (done) {
+  it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
       ao.instrument('fake', noop)
       done()
@@ -591,7 +591,7 @@ describe('probes.fs', function () {
     ], reset)
   });
 
-  it.only('should report open errors', function (done) {
+  it('should report open errors', function (done) {
     const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
     delete ao.probes.fs.ignoreErrors;
     function reset (err) {

@@ -489,56 +489,11 @@ describe('get-unified-config', function () {
   })
 
   //
-  // verify that serviceName and serviceKey are handled correctly.
+  // verify that a misisng serviceKey is handled correctly.
   //
-  it('should not check or supply a serviceKey in the lambda environment', function () {
-    const serviceName = 'service-name';
-
-    process.env.AWS_LAMBDA_FUNCTION_NAME = 'bruce';
-    process.env.LAMBDA_TASK_ROOT = '/';
-    process.env.APPOPTICS_SERVICE_NAME = serviceName;
-    process.env.APPOPTICS_SERVICE_KEY = 'red-shoes';
-
-    const cfg = guc();
-
-    // there is a valid serviceName so the bad service key should not matter.
-    const fatals = [];
-    const expected = Object.assign({global: {serviceName, serviceKey: undefined}, fatals});
-    doChecks(cfg, expected);
-  });
-
-  it('should not check or supply a serviceName in a non-lambda environment', function () {
-    const serviceKey = `${'f'.repeat(64)}:service-name`;
-    process.env.APPOPTICS_SERVICE_NAME = '';
-    process.env.APPOPTICS_SERVICE_KEY = serviceKey;
-
-    const cfg = guc();
-
-    // there is a valid serviceName so not fatal should be detected
-    const fatals = [];
-    const expected = Object.assign({global: {serviceName: undefined, serviceKey}, fatals});
-    doChecks(cfg, expected);
-  });
-
-  it('an invalid serviceName in a lambda environment is a fatal error', function () {
-    const serviceName = '';
-
-    process.env.AWS_LAMBDA_FUNCTION_NAME = 'bruce';
-    process.env.LAMBDA_TASK_ROOT = '/';
-    process.env.APPOPTICS_SERVICE_NAME = serviceName;
-    process.env.APPOPTICS_SERVICE_KEY = `${'f'.repeat(64)}:red-shoes`;
-
-    const cfg = guc();
-
-    // there is a val
-    const fatals = ['not a valid serviceName: '];
-    const expected = Object.assign({global: {serviceName, serviceKey: undefined}, fatals});
-    doChecks(cfg, expected);
-  });
 
   it('an invalid serviceKey in a non-lambda environment is a fatal error', function () {
     const serviceKey = `${'f'.repeat(32)}:service-name`;
-    process.env.APPOPTICS_SERVICE_NAME = 'i-am-valid';
     process.env.APPOPTICS_SERVICE_KEY = serviceKey;
 
     const cfg = guc();
