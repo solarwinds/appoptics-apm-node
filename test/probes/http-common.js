@@ -481,6 +481,36 @@ describe(`probes.${p}`, function () {
       })
     })
 
+    it('should map a specific header to ClientIP when specified', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done');
+      });
+
+      ao.probes[p]['client-ip-header'] = 'x-real-ip';
+      const ClientIPExpected = '777.777.333.333';
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg);
+          expect(msg).property('ClientIP', ClientIPExpected);
+        },
+        function (msg) {
+          check.server.exit(msg);
+        }
+      ], function () {
+        server.close(done);
+      });
+
+      server.listen(function () {
+        const port = server.address().port;
+        const options = {
+          url: `${p}://localhost:${port}`,
+          headers: {'x-real-ip': ClientIPExpected}
+        }
+        request(options);
+      });
+    })
+
     //
     // Test errors emitted on http request object
     //
