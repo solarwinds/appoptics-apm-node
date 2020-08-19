@@ -56,7 +56,7 @@ The configuration file can supply the following properties, showing their defaul
 
 #### Configuration File Probe Settings ####
 
-Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different configuration options. See `lib/defaults.js` for details.
+Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different configuration options. See `lib/probe-defaults.js` for details.
 
 There is one particular setting for the `fs` probe that you might want to be aware of: `ignoreErrors`. The only errors that can be ignored are node
 System errors (see the node [docs](https://nodejs.org/api/errors.html#errors_common_system_errors)) provided by the asynchronous functions or thrown
