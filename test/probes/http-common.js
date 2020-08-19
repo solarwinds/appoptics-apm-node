@@ -518,6 +518,7 @@ describe(`probes.${p}`, function () {
 
       helper.doChecks(emitter, [
         function (msg) {
+          // this checks that ClientIP is set.
           check.server.entry(msg);
         },
         function (msg) {
