@@ -509,7 +509,32 @@ describe(`probes.${p}`, function () {
         }
         request(options);
       });
-    })
+    });
+
+    it('should set ClientIP when req[\'client-ip-header\'] is undefined', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done');
+      });
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg);
+        },
+        function (msg) {
+          check.server.exit(msg);
+        }
+      ], function () {
+        server.close(done);
+      });
+
+      server.listen(function () {
+        const port = server.address().port;
+        const options = {
+          url: `${p}://localhost:${port}`,
+        };
+        request(options);
+      });
+    });
 
     //
     // Test errors emitted on http request object
