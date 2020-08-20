@@ -16,9 +16,9 @@ SKIPPED=( )         # as above for tests that were skipped
 GROUPS_PASSED=0
 GROUPS_FAILED=0
 
-TESTS_PASSED=0
-TESTS_FAILED=0
-TESTS_SKIPPED=0
+SUITES_PASSED=0
+SUITES_FAILED=0
+SUITES_SKIPPED=0
 
 # if one of the strings in SKIP is found in a test file that file will be skipped.
 SKIP=${SKIP:-"test/solo/notifications"}
@@ -47,14 +47,14 @@ function executeTestGroup() {
         skipThis $F
         if [ $? -eq 1 ]; then
             new_skipped="$new_skipped $F"
-            TESTS_SKIPPED=`expr $TESTS_SKIPPED + 1`
+            SUITES_SKIPPED=`expr $SUITES_SKIPPED + 1`
         else
             mocha $F
             if [ $? -ne 0 ]; then
                 new_errors="$new_errors $F"
-                TESTS_FAILED=`expr $TESTS_FAILED + 1`
+                SUITES_FAILED=`expr $SUITES_FAILED + 1`
             else
-                TESTS_PASSED=`expr $TESTS_PASSED + 1`
+                SUITES_PASSED=`expr $SUITES_PASSED + 1`
             fi
         fi
     done
@@ -114,14 +114,14 @@ executeTestGroup "PROBES" "test/probes/*.test.js"
 # provide a summary of the test results.
 #=======================================
 if [ ${#ERRORS[*]} -ne 0 ]; then
-    echo "$TESTS_PASSED tests in $GROUPS_PASSED groups passed"
-    echo "$TESTS_FAILED tests in ${#ERRORS[*]} groups failed"
+    echo "$SUITES_PASSED suites in $GROUPS_PASSED groups passed"
+    echo "$SUITES_FAILED suites in ${#ERRORS[*]} groups failed"
     for ix in ${!ERRORS[@]}
     do
         echo "    ${ERRORS[$ix]}"
     done
-    if [ $TESTS_SKIPPED -ne 0 ]; then
-        echo "$TESTS_SKIPPED tests in ${#SKIPPED[*]} groups skipped"
+    if [ $SUITES_SKIPPED -ne 0 ]; then
+        echo "$SUITES_SKIPPED suites in ${#SKIPPED[*]} groups skipped"
         for ix in ${!SKIPPED[@]}
         do
             echo "    ${SKIPPED[$ix]}"
@@ -130,9 +130,9 @@ if [ ${#ERRORS[*]} -ne 0 ]; then
 
     exit 1
 else
-    echo "No errors - $TESTS_PASSED tests in $GROUPS_PASSED groups passed"
-    if [ $TESTS_SKIPPED -ne 0 ]; then
-        echo "$TESTS_SKIPPED tests in ${#SKIPPED[*]} groups skipped"
+    echo "No errors - $SUITES_PASSED suites in $GROUPS_PASSED groups passed"
+    if [ $SUITES_SKIPPED -ne 0 ]; then
+        echo "$SUITES_SKIPPED suites in ${#SKIPPED[*]} groups skipped"
         for ix in ${!SKIPPED[@]}
         do
             echo "    ${SKIPPED[$ix]}"
