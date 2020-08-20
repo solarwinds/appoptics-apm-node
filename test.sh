@@ -113,15 +113,22 @@ executeTestGroup "PROBES" "test/probes/*.test.js"
 #=======================================
 # provide a summary of the test results.
 #=======================================
+[ $SUITES_PASSED -ne 1 ] && sps=s
+[ $GROUPS_PASSED -ne 1 ] && gps=s
+[ $SUITES_FAILED -ne 1 ] && sfs=s
+[ ${#ERRORS[*]} -ne 1 ] && gfs=s
+[ $SUITES_SKIPPED -ne 1 ] && sss=s
+[ ${#SKIPPED[*]} -ne 1 ] && gss=s
+
 if [ ${#ERRORS[*]} -ne 0 ]; then
-    echo "$SUITES_PASSED suites in $GROUPS_PASSED groups passed"
-    echo "$SUITES_FAILED suites in ${#ERRORS[*]} groups failed"
+    echo "$SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed"
+    echo "$SUITES_FAILED suite${sfs} in ${#ERRORS[*]} group${gfs} failed"
     for ix in ${!ERRORS[@]}
     do
         echo "    ${ERRORS[$ix]}"
     done
     if [ $SUITES_SKIPPED -ne 0 ]; then
-        echo "$SUITES_SKIPPED suites in ${#SKIPPED[*]} groups skipped"
+        echo "$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped"
         for ix in ${!SKIPPED[@]}
         do
             echo "    ${SKIPPED[$ix]}"
@@ -130,9 +137,9 @@ if [ ${#ERRORS[*]} -ne 0 ]; then
 
     exit 1
 else
-    echo "No errors - $SUITES_PASSED suites in $GROUPS_PASSED groups passed"
+    echo "No errors - $SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed"
     if [ $SUITES_SKIPPED -ne 0 ]; then
-        echo "$SUITES_SKIPPED suites in ${#SKIPPED[*]} groups skipped"
+        echo "$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped"
         for ix in ${!SKIPPED[@]}
         do
             echo "    ${SKIPPED[$ix]}"
