@@ -1,16 +1,26 @@
 ## Configuration ##
 
-Configuration of `appoptics-apm` is possible through configuration files, environment variables, and run-time settings using the API. This covers configuration files and environment variables; the API is covered in the api guide.
+Configuration of `appoptics-apm` is possible through configuration files, environment variables, and run-time
+settings using the API. This covers configuration files and environment variables; the API is covered in the
+api guide.
 
 ### Required Configuration ###
 
-There is only one configuration parameter that is required, the service key. The service key is in the form ``<api token>:<service name>``.
+There is only one configuration parameter that is required, the service key. The service key is in the form
+``<api token>:<service name>``.
 
-It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY or via the `appoptics-apm-config` configuration file. If both are supplied the environment variable will be used. If not supplied the `appoptics-apm` agent will disable itself.
+It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY or via the
+`appoptics-apm-config` configuration file. If both are supplied the environment variable will be used.
+If not supplied the `appoptics-apm` agent will disable itself.
 
 ### The Configuration File ###
 
-The `appoptics-apm` default configuration file is either `appoptics-apm=config.json` or `appoptics-apm-config.js`. It should be placed in the root directory of the project being instrumented. The file/location may be changed via the environment variable `APPOPTICS_APM_CONFIG_NODE`. When using `APPOPTICS_APM_CONFIG_NODE` the path it specifies must include the filename. If the file is a node module it must export a single object containing the same information that `appoptics-apm-config.json` would; the advantage of using a node module is that the values for configuration properties can be set programmatically.
+The `appoptics-apm` default configuration file is either `appoptics-apm-config.json` or `appoptics-apm-config.js`.
+It should be placed in the root directory of the project being instrumented. The file/location may be changed via the
+environment variable `APPOPTICS_APM_CONFIG_NODE`. When using `APPOPTICS_APM_CONFIG_NODE` the path it specifies must
+include the filename. If the file is a node module it must export a single object containing the same information that
+`appoptics-apm-config.json` would; the advantage of using a node module is that the values for configuration properties
+can be set programmatically.
 
 The configuration file can supply the following properties, showing their defaults:
 
@@ -56,17 +66,21 @@ The configuration file can supply the following properties, showing their defaul
 
 #### Configuration File Probe Settings ####
 
-Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different configuration options. See `lib/probe-defaults.js` for details.
+Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different
+configuration options. See `lib/probe-defaults.js` for details.
 
-There is one particular setting for the `fs` probe that you might want to be aware of: `ignoreErrors`. The only errors that can be ignored are node
-System errors (see the node [docs](https://nodejs.org/api/errors.html#errors_common_system_errors)) provided by the asynchronous functions or thrown
-by the synchronous functions. Note that there is only one setting for each pair of asynchronous and synchronous functions, e.g. the `open` setting
-applies to both `fs.open()` and `fs.openSync()`.
+There is one particular setting for the `fs` probe that you might want to be aware of: `ignoreErrors`.
+The only errors that can be ignored are node System errors (see the node [docs](https://nodejs.org/api/errors.html#errors_common_system_errors))
+provided by the asynchronous functions or thrown by the synchronous functions. Note that there is only one setting for
+each pair of asynchronous and synchronous functions, e.g. the `open` setting applies to both `fs.open()` and
+`fs.openSync()`.
 
-Ignoring the `ENOENT` error for the `fs.open()` and `fs.openSync()` functions is shown in the examples below. This setting won't take effect because of
-the `fs` probe setting `enabled: false` but is shown for the syntax.
+Ignoring the `ENOENT` error for the `fs.open()` and `fs.openSync()` functions is shown in the examples below. This setting
+won't take effect because of the `fs` probe setting `enabled: false` but is shown for the syntax.
 
-Probe settings in the `appoptics-apm-config` configuration file will override those in `defaults.js`, so the safest approach to changing an option is to add it to `appoptics-apm-config.json`. For example, here is how to turn off sampling for `fs`:
+Probe settings in the `appoptics-apm-config` configuration file will override those in `probe-defaults.js`, so the safest
+approach to changing an option is to add it to `appoptics-apm-config.json`. For example, here is how to turn off sampling
+for `fs`:
 
 ```
 {
@@ -85,7 +99,8 @@ Probe settings in the `appoptics-apm-config` configuration file will override th
 }
 ```
 
-Bonus - the configuration file is `require`d so it can be a module as opposed to pure JSON (double quoting properties, no comments):
+Bonus - the configuration file is `require`d so it can be a module as opposed to pure JSON (double quoting properties,
+no comments):
 
 ```
 module.exports = {
@@ -107,12 +122,13 @@ module.exports = {
 
 ### Debugging Configuration ###
 
-This section is primarily of interest to those implementing custom instrumentation or doing development on the `appoptics-apm` agent and SDK.
+This section is primarily of interest to those implementing custom instrumentation or doing development on the
+`appoptics-apm` agent and SDK.
 
 #### Environment Variables ####
 
-Environment variables with illegal values will generate a warning message and revert to their default values. Variables accepting `'true'` and
-`'false'` as options care case-insensitive.
+Environment variables with illegal values will generate a warning message and revert to their default values.
+Variables accepting `'true'` and `'false'` as options care case-insensitive.
 
 These environment variables may be set:
 
