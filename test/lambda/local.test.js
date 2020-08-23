@@ -106,8 +106,11 @@ describe('execute lambda functions with a simulated api gateway event', function
             if (k === 'ao-data') {
               const aoData = decodeAoData(o);
               const organized = checkAoData(aoData);
-              console.log(organized.metrics[0]);
-              console.log(organized.metrics[1]);
+              organized.metrics.forEach(m => {
+                ['measurements', 'histograms'].forEach(k => {
+                  console.log(m[k], m[k].tags ? m[k].tags : '');
+                })
+              });
             } else if (k === 'test-data') {
               expect(o.initialao).equal(false, 'ao should not have been loaded');
               expect(o.resolve).property('statusCode').equal(200);
