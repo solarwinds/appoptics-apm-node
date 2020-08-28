@@ -45,7 +45,8 @@ const skeletalAo = {
   },
   logger: {
     addEnabled () {},
-  }
+  },
+  execEnv: {type: 'linux', id: undefined, nodeEnv: 'production'}
 };
 
 const aoSim = require('./lib/api-sim')(Object.assign({}, skeletalAo));
