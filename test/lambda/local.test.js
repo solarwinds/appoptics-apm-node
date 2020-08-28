@@ -18,7 +18,8 @@ const expect = require('chai').expect;
 const BSON = require('bson');
 
 
-const entrySpanName = 'node-lambda-span';
+const xt = 'X-Trace';
+const entrySpanName = 'nodejs-lambda-fakeLambdaPromiser';
 const testFile = './local-tests.js';
 
 // need to spawn task executing runnable script so stdout/stderr are captured.
@@ -31,7 +32,7 @@ const testFile = './local-tests.js';
 const xTraceS = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084301';
 const xTraceU = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084300';
 
-describe('execute lambda functions with a simulated api gateway event', function () {
+describe('execute lambda promise-functions with a simulated api gateway event', function () {
   beforeEach(function () {
     this.timeout(20000);
   })
@@ -44,16 +45,13 @@ describe('execute lambda functions with a simulated api gateway event', function
     return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = r.stdout.split('\n').filter(s => s).map(s => JSON.parse(s));
+        const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
           for (const k in obj) {
             expect(k).not.equal('ao-data');
             const o = obj[k];
-            if (k === 'ao-data') {
-              expect(o).property('events').an('array');
-              expect(o).property('metrics').an('array');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'ao should not have been loaded');
+            if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
               expect(o.resolve).property('statusCode').equal(200);
             }
           }
@@ -71,7 +69,7 @@ describe('execute lambda functions with a simulated api gateway event', function
     return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = r.stdout.split('\n').filter(s => s).map(s => JSON.parse(s));
+        const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
           for (const k in obj) {
             expect(k).not.equal('ao-data');
@@ -80,7 +78,7 @@ describe('execute lambda functions with a simulated api gateway event', function
               expect(o).property('events').an('array');
               expect(o).property('metrics').an('array');
             } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'ao should not have been loaded');
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
               expect(o.resolve).property('statusCode').equal(200);
             }
           }
@@ -99,7 +97,7 @@ describe('execute lambda functions with a simulated api gateway event', function
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = r.stdout.split('\n').filter(s => s).map(s => JSON.parse(s));
+        const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
           for (const k in obj) {
             const o = obj[k];
@@ -108,18 +106,112 @@ describe('execute lambda functions with a simulated api gateway event', function
               const organized = checkAoData(aoData);
               organized.metrics.forEach(m => {
                 ['measurements', 'histograms'].forEach(k => {
-                  console.log(m[k], m[k].tags ? m[k].tags : '');
+                  //console.log(m[k]);
                 })
               });
             } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'ao should not have been loaded');
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o).property('resolve').property('statusCode').equal(200);
               expect(o.resolve).property('statusCode').equal(200);
             }
           }
         }
         return undefined;
       });
+  });
 
+  it('should not report an error when the function rejects', function () {
+    const test = 'agentEnabled';
+    const errorCode = 404;
+    const event = JSON.stringify({reject: errorCode});
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const organized = checkAoData(aodata);
+              expect(organized.topEvents.exit).not.property('ErrorClass');
+              expect(organized.topEvents.exit).not.property('ErrorMsg');
+              expect(organized.topEvents.exit).not.property('Backtrace');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).not.exist;
+              expect(o.reject).exist;
+              expect(o.reject.statusCode).equal(errorCode, `errorCode should be ${errorCode}`);
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('should report an error when the function throws', function () {
+    const test = 'agentEnabled';
+    const emsg = 'fatal error';
+    const re = new RegExp(`^Error: ${emsg}\n`);
+    const event = JSON.stringify({throw: emsg});
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const organized = checkAoData(aodata);
+              expect(organized.topEvents.exit).property('ErrorClass', 'Error');
+              expect(organized.topEvents.exit).property('ErrorMsg', emsg);
+              expect(organized.topEvents.exit).property('Backtrace').match(re);
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).not.exist;
+              expect(o.reject).exist;
+              expect(o.reject).deep.equal({});
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('should not return an x-trace header when it throws', function () {
+    const test = 'agentEnabled';
+    const emsg = 'fatal error';
+    const re = new RegExp(`^Error: ${emsg}\n`);
+    const event = JSON.stringify({throw: emsg, headers: {'x-trace': xTraceS}});
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const organized = checkAoData(aodata);
+              expect(organized.topEvents.exit).property('ErrorClass', 'Error');
+              expect(organized.topEvents.exit).property('ErrorMsg', emsg);
+              expect(organized.topEvents.exit).property('Backtrace').match(re);
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).not.exist;
+              expect(o.reject).deep.equal({});
+            }
+          }
+        }
+        return undefined;
+      });
   });
 
   it('should work when a sampled x-trace header is supplied', function () {
@@ -130,7 +222,7 @@ describe('execute lambda functions with a simulated api gateway event', function
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = r.stdout.split('\n').filter(s => s).map(s => JSON.parse(s));
+        const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
           for (const k in obj) {
             const o = obj[k];
@@ -138,8 +230,8 @@ describe('execute lambda functions with a simulated api gateway event', function
               expect(o).property('events').an('array');
               expect(o).property('metrics').an('array');
             } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'ao should not have been loaded');
-              expect(o.resolve);
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).exist;
               expect(o.resolve.statusCode).equal(200, 'statusCode should be 200');
               expect(o.resolve.headers).property('x-trace');
               expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
@@ -149,7 +241,6 @@ describe('execute lambda functions with a simulated api gateway event', function
         }
         return undefined;
       });
-
   });
 
   it('should work when an unsampled x-trace header is supplied', function () {
@@ -160,7 +251,7 @@ describe('execute lambda functions with a simulated api gateway event', function
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = r.stdout.split('\n').filter(s => s).map(s => JSON.parse(s));
+        const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
           for (const k in obj) {
             const o = obj[k];
@@ -168,8 +259,8 @@ describe('execute lambda functions with a simulated api gateway event', function
               expect(o).property('events').an('array');
               expect(o).property('metrics').an('array');
             } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'ao should not have been loaded');
-              expect(o.resolve);
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).exist;
               expect(o.resolve.statusCode).equal(200, 'statusCode should be 200');
               expect(o.resolve.headers).property('x-trace');
               expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceU.slice(2, 42), 'task IDs don\'t match');
@@ -179,9 +270,106 @@ describe('execute lambda functions with a simulated api gateway event', function
         }
         return undefined;
       });
-
-
   });
+});
+
+
+describe('execute lambda callback-functions with a simulated api gateway event', function () {
+
+  it('should work when a sampled x-trace header is supplied', function () {
+    const test = 'agentEnabledCB';
+    const event = JSON.stringify({headers: {'x-trace': xTraceS}});
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              expect(o).property('events').an('array');
+              expect(o).property('metrics').an('array');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).exist;
+              expect(o.resolve.statusCode).equal(200, 'statusCode should be 200');
+              expect(o.resolve.headers).property('x-trace');
+              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
+              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
+            } else {
+              // eslint-disable-next-line no-console
+              console.log('unexpected:', o);
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+});
+
+describe('execute lambda functions with a direct function call', function () {
+  beforeEach(function () {
+    this.timeout(20000);
+  });
+
+  it('should work with the agent disabled', function () {
+    const test = 'agentDisabled';
+    const event = JSON.stringify({});
+    const context = JSON.stringify({});
+
+    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              expect(k).not.equal('ao-data', 'there should not be an "ao-data" key in the log');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode').equal(200);
+            }
+          }
+          return undefined;
+        }
+      });
+  });
+
+  it('should work with the agent enabled', function () {
+    const test = 'agentEnabled';
+    const event = JSON.stringify({});
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aoData = decodeAoData(o);
+              const organized = checkAoData(aoData);
+              organized.metrics.forEach(m => {
+                ['measurements', 'histograms'].forEach(k => {
+                  //console.log(m[k]);
+                })
+              });
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode').equal(200);
+              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}01/);
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
 });
 
 
@@ -199,6 +387,33 @@ async function exec (arg) {
   return p;
 }
 
+function parseStdout (text, debug) {
+  if (text === undefined) {
+    return [];
+  }
+  const good = [];
+  const bad = [];
+  try {
+    const lines = text.split('\n').filter(s => s);
+    for (let i = 0; i < lines.length; i++) {
+      try {
+        good.push(JSON.parse(lines[i]));
+      } catch (e) {
+        bad.push(lines[i]);
+      }
+    }
+  } catch (e) {
+    console.log(text);  // eslint-disable-line no-console
+    return [];
+  }
+
+  if (bad.length) {
+    console.log('bad stdout:', bad);   // eslint-disable-line no-console
+  }
+
+  return good;
+}
+
 // return undefined or the text
 function checkStderr (text, debug) {
   if (text === undefined) {
@@ -208,14 +423,15 @@ function checkStderr (text, debug) {
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] === '') continue;
     if (debug) console.log(lines[i]); // eslint-disable-line no-console
-    if (!lines[i].match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:/)) {
+    const m = lines[i].match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(\S+)/);
+    if (!m || m[1] === 'error') {
       return text;
     }
   }
   return undefined;
 }
 
-function decodeAoData (data) {
+function decodeAoData (data, debug) {
   const keys = Object.keys(data);
   expect(keys).deep.equal(['events', 'metrics']);
   expect(data.events).an('array');
@@ -236,14 +452,29 @@ function decodeAoData (data) {
     }
   }
 
+  if (debug) {
+    console.log(decoded);   // eslint-disable-line no-console
+  }
+
   return decoded;
 }
 
+//
+// verify the ao-data property is correct.
+//
+// 1. must have an __Init event
+// 2. must have an entry and exit event for "entrySpanName"
+// 3. the entry and exit events must have a valid x-trace
+// 4. the entry and exit events task ids must match
+// 5. the exit event's edge must point to the entry
+// 6. the entry and exit events must have the same Hostname
+// 7. the exit event must have a TransactionName
+//
+// return ao-data in useful groups
+//
 function checkAoData (aoData, checks) {
   expect(aoData.events.length).gte(3);
   expect(aoData.metrics.length).gte(1);
-
-  const xt = 'X-Trace';
 
   const {events, metrics} = aoData;
 
@@ -259,7 +490,26 @@ function checkAoData (aoData, checks) {
       otherEvents.push(events[i]);
     }
   }
-  expect(init, 'missing an __Init event');
+  expect(init, 'missing nodejs:single __Init event');
+
+  expect(topEvents).property('entry').an('object');
+  expect(topEvents).property('exit').an('object');
+
+  expect(topEvents.entry).property('Layer', entrySpanName, `missing event: ${entrySpanName}:entry`);
+  expect(topEvents.exit).property('Layer', entrySpanName, `missing event: ${entrySpanName}:exit`);
+
+  expect(topEvents.entry).property('Spec', 'lambda');
+  expect(topEvents.entry).property('InvocationCount', 1);
+  expect(topEvents.entry).property('SampleSource', 1);
+  expect(topEvents.entry).property('SampleRate', 1000000);
+  expect(topEvents.entry).property('TID');
+  expect(topEvents.entry).property('Timestamp_u');
+  expect(topEvents.entry).property('Hostname');
+
+  expect(topEvents.exit).property('TransactionName', `custom-${entrySpanName}`);
+  expect(topEvents.exit).property('TID');
+  expect(topEvents.exit).property('Timestamp_u');
+  expect(topEvents.exit).property('Hostname');
 
   expect(topEvents.entry).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
   expect(topEvents.exit).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
