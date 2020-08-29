@@ -325,11 +325,10 @@ describe('execute lambda functions with a direct function call', function () {
         expect(checkStderr(r.stderr)).equal(undefined);
         const jsonObjs = parseStdout(r.stdout);
         for (const obj of jsonObjs) {
+          expect(obj['ao-data']).not.exist;
           for (const k in obj) {
             const o = obj[k];
-            if (k === 'ao-data') {
-              expect(k).not.equal('ao-data', 'there should not be an "ao-data" key in the log');
-            } else if (k === 'test-data') {
+            if (k === 'test-data') {
               expect(o.initialao).equal(false, 'the agent should not have been loaded');
               expect(o.resolve).property('statusCode').equal(200);
             }
