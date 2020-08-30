@@ -13,6 +13,7 @@ const axios = require('axios');
 const expect = require('chai').expect;
 
 const awsUtil = require('./aws-util.js');
+const cwl = awsUtil.cwl;
 
 const lambdaTestFunction = 'nodejs-apig-function-9FHBV1SLUTCC';
 const lambdaApmLayer = 'appoptics-apm-layer';
@@ -83,4 +84,188 @@ describe('verify the lambda layer works', function () {
       })
 
   });
+
+  it('should fetch correctly work through the api gateway', function () {
+    this.timeout(10 * 60 * 1000);
+
+    // TODO BAM add cloudformation describe-stack-resource call to get api
+    const apiid = 'gug4hbulf5';
+    const region = awsUtil.AWS.config.region;
+    const queryParams = '?context&event';
+    const url = `https://${apiid}.execute-api.${region}.amazonaws.com/api/${queryParams}`;
+
+    return axios.get(url)
+      .then(response => {
+        expect(response.status).equal(200, 'status should be 200');
+        expect(response.headers).exist;
+        expect(response.data).exist;
+
+        expect(response.headers).property('x-trace').match(/2B[0-9A-F]{56}0(1|0)/);
+
+        expect(response.data.response).exist;
+        const data = response.data.response;
+
+        expect(data.invocations).exist;
+        expect(data.context).exist;
+        expect(data.event).exist;
+
+        expect(data.invocations).property('count').gte(1);
+        const invocations = data.invocations.count;
+
+        expect(data.context).property('logGroupName').a('string');
+        expect(data.context).property('logStreamName').a('string');
+        expect(data.context).property('awsRequestId').a('string');
+        const logGroupName = data.context.logGroupName;
+        const logStreamName = data.context.logStreamName;
+        const requestId = data.context.awsRequestId;
+
+        return {
+          'x-trace': response.headers['x-trace'],
+          logGroupName,
+          logStreamName,
+          requestId,
+          invocations,
+        };
+      })
+      .then(r => {
+        console.log('n', r.invocations, 'rid', r.requestId);
+
+        const le = new LogEntries(r.requestId, r.logGroupName, r.logStreamName);
+
+        // look for
+        // START RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
+        // ...
+        // END RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
+        return le.waitUntilFind(5000, 60)
+          .then(r => {
+            console.log(r.state);
+            if (r.state === 'done') {
+              console.log(r.entries[r.startIx]);
+              for (let i = 0; i < r.aoIx.length; i++) {
+                console.log(r.entries[r.aoIx[i]]);
+              }
+              console.log(r.entries[r.endIx]);
+              if (r.reportIx) {
+                console.log(r.entries[r.reportIx]);
+              }
+            }
+            return r;
+          })
+
+      });
+  })
 });
+
+class LogEntries {
+  constructor (requestId, logGroupName, logStreamName) {
+    this.requestId = requestId;
+    this.logGroupName = logGroupName;
+    this.logStreamName = logStreamName;
+    this.state = 'find-start';
+    this.startIx = undefined;
+    this.aoIx = [];
+    this.endIx = undefined;
+    this.reportIx = undefined;
+    this.startMarker = `START RequestId: ${requestId}`;
+    this.endMarker = `END RequestId: ${requestId}`;
+    this.reportMarker = `REPORT RequestId: ${requestId}`;
+    this.entries = [];
+  }
+
+  find (newEntries, debug) {
+    if (!Array.isArray(newEntries)) {
+      throw new TypeError('newEntries must be an array');
+    }
+    if (debug) console.log('starting find, state =', this.state);
+    for (let i = 0; i < newEntries.length; i++) {
+      if (this.state === 'find-start') {
+        if (newEntries[i].message.startsWith(this.startMarker)) {
+          if (debug) console.log('found start, setting state = find-end');
+          this.startIx = this.entries.length;
+          this.entries.push(newEntries[i]);
+          this.state = 'find-end';
+        }
+        continue;
+      } else if (this.state === 'find-end') {
+        this.entries.push(newEntries[i]);
+        if (newEntries[i].message.startsWith('{"ao-data":')) {
+          this.aoIx.push(this.entries.length - 1);
+        } else if (newEntries[i].message.startsWith(this.endMarker)) {
+          if (debug) console.log('found end, state = done');
+          this.endIx = this.entries.length - 1;
+          this.state = 'done';
+          if (newEntries[i + 1].message.startsWith(this.reportMarker)) {
+            this.reportIx = this.entries.length;
+            this.entries.push(newEntries[i + 1]);
+          }
+        }
+      }
+      //
+      if (this.state === 'done') {
+        if (debug) console.log('state = done, exiting loop');
+        break;
+      }
+    }
+
+    return this.state;
+  }
+
+  async waitUntilFind (interval, n) {
+    let r;
+    try {
+      r = await this.getLogEvents();
+    } catch (e) {
+      for (const k of ['message', 'code', 'statusCode', 'retryable', 'retryDelay']) {
+        console.log(k, e[k]);
+      }
+      throw e;
+    }
+
+    let {events, nextForwardToken} = r;
+    let state = this.find(events);
+
+    while (state !== 'done' && nextForwardToken && n > 0) {
+      console.log('pausing');
+      await pause(interval);
+      n -= 1;
+      const r = await this.getLogEvents({nextToken: nextForwardToken});
+      ({events, nextForwardToken} = r);
+      state = this.find(events);
+    }
+
+    return {
+      state,
+      entries: this.entries,
+      startIx: this.startIx,
+      aoIx: this.aoIx,
+      endIx: this.endIx,
+      reportIx: this.reportIx
+    };
+  }
+
+  async getLogEvents (options) {
+    return new Promise((resolve, reject) => {
+      const params = {
+        logGroupName: this.logGroupName,
+        logStreamName: this.logStreamName,
+        startFromHead: true
+      };
+      Object.assign(params, options);
+      cwl.getLogEvents(params, function (err, data) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      })
+    })
+  }
+}
+
+async function pause (ms) {
+  return new Promise(resolve => {
+    setTimeout(function () {
+      resolve();
+    }, ms);
+  })
+}

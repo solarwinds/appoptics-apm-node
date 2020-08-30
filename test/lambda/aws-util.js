@@ -344,6 +344,9 @@ async function invoke (FunctionName, Payload) {
 
 
 module.exports = {
+  AWS,
+  lambda,
+  cwl,
   getFunctionInfo,
   getFunctionConfiguration,
   getFunctionVersions,
