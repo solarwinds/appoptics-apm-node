@@ -136,7 +136,9 @@ describe('verify the lambda layer works', function () {
         // START RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
         // ...
         // END RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
-        return le.waitUntilFind(5000, 60)
+        //
+        // wait 5 minutes for the logs to appear
+        return le.waitUntilFind(5 * 60)
           .then(r => {
             console.log(r.state);
             if (r.state === 'done') {
@@ -210,24 +212,32 @@ class LogEntries {
     return this.state;
   }
 
-  async waitUntilFind (interval, n) {
+  async waitUntilFind (secondsToWait) {
+    const endTime = Date.now() + secondsToWait * 1000;
+
     let r;
-    try {
-      r = await this.getLogEvents();
-    } catch (e) {
-      for (const k of ['message', 'code', 'statusCode', 'retryable', 'retryDelay']) {
-        console.log(k, e[k]);
+    while (Date.now() < endTime) {
+      try {
+        r = await this.getLogEvents();
+        break;
+      } catch (e) {
+        if (e.code !== 'ResourceNotFoundException') {
+          for (const k of ['message', 'code', 'statusCode', 'retryable', 'retryDelay']) {
+            console.log(k, e[k]);
+          }
+          throw e;
+        }
+        console.log('waiting for log stream to show up');
+        await pause(e.retryDelay || 1000);
       }
-      throw e;
     }
 
     let {events, nextForwardToken} = r;
     let state = this.find(events);
 
-    while (state !== 'done' && nextForwardToken && n > 0) {
+    while (state !== 'done' && nextForwardToken && Date.now() < endTime) {
       console.log('pausing');
-      await pause(interval);
-      n -= 1;
+      await pause(2 * 1000);
       const r = await this.getLogEvents({nextToken: nextForwardToken});
       ({events, nextForwardToken} = r);
       state = this.find(events);
