@@ -13,7 +13,8 @@ const axios = require('axios');
 const expect = require('chai').expect;
 
 const awsUtil = require('./aws-util.js');
-const cwl = awsUtil.cwl;
+
+const LogEntries = require('./log-entries');
 
 const lambdaTestFunction = 'nodejs-apig-function-9FHBV1SLUTCC';
 const lambdaApmLayer = 'appoptics-apm-layer';
@@ -128,24 +129,18 @@ describe('verify the lambda layer works', function () {
         };
       })
       .then(r => {
-        console.log('n', r.invocations, 'rid', r.requestId);
-
         const le = new LogEntries(r.requestId, r.logGroupName, r.logStreamName);
 
-        // look for
-        // START RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
-        // ...
-        // END RequestId: 85b7365d-08e8-4fa5-b1b8-5bdda5eac08b
-        //
-        // wait 5 minutes for the logs to appear
+        // wait up to 5 minutes for the logs to appear
         return le.waitUntilFind(5 * 60)
           .then(r => {
             console.log(r.state);
             if (r.state === 'done') {
               console.log(r.entries[r.startIx]);
               for (let i = 0; i < r.aoIx.length; i++) {
-                console.log(r.entries[r.aoIx[i]]);
+                //console.log(r.entries[r.aoIx[i]]);
               }
+              console.log(r.aoData);
               console.log(r.entries[r.endIx]);
               if (r.reportIx) {
                 console.log(r.entries[r.reportIx]);
@@ -158,124 +153,4 @@ describe('verify the lambda layer works', function () {
   })
 });
 
-class LogEntries {
-  constructor (requestId, logGroupName, logStreamName) {
-    this.requestId = requestId;
-    this.logGroupName = logGroupName;
-    this.logStreamName = logStreamName;
-    this.state = 'find-start';
-    this.startIx = undefined;
-    this.aoIx = [];
-    this.endIx = undefined;
-    this.reportIx = undefined;
-    this.startMarker = `START RequestId: ${requestId}`;
-    this.endMarker = `END RequestId: ${requestId}`;
-    this.reportMarker = `REPORT RequestId: ${requestId}`;
-    this.entries = [];
-  }
 
-  find (newEntries, debug) {
-    if (!Array.isArray(newEntries)) {
-      throw new TypeError('newEntries must be an array');
-    }
-    if (debug) console.log('starting find, state =', this.state);
-    for (let i = 0; i < newEntries.length; i++) {
-      if (this.state === 'find-start') {
-        if (newEntries[i].message.startsWith(this.startMarker)) {
-          if (debug) console.log('found start, setting state = find-end');
-          this.startIx = this.entries.length;
-          this.entries.push(newEntries[i]);
-          this.state = 'find-end';
-        }
-        continue;
-      } else if (this.state === 'find-end') {
-        this.entries.push(newEntries[i]);
-        if (newEntries[i].message.startsWith('{"ao-data":')) {
-          this.aoIx.push(this.entries.length - 1);
-        } else if (newEntries[i].message.startsWith(this.endMarker)) {
-          if (debug) console.log('found end, state = done');
-          this.endIx = this.entries.length - 1;
-          this.state = 'done';
-          if (newEntries[i + 1].message.startsWith(this.reportMarker)) {
-            this.reportIx = this.entries.length;
-            this.entries.push(newEntries[i + 1]);
-          }
-        }
-      }
-      //
-      if (this.state === 'done') {
-        if (debug) console.log('state = done, exiting loop');
-        break;
-      }
-    }
-
-    return this.state;
-  }
-
-  async waitUntilFind (secondsToWait) {
-    const endTime = Date.now() + secondsToWait * 1000;
-
-    let r;
-    while (Date.now() < endTime) {
-      try {
-        r = await this.getLogEvents();
-        break;
-      } catch (e) {
-        if (e.code !== 'ResourceNotFoundException') {
-          for (const k of ['message', 'code', 'statusCode', 'retryable', 'retryDelay']) {
-            console.log(k, e[k]);
-          }
-          throw e;
-        }
-        console.log('waiting for log stream to show up');
-        await pause(e.retryDelay || 1000);
-      }
-    }
-
-    let {events, nextForwardToken} = r;
-    let state = this.find(events);
-
-    while (state !== 'done' && nextForwardToken && Date.now() < endTime) {
-      console.log('pausing');
-      await pause(2 * 1000);
-      const r = await this.getLogEvents({nextToken: nextForwardToken});
-      ({events, nextForwardToken} = r);
-      state = this.find(events);
-    }
-
-    return {
-      state,
-      entries: this.entries,
-      startIx: this.startIx,
-      aoIx: this.aoIx,
-      endIx: this.endIx,
-      reportIx: this.reportIx
-    };
-  }
-
-  async getLogEvents (options) {
-    return new Promise((resolve, reject) => {
-      const params = {
-        logGroupName: this.logGroupName,
-        logStreamName: this.logStreamName,
-        startFromHead: true
-      };
-      Object.assign(params, options);
-      cwl.getLogEvents(params, function (err, data) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      })
-    })
-  }
-}
-
-async function pause (ms) {
-  return new Promise(resolve => {
-    setTimeout(function () {
-      resolve();
-    }, ms);
-  })
-}
