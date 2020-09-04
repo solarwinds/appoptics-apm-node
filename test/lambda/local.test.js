@@ -23,6 +23,9 @@ const pEntrySpanName = 'nodejs-lambda-fakeLambdaPromiser';
 const cEntrySpanName = 'nodejs-lambda-fakeLambdaCallbacker';
 const testFile = './local-tests.js';
 
+const {aoLambdaTest} = require(testFile);
+
+
 // need to spawn task executing runnable script so stdout/stderr are captured.
 // task should be a function in a module that is wrapped by our code.
 // the function should execute an async outbound http call and a sync span
@@ -122,8 +125,8 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
   it('should not report an error when the function rejects', function () {
     const test = 'agentEnabled';
     const errorCode = 404;
-    const event = JSON.stringify({reject: errorCode});
-    const context = JSON.stringify({});
+    const event = JSON.stringify({});
+    const context = JSON.stringify({[aoLambdaTest]: {reject: errorCode}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
@@ -155,8 +158,8 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
     const test = 'agentEnabled';
     const emsg = 'fatal error';
     const re = new RegExp(`^Error: ${emsg}\n`);
-    const event = JSON.stringify({throw: emsg});
-    const context = JSON.stringify({});
+    const event = JSON.stringify();
+    const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
@@ -188,8 +191,8 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
     const test = 'agentEnabled';
     const emsg = 'fatal error';
     const re = new RegExp(`^Error: ${emsg}\n`);
-    const event = JSON.stringify({throw: emsg, headers: {'x-trace': xTraceS}});
-    const context = JSON.stringify({});
+    const event = JSON.stringify({headers: {'x-trace': xTraceS}});
+    const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
@@ -276,6 +279,103 @@ describe('execute lambda promise-functions with simulated api gateway events', f
               expect(o.resolve).property('headers').property('x-trace');
               expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceU.slice(2, 42), 'task IDs don\'t match');
               expect(o.resolve.headers['x-trace'].slice(-2)).equal('00', 'sample bit doesn\'t match');
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('apig-v1 should not modify a string response', function () {
+    const test = 'agentEnabled';
+    const event = JSON.stringify(clone(events.v1));
+    const resolve = 'bad-resolve-value';
+    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: pEntrySpanName};
+              const organized = checkAoData(aodata, options);
+              expect(organized.topEvents.exit).not.property('ErrorClass');
+              expect(organized.topEvents.exit).not.property('ErrorMsg');
+              expect(organized.topEvents.exit).not.property('Backtrace');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).equal(resolve);
+              expect(o.reject).not.exist;
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('apig-v2 should modify a string response', function () {
+    const test = 'agentEnabled';
+    const event = JSON.stringify(clone(events.v2));
+    const resolve = 'bad-resolve-value';
+    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: pEntrySpanName};
+              const organized = checkAoData(aodata, options);
+              expect(organized.topEvents.exit).not.property('ErrorClass');
+              expect(organized.topEvents.exit).not.property('ErrorMsg');
+              expect(organized.topEvents.exit).not.property('Backtrace');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode', 200);
+              expect(o.resolve).property('body', resolve);
+              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+              expect(o.reject).not.exist;
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('apig-v2 should treat an object response without a statusCode as the body', function () {
+    const test = 'agentEnabled';
+    const resolve = {i: 'am', a: 'custom', body: 'response'};
+    const event = JSON.stringify(clone(events.v2));
+    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: pEntrySpanName};
+              const organized = checkAoData(aodata, options);
+              expect(organized.topEvents.exit).not.property('ErrorClass');
+              expect(organized.topEvents.exit).not.property('ErrorMsg');
+              expect(organized.topEvents.exit).not.property('Backtrace');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode', 200);
+              expect(o.resolve).property('body', JSON.stringify(resolve));
+              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+              expect(o.reject).not.exist;
             }
           }
         }
