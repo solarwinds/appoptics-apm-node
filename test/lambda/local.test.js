@@ -14,9 +14,9 @@ delete process.env.APPOPTICS_COLLECTOR;
 
 const child_process = require('child_process');
 const expect = require('chai').expect;
-
 const BSON = require('bson');
 
+const events = require('./v1-v2-events.js');
 
 const xt = 'X-Trace';
 const pEntrySpanName = 'nodejs-lambda-fakeLambdaPromiser';
@@ -215,13 +215,15 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
         return undefined;
       });
   });
+});
 
-  it('should work when a sampled x-trace header is supplied', function () {
+describe('execute lambda promise-functions with simulated api gateway events', function () {
+
+  it('should work when a sampled x-trace header is supplied in a v1 event', function () {
     const test = 'agentEnabled';
-    const event = JSON.stringify({
-      headers: {'x-trace': xTraceS},
-      requestContext: {httpMethod: 'GET'},
-    });
+    const e1 = clone(events.v1);
+    e1.headers['x-trace'] = xTraceS;
+    const event = JSON.stringify(e1);
     const context = JSON.stringify({});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -249,9 +251,11 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
       });
   });
 
-  it('should work when an unsampled x-trace header is supplied', function () {
+  it('should work when an unsampled x-trace header is supplied in a v2 event', function () {
     const test = 'agentEnabled';
-    const event = JSON.stringify({headers: {'x-trace': xTraceU}, requestContext: {httpMethod: 'GET'}});
+    const e2 = clone(events.v2);
+    e2.headers['x-trace'] = xTraceU;
+    const event = JSON.stringify(e2);
     const context = JSON.stringify({});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -269,7 +273,7 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
               expect(o.initialao).equal(false, 'the agent should not have been loaded');
               expect(o.resolve).exist;
               expect(o.resolve.statusCode).equal(200, 'statusCode should be 200');
-              expect(o.resolve.headers).property('x-trace');
+              expect(o.resolve).property('headers').property('x-trace');
               expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceU.slice(2, 42), 'task IDs don\'t match');
               expect(o.resolve.headers['x-trace'].slice(-2)).equal('00', 'sample bit doesn\'t match');
             }
@@ -281,11 +285,13 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
 });
 
 
-describe('execute lambda callback-function with a simulated api gateway event', function () {
+describe('execute lambda callback-function with simulated api gateway events', function () {
 
-  it('should work when a sampled x-trace header is supplied', function () {
+  it('should work when a sampled x-trace header is supplied in a v1 event', function () {
     const test = 'agentEnabledCB';
-    const event = JSON.stringify({headers: {'x-trace': xTraceS}, requestContext: {httpMethod: 'GET'}});
+    const e1 = clone(events.v1);
+    e1.headers['x-trace'] = xTraceS;
+    const event = JSON.stringify(e1);
     const context = JSON.stringify({});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -298,6 +304,41 @@ describe('execute lambda callback-function with a simulated api gateway event', 
             if (k === 'ao-data') {
               const aodata = decodeAoData(o);
               const options = {entrySpanName: cEntrySpanName, xtrace:xTraceS};
+              checkAoData(aodata, options);
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).exist;
+              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+              expect(o.resolve).property('headers').an('object').property('x-trace');
+              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
+              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
+            } else {
+              // eslint-disable-next-line no-console
+              console.log('unexpected:', o);
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('should work when a sampled x-trace header is supplied in a v2 event', function () {
+    const test = 'agentEnabledCB';
+    const e2 = clone(events.v2);
+    e2.headers['x-trace'] = xTraceS;
+    const event = JSON.stringify(e2);
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: cEntrySpanName, xtrace: xTraceS};
               checkAoData(aodata, options);
             } else if (k === 'test-data') {
               expect(o.initialao).equal(false, 'the agent should not have been loaded');
@@ -572,4 +613,29 @@ function checkAoData (aoData, options = {}) {
   }
 
   return {init, topEvents, otherEvents, metrics};
+}
+
+// https://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
+function clone (obj, hash = new WeakMap()) {
+  if (Object(obj) !== obj) return obj;      // primitives
+  if (hash.has(obj)) return hash.get(obj);  // cyclic reference
+  let result;
+
+  if (obj instanceof Set) {
+    result = new Set(obj);                  // treat set as a value
+  } else if (obj instanceof Map) {
+    result = new Map(Array.from(obj, ([key, val]) => [key, clone(val, hash)]));
+  } else if (obj instanceof Date) {
+    result = new Date(obj);
+  } else if (obj instanceof RegExp) {
+    result = new RegExp(obj.source, obj.flags);
+  } else if (obj.constructor) {
+    result = new obj.constructor();
+  } else {
+    result = Object.create(null);
+  }
+  hash.set(obj, result);
+  return Object.assign(result, ...Object.keys(obj).map(key => {
+    return {[key]: clone(obj[key], hash)};
+  }));
 }
