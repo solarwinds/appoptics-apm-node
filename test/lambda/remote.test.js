@@ -32,6 +32,9 @@ const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
     aobVersion = JSON.parse(text).version;
   });
 
+let functionArn;
+let fnConfig;
+
 describe('verify the lambda layer works', function () {
   before(function () {
     // wait for the io to complete
@@ -44,8 +47,9 @@ describe('verify the lambda layer works', function () {
       // find lambdaApmLayer
       .then(fnConfig => {
         if (!fnConfig.Layers) {
-          throw new TypeError(`${fnConfig.FunctionName} has no layers`);
+          throw new TypeError(`${fnConfig.FunctionName} has no layers or FunctionArn`);
         }
+        functionArn = fnConfig.FunctionArn;
         const re = new RegExp(`${lambdaApmLayer}:([0-9]+)$`);
         let m;
         let arn;
@@ -71,19 +75,21 @@ describe('verify the lambda layer works', function () {
             }
             expect(apmVersion).equal(m[1]);
             expect(aobVersion).equal(m[2]);
-            return r.fnConfig;
+            return (fnConfig = r.fnConfig);
           });
-      })
-      // and double check by asking the function to return the versions too.
-      .then(fnConfig => {
-        const payload = JSON.stringify({cmds: ['versions', 'context']});
-        return awsUtil.invoke(fnConfig.FunctionArn, payload)
-          .then(r => {
-            expect(r.Payload.body.response.versions.ao).equal(apmVersion);
-            expect(r.Payload.body.response.versions.aob).equal(aobVersion);
-            expect(r.Payload.body.response.context).an('object');
-            return r.Payload.body.response;
-          })
+      });
+  });
+
+  it('should invoke the function, verify the version, and check logs', function () {
+    this.timeout(10 * 60 * 1000);
+    // and double check by asking the function to return the versions too.
+    const payload = JSON.stringify({cmds: ['versions', 'context']});
+    return awsUtil.invoke(fnConfig.FunctionArn, payload)
+      .then(r => {
+        expect(r.Payload.body.response.versions.ao).equal(apmVersion);
+        expect(r.Payload.body.response.versions.aob).equal(aobVersion);
+        expect(r.Payload.body.response.context).an('object');
+        return r.Payload.body.response;
       })
       .then(response => {
         const {context, invocations} = response;
@@ -92,7 +98,7 @@ describe('verify the lambda layer works', function () {
         // wait up to 5 minutes for the logs to appear
         return le.waitUntilFind(5 * 60)
           .then(found => {
-            expect(found.state).equal('done', `waitUntilFind returned state ${found.state}, expected done`);
+            expect(found.state).equal('done', `waitUntilFind() returned state ${found.state}, expected done`);
 
             expect(found).property('aoData').exist.an('object', 'aoData object not found');
             expect(found.aoData).property('events').exist.an('array', 'aoData.events must be an array');
@@ -104,58 +110,42 @@ describe('verify the lambda layer works', function () {
             return {events, metrics};
           })
           .then(results => {
-            // if it just started then an init event was sent.
             const {events, metrics} = results;
 
-            const expectedEvents = invocations.count === 1 ? 3 : 2;
-            expect(events.length).equal(expectedEvents, `found ${events.length} events when expecting ${expectedEvents}`);
+            // if it just started then an init event was sent.
+            const expected = invocations.count === 1 ? 3 : 2;
+            expect(events.length).equal(expected, `found ${events.length} events when expecting ${expected}`);
+
+
+            if (expected === 2) {
+              // eslint-disable-next-line no-console
+              console.log('not verifying __Init event');
+            }
 
             let entryIx;
             for (let i = 0; i < events.length; i++) {
-              if (expectedEvents === 3 && events[i].Layer === 'nodejs') {
+              if (expected === 3 && events[i].Layer === 'nodejs') {
                 expect(events[i].Label).equal('single');
-                expect(events[i]).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
-                expect(events[i].__Init).equal(1);
-                expect(events[i].TID).exist.a('number');
-                expect(events[i].Timestamp_u).exist.a('number');
-                expect(events[i].Hostname).exist.a('string');
+                checkInit(events[i]);
                 continue;
               }
 
               expect(events[i].Layer).equal('nodejs-lambda-userHandler');
+
               if (events[i].Label === 'entry') {
-                expect(events[i].Spec).equal('lambda');
-                expect(events[i]['X-Trace']).match(/2B[0-9A-F]{56}0(0|1)/);
                 entryIx = i;
-
-                expect(events[i].InvocationCount).gte(1);
-                expect(events[i].FunctionName).equal(lambdaTestFunction);
-                expect(events[i].FunctionVersion).equal('$LATEST');
-                expect(events[i].SampleSource).equal(1);
-                expect(events[i].SampleRate).equal(1000000);
-                expect(events[i].TID).exist.a('number');
-                expect(events[i].Timestamp_u).exist.a('number');
-                expect(events[i].Hostname).exist.a('string');
-
+                checkLambdaEntry(events[i]);
               } else if (events[i].Label === 'exit') {
-                expect(events[i]).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
-                expect(events[i]).property('Edge').match(/[0-9A-F]{16}/);
-                expect(events[i][xt].slice(0, 42)).equal(events[entryIx][xt].slice(0, 42), 'task IDs must match');
-                expect(events[i].Edge).equal(events[entryIx][xt].slice(42, 58), 'edge must point to entry');
-                expect(events[i]).property('TransactionName').a('string');
-
-                expect(events[i].TID).exist.a('number');
-                expect(events[i].Timestamp_u).exist.a('number');
-                expect(events[i].Hostname).exist.a('string');
+                checkLambdaExit(events[i], events[entryIx]);
               } else {
                 throw new TypeError(`unexpected event ${events[i].Layer}:${events[i].Label}`);
               }
             }
 
-          })
+            expect(metrics.length).gte(1);
+          });
 
-      })
-
+      });
   });
 
   it('should fetch correctly work through the api gateway', function () {
@@ -164,10 +154,11 @@ describe('verify the lambda layer works', function () {
     // TODO BAM add cloudformation describe-stack-resource call to get api
     const apiid = 'gug4hbulf5';
     const region = awsUtil.AWS.config.region;
-    const queryParams = '?context&event';
+    const queryParams = '?context&event&versions';
     const protocol = 'https';
     const host = `${apiid}.execute-api.${region}.amazonaws.com`;
-    const target = `${host}/api`;
+    // use /latest to avoid specific function version bound to the /api endpoint.
+    const target = `${host}/api/latest`;
     const url = `${protocol}://${target}${queryParams}`;
 
     return axios.get(url)
@@ -176,14 +167,18 @@ describe('verify the lambda layer works', function () {
         expect(response.headers).exist;
         expect(response.data).exist;
 
-        expect(response.headers).property('x-trace').match(/2B[0-9A-F]{56}0(1|0)/);
+        //expect(response.headers).property('x-trace').match(/2B[0-9A-F]{56}0(1|0)/);
 
-        expect(response.data.response).exist;
+        expect(response.data).property('response').an('object');
         const data = response.data.response;
 
-        expect(data.invocations).exist;
-        expect(data.context).exist;
-        expect(data.event).exist;
+        expect(data.invocations).an('object');
+        expect(data.context).an('object');
+        expect(data.event).an('object');
+        // the api gateway can be bound to a specific version
+        expect(data.versions).an('object');
+        expect(data.versions).property('ao', apmVersion, 'agent version must match');
+        expect(data.versions).property('aob', aobVersion, 'bindings version must match');
 
         expect(data.invocations).property('count').gte(1);
         const invocations = data.invocations.count;
@@ -219,47 +214,32 @@ describe('verify the lambda layer works', function () {
             const metrics = found.aoData.metrics;
 
             // if it just started then an init event was sent.
-            const expectedEvents = r.invocations === 1 ? 3 : 2;
-            expect(events.length).equal(expectedEvents, `found ${events.length} events when expecteding ${expectedEvents}`);
+            const expected = r.invocations === 1 ? 3 : 2;
+            expect(events.length).equal(expected, `found ${events.length} events when expecteding ${expected}`);
 
             let entryIx;
 
             for (let i = 0; i < events.length; i++) {
-              if (expectedEvents === 3 && events[i].Layer === 'nodejs') {
-                console.log(events[i]);
+              if (expected === 3 && events[i].Layer === 'nodejs') {
                 expect(events[i].Label).equal('single');
+                checkInit(events[i]);
                 return;
               }
 
               expect(events[i].Layer).equal('nodejs-lambda-userHandler');
               if (events[i].Label === 'entry') {
-                expect(events[i].Spec).equal('lambda');
+                checkLambdaEntry(events[i]);
+                // check for additional api gateway kv pairs
                 expect(events[i].Method).equal('GET');
                 expect(events[i].URL).equal('/');
                 expect(events[i].Proto).equal(protocol);
                 expect(events[i]['HTTP-Host']).equal(host);
                 expect(events[i].Port).oneOf([443, '443']);
-                expect(events[i]['X-Trace']).match(/2B[0-9A-F]{56}0(0|1)/);
                 entryIx = i;
 
-                expect(events[i].FunctionName).equal(lambdaTestFunction);
-                expect(events[i].FunctionVersion).equal('$LATEST');
-                expect(events[i].SampleSource).equal(1);
-                expect(events[i].SampleRate).equal(1000000);
-                expect(events[i].TID).exist.a('number');
-                expect(events[i].Timestamp_u).exist.a('number');
-                expect(events[i].Hostname).exist.a('string');
-
               } else if (events[i].Label === 'exit') {
-                expect(events[i]).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
-                expect(events[i]).property('Edge').match(/[0-9A-F]{16}/);
-                expect(events[i][xt].slice(0, 42)).equal(events[entryIx][xt].slice(0, 42), 'task IDs must match');
-                expect(events[i].Edge).equal(events[entryIx][xt].slice(42, 58), 'edge must point to entry');
-                expect(events[i]).property('TransactionName').a('string');
+                checkLambdaExit(events[i], events[entryIx]);
 
-                expect(events[i].TID).exist.a('number');
-                expect(events[i].Timestamp_u).exist.a('number');
-                expect(events[i].Hostname).exist.a('string');
               } else {
                 throw new TypeError(`unexpected event ${events[i].Layer}:${events[i].Label}`);
               }
@@ -272,8 +252,10 @@ describe('verify the lambda layer works', function () {
               if (Array.isArray(m.measurements)) {
                 const measurements = m.measurements;
                 delete m.measurements;
+                // eslint-disable-next-line no-console
                 console.log(m, measurements);
               } else {
+                // eslint-disable-next-line no-console
                 console.log(`metric[${ix}]:`, m);
               }
             })
@@ -285,7 +267,41 @@ describe('verify the lambda layer works', function () {
           })
 
       });
-  })
+  });
 });
 
+function checkInit (event) {
+  expect(event).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
+  expect(event).property('__Init').equal(1);
 
+  expect(event).property('TID').a('number');
+  expect(event).property('Timestamp_u').a('number');
+  expect(event).property('Hostname').a('string');
+}
+
+function checkLambdaEntry (event) {
+  expect(event).property('Spec').equal('lambda');
+  expect(event).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
+  expect(event).property('InvocationCount').gte(1);
+  expect(event).property('InvokedFunctionARN', functionArn);
+  //expect(event).property('FunctionName').equal(lambdaTestFunction);
+  expect(event).property('FunctionVersion').equal('$LATEST');
+  expect(event).property('SampleSource').equal(1);
+  expect(event).property('SampleRate').equal(1000000);
+
+  expect(event).property('TID').a('number');
+  expect(event).property('Timestamp_u').a('number');
+  expect(event).property('Hostname').a('string');
+  expect(event).property('HTTP-Host', 'xyzzy', 'this should fail');
+}
+
+function checkLambdaExit (event, entry) {
+  expect(event).property('Edge').match(/[0-9A-F]{16}/);
+  expect(event[xt].slice(0, 42)).equal(entry[xt].slice(0, 42), 'task IDs must match');
+  expect(event).property('Edge').equal(entry[xt].slice(42, 58), 'edge must point to entry');
+  expect(event).property('TransactionName').a('string');
+
+  expect(event).property('TID').a('number');
+  expect(event).property('Timestamp_u').a('number');
+  expect(event).property('Hostname').a('string');
+}

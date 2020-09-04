@@ -6,17 +6,17 @@ const v1 = {
   'path': '/my/path',
   'httpMethod': 'GET',
   'headers': {
-    'Header1': 'value1',
-    'Header2': 'value2'
+    'X-Forwarded-Proto': 'https',
+    'CloudFront-Forwarded-Proto': 'https',
+    'Host': 'úüỏ.macnaughton.zone',
+    'X-Forwarded-Port': '443'
   },
   'multiValueHeaders': {
-    'Header1': [
-      'value1'
-    ],
-    'Header2': [
-      'value1',
-      'value2'
-    ]
+    'X-Forwarded-Proto': ['https'],
+    'CloudFront-Forwarded-Proto': ['https'],
+    'Host': ['úüỏ.macnaughton.zone'],
+    'X-Forwarded-Port': ['443'],
+    'Header2': ['value1', 'value2']
   },
   'queryStringParameters': {
     'parameter1': 'value1',
@@ -81,7 +81,10 @@ const v2 = {
     'cookie2'
   ],
   'headers': {
-    'Header1': 'value1',
+    'X-Forwarded-Proto': 'https',
+    'CloudFront-Forwarded-Proto': 'https',
+    'Host': 'úüỏ.macnaughton.zone',
+    'X-Forwarded-Port': '443',
     'Header2': 'value1,value2'
   },
   'queryStringParameters': {

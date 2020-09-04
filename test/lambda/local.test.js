@@ -13,6 +13,8 @@ delete process.env.APPOPTICS_REPORTER;
 delete process.env.APPOPTICS_COLLECTOR;
 
 const child_process = require('child_process');
+const os = require('os');
+
 const expect = require('chai').expect;
 const BSON = require('bson');
 
@@ -41,7 +43,7 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
     this.timeout(20000);
   })
 
-  it('should work without the agent being loaded', async function () {
+  it('test no agent loaded', async function () {
     const test = 'agentNotLoaded';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -65,7 +67,7 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
 
   });
 
-  it('should work with the agent disabled', function () {
+  it('test with the agent disabled', function () {
     const test = 'agentDisabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -90,9 +92,9 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
 
   });
 
-  it('should work with the agent enabled', function () {
+  it('test with the agent enabled', function () {
     const test = 'agentEnabled';
-    const event = JSON.stringify({});
+    const event = JSON.stringify(events.v1);
     const context = JSON.stringify({});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -122,10 +124,10 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
       });
   });
 
-  it('should not report an error when the function rejects', function () {
+  it('don\'t report an error when the function rejects', function () {
     const test = 'agentEnabled';
     const errorCode = 404;
-    const event = JSON.stringify({});
+    const event = JSON.stringify(events.v1);
     const context = JSON.stringify({[aoLambdaTest]: {reject: errorCode}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -154,11 +156,11 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
       });
   });
 
-  it('should report an error when the function throws', function () {
+  it('report an error when the function throws', function () {
     const test = 'agentEnabled';
     const emsg = 'fatal error';
     const re = new RegExp(`^Error: ${emsg}\n`);
-    const event = JSON.stringify();
+    const event = JSON.stringify(events.v1);
     const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -187,11 +189,13 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
       });
   });
 
-  it('should not return an x-trace header when it throws', function () {
+  it('don\'t return an x-trace header when it throws', function () {
     const test = 'agentEnabled';
     const emsg = 'fatal error';
     const re = new RegExp(`^Error: ${emsg}\n`);
-    const event = JSON.stringify({headers: {'x-trace': xTraceS}});
+    const e1 = clone(events.v1);
+    e1.headers['x-trace'] = xTraceS;
+    const event = JSON.stringify(e1);
     const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
@@ -220,9 +224,9 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
   });
 });
 
-describe('execute lambda promise-functions with simulated api gateway events', function () {
+describe('lambda promise-functions with simulated api gateway events', function () {
 
-  it('should work when a sampled x-trace header is supplied in a v1 event', function () {
+  it('test a sampled x-trace header with a v1 event', function () {
     const test = 'agentEnabled';
     const e1 = clone(events.v1);
     e1.headers['x-trace'] = xTraceS;
@@ -254,7 +258,40 @@ describe('execute lambda promise-functions with simulated api gateway events', f
       });
   });
 
-  it('should work when an unsampled x-trace header is supplied in a v2 event', function () {
+  it('test a sampled x-trace header with a v1 event with no version', function () {
+    const test = 'agentEnabled';
+    const e1 = clone(events.v1);
+    delete e1.version;
+    e1.headers['x-trace'] = xTraceS;
+    const event = JSON.stringify(e1);
+    const context = JSON.stringify({});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: pEntrySpanName, xtrace: xTraceS};
+              checkAoData(aodata, options);
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).exist;
+              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+              expect(o.resolve).property('headers').property('x-trace');
+              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
+              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
+            }
+          }
+        }
+        return undefined;
+      });
+  });
+
+  it('test an unsampled x-trace header with a v2 event', function () {
     const test = 'agentEnabled';
     const e2 = clone(events.v2);
     e2.headers['x-trace'] = xTraceU;
@@ -350,7 +387,7 @@ describe('execute lambda promise-functions with simulated api gateway events', f
       });
   });
 
-  it('apig-v2 should treat an object response without a statusCode as the body', function () {
+  it('apig-v2 should treat an object without a statusCode as the body', function () {
     const test = 'agentEnabled';
     const resolve = {i: 'am', a: 'custom', body: 'response'};
     const event = JSON.stringify(clone(events.v2));
@@ -382,12 +419,47 @@ describe('execute lambda promise-functions with simulated api gateway events', f
         return undefined;
       });
   });
+
+  it('apig-v2 should treat a value as the body', function () {
+    const test = 'agentEnabled';
+    const resolve = 7;
+    const event = JSON.stringify(clone(events.v2));
+    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
+
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              const aodata = decodeAoData(o);
+              const options = {entrySpanName: pEntrySpanName};
+              const organized = checkAoData(aodata, options);
+              expect(organized.topEvents.exit).not.property('ErrorClass');
+              expect(organized.topEvents.exit).not.property('ErrorMsg');
+              expect(organized.topEvents.exit).not.property('Backtrace');
+            } else if (k === 'test-data') {
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode', 200);
+              // the remote body must be text if supplied but this test doesn't do so. see
+              // remote.test.js
+              expect(o.resolve).property('body', resolve);
+              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+              expect(o.reject).not.exist;
+            }
+          }
+        }
+        return undefined;
+      });
+  });
 });
 
 
-describe('execute lambda callback-function with simulated api gateway events', function () {
+describe('test lambda callback-function with simulated api gateway events', function () {
 
-  it('should work when a sampled x-trace header is supplied in a v1 event', function () {
+  it('test a sampled x-trace header with a v1 event', function () {
     const test = 'agentEnabledCB';
     const e1 = clone(events.v1);
     e1.headers['x-trace'] = xTraceS;
@@ -422,7 +494,7 @@ describe('execute lambda callback-function with simulated api gateway events', f
       });
   });
 
-  it('should work when a sampled x-trace header is supplied in a v2 event', function () {
+  it('test a sampled x-trace header with a v2 event', function () {
     const test = 'agentEnabledCB';
     const e2 = clone(events.v2);
     e2.headers['x-trace'] = xTraceS;
@@ -501,7 +573,7 @@ describe('execute lambda functions with a direct function call', function () {
             const o = obj[k];
             if (k === 'ao-data') {
               const aoData = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
+              const options = {entrySpanName: pEntrySpanName, rawCall: true};
               const organized = checkAoData(aoData, options);
               organized.metrics.forEach(m => {
                 ['measurements', 'histograms'].forEach(k => {
@@ -533,7 +605,7 @@ describe('execute lambda functions with a direct function call', function () {
             const o = obj[k];
             if (k === 'ao-data') {
               const aoData = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
+              const options = {entrySpanName: pEntrySpanName, rawCall: true};
               const organized = checkAoData(aoData, options);
               organized.metrics.forEach(m => {
                 ['measurements', 'histograms'].forEach(k => {
@@ -653,8 +725,14 @@ function decodeAoData (data, debug) {
 //
 // return ao-data in useful groups
 //
+// options:
+//  entrySpanName - the name of the entry span
+//  unsampled - the trace should be unsampled
+//  xtrace - the inbound xtrace to check entry event against
+//  rawCall - the function was not invoked via the api gateway
+//
 function checkAoData (aoData, options = {}) {
-  const {unsampled, entrySpanName, xtrace} = options;
+  const {unsampled, entrySpanName, xtrace, rawCall} = options;
 
   expect(aoData).property('events').an('array');
   expect(aoData.events.length).gte(unsampled ? 1 : 3);
@@ -690,12 +768,19 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.entry).property('SampleRate', 1000000);
     expect(topEvents.entry).property('TID');
     expect(topEvents.entry).property('Timestamp_u');
-    expect(topEvents.entry).property('Hostname');
+
+    if (!rawCall) {
+      expect(topEvents.entry).property('Hostname', os.hostname());
+      expect(topEvents.entry).property('HTTP-Host', 'úüỏ.macnaughton.zone', 'use Host header');
+    }
 
     expect(topEvents.exit).property('TransactionName', `custom-${entrySpanName}`);
     expect(topEvents.exit).property('TID');
-    expect(topEvents.exit).property('Timestamp_u');
-    expect(topEvents.exit).property('Hostname');
+
+    if (!rawCall) {
+      expect(topEvents.exit).property('Timestamp_u');
+      expect(topEvents.exit).property('Hostname', os.hostname());
+    }
 
     expect(topEvents.entry).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
     expect(topEvents.exit).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
