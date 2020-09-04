@@ -158,7 +158,9 @@ describe('verify the lambda layer works', function () {
     const protocol = 'https';
     const host = `${apiid}.execute-api.${region}.amazonaws.com`;
     // use /latest to avoid specific function version bound to the /api endpoint.
-    const target = `${host}/api/latest`;
+    const stage = '/api';
+    const httpPath = '/latest';
+    const target = `${host}${stage}${httpPath}`;
     const url = `${protocol}://${target}${queryParams}`;
 
     return axios.get(url)
@@ -231,10 +233,12 @@ describe('verify the lambda layer works', function () {
                 checkLambdaEntry(events[i]);
                 // check for additional api gateway kv pairs
                 expect(events[i].Method).equal('GET');
-                expect(events[i].URL).equal('/');
-                expect(events[i].Proto).equal(protocol);
-                expect(events[i]['HTTP-Host']).equal(host);
-                expect(events[i].Port).oneOf([443, '443']);
+                //expect(events[i].URL).equal(httpPath);
+                debugger; // Path needs to be URL (with query params)
+                expect(events[i]).property('Path', httpPath);
+                expect(events[i]).property('Proto', protocol);
+                expect(events[i]).property('HTTP-Host', host);
+                expect(events[i]).property('Port').oneOf([443, '443']);
                 entryIx = i;
 
               } else if (events[i].Label === 'exit') {
@@ -279,23 +283,24 @@ function checkInit (event) {
   expect(event).property('Hostname').a('string');
 }
 
-function checkLambdaEntry (event) {
+function checkLambdaEntry (event, apig) {
   expect(event).property('Spec').equal('lambda');
   expect(event).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
   expect(event).property('InvocationCount').gte(1);
   expect(event).property('InvokedFunctionARN', functionArn);
-  //expect(event).property('FunctionName').equal(lambdaTestFunction);
   expect(event).property('FunctionVersion').equal('$LATEST');
   expect(event).property('SampleSource').equal(1);
   expect(event).property('SampleRate').equal(1000000);
 
   expect(event).property('TID').a('number');
   expect(event).property('Timestamp_u').a('number');
-  expect(event).property('Hostname').a('string');
-  expect(event).property('HTTP-Host', 'xyzzy', 'this should fail');
+  if (apig) {
+    expect(event).property('Hostname').a('string');
+    expect(event).property('HTTP-Host', 'xyzzy', 'this should fail');
+  }
 }
 
-function checkLambdaExit (event, entry) {
+function checkLambdaExit (event, entry, apig) {
   expect(event).property('Edge').match(/[0-9A-F]{16}/);
   expect(event[xt].slice(0, 42)).equal(entry[xt].slice(0, 42), 'task IDs must match');
   expect(event).property('Edge').equal(entry[xt].slice(42, 58), 'edge must point to entry');
@@ -303,5 +308,7 @@ function checkLambdaExit (event, entry) {
 
   expect(event).property('TID').a('number');
   expect(event).property('Timestamp_u').a('number');
-  expect(event).property('Hostname').a('string');
+  if (apig) {
+    expect(event).property('Hostname').a('string');
+  }
 }
