@@ -2,6 +2,7 @@
 
 const helper = require('./helper')
 const ao = require('..')
+const spawnSync = require('child_process').spawnSync;
 const debug = ao.logger.debug
 
 const util = require('util')
@@ -32,6 +33,7 @@ describe('logging', function () {
 
   afterEach(function () {
     debug.log = logger
+    ao.logLevel = levels;
   })
 
   it('should set logging', function () {
@@ -41,11 +43,9 @@ describe('logging', function () {
       correct = level === 'appoptics:span'
       debug.enable = real
     }
-    const before = ao.logLevel
     ao.logLevel = 'span'
     expect(ao.logLevel).equal('span')
     expect(correct).equal(true)
-    ao.logLevel = before
   })
 
   it('should add and remove logging', function () {
@@ -64,8 +64,7 @@ describe('logging', function () {
     expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon', 'appoptics:error'])
     ao.logLevel = ''
     expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon'])
-    ao.logLevel = 'error,warn'
-  })
+  });
 
   it('should log correctly', function () {
     const msg = 'test logging'
@@ -78,6 +77,25 @@ describe('logging', function () {
     }
     ao.loggers.error(msg)
     expect(called).equal(true, 'logger must be called')
+  });
+
+  it('should allow all logging to be suppressed', function () {
+    ao.logLevel = '';
+    let called = false;
+    let level;
+    let text;
+    debug.log = function (output) {
+      [level, text] = getLevelAndText(output);
+      called = true;
+    };
+
+    ao.loggers.error('anything');
+    ao.loggers.warn('nothing');
+    ao.loggers.debug('something');
+
+    if (called) {
+      expect(called).equal(false, `log ${level}:${text} should not have been output`);
+    }
   });
 
   it('should throw when constructing a debounced logger that does not exist', function () {
@@ -114,7 +132,9 @@ describe('logging', function () {
   })
 
   it('should debounce repetitive logging by time', function (done) {
-    this.timeout(5000)
+    this.timeout(5000);
+    // don't have mocha highlight this (even yellow) as a slow test.
+    this.slow(10000);
     const msg = 'test logging'
     const aolevel = 'error'
     const options = {
@@ -164,7 +184,7 @@ describe('logging', function () {
     [logger, getter] = makeLogHandler()
     debug.log = logger
     ao.loggers.warn('embed integer %i floating %f object %o Object %O', 17.5, 17.5, [1, 2], [1, 2]);
-    [called, level, text, formatted] = getter()
+    [called, level, text, formatted] = getter();      // eslint-disable-line no-unused-vars
     expect(called).equal(true, 'logger must be called')
     expect(level).equal('appoptics:warn')
     expect(formatted).equal('embed integer 17 floating 17.5 object [ 1, 2, [length]: 2 ] Object [ 1, 2 ]')
@@ -219,7 +239,7 @@ describe('logging', function () {
     // get uppercase, non-delimited string
     const s = md.toString()
     ao.loggers.error('string xtrace %x', s);
-    [called, level, text, formatted] = getter()
+    [called, level, text, formatted] = getter();    // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
     expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`);
@@ -257,7 +277,50 @@ describe('logging', function () {
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
     expect(formatted).equal(`${name} ${event.event.toString(1)}`)
-  })
+  });
+
+  it('should suppress all startup logging when APPOPTICS_LOG_SETTINGS=""', function () {
+    this.slow(200);
+    const env = Object.assign({}, process.env, {APPOPTICS_SERVICE_KEY: 'bad key', APPOPTICS_LOG_SETTINGS: ''});
+    const cmd = 'node';
+    const args = ['-r ".."', '-e "process.exit()"'];
+
+    const r = spawnSync(cmd,  args, {
+      env,
+      shell: true,
+      encoding: 'utf-8',
+      cwd: __dirname
+    });
+    expect(r.stdout.length).equal(0, 'nothing should be written to stdout');
+    expect(r.stderr.length).equal(0, 'nothing should be written to stderr');
+  });
+
+  it('should not suppress startup logging by default', function () {
+    this.slow(200);
+    const env = Object.assign({}, process.env, {APPOPTICS_SERVICE_KEY: 'bad key'});
+    // delete underlying debug package's state; the logging package will detect
+    // and enable them too.
+    delete env.DEBUG;
+    delete env.APPOPTICS_LOG_SETTINGS;
+    const cmd = 'node';
+    const args = ['-r ".."', '-e "process.exit()"'];
+
+    const r = spawnSync(cmd, args, {
+      env,
+      shell: true,
+      encoding: 'utf-8',
+      cwd: __dirname
+    });
+    expect(r.stdout.length).equal(0, 'nothing should be written to stdout');
+    expect(r.stderr.length).not.equal(0, 'stderr should not be empty');
+
+    // line format: 2020-08-07T21:48:36.268Z appoptics:error
+    const lines = r.stderr.split('\n');
+    const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(error|warn)/
+    lines.forEach(l => {
+      expect(l.match(pattern, 'each line should contain only default logging levels'));
+    });
+  });
 
   it.skip('should handle the appoptics extended cls (%c) format', function () {})
 
