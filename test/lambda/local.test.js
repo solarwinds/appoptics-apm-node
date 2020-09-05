@@ -38,12 +38,12 @@ const {aoLambdaTest} = require(testFile);
 const xTraceS = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084301';
 const xTraceU = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084300';
 
-describe('execute lambda promise-functions with a simulated api gateway event', function () {
+describe('test lambda promise function\'s core responses with mock apig events', function () {
   beforeEach(function () {
     this.timeout(20000);
   })
 
-  it('test no agent loaded', async function () {
+  it('no agent loaded', async function () {
     const test = 'agentNotLoaded';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -67,7 +67,7 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
 
   });
 
-  it('test with the agent disabled', function () {
+  it('agent disabled', function () {
     const test = 'agentDisabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -92,7 +92,7 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
 
   });
 
-  it('test with the agent enabled', function () {
+  it('agent enabled', function () {
     const test = 'agentEnabled';
     const event = JSON.stringify(events.v1);
     const context = JSON.stringify({});
@@ -224,9 +224,9 @@ describe('execute lambda promise-functions with a simulated api gateway event', 
   });
 });
 
-describe('lambda promise-functions with simulated api gateway events', function () {
+describe('test lambda promise functions with mock apig events', function () {
 
-  it('test a sampled x-trace header with a v1 event', function () {
+  it('apig-v1 with version with sampled x-trace header', function () {
     const test = 'agentEnabled';
     const e1 = clone(events.v1);
     e1.headers['x-trace'] = xTraceS;
@@ -258,7 +258,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('test a sampled x-trace header with a v1 event with no version', function () {
+  it('apig-v1 without version with sampled x-trace header', function () {
     const test = 'agentEnabled';
     const e1 = clone(events.v1);
     delete e1.version;
@@ -291,7 +291,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('test an unsampled x-trace header with a v2 event', function () {
+  it('apig-v2 with unsampled x-trace header', function () {
     const test = 'agentEnabled';
     const e2 = clone(events.v2);
     e2.headers['x-trace'] = xTraceU;
@@ -323,7 +323,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('apig-v1 should not modify a string response', function () {
+  it('apig-v1 an invalid response does not generate an error', function () {
     const test = 'agentEnabled';
     const event = JSON.stringify(clone(events.v1));
     const resolve = 'bad-resolve-value';
@@ -354,7 +354,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('apig-v2 should modify a string response', function () {
+  it('apig-v2 a string response becomes the body', function () {
     const test = 'agentEnabled';
     const event = JSON.stringify(clone(events.v2));
     const resolve = 'bad-resolve-value';
@@ -387,7 +387,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('apig-v2 should treat an object without a statusCode as the body', function () {
+  it('apig-v2 an object response without a statusCode becomes the body', function () {
     const test = 'agentEnabled';
     const resolve = {i: 'am', a: 'custom', body: 'response'};
     const event = JSON.stringify(clone(events.v2));
@@ -420,7 +420,7 @@ describe('lambda promise-functions with simulated api gateway events', function 
       });
   });
 
-  it('apig-v2 should treat a value as the body', function () {
+  it('apig-v2 a value becomes the body', function () {
     const test = 'agentEnabled';
     const resolve = 7;
     const event = JSON.stringify(clone(events.v2));
@@ -457,9 +457,9 @@ describe('lambda promise-functions with simulated api gateway events', function 
 });
 
 
-describe('test lambda callback-function with simulated api gateway events', function () {
+describe('test lambda callback functions with mock apig events', function () {
 
-  it('test a sampled x-trace header with a v1 event', function () {
+  it('apig-v1 with sampled x-trace header', function () {
     const test = 'agentEnabledCB';
     const e1 = clone(events.v1);
     e1.headers['x-trace'] = xTraceS;
@@ -494,7 +494,7 @@ describe('test lambda callback-function with simulated api gateway events', func
       });
   });
 
-  it('test a sampled x-trace header with a v2 event', function () {
+  it('apig-v2 with sampled x-trace header', function () {
     const test = 'agentEnabledCB';
     const e2 = clone(events.v2);
     e2.headers['x-trace'] = xTraceS;
@@ -531,12 +531,12 @@ describe('test lambda callback-function with simulated api gateway events', func
 
 });
 
-describe('execute lambda functions with a direct function call', function () {
+describe('test lambda functions with a direct function call', function () {
   beforeEach(function () {
     this.timeout(20000);
   });
 
-  it('should work with the agent disabled', function () {
+  it('agent disabled', function () {
     const test = 'agentDisabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -559,7 +559,7 @@ describe('execute lambda functions with a direct function call', function () {
       });
   });
 
-  it('should work with the agent enabled', function () {
+  it('agent enabled', function () {
     const test = 'agentEnabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
@@ -591,7 +591,7 @@ describe('execute lambda functions with a direct function call', function () {
       });
   });
 
-  it('should not return an x-trace header if it doesn\'t have api gateway properties', function () {
+  it('don\'t return an x-trace header if not an apig event', function () {
     const test = 'agentEnabled';
     const event = JSON.stringify({'x-trace': xTraceS});
     const context = JSON.stringify({});
