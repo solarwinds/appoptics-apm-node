@@ -34,6 +34,8 @@ const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
 
 let functionArn;
 let fnConfig;
+let fnInvocations;
+let initEvent;
 
 describe('verify the lambda layer works', function () {
   before(function () {
@@ -117,16 +119,12 @@ describe('verify the lambda layer works', function () {
             expect(events.length).equal(expected, `found ${events.length} events when expecting ${expected}`);
 
 
-            if (expected === 2) {
-              // eslint-disable-next-line no-console
-              console.log('not verifying __Init event');
-            }
+            fnInvocations = invocations.count;
 
             let entryIx;
             for (let i = 0; i < events.length; i++) {
               if (expected === 3 && events[i].Layer === 'nodejs') {
-                expect(events[i].Label).equal('single');
-                checkInit(events[i]);
+                initEvent = events[i];
                 continue;
               }
 
@@ -147,6 +145,14 @@ describe('verify the lambda layer works', function () {
 
       });
   });
+
+  it('should test the init event if this was the first invocation', function () {
+    if (fnInvocations !== 1) {
+      this.skip();
+    }
+    expect(initEvent).property('Label', 'single');
+    checkInit(initEvent);
+  })
 
   it('should fetch correctly work through the api gateway', function () {
     this.timeout(10 * 60 * 1000);
