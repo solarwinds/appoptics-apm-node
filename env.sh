@@ -1,21 +1,22 @@
+#!/bin/bash
 ARG=$1
 PARAM=$2
 
 AO_TOKEN=${AO_TOKEN_STG:-$AO_TOKEN_PROD}
 
-if [[ -z "$AO_TOKEN" ]]; then
+if [ -z "$AO_TOKEN" ]; then
     echo "AO_TOKEN_PROD or AO_TOKEN_STG must be defined and contain a valid SolarWinds token"
     echo "for accessing a collector."
     return
 fi
 
 if [ "$AO_TOKEN" = "$AO_TOKEN_PROD" ]; then
-    AO_COLLECTOR=collector.appoptics.com
+    APPOPTICS_COLLECTOR=collector.appoptics.com
 else
-    AO_COLLECTOR=collector-stg.appoptics.com
+    APPOPTICS_COLLECTOR=collector-stg.appoptics.com
 fi
 
-global_path="$NVM_DIR/versions/node/`node -v`/lib/node_modules"
+global_path="$NVM_DIR/versions/node/$(node -v)/lib/node_modules"
 if [ -d "$global_path" ] && [[ ":$PATH:" != *":$1:"* ]]; then
     PATH="${PATH:+"$PATH:"}$global_path"
 elif [ ! -d "$global_path" ]; then
@@ -24,7 +25,8 @@ fi
 
 if [[ -z "$ARG" ]]; then
     echo "source this script with an argument of docker, docker-scribe, bash,"
-    echo "bash-testing, or travis\n"
+    echo "bash-testing, or travis"
+    echo ""
     echo "docker defines variables for running tests in the docker environment."
     echo "docker-scribe does the same but with the scribe collector instead of java"
     echo "  collector."
@@ -109,6 +111,8 @@ elif [[ "$ARG" = "bash" ]]; then
     export AO_TEST_REDIS_3_0=localhost:6379
     # the tedious probe tests SQL Server.
     export AO_TEST_SQLSERVER_EX=localhost:1433
+    export AO_TEST_SQLSERVER_USERNAME=sa
+    export AO_TEST_SQLSERVER_PASSWORD=whatyouknowaboutthat
 elif [[ "$ARG" = "stg" ]]; then
     export APPOPTICS_COLLECTOR=collector-stg.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_STG}:ao-node-test
