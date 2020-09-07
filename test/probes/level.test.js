@@ -3,15 +3,17 @@
 const helper = require('../helper')
 const {ao} = require('../1.test-common')
 
+const fs = require('fs');
 // require level in order to test levelup/leveldown because level
 // assures that compatible versions of both are loaded.
-const level = require('level')
-const db = level('../test-db')
+const level = require('level');
+const dbPath = '/tmp/test-db';
+const db = level(dbPath);
 
 const pkg = require('level/package')
 
 describe('probes.level ' + pkg.version, function () {
-  let emitter
+  let emitter;
 
   //
   // Intercept appoptics messages for analysis
@@ -21,10 +23,18 @@ describe('probes.level ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)
-  })
+  });
   after(function (done) {
-    emitter.close(done)
-  })
+    emitter.close(done);
+  });
+  after(function (done) {
+    try {
+      fs.rmdirSync(dbPath, {recursive: true});
+      done();
+    } catch (e) {
+      ao.loggers.debug(`failed to rm -rf ${dbPath}`);
+    }
+  });
 
   const check = {
     'levelup-entry': function (msg) {
