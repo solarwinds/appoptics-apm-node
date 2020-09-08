@@ -1,4 +1,6 @@
 #!/bin/bash
+# shellcheck disable=SC2003,SC2006 # don't mind backticks or expr
+
 #
 # script to run tests
 #
@@ -7,7 +9,8 @@
 # various tests are separated because mocha consolidates all tests in each command as one
 # so they are not truly independent. e.g., every require across all tests is required at
 # the start of tests. that makes it impossible to run tests without the addon loaded when
-# some tests do load the addon.
+# some tests have already loaded the addon or to change the configuration once the addon
+# has been initialized.
 #
 
 ERRORS=( )          # list of "GROUP test test test GROUP ..." which failed
@@ -20,7 +23,8 @@ SUITES_PASSED=0
 SUITES_FAILED=0
 SUITES_SKIPPED=0
 
-# if one of the strings in SKIP is found in a test file that file will be skipped.
+# if one of the strings in SKIP is found in a test file name that file will be skipped so
+# it's best to start with "test/" and provide as much of the path as possible.
 SKIP=${SKIP:-"test/solo/notifications"}
 
 function skipThis() {
@@ -41,16 +45,13 @@ function executeTestGroup() {
     local new_errors=""
     local new_skipped=""
 
-    local FS=$(ls $test_pattern)
-    for F in $FS
+    for F in $test_pattern
     do
-        skipThis $F
-        if [ $? -eq 1 ]; then
+        if ! skipThis "$F"; then
             new_skipped="$new_skipped $F"
             SUITES_SKIPPED=`expr $SUITES_SKIPPED + 1`
         else
-            mocha $F
-            if [ $? -ne 0 ]; then
+            if ! mocha "$F"; then
                 new_errors="$new_errors $F"
                 SUITES_FAILED=`expr $SUITES_FAILED + 1`
             else
@@ -123,13 +124,13 @@ executeTestGroup "PROBES" "test/probes/*.test.js"
 if [ ${#ERRORS[*]} -ne 0 ]; then
     echo "$SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed"
     echo "$SUITES_FAILED suite${sfs} in ${#ERRORS[*]} group${gfs} failed"
-    for ix in ${!ERRORS[@]}
+    for ix in "${!ERRORS[@]}"
     do
         echo "    ${ERRORS[$ix]}"
     done
     if [ $SUITES_SKIPPED -ne 0 ]; then
         echo "$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped"
-        for ix in ${!SKIPPED[@]}
+        for ix in "${!SKIPPED[@]}"
         do
             echo "    ${SKIPPED[$ix]}"
         done
@@ -140,7 +141,7 @@ else
     echo "No errors - $SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed"
     if [ $SUITES_SKIPPED -ne 0 ]; then
         echo "$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped"
-        for ix in ${!SKIPPED[@]}
+        for ix in "${!SKIPPED[@]}"
         do
             echo "    ${SKIPPED[$ix]}"
         done
