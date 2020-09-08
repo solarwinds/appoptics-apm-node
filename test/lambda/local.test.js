@@ -9,6 +9,7 @@ process.env.NODE_PATH += globalInstalls;
 // create a fake lambda environment
 process.env.AWS_LAMBDA_FUNCTION_NAME = 'local-test-function';
 process.env.LAMBDA_TASK_ROOT = '/var/runtime';
+process.env.APPOPTICS_SAMPLE_PERCENT = 100;
 delete process.env.APPOPTICS_REPORTER;
 delete process.env.APPOPTICS_COLLECTOR;
 
