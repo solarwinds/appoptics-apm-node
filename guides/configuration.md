@@ -4,7 +4,7 @@ Configuration of `appoptics-apm` is possible through configuration files, enviro
 settings using the API. This covers configuration files and environment variables; the API is covered in the
 api guide.
 
-### Required Configuration ###
+## Required Configuration ##
 
 There is only one configuration parameter that is required, the service key. The service key is in the form
 ``<api token>:<service name>``.
@@ -13,7 +13,7 @@ It must be supplied using either the environment variable APPOPTICS_SERVICE_KEY 
 `appoptics-apm-config` configuration file. If both are supplied the environment variable will be used.
 If not supplied the `appoptics-apm` agent will disable itself.
 
-### The Configuration File ###
+## The Configuration File ##
 
 The `appoptics-apm` default configuration file is either `appoptics-apm-config.json` or `appoptics-apm-config.js`.
 It should be placed in the root directory of the project being instrumented. The file/location may be changed via the
@@ -44,7 +44,7 @@ The configuration file can supply the following properties, showing their defaul
 }
 ```
 
-#### Top Level Configuration File Properties ####
+### Top Level Configuration File Properties ###
 
 | Property Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
@@ -64,7 +64,7 @@ The configuration file can supply the following properties, showing their defaul
 |triggerTraceEnabled|`true`|Enable or disable the trigger-trace feature. Option values are `true` and `false`|
 
 
-#### Configuration File Probe Settings ####
+### Configuration File Probe Settings ###
 
 Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different
 configuration options. See `lib/probe-defaults.js` for details.
@@ -120,11 +120,6 @@ module.exports = {
 }
 ```
 
-### Debugging Configuration ###
-
-This section is primarily of interest to those implementing custom instrumentation or doing development on the
-`appoptics-apm` agent and SDK.
-
 #### Environment Variables ####
 
 Environment variables with illegal values will generate a warning message and revert to their default values.
@@ -134,6 +129,7 @@ These environment variables may be set:
 
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
+|APPOPTICS_ENABLED|`true`|The agent is enabled. Set to `false` to disable.|
 |APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable.|
 |APPOPTICS_PROXY||Proxy that does not require authentication: `http://proxy-server:3306`. Proxy that does require Basic Authentication: `http://user:password@proxy-server:3306`.|
 |APPOPTICS_APM_CONFIG_NODE|`'$PWD/appoptics-apm'`|The location of the configuration file.|
