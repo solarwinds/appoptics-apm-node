@@ -44,6 +44,12 @@ const rootConfigName = `${process.cwd()}/appoptics-apm-config`;
 //
 function doChecks (cfg, overrides = {}) {
   let expected;
+  let debug = false;
+
+  if (overrides.debug) {
+    debug = true;
+    delete overrides.debug;
+  }
 
   expected = overrides.file || rootConfigName;
   expect(cfg.file).equal(expected);
@@ -52,6 +58,10 @@ function doChecks (cfg, overrides = {}) {
   // special to allow undefined serviceKey/serviceName to remove key
   if (expected.serviceKey === undefined) delete expected.serviceKey;
   if (expected.serviceName === undefined) delete expected.serviceName;
+
+  if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === 'lambda') {
+    if (!('sampleRate' in expected)) expected.sampleRate = 300000; // the lambda default
+  }
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
   expected = Object.assign({}, expectedProbeDefaults);
@@ -83,6 +93,11 @@ function doChecks (cfg, overrides = {}) {
 
   expected = overrides.warnings || [];
   expect(cfg.warnings).an('array').deep.equal(expected, 'warnings mismatch');
+
+  if (debug && cfg.debuggings.length) {
+    // eslint-disable-next-line no-console
+    console.log(cfg.debuggings);
+  }
 }
 
 function writeConfigJSON (cfg) {
@@ -468,9 +483,11 @@ describe('get-unified-config', function () {
     })
 
     //
-    // verify that a missing serviceKey is handled correctly.
+    // verify that a missing serviceKey is handled correctly. index.js will not let this
+    // actually prevent the agent from running in a lambda environment, but the error will
+    // be reported because the service key's format is invalid.
     //
-    it('an invalid serviceKey in a non-lambda environment is a fatal error', function () {
+    it('an invalid serviceKey is a fatal error', function () {
       const serviceKey = `${'f'.repeat(32)}:service-name`;
       process.env.APPOPTICS_SERVICE_KEY = serviceKey;
 
@@ -481,6 +498,51 @@ describe('get-unified-config', function () {
       const expected = Object.assign({global: {serviceName: undefined, serviceKey: ''}, fatals});
       doChecks(cfg, expected);
     });
+
+    it('token bucket parameters should work in a lambda environment', function () {
+      process.env.LAMBDA_TASK_ROOT = '/var/task'
+      process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
+
+      const tokenBucketRate = 100;
+      const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
+      process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
+
+      const cfg = guc();
+
+      expect(cfg.execEnv).property('type', 'serverless');
+      expect(cfg.execEnv).property('id', 'lambda');
+
+      // no service key is supplied so there shouldn't be a serviceKey property.
+      const globals = {tokenBucketRate, tokenBucketCapacity, serviceKey: undefined};
+
+      // the default check for fatals is "not a valid serviceKey:" so override it
+      const fatals = [];
+      const expected = Object.assign({global: globals, fatals});
+      doChecks(cfg, expected);
+    });
+
+    it('token bucket parameters should be flagged in a non-lambda environment', function () {
+      const tokenBucketRate = 100;
+      const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
+      process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
+
+      const cfg = guc();
+
+      expect(cfg.execEnv).property('type', 'linux');
+
+      // no service key is supplied so there shouldn't the default fatals
+      // of "not a valid serviceKey: " should occur.
+      const globals = {};
+      const unusedEnvVars = [
+        `APPOPTICS_TOKEN_BUCKET_RATE=${tokenBucketRate}`,
+        `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
+      ];
+      const expected = Object.assign({debug: false, global: globals, unusedEnvVars});
+      doChecks(cfg, expected);
+    });
+
   });
   //
   // probes
