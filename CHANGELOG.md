@@ -119,3 +119,50 @@ Features
 - runtime metrics
 - new function `sendMetrics()`; deprecate `sendMetric()`
 - requires `appoptics-bindings@9`
+
+### v7.1.1
+
+Bug fix
+- fix undefined `reporter` in `sendMetrics()`
+
+### v8.0.0
+
+Features
+- minimize span/event creation for unsampled traces
+- support HTTP proxy configuration
+- improve run span logic.
+- debounce metrics send error logging
+- improve logging consistency
+- implement messaging for host-requested soft disable
+
+Breaking changes
+- removed `Span.last` and `Event.last` - use `ao.lastSpan` and `ao.lastEvent`
+- removed `span.exitWithError()` - use `span.exitCheckingError()`
+- `aob.Reporter.isReadyToSample()` is now `aob.isReadyToSample()`
+- `aob.Metadata` no longer exists. see `guides/migration.md` if you're using this low level class.
+- removed `%m` custom log format for `Metadata` objects.
+
+### v8.0.1
+
+Bug fixes
+- support cassandra-driver > v4.4.0
+- document proxy in configuration guide.
+
+### v8.1.0
+
+Features
+- http/https probe configuration property to specify header to be used for ClientIP KV
+- don't read instrumented package versions more than once.
+
+Bug fix
+- don't log an error when `req.socket.remoteAddress` is undefined.
+
+### vNext
+
+Features
+- lambda support
+- enable all logging to be suppressed via APPOPTICS_LOG_SETTINGS=''
+- capture agent version in init message
+
+Bug fix
+- change config file name `appoptics-apm.{js|json}` => `appoptics-apm-config.{js|json}`
