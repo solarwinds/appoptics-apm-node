@@ -19,11 +19,17 @@ The signature is `ao.instrument (span, runner, config, callback)`.
 - `runner` is a function that will run the function to be instrumented (see below).
 - `config` [optional] allows non-default settings to be specified.
 - `callback` is only present if the function to be instrumented is asynchronous.
+- returns the value returned by the `runner` function
 
 There is also a promise-based equivalent, `ao.pInstrument(...)` in which the runner
-function returns a promise. The first three arguments are the same as `ao.instrument`,
-there is no callback function, and the return value is the promise returned by the
-`runner` function.
+function must return a promise.
+
+The signature is `ao.pInstrument (span, pRunner, config)`.
+
+- `span` as above
+- `pRunner` is the function to be instrumented. It must return a promise.
+- `config` as above
+- returns the promise returned by the `pRunner` function.
 
 #### Span
 

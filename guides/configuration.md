@@ -99,8 +99,8 @@ for `fs`:
 }
 ```
 
-Bonus - the configuration file is `require`d so it can be a module as opposed to pure JSON (double quoting properties,
-no comments):
+Bonus - the configuration file is `require`d so it can be a module (instead of JSON). A module allows
+using native JavaScript with comments and avoids the need to double quote all the property names.
 
 ```
 module.exports = {
