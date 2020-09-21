@@ -69,9 +69,16 @@ const aos = Symbol.for('AppOptics.Apm.Once');
 module.exports = {
   // look in the context data for this symbol for additional instructions.
   aoLambdaTest,
+  runtimeRequirePath: __filename,
+  load (taskRoot, handler) {
+    const ix = handler.lastIndexOf('.');
+    const handlerName = handler.slice(ix + 1);
+    return module.exports[handlerName];
+  },
 
   // just make sure everything is as it is expected to be. the agent
-  // is not loaded so the user's function is not wrapped.
+  // is not loaded so the user's function is not wrapped unless
+  // autowrap is being used.
   agentNotLoaded (event, context) {
     const output = {'test-data': {initialao: global[aos] !== undefined}};
 

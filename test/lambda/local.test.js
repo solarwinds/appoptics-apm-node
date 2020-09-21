@@ -10,6 +10,7 @@ process.env.NODE_PATH += globalInstalls;
 process.env.AWS_LAMBDA_FUNCTION_NAME = 'local-test-function';
 process.env.LAMBDA_TASK_ROOT = '/var/runtime';
 process.env.APPOPTICS_SAMPLE_PERCENT = 100;
+process.env.APPOPTICS_LOG_SETTINGS = '';
 delete process.env.APPOPTICS_REPORTER;
 delete process.env.APPOPTICS_COLLECTOR;
 
@@ -22,8 +23,13 @@ const BSON = require('bson');
 const events = require('./v1-v2-events.js');
 
 const xt = 'X-Trace';
+
 const pEntrySpanName = 'nodejs-lambda-fakeLambdaPromiser';
 const cEntrySpanName = 'nodejs-lambda-fakeLambdaCallbacker';
+// the auto wrapped version invokes the test function that doesn't
+// manually wrap the agent.
+const autoEntrySpanName = 'nodejs-lambda-agentNotLoaded';
+
 const testFile = './local-tests.js';
 
 const {aoLambdaTest} = require(testFile);
@@ -42,6 +48,7 @@ const xTraceU = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084300';
 describe('test lambda promise function\'s core responses with mock apig events', function () {
   beforeEach(function () {
     this.timeout(20000);
+    process.env.APPOPTICS_ENABLED = 'true';
   })
 
   it('no agent loaded', async function () {
@@ -68,10 +75,12 @@ describe('test lambda promise function\'s core responses with mock apig events',
 
   });
 
-  it('agent disabled', function () {
+  it('agent disabled by configuration file', function () {
     const test = 'agentDisabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
+    // don't let the env var override the configuration file
+    delete process.env.APPOPTICS_ENABLED;
 
     return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
       .then(r => {
@@ -89,8 +98,30 @@ describe('test lambda promise function\'s core responses with mock apig events',
         }
         return undefined;
       });
+  });
 
+  it('agent disabled by environment variable', function () {
+    const test = 'agentEnabled';
+    const event = JSON.stringify({});
+    const context = JSON.stringify({});
+    process.env.APPOPTICS_ENABLED = false;
 
+    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            expect(k).not.equal('ao-data');
+            if (k === 'test-data') {
+              const o = obj[k];
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o.resolve).property('statusCode').equal(200);
+            }
+          }
+        }
+        return undefined;
+      });
   });
 
   it('agent enabled', function () {
@@ -541,6 +572,7 @@ describe('test lambda functions with a direct function call', function () {
     const test = 'agentDisabled';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
+    delete process.env.APPOPTICS_ENABLED;
 
     return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
       .then(r => {
@@ -626,6 +658,109 @@ describe('test lambda functions with a direct function call', function () {
 
 });
 
+//
+// these tests require setting environment variables to the auto-wrapper but
+// doesn't try to use the real lambda runtime (/var/runtime/UserFunction)
+// module, so apm must load this repo version of apm; there is not one in
+// node_modules. and  the runtime is faked by the load function is testFile.
+//
+// AO_TEST_LAMBDA_APM = '../..'
+// AO_TEST_LAMBDA_RUNTIME = require(testFile).runtimeRequirePath;
+//
+// it loads a real copy of appoptics-auto-lambda but that function uses the
+// AO_TEST_ env vars above to load the proper versions for testing.
+//
+describe('verify auto-wrap function works', function () {
+
+  it('should automatically wrap the user function and load APM', function () {
+    process.env.AO_TEST_LAMBDA_APM = '../..';
+    process.env.AO_TEST_LAMBDA_RUNTIME = require(testFile).runtimeRequirePath;
+    delete process.env.APPOPTICS_ENABLED;
+
+    // now set auto-wrap up with the function that doesn't manually wrap the
+    // user function.
+    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoaded`;
+
+    const event = JSON.stringify(events.v1);
+    const context = JSON.stringify({});
+
+    let aoDataSeen = false;
+    let testDataSeen = false;
+    return exec(`node -e 'require("appoptics-auto-lambda").handler(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              aoDataSeen = true;
+              const aoData = decodeAoData(o);
+              const options = {entrySpanName: autoEntrySpanName};
+              const organized = checkAoData(aoData, options);
+              organized.metrics.forEach(m => {
+                ['measurements', 'histograms'].forEach(k => {
+                  //console.log(m[k]);
+                })
+              });
+            } else if (k === 'test-data') {
+              testDataSeen = true;
+              expect(o.initialao).equal(true, 'the agent should have been loaded');
+              expect(o).property('resolve').property('statusCode').equal(200);
+            }
+          }
+        }
+        expect(aoDataSeen).equal(true, 'ao-data must be present');
+        expect(testDataSeen).equal(true, 'test-data must be present');
+        return undefined;
+      });
+  });
+
+  it('should not wrap when disabled', function () {
+    process.env.APPOPTICS_ENABLED = false;
+    process.env.AO_TEST_LAMBDA_APM = '../..';
+    process.env.AO_TEST_LAMBDA_RUNTIME = require(testFile).runtimeRequirePath;
+
+    // now set auto-wrap up with the function that doesn't manually wrap the
+    // user function.
+    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoaded`;
+
+    const event = JSON.stringify(events.v1);
+    const context = JSON.stringify({});
+
+    let aoDataSeen = false;
+    let testDataSeen = false;
+    return exec(`node -e 'require("appoptics-auto-lambda").handler(${event}, ${context})'`)
+      .then(r => {
+        expect(checkStderr(r.stderr)).equal(undefined);
+        const jsonObjs = parseStdout(r.stdout);
+        for (const obj of jsonObjs) {
+          for (const k in obj) {
+            const o = obj[k];
+            if (k === 'ao-data') {
+              aoDataSeen = true;
+              const aoData = decodeAoData(o);
+              const options = {entrySpanName: autoEntrySpanName};
+              const organized = checkAoData(aoData, options);
+              organized.metrics.forEach(m => {
+                ['measurements', 'histograms'].forEach(k => {
+                  //console.log(m[k]);
+                })
+              });
+            } else if (k === 'test-data') {
+              testDataSeen = true;
+              expect(o.initialao).equal(false, 'the agent should not have been loaded');
+              expect(o).property('resolve').property('statusCode').equal(200);
+            }
+          }
+        }
+        expect(aoDataSeen).equal(false, 'ao-data must not be present');
+        expect(testDataSeen).equal(true, 'test-data must be present');
+        return undefined;
+      });
+  })
+})
+
 
 async function exec (arg) {
   const options = {cwd: './test/lambda'};
@@ -663,6 +798,9 @@ function parseStdout (text, debug) {
 
   if (bad.length) {
     console.log('bad stdout:', bad);   // eslint-disable-line no-console
+  }
+  if (debug) {
+    console.log(good);    // eslint-disable-line no-console
   }
 
   return good;
@@ -763,7 +901,7 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.entry).property('Layer', entrySpanName, `missing event: ${entrySpanName}:entry`);
     expect(topEvents.exit).property('Layer', entrySpanName, `missing event: ${entrySpanName}:exit`);
 
-    expect(topEvents.entry).property('Spec', 'lambda');
+    expect(topEvents.entry).property('Spec', 'aws-lambda');
     expect(topEvents.entry).property('InvocationCount', 1);
     expect(topEvents.entry).property('SampleSource', 1);
     expect(topEvents.entry).property('SampleRate', 1000000);
