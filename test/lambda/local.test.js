@@ -24,8 +24,6 @@ const events = require('./v1-v2-events.js');
 
 const xt = 'X-Trace';
 
-const pEntrySpanName = 'nodejs-lambda-fakeLambdaPromiser';
-const cEntrySpanName = 'nodejs-lambda-fakeLambdaCallbacker';
 // the auto wrapped version invokes the test function that doesn't
 // manually wrap the agent.
 const autoEntrySpanName = 'nodejs-lambda-agentNotLoaded';
@@ -45,14 +43,13 @@ const {aoLambdaTest} = require(testFile);
 const xTraceS = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084301';
 const xTraceU = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084300';
 
-describe('test lambda promise function\'s core responses with mock apig events', function () {
+describe('test lambda promise function\'s core responses with empty events', function () {
   beforeEach(function () {
-    this.timeout(20000);
     process.env.APPOPTICS_ENABLED = 'true';
-  })
+  });
 
   it('no agent loaded', async function () {
-    const test = 'agentNotLoaded';
+    const test = 'agentNotLoadedP';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
 
@@ -76,7 +73,7 @@ describe('test lambda promise function\'s core responses with mock apig events',
   });
 
   it('agent disabled by configuration file', function () {
-    const test = 'agentDisabled';
+    const test = 'agentDisabledP';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
     // don't let the env var override the configuration file
@@ -101,7 +98,7 @@ describe('test lambda promise function\'s core responses with mock apig events',
   });
 
   it('agent disabled by environment variable', function () {
-    const test = 'agentEnabled';
+    const test = 'agentEnabledP';
     const event = JSON.stringify({});
     const context = JSON.stringify({});
     process.env.APPOPTICS_ENABLED = false;
@@ -123,539 +120,288 @@ describe('test lambda promise function\'s core responses with mock apig events',
         return undefined;
       });
   });
-
-  it('agent enabled', function () {
-    const test = 'agentEnabled';
-    const event = JSON.stringify(events.v1);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aoData = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aoData, options);
-              organized.metrics.forEach(m => {
-                ['measurements', 'histograms'].forEach(k => {
-                  //console.log(m[k]);
-                })
-              });
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o).property('resolve').property('statusCode').equal(200);
-              expect(o.resolve).property('statusCode').equal(200);
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('don\'t report an error when the function rejects', function () {
-    const test = 'agentEnabled';
-    const errorCode = 404;
-    const event = JSON.stringify(events.v1);
-    const context = JSON.stringify({[aoLambdaTest]: {reject: errorCode}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).not.property('ErrorClass');
-              expect(organized.topEvents.exit).not.property('ErrorMsg');
-              expect(organized.topEvents.exit).not.property('Backtrace');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).not.exist;
-              expect(o.reject).exist;
-              expect(o.reject.statusCode).equal(errorCode, `errorCode should be ${errorCode}`);
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('report an error when the function throws', function () {
-    const test = 'agentEnabled';
-    const emsg = 'fatal error';
-    const re = new RegExp(`^Error: ${emsg}\n`);
-    const event = JSON.stringify(events.v1);
-    const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).property('ErrorClass', 'Error');
-              expect(organized.topEvents.exit).property('ErrorMsg', emsg);
-              expect(organized.topEvents.exit).property('Backtrace').match(re);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).not.exist;
-              expect(o.reject).exist;
-              expect(o.reject).deep.equal({});
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('don\'t return an x-trace header when it throws', function () {
-    const test = 'agentEnabled';
-    const emsg = 'fatal error';
-    const re = new RegExp(`^Error: ${emsg}\n`);
-    const e1 = clone(events.v1);
-    e1.headers['x-trace'] = xTraceS;
-    const event = JSON.stringify(e1);
-    const context = JSON.stringify({[aoLambdaTest]: {throw: emsg}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).property('ErrorClass', 'Error');
-              expect(organized.topEvents.exit).property('ErrorMsg', emsg);
-              expect(organized.topEvents.exit).property('Backtrace').match(re);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).not.exist;
-              expect(o.reject).deep.equal({});
-            }
-          }
-        }
-        return undefined;
-      });
-  });
 });
 
+
+//
+// verify that wrapping the promise functions works as expected.
+//
 describe('test lambda promise functions with mock apig events', function () {
-
-  it('apig-v1 with version with sampled x-trace header', function () {
-    const test = 'agentEnabled';
-    const e1 = clone(events.v1);
-    e1.headers['x-trace'] = xTraceS;
-    const event = JSON.stringify(e1);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName, xtrace: xTraceS};
-              checkAoData(aodata, options);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).exist;
-              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
-              expect(o.resolve).property('headers').property('x-trace');
-              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
-              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v1 without version with sampled x-trace header', function () {
-    const test = 'agentEnabled';
-    const e1 = clone(events.v1);
-    delete e1.version;
-    e1.headers['x-trace'] = xTraceS;
-    const event = JSON.stringify(e1);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName, xtrace: xTraceS};
-              checkAoData(aodata, options);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).exist;
-              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
-              expect(o.resolve).property('headers').property('x-trace');
-              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
-              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v2 with unsampled x-trace header', function () {
-    const test = 'agentEnabled';
-    const e2 = clone(events.v2);
-    e2.headers['x-trace'] = xTraceU;
-    const event = JSON.stringify(e2);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName, unsampled: true, xtrace: xTraceU};
-              checkAoData(aodata, options);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).exist;
-              expect(o.resolve.statusCode).equal(200, 'statusCode should be 200');
-              expect(o.resolve).property('headers').property('x-trace');
-              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceU.slice(2, 42), 'task IDs don\'t match');
-              expect(o.resolve.headers['x-trace'].slice(-2)).equal('00', 'sample bit doesn\'t match');
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v1 an invalid response does not generate an error', function () {
-    const test = 'agentEnabled';
-    const event = JSON.stringify(clone(events.v1));
-    const resolve = 'bad-resolve-value';
-    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).not.property('ErrorClass');
-              expect(organized.topEvents.exit).not.property('ErrorMsg');
-              expect(organized.topEvents.exit).not.property('Backtrace');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).equal(resolve);
-              expect(o.reject).not.exist;
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v2 a string response becomes the body', function () {
-    const test = 'agentEnabled';
-    const event = JSON.stringify(clone(events.v2));
-    const resolve = 'bad-resolve-value';
-    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).not.property('ErrorClass');
-              expect(organized.topEvents.exit).not.property('ErrorMsg');
-              expect(organized.topEvents.exit).not.property('Backtrace');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode', 200);
-              expect(o.resolve).property('body', resolve);
-              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
-              expect(o.reject).not.exist;
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v2 an object response without a statusCode becomes the body', function () {
-    const test = 'agentEnabled';
-    const resolve = {i: 'am', a: 'custom', body: 'response'};
-    const event = JSON.stringify(clone(events.v2));
-    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).not.property('ErrorClass');
-              expect(organized.topEvents.exit).not.property('ErrorMsg');
-              expect(organized.topEvents.exit).not.property('Backtrace');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode', 200);
-              expect(o.resolve).property('body', JSON.stringify(resolve));
-              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
-              expect(o.reject).not.exist;
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v2 a value becomes the body', function () {
-    const test = 'agentEnabled';
-    const resolve = 7;
-    const event = JSON.stringify(clone(events.v2));
-    const context = JSON.stringify({[aoLambdaTest]: {resolve}});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName};
-              const organized = checkAoData(aodata, options);
-              expect(organized.topEvents.exit).not.property('ErrorClass');
-              expect(organized.topEvents.exit).not.property('ErrorMsg');
-              expect(organized.topEvents.exit).not.property('Backtrace');
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode', 200);
-              // the remote body must be text if supplied but this test doesn't do so. see
-              // remote.test.js
-              expect(o.resolve).property('body', resolve);
-              expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
-              expect(o.reject).not.exist;
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-});
-
-
-describe('test lambda callback functions with mock apig events', function () {
-
-  it('apig-v1 with sampled x-trace header', function () {
-    const test = 'agentEnabledCB';
-    const e1 = clone(events.v1);
-    e1.headers['x-trace'] = xTraceS;
-    const event = JSON.stringify(e1);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: cEntrySpanName, xtrace:xTraceS};
-              checkAoData(aodata, options);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).exist;
-              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
-              expect(o.resolve).property('headers').an('object').property('x-trace');
-              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
-              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
-            } else {
-              // eslint-disable-next-line no-console
-              console.log('unexpected:', o);
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-  it('apig-v2 with sampled x-trace header', function () {
-    const test = 'agentEnabledCB';
-    const e2 = clone(events.v2);
-    e2.headers['x-trace'] = xTraceS;
-    const event = JSON.stringify(e2);
-    const context = JSON.stringify({});
-
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aodata = decodeAoData(o);
-              const options = {entrySpanName: cEntrySpanName, xtrace: xTraceS};
-              checkAoData(aodata, options);
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).exist;
-              expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
-              expect(o.resolve).property('headers').an('object').property('x-trace');
-              expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
-              expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
-            } else {
-              // eslint-disable-next-line no-console
-              console.log('unexpected:', o);
-            }
-          }
-        }
-        return undefined;
-      });
-  });
-
-});
-
-describe('test lambda functions with a direct function call', function () {
   beforeEach(function () {
-    this.timeout(20000);
-  });
-
-  it('agent disabled', function () {
-    const test = 'agentDisabled';
-    const event = JSON.stringify({});
-    const context = JSON.stringify({});
     delete process.env.APPOPTICS_ENABLED;
-
-    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          expect(obj['ao-data']).not.exist;
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode').equal(200);
-            }
-          }
-          return undefined;
-        }
-      });
+    process.env.APPOPTICS_LOG_SETTINGS = '';
   });
 
-  it('agent enabled', function () {
-    const test = 'agentEnabled';
-    const event = JSON.stringify({});
-    const context = JSON.stringify({});
+  const tests = [{
+    desc: 'apig-${version}${x-trace-clause} should insert x-trace header',
+    test: 'agentEnabledP',
+    xtrace: xTraceS,
+    options: {},
+    debug: false,
+    testDataChecks (o) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).exist;
+      expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+      expect(o.resolve).property('headers').property('x-trace');
+      expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
+      expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
+    }
+  }, {
+    desc: 'apig-${version}${x-trace-clause} should insert x-trace header',
+    test: 'agentEnabledP',
+    xtrace: xTraceU,
+    options: {},
+    testDataChecks (o) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).exist;
+      expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+      expect(o.resolve).property('headers').property('x-trace');
+      expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(xTraceS.slice(2, 42), 'task IDs don\'t match');
+      expect(o.resolve.headers['x-trace'].slice(-2)).equal('00', 'sample bit doesn\'t match');
+    }
+  }, {
+    desc: 'apig-${version}${x-trace-clause} don\'t insert x-trace header',
+    test: 'agentEnabledP',
+    xtrace: undefined,
+    options: {},
+    testDataChecks (o) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).exist;
+      expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+      expect(o.resolve).not.property('headers');
+    }
+  }, {
+    desc: 'apig-${version} invalid v1 response does not generate an error',
+    test: 'agentEnabledP',
+    xtrace: undefined,
+    resolve: 'invalid-resolve-value-for-v1',
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents.exit).not.property('ErrorClass');
+      expect(organized.topEvents.exit).not.property('ErrorMsg');
+      expect(organized.topEvents.exit).not.property('Backtrace');
+    },
+    testDataChecks (o) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).equal(this.resolve);
+      expect(o.reject).not.exist;
+    }
 
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aoData = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName, rawCall: true};
-              const organized = checkAoData(aoData, options);
-              organized.metrics.forEach(m => {
-                ['measurements', 'histograms'].forEach(k => {
-                  //console.log(m[k]);
-                })
-              });
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode').equal(200);
-              expect(o.resolve).not.property('headers');
-            }
-          }
+  }, {
+    desc: 'apig-${version} string => body (if v2)${x-trace-clause}',
+    test: 'agentEnabledP',
+    xtrace: xTraceU,
+    resolve: 'string-resolve-value',
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents).deep.equal({}, 'no topEvents should be present');
+    },
+    testDataChecks (o, options) {
+      const {ev} = options;
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      if (ev === 'v2') {
+        expect(o.resolve).property('statusCode', 200);
+        expect(o.resolve).property('body', this.resolve);
+        expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+      } else {
+        expect(o.resolve).equal(this.resolve);
+      }
+      expect(o.reject).not.exist;
+    }
+  }, {
+    desc: 'apig-${version} string => body (only v2)${x-trace-clause}',
+    test: 'agentEnabledP',
+    xtrace: xTraceS,
+    resolve: 'string-resolve-value',
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents).not.deep.equal({}, 'topEvents should be present');
+    },
+    testDataChecks (o, options) {
+      const {ev} = options;
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      if (ev === 'v2') {
+        expect(o.resolve).property('statusCode', 200);
+        expect(o.resolve).property('body', this.resolve);
+        expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+      } else {
+        expect(o.resolve).equal(this.resolve);
+      }
+      expect(o.reject).not.exist;
+    }
+  }, {
+    desc: 'apig-${version} a string is not modified when no x-trace',
+    test: 'agentEnabledP',
+    xtrace: undefined,
+    resolve: 'string-resolve-value',
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents.exit).not.property('ErrorClass');
+      expect(organized.topEvents.exit).not.property('ErrorMsg');
+      expect(organized.topEvents.exit).not.property('Backtrace');
+    },
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).equal(this.resolve);
+      expect(o.reject).not.exist;
+    }
+  }, {
+    desc: 'apig-${version} obj (no statusCode, v2 only) => body${x-trace-clause}',
+    test: 'agentEnabledP',
+    xtrace: xTraceU,
+    resolve: {i: 'am', a: 'custom', body: 'response'},
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents).deep.equal({});
+    },
+    testDataChecks (o, options) {
+      const {ev} = options;
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      if (ev === 'v2') {
+        expect(o.resolve).property('statusCode', 200);
+        expect(o.resolve).property('body', JSON.stringify(this.resolve));
+      } else {
+        const resolveKeys = Object.keys(this.resolve);
+        for (const k of resolveKeys) {
+          expect(o.resolve[k]).equal(this.resolve[k]);
         }
-        return undefined;
-      });
+      }
+      expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+      expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1));
+      expect(o.reject).not.exist;
+    }
+  }, {
+    desc: 'report statusCode but not error when the function rejects',
+    test: 'agentEnabledP',
+    xtrace: undefined,
+    reject: 404,
+    options: {},
+    extraAoDataChecks (organized) {
+      expect(organized.topEvents.exit).not.property('ErrorClass');
+      expect(organized.topEvents.exit).not.property('ErrorMsg');
+      expect(organized.topEvents.exit).not.property('Backtrace');
+    },
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).not.exist;
+      expect(o.reject).exist;
+      expect(o.reject.statusCode).equal(this.reject, `errorCode should be ${this.reject}`);
+    }
+
+  }, {
+    desc: 'report an error when the function throws',
+    test: 'agentEnabledP',
+    xtrace: undefined,
+    throw: 'made up fatal error',
+    extraAoDataChecks (organized) {
+      const re = new RegExp(`^Error: ${this.throw}\n`);
+      expect(organized.topEvents.exit).property('ErrorClass', 'Error');
+      expect(organized.topEvents.exit).property('ErrorMsg', this.throw);
+      expect(organized.topEvents.exit).property('Backtrace').match(re);
+    },
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).not.exist;
+      expect(o.reject).exist;
+      expect(o.reject).deep.equal({});
+    }
+  }, {
+    desc: 'do not return an x-trace when it throws',
+    test: 'agentEnabledP',
+    xtrace: xTraceS,
+    throw: 'no-xtrace-please',
+    extraAoDataChecks (organized) {
+      const re = new RegExp(`^Error: ${this.throw}\n`);
+      expect(organized.topEvents.exit).property('ErrorClass', 'Error');
+      expect(organized.topEvents.exit).property('ErrorMsg', this.throw);
+      expect(organized.topEvents.exit).property('Backtrace').match(re);
+    },
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).not.exist;
+      expect(o.reject).deep.equal({});
+    }
+  }];
+
+  executeTests(tests);
+
+});
+
+//
+// a quick set executing the callback signature.
+//
+describe('test lambda callback functions with mock apig events', function () {
+  beforeEach(function () {
+    delete process.env.APPOPTICS_ENABLED;
+    process.env.APPOPTICS_LOG_SETTINGS = '';
   });
 
-  it('don\'t return an x-trace header if not an apig event', function () {
-    const test = 'agentEnabled';
-    const event = JSON.stringify({'x-trace': xTraceS});
-    const context = JSON.stringify({});
+  const tests = [{
+    desc: 'apig-${version} callback test${x-trace-clause}',
+    test: 'agentEnabledCB',
+    xtrace: xTraceS,
+    options: {},
+    debug: false,
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).exist;
+      expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
+      expect(o.resolve).property('headers').an('object').property('x-trace');
+      expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(this.xtrace.slice(2, 42), 'task IDs don\'t match');
+      expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1), 'sample bit doesn\'t match');
+    }
+  }];
+  executeTests(tests);
+});
 
-    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
-      .then(r => {
-        expect(checkStderr(r.stderr)).equal(undefined);
-        const jsonObjs = parseStdout(r.stdout);
-        for (const obj of jsonObjs) {
-          for (const k in obj) {
-            const o = obj[k];
-            if (k === 'ao-data') {
-              const aoData = decodeAoData(o);
-              const options = {entrySpanName: pEntrySpanName, rawCall: true};
-              const organized = checkAoData(aoData, options);
-              organized.metrics.forEach(m => {
-                ['measurements', 'histograms'].forEach(k => {
-                  //console.log(m[k]);
-                })
-              });
-            } else if (k === 'test-data') {
-              expect(o.initialao).equal(false, 'the agent should not have been loaded');
-              expect(o.resolve).property('statusCode').equal(200);
-              expect(o.resolve).not.property('headers');
-            }
-          }
-        }
-        return undefined;
-      });
+//
+// simulate direct function calls using a non-apig event format.
+//
+describe('test lambda functions with direct function call', function () {
+  beforeEach(function () {
+    delete process.env.APPOPTICS_ENABLED;
+    process.env.APPOPTICS_LOG_SETTINGS = '';
   });
 
+  const tests = [{
+    desc: 'simulated invoke(), agent disabled',
+    test: 'agentDisabledP',
+    events: [{name: 'emptyEvent', e: {}}],
+    //xtrace: xTraceS,
+    options: {},
+    debug: false,
+    replaceAoDataChecks (aodata) {
+      expect(aodata, 'ao-data should not exist').not.exist;
+    },
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).property('statusCode').equal(200);
+    }
+  }, {
+    desc: 'simulated invoke(), agent enabled',
+    test: 'agentEnabledP',
+    events: [{name: 'emptyEvent', e: {}}],
+    options: {},
+    debug: false,
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).property('statusCode').equal(200);
+      expect(o.resolve).not.property('headers');
+    }
+  }, {
+    desc: 'simulated invoke(), agent enabled, x-trace header sent',
+    test: 'agentEnabledP',
+    events: [{name: 'xtraceEvent', e: {headers: {'x-trace': xTraceS}, 'x-trace': xTraceS}}],
+    options: {},
+    debug: false,
+    testDataChecks (o, options) {
+      expect(o.initialao).equal(false, 'the agent should not have been loaded');
+      expect(o.resolve).property('statusCode').equal(200);
+      expect(o.resolve).not.property('headers');
+    }
+  }];
+
+  executeTests(tests);
 });
 
 //
@@ -671,6 +417,9 @@ describe('test lambda functions with a direct function call', function () {
 // AO_TEST_ env vars above to load the proper versions for testing.
 //
 describe('verify auto-wrap function works', function () {
+  beforeEach(function () {
+    delete process.env.APPOPTICS_WRAP_LAMBDA_HANDLER;
+  })
 
   it('should automatically wrap the user function and load APM', function () {
     process.env.AO_TEST_LAMBDA_APM = '../..';
@@ -679,10 +428,12 @@ describe('verify auto-wrap function works', function () {
 
     // now set auto-wrap up with the function that doesn't manually wrap the
     // user function.
-    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoaded`;
+    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoadedP`;
 
-    const event = JSON.stringify(events.v1);
+    const ev = 'v1';
+    const event = JSON.stringify(events[ev]);
     const context = JSON.stringify({});
+    const options = {entrySpanName: autoEntrySpanName, ev};
 
     let aoDataSeen = false;
     let testDataSeen = false;
@@ -696,7 +447,6 @@ describe('verify auto-wrap function works', function () {
             if (k === 'ao-data') {
               aoDataSeen = true;
               const aoData = decodeAoData(o);
-              const options = {entrySpanName: autoEntrySpanName};
               const organized = checkAoData(aoData, options);
               organized.metrics.forEach(m => {
                 ['measurements', 'histograms'].forEach(k => {
@@ -723,7 +473,7 @@ describe('verify auto-wrap function works', function () {
 
     // now set auto-wrap up with the function that doesn't manually wrap the
     // user function.
-    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoaded`;
+    process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoadedP`;
 
     const event = JSON.stringify(events.v1);
     const context = JSON.stringify({});
@@ -760,6 +510,83 @@ describe('verify auto-wrap function works', function () {
       });
   })
 })
+
+//
+// iterate over the tests executing each one with a rest, v1, and v2 event format or
+// a specified set of events.
+//
+function executeTests (tests) {
+  for (const t of tests) {
+    //const testEvents = t.events || ['rest', 'v1', 'v2'];
+    const testEvents = t.events || ['rest', 'v1', 'v2'].map(name => {return {name, e: events[name]}});
+    for (const info of testEvents) {
+      const {name: ev, e} = info;
+      const {desc, test, xtrace, logging, debug} = t;
+      let clause = '';
+      //const testEvent = clone(events[ev]);
+      const testEvent = clone(e);
+      if (xtrace && testEvent.headers) {
+        const sampled = xtrace.slice(-1) === '1' ? 'sampled' : 'unsampled';
+        clause = ` ${sampled} x-trace`;
+        testEvent.headers['x-trace'] = xtrace;
+      } else {
+        clause = ' no x-trace';
+      }
+
+      const description = desc.replace('${version}', ev).replace('${x-trace-clause}', clause);
+      const event = JSON.stringify(testEvent);
+      const ctxObject = {};
+      const ctx = {};
+      if ('resolve' in t) {
+        ctx.resolve = t.resolve;
+      }
+      if ('reject' in t) {
+        ctx.reject = t.reject;
+      }
+      if ('throw' in t) {
+        ctx.throw = t.throw;
+      }
+      if (Object.keys(ctx).length) {
+        ctxObject[aoLambdaTest] = ctx;
+      }
+      const context = JSON.stringify(ctxObject);
+      // it's a little kludgy but if the last char of the function is P then it's a promise
+      // and if it's a B it's a callback (CB ending).
+      const entrySpanName = `nodejs-lambda-fakeLambda${test.slice(-1) === 'P' ? 'Promiser' : 'Callbacker'}`
+      const checkOptions = {entrySpanName, xtrace, ev};
+
+      it(description, function () {
+        if (logging) {
+          process.env.APPOPTICS_LOG_SETTINGS = logging;
+        }
+        return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+          .then(r => {
+            expect(checkStderr(r.stderr, debug)).equal(undefined);
+            const jsonObjs = parseStdout(r.stdout, debug);
+            for (const obj of jsonObjs) {
+              for (const k in obj) {
+                const o = obj[k];
+                if (k === 'ao-data') {
+                  const aodata = decodeAoData(o, debug);
+                  if (t.replaceAoDataChecks) {
+                    t.replaceAoDataChecks(aodata);
+                  } else {
+                    const organized = checkAoData(aodata, checkOptions);
+                    if (t.extraAoDataChecks) {
+                      t.extraAoDataChecks(organized);
+                    }
+                  }
+                } else if (k === 'test-data') {
+                  t.testDataChecks(o, checkOptions);
+                }
+              }
+            }
+            return undefined;
+          });
+      });
+    }
+  }
+}
 
 
 async function exec (arg) {
@@ -824,6 +651,9 @@ function checkStderr (text, debug) {
 }
 
 function decodeAoData (data, debug) {
+  if (!data) {
+    return undefined;
+  }
   const keys = Object.keys(data);
   expect(keys).deep.equal(['events', 'metrics']);
   expect(data.events).an('array');
@@ -864,17 +694,17 @@ function decodeAoData (data, debug) {
 //
 // return ao-data in useful groups
 //
-// options:
+//// options:
 //  entrySpanName - the name of the entry span
-//  unsampled - the trace should be unsampled
 //  xtrace - the inbound xtrace to check entry event against
 //  rawCall - the function was not invoked via the api gateway
 //
 function checkAoData (aoData, options = {}) {
-  const {unsampled, entrySpanName, xtrace, rawCall} = options;
+  const {entrySpanName, xtrace, rawCall, ev} = options;
+  const sampled = xtrace && xtrace[59] === '1';
 
   expect(aoData).property('events').an('array');
-  expect(aoData.events.length).gte(unsampled ? 1 : 3);
+  expect(aoData.events.length).gte(sampled ? 3 : 1);
   expect(aoData).property('metrics').an('array');
   expect(aoData.metrics.length).gte(1);
 
@@ -894,14 +724,15 @@ function checkAoData (aoData, options = {}) {
   }
   expect(init).exist.an('object', 'missing nodejs:single __Init event');
 
-  if (!unsampled) {
+  if (sampled) {
     expect(topEvents).property('entry').an('object');
     expect(topEvents).property('exit').an('object');
 
     expect(topEvents.entry).property('Layer', entrySpanName, `missing event: ${entrySpanName}:entry`);
     expect(topEvents.exit).property('Layer', entrySpanName, `missing event: ${entrySpanName}:exit`);
 
-    expect(topEvents.entry).property('Spec', 'aws-lambda');
+    const spec = (ev === 'v1' || ev === 'v2' || ev === 'rest') ? 'aws-lambda:ws' : 'aws-lambda';
+    expect(topEvents.entry).property('Spec', spec);
     expect(topEvents.entry).property('InvocationCount', 1);
     expect(topEvents.entry).property('SampleSource', 1);
     expect(topEvents.entry).property('SampleRate', 1000000);

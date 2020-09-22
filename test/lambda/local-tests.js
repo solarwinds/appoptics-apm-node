@@ -79,7 +79,7 @@ module.exports = {
   // just make sure everything is as it is expected to be. the agent
   // is not loaded so the user's function is not wrapped unless
   // autowrap is being used.
-  agentNotLoaded (event, context) {
+  agentNotLoadedP (event, context) {
     const output = {'test-data': {initialao: global[aos] !== undefined}};
 
     return fakeLambdaPromiser(event, context)
@@ -108,7 +108,7 @@ module.exports = {
   },
 
   // make sure the wrapper works when the agent is disabled at startup.
-  agentDisabled (event, context) {
+  agentDisabledP (event, context) {
     const output = {'test-data': {initialao: global[aos] !== undefined}};
 
     process.env.APPOPTICS_APM_CONFIG_NODE = './disabled-config.json';
@@ -156,7 +156,7 @@ module.exports = {
       })
   },
 
-  agentEnabled (event, context) {
+  agentEnabledP (event, context) {
     const output = {'test-data': {initialao: global[aos] !== undefined}};
 
     const ao = require('../..');
@@ -178,7 +178,7 @@ module.exports = {
       });
   },
 
-  agentEnabledReturnValue (event, context) {
+  agentEnabledReturnValueP (event, context) {
     const output = {'test-data': {initialao: global[aos] !== undefined}};
 
     const ao = require('../..');
