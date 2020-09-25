@@ -15,6 +15,7 @@ delete process.env.APPOPTICS_REPORTER;
 delete process.env.APPOPTICS_COLLECTOR;
 
 const child_process = require('child_process');
+const util = require('util');
 
 const expect = require('chai').expect;
 const BSON = require('bson');
@@ -173,7 +174,7 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'apig-${version} invalid v1 response does not generate an error',
     test: 'agentEnabledP',
     xtrace: undefined,
-    resolve: 'invalid-resolve-value-for-v1',
+    modifiers: {resolve: 'invalid-resolve-value-for-v1'},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents.exit).not.property('ErrorClass');
@@ -182,7 +183,7 @@ describe('test lambda promise functions with mock apig events', function () {
     },
     testDataChecks (o) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      expect(o.resolve).equal(this.resolve);
+      expect(o.resolve).equal(this.modifiers.resolve);
       expect(o.reject).not.exist;
     }
 
@@ -190,7 +191,7 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'apig-${version} string => body (if v2)${x-trace-clause}',
     test: 'agentEnabledP',
     xtrace: xTraceU,
-    resolve: 'string-resolve-value',
+    modifiers: {resolve: 'string-resolve-value'},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents).deep.equal({}, 'no topEvents should be present');
@@ -200,10 +201,10 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', this.resolve);
+        expect(o.resolve).property('body', this.modifiers.resolve);
         expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
       } else {
-        expect(o.resolve).equal(this.resolve);
+        expect(o.resolve).equal(this.modifiers.resolve);
       }
       expect(o.reject).not.exist;
     }
@@ -211,7 +212,7 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'apig-${version} string => body (only v2)${x-trace-clause}',
     test: 'agentEnabledP',
     xtrace: xTraceS,
-    resolve: 'string-resolve-value',
+    modifiers: {resolve: 'string-resolve-value'},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents).not.deep.equal({}, 'topEvents should be present');
@@ -221,10 +222,10 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', this.resolve);
+        expect(o.resolve).property('body', this.modifiers.resolve);
         expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
       } else {
-        expect(o.resolve).equal(this.resolve);
+        expect(o.resolve).equal(this.modifiers.resolve);
       }
       expect(o.reject).not.exist;
     }
@@ -232,7 +233,7 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'apig-${version} a string is not modified when no x-trace',
     test: 'agentEnabledP',
     xtrace: undefined,
-    resolve: 'string-resolve-value',
+    modifiers: {resolve: 'string-resolve-value'},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents.exit).not.property('ErrorClass');
@@ -241,14 +242,14 @@ describe('test lambda promise functions with mock apig events', function () {
     },
     testDataChecks (o, options) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      expect(o.resolve).equal(this.resolve);
+      expect(o.resolve).equal(this.modifiers.resolve);
       expect(o.reject).not.exist;
     }
   }, {
     desc: 'apig-${version} obj (no statusCode, v2 only) => body${x-trace-clause}',
     test: 'agentEnabledP',
     xtrace: xTraceU,
-    resolve: {i: 'am', a: 'custom', body: 'response'},
+    modifiers: {resolve: {i: 'am', a: 'custom', body: 'response'}},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents).deep.equal({});
@@ -258,11 +259,11 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', JSON.stringify(this.resolve));
+        expect(o.resolve).property('body', JSON.stringify(this.modifiers.resolve));
       } else {
-        const resolveKeys = Object.keys(this.resolve);
+        const resolveKeys = Object.keys(this.modifiers.resolve);
         for (const k of resolveKeys) {
-          expect(o.resolve[k]).equal(this.resolve[k]);
+          expect(o.resolve[k]).equal(this.modifiers.resolve[k]);
         }
       }
       expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
@@ -273,7 +274,7 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'report statusCode but not error when the function rejects',
     test: 'agentEnabledP',
     xtrace: undefined,
-    reject: 404,
+    modifiers: {reject: 404},
     options: {},
     extraAoDataChecks (organized) {
       expect(organized.topEvents.exit).not.property('ErrorClass');
@@ -284,18 +285,18 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).not.exist;
       expect(o.reject).exist;
-      expect(o.reject.statusCode).equal(this.reject, `errorCode should be ${this.reject}`);
+      expect(o.reject.statusCode).equal(this.modifiers.reject, `errorCode should be ${this.modifiers.reject}`);
     }
 
   }, {
     desc: 'report an error when the function throws',
     test: 'agentEnabledP',
     xtrace: undefined,
-    throw: 'made up fatal error',
+    modifiers: {throw: 'made up fatal error'},
     extraAoDataChecks (organized) {
-      const re = new RegExp(`^Error: ${this.throw}\n`);
+      const re = new RegExp(`^Error: ${this.modifiers.throw}\n`);
       expect(organized.topEvents.exit).property('ErrorClass', 'Error');
-      expect(organized.topEvents.exit).property('ErrorMsg', this.throw);
+      expect(organized.topEvents.exit).property('ErrorMsg', this.modifiers.throw);
       expect(organized.topEvents.exit).property('Backtrace').match(re);
     },
     testDataChecks (o, options) {
@@ -308,11 +309,11 @@ describe('test lambda promise functions with mock apig events', function () {
     desc: 'do not return an x-trace when it throws',
     test: 'agentEnabledP',
     xtrace: xTraceS,
-    throw: 'no-xtrace-please',
+    modifiers: {throw: 'no-xtrace-please'},
     extraAoDataChecks (organized) {
-      const re = new RegExp(`^Error: ${this.throw}\n`);
+      const re = new RegExp(`^Error: ${this.modifiers.throw}\n`);
       expect(organized.topEvents.exit).property('ErrorClass', 'Error');
-      expect(organized.topEvents.exit).property('ErrorMsg', this.throw);
+      expect(organized.topEvents.exit).property('ErrorMsg', this.modifiers.throw);
       expect(organized.topEvents.exit).property('Backtrace').match(re);
     },
     testDataChecks (o, options) {
@@ -368,8 +369,7 @@ describe('test lambda functions with direct function call', function () {
     desc: 'simulated invoke(), agent disabled',
     test: 'agentDisabledP',
     events: [{en: 'emptyEvent', event: {}}],
-    //xtrace: xTraceS,
-    options: {},
+    options: {}, //{logging: ['error', 'warn', 'debug', 'info']}
     debug: false,
     replaceAoDataChecks (aodata) {
       expect(aodata, 'ao-data should not exist').not.exist;
@@ -522,12 +522,12 @@ describe('verify auto-wrap function works', function () {
 //
 function executeTests (tests) {
   for (const t of tests) {
-    //const testEvents = t.events || ['rest', 'v1', 'v2'];
     const testEvents = t.events || ['rest', 'v1', 'v2'].map(en => {return {en, event: events[en]}});
     for (let i = 0; i < testEvents.length; i++) {
       // get test event name and event
       const {en, event} = testEvents[i];
-      const {desc, test, xtrace, logging, options = {}} = t;
+      if (!en || !event) throw new Error('events must have en and event properties');
+      const {desc, test, xtrace, options = {}} = t;
 
       let dbg = {stderr: false, stdout: false, decodeAo: false, checkAo: false};
       if (t.debug === true) {
@@ -545,20 +545,22 @@ function executeTests (tests) {
       } else {
         clause = ' no x-trace';
       }
-
       const description = desc.replace('${version}', en).replace('${x-trace-clause}', clause);
+
       const clEvent = JSON.stringify(testEvent);
       // build the context object. it can have a special aoLambdaTest property that informs
       // the test function how to perform the test.
       const ctxObject = {};
-      const ctx = {};
-      for (const key of ['resolve', 'reject', 'throw']) {
-        if (key in t) {
-          ctx[key] = t[key];
+      if (t.modifiers) {
+        const ctx = {};
+        for (const key of ['resolve', 'reject', 'throw']) {
+          if (key in t.modifiers) {
+            ctx[key] = t.modifiers[key];
+          }
         }
-      }
-      if (Object.keys(ctx).length) {
-        ctxObject[aoLambdaTest] = ctx;
+        if (Object.keys(ctx).length) {
+          ctxObject[aoLambdaTest] = ctx;
+        }
       }
       // it's a little kludgy but if the last char of the function is P then it's a promise
       // and if it's a B it's a callback (CB ending).
@@ -572,9 +574,6 @@ function executeTests (tests) {
 
       const doit = options.only ? it.only : it;
       doit(description, function () {
-        if (logging) {
-          process.env.APPOPTICS_LOG_SETTINGS = logging;
-        }
         const previousLogging = process.env.APPOPTICS_LOG_SETTINGS;
         if (options.logging) {
           process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',');
@@ -642,15 +641,15 @@ function parseStdout (text, debug) {
       }
     }
   } catch (e) {
-    console.log(text);  // eslint-disable-line no-console
+    console.log(util.inspect(text));  // eslint-disable-line no-console
     return [];
   }
 
   if (bad.length) {
-    console.log('bad stdout:', bad);   // eslint-disable-line no-console
+    console.log('bad stdout:', util.inspect(bad));   // eslint-disable-line no-console
   }
   if (debug) {
-    console.log(good);    // eslint-disable-line no-console
+    console.log('good stdout', util.inspect(good, {depth: 4}));    // eslint-disable-line no-console
   }
 
   return good;
@@ -665,7 +664,7 @@ function checkStderr (text, debug) {
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] === '') continue;
     if (debug) {
-      console.log(lines[i]); // eslint-disable-line no-console
+      console.log(util.inspect(lines[i])); // eslint-disable-line no-console
     }
     const m = lines[i].match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(\S+)/);
     if (!m || m[1] === 'error') {
@@ -700,7 +699,7 @@ function decodeAoData (data, debug) {
   }
 
   if (debug) {
-    console.log(decoded);   // eslint-disable-line no-console
+    console.log(util.inspect(decoded));   // eslint-disable-line no-console
   }
 
   return decoded;
