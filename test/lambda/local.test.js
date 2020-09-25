@@ -15,14 +15,11 @@ delete process.env.APPOPTICS_REPORTER;
 delete process.env.APPOPTICS_COLLECTOR;
 
 const child_process = require('child_process');
-const os = require('os');
 
 const expect = require('chai').expect;
 const BSON = require('bson');
 
 const events = require('./v1-v2-events.js');
-
-const xt = 'X-Trace';
 
 // the auto wrapped version invokes the test function that doesn't
 // manually wrap the agent.
@@ -199,9 +196,9 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(organized.topEvents).deep.equal({}, 'no topEvents should be present');
     },
     testDataChecks (o, options) {
-      const {ev} = options;
+      const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      if (ev === 'v2') {
+      if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
         expect(o.resolve).property('body', this.resolve);
         expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
@@ -220,9 +217,9 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(organized.topEvents).not.deep.equal({}, 'topEvents should be present');
     },
     testDataChecks (o, options) {
-      const {ev} = options;
+      const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      if (ev === 'v2') {
+      if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
         expect(o.resolve).property('body', this.resolve);
         expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
@@ -257,9 +254,9 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(organized.topEvents).deep.equal({});
     },
     testDataChecks (o, options) {
-      const {ev} = options;
+      const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      if (ev === 'v2') {
+      if (en === 'v2') {
         expect(o.resolve).property('statusCode', 200);
         expect(o.resolve).property('body', JSON.stringify(this.resolve));
       } else {
@@ -370,7 +367,7 @@ describe('test lambda functions with direct function call', function () {
   const tests = [{
     desc: 'simulated invoke(), agent disabled',
     test: 'agentDisabledP',
-    events: [{name: 'emptyEvent', e: {}}],
+    events: [{en: 'emptyEvent', event: {}}],
     //xtrace: xTraceS,
     options: {},
     debug: false,
@@ -384,7 +381,7 @@ describe('test lambda functions with direct function call', function () {
   }, {
     desc: 'simulated invoke(), agent enabled',
     test: 'agentEnabledP',
-    events: [{name: 'emptyEvent', e: {}}],
+    events: [{en: 'emptyEvent', event: {}}],
     options: {},
     debug: false,
     testDataChecks (o, options) {
@@ -395,7 +392,7 @@ describe('test lambda functions with direct function call', function () {
   }, {
     desc: 'simulated invoke(), agent enabled, x-trace header sent',
     test: 'agentEnabledP',
-    events: [{name: 'xtraceEvent', e: {headers: {'x-trace': xTraceS}, 'x-trace': xTraceS}}],
+    events: [{en: 'xtraceEvent', event: {headers: {'x-trace': xTraceS}, 'x-trace': xTraceS}}],
     options: {},
     debug: false,
     testDataChecks (o, options) {
@@ -435,10 +432,10 @@ describe('verify auto-wrap function works', function () {
     // user function.
     process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoadedP`;
 
-    const ev = 'v1';
-    const event = JSON.stringify(events[ev]);
+    const en = 'v1';
+    const event = JSON.stringify(events[en]);
     const context = randomContext();
-    const options = {entrySpanName: autoEntrySpanName, ev};
+    const options = {entrySpanName: autoEntrySpanName, en};
 
     let aoDataSeen = false;
     let testDataSeen = false;
@@ -517,18 +514,19 @@ describe('verify auto-wrap function works', function () {
 })
 
 //
-// iterate over the tests executing each one with a rest, v1, and v2 event format or
+// iterate over the tests executing each one with a rest, v1, and v2 event format over
 // a specified set of events.
-// test-specific settings are available for test.debug and test.options.
+// test-specific settings are available by using test.debug and test.options.
 // debug - see t.debug below
-// options - {only: true, logging: ['span', 'debug']} defaults are false and [];
+// options - {only: true, logging: ['span', 'debug']} defaults are false and APPOPTICS_LOG_SETTINGS;
 //
 function executeTests (tests) {
   for (const t of tests) {
     //const testEvents = t.events || ['rest', 'v1', 'v2'];
-    const testEvents = t.events || ['rest', 'v1', 'v2'].map(name => {return {name, e: events[name]}});
-    for (const info of testEvents) {
-      const {name: ev, e} = info;
+    const testEvents = t.events || ['rest', 'v1', 'v2'].map(en => {return {en, event: events[en]}});
+    for (let i = 0; i < testEvents.length; i++) {
+      // get test event name and event
+      const {en, event} = testEvents[i];
       const {desc, test, xtrace, logging, options = {}} = t;
 
       let dbg = {stderr: false, stdout: false, decodeAo: false, checkAo: false};
@@ -539,7 +537,7 @@ function executeTests (tests) {
       }
 
       let clause = '';
-      const testEvent = clone(e);
+      const testEvent = clone(event);
       if (xtrace && testEvent.headers) {
         const sampled = xtrace.slice(-1) === '1' ? 'sampled' : 'unsampled';
         clause = ` ${sampled} x-trace`;
@@ -548,8 +546,10 @@ function executeTests (tests) {
         clause = ' no x-trace';
       }
 
-      const description = desc.replace('${version}', ev).replace('${x-trace-clause}', clause);
-      const event = JSON.stringify(testEvent);
+      const description = desc.replace('${version}', en).replace('${x-trace-clause}', clause);
+      const clEvent = JSON.stringify(testEvent);
+      // build the context object. it can have a special aoLambdaTest property that informs
+      // the test function how to perform the test.
       const ctxObject = {};
       const ctx = {};
       for (const key of ['resolve', 'reject', 'throw']) {
@@ -557,25 +557,18 @@ function executeTests (tests) {
           ctx[key] = t[key];
         }
       }
-      /*
-      if ('resolve' in t) {
-        ctx.resolve = t.resolve;
-      }
-      if ('reject' in t) {
-        ctx.reject = t.reject;
-      }
-      if ('throw' in t) {
-        ctx.throw = t.throw;
-      }
-      // */
       if (Object.keys(ctx).length) {
         ctxObject[aoLambdaTest] = ctx;
       }
-      const context = randomContext(ctxObject);
       // it's a little kludgy but if the last char of the function is P then it's a promise
       // and if it's a B it's a callback (CB ending).
+      //ctxObject.functionName = `fakeLambda${test.slice(-1) === 'P' ? 'Promiser' : 'Callbacker'}`;
+      const context = randomContext(ctxObject, {stringify: false});
+      const clContext = JSON.stringify(context);
+      // it's a little kludgy but if the last char of the function is P then it's a promise
+      // and if it's a B it's a callback (CB ending). either wy
       const fnName = `fakeLambda${test.slice(-1) === 'P' ? 'Promiser' : 'Callbacker'}`;
-      const checkOptions = {fnName, xtrace, ev, context: JSON.parse(context), debug: dbg.checkAo};
+      const checkOptions = {fnName, xtrace, en, event, context, debug: dbg.checkAo};
 
       const doit = options.only ? it.only : it;
       doit(description, function () {
@@ -586,7 +579,7 @@ function executeTests (tests) {
         if (options.logging) {
           process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',');
         }
-        return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
+        return exec(`node -e 'require("${testFile}").${test}(${clEvent}, ${clContext})'`)
           .then(r => {
             process.env.APPOPTICS_LOG_SETTINGS = previousLogging;
             expect(checkStderr(r.stderr, dbg.stderr)).equal(undefined);
@@ -731,10 +724,12 @@ function decodeAoData (data, debug) {
 //  xtrace - the inbound xtrace to check entry event against
 //
 function checkAoData (aoData, options = {}) {
-  const {fnName, xtrace, ev, context, debug} = options;
+  const {fnName, xtrace, en, event, context, debug} = options;
   if (debug) {
     debugger;     // eslint-disable-line
   }
+
+  const xt = 'X-Trace';
   const sampled = xtrace && xtrace[59] === '1';
   const entrySpanName = `nodejs-lambda-${fnName}`;
 
@@ -766,19 +761,17 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.entry).property('Layer', entrySpanName, `missing event: ${entrySpanName}:entry`);
     expect(topEvents.exit).property('Layer', entrySpanName, `missing event: ${entrySpanName}:exit`);
 
-    // if not invoked with an apig event then this is a "raw call", i.e., it is not treated
-    // as an aws-lambda:ws trace.
-    const apigCall = (ev === 'v1' || ev === 'v2' || ev === 'rest');
+    // an api gateway call has a different spec and additional KVs
+    const apigCall = (en === 'v1' || en === 'v2' || en === 'rest');
 
-    const spec = apigCall ? 'aws-lambda:ws' : 'aws-lambda';
-    expect(topEvents.entry).property('Spec', spec);
+    expect(topEvents.entry).property('Spec', apigCall ? 'aws-lambda:ws' : 'aws-lambda');
     expect(topEvents.entry).property('InvocationCount', 1);
-    // these are only reported when there is not an inbound x-trace and so a true sample
+    // these are only reported when there is not an inbound x-trace and a true sample
     // decision is made.
     if (!xtrace) {
       expect(topEvents.entry).property('SampleSource', 1);
       expect(topEvents.entry).property('SampleRate', 1000000);
-      expect(topEvents.entry).property('TID');
+      expect(topEvents.entry).property('TID').a('string').match(/\d+/);
       expect(topEvents.entry).property('Timestamp_u');
     }
     // the following are taken from context
@@ -787,16 +780,19 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.entry).property('AWSRequestID', context.awsRequestId);
     expect(topEvents.entry).property('MemoryLimitInMB', context.memoryLimitInMB);
     expect(topEvents.entry).property('LogStreamName', context.logStreamName);
-    // this should match what is set when this
+    // this is taken from the inherited env var so it should match that.
     expect(topEvents.entry).property('AWSRegion', process.env.AWS_REGION);
 
     if (apigCall) {
-      expect(topEvents.entry).property('HTTPMethod', getMethod(ev));
-      expect(topEvents.entry).property('Hostname', os.hostname());
-      expect(topEvents.entry).property('HTTP-Host', 'úüỏ.macnaughton.zone', 'use Host header');
+      expect(topEvents.entry).property('HTTPMethod', getMethod(en));
+      expect(topEvents.entry).property('HTTP-Host', event.headers.Host, 'use Host header');
+      // rest event.path does not include stage, e.g., just '/v1' but requestContext.path is '/api/v1'
+      // ditto v1 (though i haven't added a stage it appears so)
+      // only event v2 has rawpath and rawquery string.
+      expect(topEvents.entry).property('URL', en === 'v2' ? event.rawPath : event.path);
     }
 
-    expect(topEvents.exit).property('TransactionName', `${getMethod(ev)}.${fnName}`);
+    expect(topEvents.exit).property('TransactionName', `${getMethod(en)}.${fnName}`);
     expect(topEvents.exit).property('TID');
 
     expect(topEvents.entry).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
@@ -811,19 +807,18 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.exit).property('Edge', topEvents.entry[xt].slice(42, 58), 'edge doesn\'t point to entry');
     expect(topEvents.entry).property('Hostname');
     expect(topEvents.entry.Hostname).equal(topEvents.exit.Hostname, 'Hostname doesn\'t match');
-    expect(topEvents.exit).property('TransactionName');
   }
 
   return {init, topEvents, otherEvents, metrics};
 }
 
-function getMethod (ev) {
-  if (ev === 'v1' || ev === 'rest') {
-    return events[ev].httpMethod.toUpperCase();
-  } else if (ev === 'v2') {
+function getMethod (en) {
+  if (en === 'v1' || en === 'rest') {
+    return events[en].httpMethod.toUpperCase();
+  } else if (en === 'v2') {
     return events.v2.requestContext.http.method.toUpperCase();
   } else {
-    throw new Error(`${ev} is not recognized`)
+    throw new Error(`${en} is not recognized`)
   }
 }
 
@@ -882,14 +877,35 @@ function randomRegion () {
   return regions[Math.floor(Math.random() * regions.length)];
 }
 
-function randomContext (predefined) {
-  const context = {
+function randomContext (overrides, options = {stringify: true}) {
+  const functionName = randomFunctionName();
+  let context = {
+    functionName,
     functionVersion: '$LATEST',
-    invokedFunctionArn: 'arn:aws:lambda:us-east-1:858939916050:function:f2-node-bam',
+    invokedFunctionArn: `arn:aws:lambda:us-east-1:858939916050:function:${functionName}`,
     awsRequestId: 'a704f0cd-645e-4fb4-8a6b-fa1416aa2e61',
     memoryLimitInMB: '128',
     logStreamName: '2020/09/24/[$LATEST]b3f0e39b1c034ea6bc48f7388f132d92',
   };
 
-  return JSON.stringify(Object.assign(context, predefined));
+  Object.assign(context, overrides);
+  if (options.stringify) {
+    context = JSON.stringify(context);
+  }
+  return context;
+}
+
+function randomFunctionName (options) {
+  const {max, min} = Object.assign({max: 17, min: 5}, options);
+  const len = randomInt(min, max);
+
+  const buf = Buffer.allocUnsafe(len);
+  for (let i = 0; i < len; i++) {
+    buf[i] = randomInt('a'.charCodeAt(0), 'z'.charCodeAt(0));
+  }
+  return buf.toString('utf8');
+}
+
+function randomInt (min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
 }
