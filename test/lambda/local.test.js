@@ -46,14 +46,14 @@ const xTraceU = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084300';
 describe('test lambda promise function\'s core responses with empty events', function () {
   beforeEach(function () {
     process.env.APPOPTICS_ENABLED = 'true';
+    process.env.AWS_REGION = randomRegion();
   });
 
   it('no agent loaded', async function () {
     const test = 'agentNotLoadedP';
     const event = JSON.stringify({});
-    const context = JSON.stringify({});
-
-    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
+    const context = randomContext();
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
         const jsonObjs = parseStdout(r.stdout);
@@ -75,11 +75,11 @@ describe('test lambda promise function\'s core responses with empty events', fun
   it('agent disabled by configuration file', function () {
     const test = 'agentDisabledP';
     const event = JSON.stringify({});
-    const context = JSON.stringify({});
+    const context = randomContext();
     // don't let the env var override the configuration file
     delete process.env.APPOPTICS_ENABLED;
 
-    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
         const jsonObjs = parseStdout(r.stdout);
@@ -100,10 +100,10 @@ describe('test lambda promise function\'s core responses with empty events', fun
   it('agent disabled by environment variable', function () {
     const test = 'agentEnabledP';
     const event = JSON.stringify({});
-    const context = JSON.stringify({});
+    const context = randomContext();
     process.env.APPOPTICS_ENABLED = false;
 
-    return exec(`node -e "require('${testFile}').${test}(${event}, ${context})"`)
+    return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
         expect(checkStderr(r.stderr)).equal(undefined);
         const jsonObjs = parseStdout(r.stdout);
@@ -122,14 +122,16 @@ describe('test lambda promise function\'s core responses with empty events', fun
   });
 });
 
-
-//
+//=============================================================
+//=============================================================
 // verify that wrapping the promise functions works as expected.
-//
+//=============================================================
+//=============================================================
 describe('test lambda promise functions with mock apig events', function () {
   beforeEach(function () {
     delete process.env.APPOPTICS_ENABLED;
     process.env.APPOPTICS_LOG_SETTINGS = '';
+    process.env.AWS_REGION = randomRegion();
   });
 
   const tests = [{
@@ -137,7 +139,7 @@ describe('test lambda promise functions with mock apig events', function () {
     test: 'agentEnabledP',
     xtrace: xTraceS,
     options: {},
-    debug: false,
+    debug: ['stderr'],
     testDataChecks (o) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).exist;
@@ -334,6 +336,7 @@ describe('test lambda callback functions with mock apig events', function () {
   beforeEach(function () {
     delete process.env.APPOPTICS_ENABLED;
     process.env.APPOPTICS_LOG_SETTINGS = '';
+    process.env.AWS_REGION = randomRegion();
   });
 
   const tests = [{
@@ -361,6 +364,7 @@ describe('test lambda functions with direct function call', function () {
   beforeEach(function () {
     delete process.env.APPOPTICS_ENABLED;
     process.env.APPOPTICS_LOG_SETTINGS = '';
+    process.env.AWS_REGION = randomRegion();
   });
 
   const tests = [{
@@ -419,6 +423,7 @@ describe('test lambda functions with direct function call', function () {
 describe('verify auto-wrap function works', function () {
   beforeEach(function () {
     delete process.env.APPOPTICS_WRAP_LAMBDA_HANDLER;
+    process.env.AWS_REGION = randomRegion();
   })
 
   it('should automatically wrap the user function and load APM', function () {
@@ -432,7 +437,7 @@ describe('verify auto-wrap function works', function () {
 
     const ev = 'v1';
     const event = JSON.stringify(events[ev]);
-    const context = JSON.stringify({});
+    const context = randomContext();
     const options = {entrySpanName: autoEntrySpanName, ev};
 
     let aoDataSeen = false;
@@ -476,7 +481,7 @@ describe('verify auto-wrap function works', function () {
     process.env.APPOPTICS_WRAP_LAMBDA_HANDLER = `${testFile}.agentNotLoadedP`;
 
     const event = JSON.stringify(events.v1);
-    const context = JSON.stringify({});
+    const context = randomContext();
 
     let aoDataSeen = false;
     let testDataSeen = false;
@@ -514,6 +519,9 @@ describe('verify auto-wrap function works', function () {
 //
 // iterate over the tests executing each one with a rest, v1, and v2 event format or
 // a specified set of events.
+// test-specific settings are available for test.debug and test.options.
+// debug - see t.debug below
+// options - {only: true, logging: ['span', 'debug']} defaults are false and [];
 //
 function executeTests (tests) {
   for (const t of tests) {
@@ -521,9 +529,16 @@ function executeTests (tests) {
     const testEvents = t.events || ['rest', 'v1', 'v2'].map(name => {return {name, e: events[name]}});
     for (const info of testEvents) {
       const {name: ev, e} = info;
-      const {desc, test, xtrace, logging, debug} = t;
+      const {desc, test, xtrace, logging, options = {}} = t;
+
+      let dbg = {stderr: false, stdout: false, decodeAo: false, checkAo: false};
+      if (t.debug === true) {
+        dbg = {stderr: true, stdout: true, decodeAo: true, checkAo: true};
+      } else if (Array.isArray(t.debug)) {
+        t.debug.forEach(d => dbg[d] = true);
+      }
+
       let clause = '';
-      //const testEvent = clone(events[ev]);
       const testEvent = clone(e);
       if (xtrace && testEvent.headers) {
         const sampled = xtrace.slice(-1) === '1' ? 'sampled' : 'unsampled';
@@ -537,6 +552,12 @@ function executeTests (tests) {
       const event = JSON.stringify(testEvent);
       const ctxObject = {};
       const ctx = {};
+      for (const key of ['resolve', 'reject', 'throw']) {
+        if (key in t) {
+          ctx[key] = t[key];
+        }
+      }
+      /*
       if ('resolve' in t) {
         ctx.resolve = t.resolve;
       }
@@ -546,28 +567,35 @@ function executeTests (tests) {
       if ('throw' in t) {
         ctx.throw = t.throw;
       }
+      // */
       if (Object.keys(ctx).length) {
         ctxObject[aoLambdaTest] = ctx;
       }
-      const context = JSON.stringify(ctxObject);
+      const context = randomContext(ctxObject);
       // it's a little kludgy but if the last char of the function is P then it's a promise
       // and if it's a B it's a callback (CB ending).
-      const entrySpanName = `nodejs-lambda-fakeLambda${test.slice(-1) === 'P' ? 'Promiser' : 'Callbacker'}`
-      const checkOptions = {entrySpanName, xtrace, ev};
+      const fnName = `fakeLambda${test.slice(-1) === 'P' ? 'Promiser' : 'Callbacker'}`;
+      const checkOptions = {fnName, xtrace, ev, context: JSON.parse(context), debug: dbg.checkAo};
 
-      it(description, function () {
+      const doit = options.only ? it.only : it;
+      doit(description, function () {
         if (logging) {
           process.env.APPOPTICS_LOG_SETTINGS = logging;
         }
+        const previousLogging = process.env.APPOPTICS_LOG_SETTINGS;
+        if (options.logging) {
+          process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',');
+        }
         return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
           .then(r => {
-            expect(checkStderr(r.stderr, debug)).equal(undefined);
-            const jsonObjs = parseStdout(r.stdout, debug);
+            process.env.APPOPTICS_LOG_SETTINGS = previousLogging;
+            expect(checkStderr(r.stderr, dbg.stderr)).equal(undefined);
+            const jsonObjs = parseStdout(r.stdout, dbg.stdout);
             for (const obj of jsonObjs) {
               for (const k in obj) {
                 const o = obj[k];
                 if (k === 'ao-data') {
-                  const aodata = decodeAoData(o, debug);
+                  const aodata = decodeAoData(o, dbg.decodeAo);
                   if (t.replaceAoDataChecks) {
                     t.replaceAoDataChecks(aodata);
                   } else {
@@ -588,7 +616,9 @@ function executeTests (tests) {
   }
 }
 
-
+//
+// spawn a child process to execute a command line, returning all statuses in result
+//
 async function exec (arg) {
   const options = {cwd: './test/lambda'};
   const p = new Promise(resolve => {
@@ -641,7 +671,9 @@ function checkStderr (text, debug) {
   const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] === '') continue;
-    if (debug) console.log(lines[i]); // eslint-disable-line no-console
+    if (debug) {
+      console.log(lines[i]); // eslint-disable-line no-console
+    }
     const m = lines[i].match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(\S+)/);
     if (!m || m[1] === 'error') {
       return text;
@@ -697,11 +729,14 @@ function decodeAoData (data, debug) {
 //// options:
 //  entrySpanName - the name of the entry span
 //  xtrace - the inbound xtrace to check entry event against
-//  rawCall - the function was not invoked via the api gateway
 //
 function checkAoData (aoData, options = {}) {
-  const {entrySpanName, xtrace, rawCall, ev} = options;
+  const {fnName, xtrace, ev, context, debug} = options;
+  if (debug) {
+    debugger;     // eslint-disable-line
+  }
   const sampled = xtrace && xtrace[59] === '1';
+  const entrySpanName = `nodejs-lambda-${fnName}`;
 
   expect(aoData).property('events').an('array');
   expect(aoData.events.length).gte(sampled ? 3 : 1);
@@ -731,26 +766,38 @@ function checkAoData (aoData, options = {}) {
     expect(topEvents.entry).property('Layer', entrySpanName, `missing event: ${entrySpanName}:entry`);
     expect(topEvents.exit).property('Layer', entrySpanName, `missing event: ${entrySpanName}:exit`);
 
-    const spec = (ev === 'v1' || ev === 'v2' || ev === 'rest') ? 'aws-lambda:ws' : 'aws-lambda';
+    // if not invoked with an apig event then this is a "raw call", i.e., it is not treated
+    // as an aws-lambda:ws trace.
+    const apigCall = (ev === 'v1' || ev === 'v2' || ev === 'rest');
+
+    const spec = apigCall ? 'aws-lambda:ws' : 'aws-lambda';
     expect(topEvents.entry).property('Spec', spec);
     expect(topEvents.entry).property('InvocationCount', 1);
-    expect(topEvents.entry).property('SampleSource', 1);
-    expect(topEvents.entry).property('SampleRate', 1000000);
-    expect(topEvents.entry).property('TID');
-    expect(topEvents.entry).property('Timestamp_u');
+    // these are only reported when there is not an inbound x-trace and so a true sample
+    // decision is made.
+    if (!xtrace) {
+      expect(topEvents.entry).property('SampleSource', 1);
+      expect(topEvents.entry).property('SampleRate', 1000000);
+      expect(topEvents.entry).property('TID');
+      expect(topEvents.entry).property('Timestamp_u');
+    }
+    // the following are taken from context
+    expect(topEvents.entry).property('FunctionVersion', context.functionVersion);
+    expect(topEvents.entry).property('InvokedFunctionARN', context.invokedFunctionArn);
+    expect(topEvents.entry).property('AWSRequestID', context.awsRequestId);
+    expect(topEvents.entry).property('MemoryLimitInMB', context.memoryLimitInMB);
+    expect(topEvents.entry).property('LogStreamName', context.logStreamName);
+    // this should match what is set when this
+    expect(topEvents.entry).property('AWSRegion', process.env.AWS_REGION);
 
-    if (!rawCall) {
+    if (apigCall) {
+      expect(topEvents.entry).property('HTTPMethod', getMethod(ev));
       expect(topEvents.entry).property('Hostname', os.hostname());
       expect(topEvents.entry).property('HTTP-Host', 'úüỏ.macnaughton.zone', 'use Host header');
     }
 
-    expect(topEvents.exit).property('TransactionName', `custom-${entrySpanName}`);
+    expect(topEvents.exit).property('TransactionName', `${getMethod(ev)}.${fnName}`);
     expect(topEvents.exit).property('TID');
-
-    if (!rawCall) {
-      expect(topEvents.exit).property('Timestamp_u');
-      expect(topEvents.exit).property('Hostname', os.hostname());
-    }
 
     expect(topEvents.entry).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
     expect(topEvents.exit).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
@@ -768,6 +815,16 @@ function checkAoData (aoData, options = {}) {
   }
 
   return {init, topEvents, otherEvents, metrics};
+}
+
+function getMethod (ev) {
+  if (ev === 'v1' || ev === 'rest') {
+    return events[ev].httpMethod.toUpperCase();
+  } else if (ev === 'v2') {
+    return events.v2.requestContext.http.method.toUpperCase();
+  } else {
+    throw new Error(`${ev} is not recognized`)
+  }
 }
 
 // https://stackoverflow.com/questions/4459928/how-to-deep-clone-in-javascript
@@ -793,4 +850,46 @@ function clone (obj, hash = new WeakMap()) {
   return Object.assign(result, ...Object.keys(obj).map(key => {
     return {[key]: clone(obj[key], hash)};
   }));
+}
+
+function randomRegion () {
+  const regions = [
+    'us-east-2',
+    'us-east-1',
+    'us-west-1',
+    'us-west-2',
+    'af-south-1',
+    'ap-east-1',
+    'ap-south-1',
+    'ap-northeast-3',
+    'ap-northeast-2',
+    'ap-southeast-1',
+    'ap-southeast-2',
+    'ap-northeast-1',
+    'ca-central-1',
+    'cn-north-1',
+    'cn-northwest-1',
+    'eu-central-1',
+    'eu-west-1',
+    'eu-west-2',
+    'eu-south-1',
+    'eu-west-3',
+    'eu-north-1',
+    'me-south-1',
+    'sa-east-1',
+    'us-gov-east-1',
+  ];
+  return regions[Math.floor(Math.random() * regions.length)];
+}
+
+function randomContext (predefined) {
+  const context = {
+    functionVersion: '$LATEST',
+    invokedFunctionArn: 'arn:aws:lambda:us-east-1:858939916050:function:f2-node-bam',
+    awsRequestId: 'a704f0cd-645e-4fb4-8a6b-fa1416aa2e61',
+    memoryLimitInMB: '128',
+    logStreamName: '2020/09/24/[$LATEST]b3f0e39b1c034ea6bc48f7388f132d92',
+  };
+
+  return JSON.stringify(Object.assign(context, predefined));
 }
