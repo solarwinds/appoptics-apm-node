@@ -103,6 +103,11 @@ executeTestGroup "TOKEN" "test/token/*.test.js"
 executeTestGroup "COMPOSITE" "test/composite/*.test.js"
 
 #
+# this group has lambda-specific tests
+#
+executeTestGroup "LAMBDA" "test/lambda/*.test.js"
+
+#
 # run the probe tests
 #
 # they are last because at least one test might not close emitters or timers. that test causes
