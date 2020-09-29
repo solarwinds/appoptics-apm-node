@@ -10,7 +10,7 @@ const makeSettings = helper.makeSettings
 
 describe('error', function () {
   const conf = {enabled: true}
-  const error = new Error('nope')
+  let error;
   let emitter
   let realSampleTrace
 
@@ -49,6 +49,10 @@ describe('error', function () {
   after(function (done) {
     ao.addon.Context.sampleTrace = realSampleTrace
     emitter.close(done)
+  })
+
+  beforeEach(function () {
+    error = new Error(this.currentTest.title.replace(/' '/g, '-'));
   })
 
   //
@@ -287,7 +291,7 @@ describe('error', function () {
   })
 
   it('should allow sending the same error multiple times', function (done) {
-    const error = new Error('dupe')
+    error = new Error('dupe')
 
     // TODO: validate edge chaining
     function validate (msg) {

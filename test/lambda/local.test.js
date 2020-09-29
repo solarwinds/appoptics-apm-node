@@ -186,7 +186,6 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.resolve).equal(this.modifiers.resolve);
       expect(o.reject).not.exist;
     }
-
   }, {
     desc: 'apig-${version} string => body (if v2)${x-trace-clause}',
     test: 'agentEnabledP',
@@ -320,6 +319,25 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).not.exist;
       expect(o.reject).deep.equal({});
+    }
+  }, {
+    desc: 'report an error when a promise resolves an error',
+    test: 'agentEnabledP',
+    xtrace: xTraceS,
+    options: undefined, //{only: true, },//logging: ['error', 'warn', 'debug', 'info']},
+    //debug: ['stdout', 'stderr'],
+    modifiers: {'resolve-error': 'if fulfill with error object apig errors'},
+    extraAoDataChecks (organized) {
+      const re = new RegExp(`^Error: ${this.modifiers['resolve-error']}\n`);
+      expect(organized.topEvents.exit).property('ErrorClass', 'Error');
+      expect(organized.topEvents.exit).property('ErrorMsg', this.modifiers['resolve-error']);
+      expect(organized.topEvents.exit).property('Backtrace').match(re);
+    },
+    testDataChecks (o, options) {
+      expect(o).property('initialao').equal(false, 'the agent should not have been loaded');
+      // JSON.stringify(new Error()) is '{}'
+      expect(o).property('resolve').deep.equal({});
+      expect(o).not.property('reject');
     }
   }];
 
@@ -534,6 +552,8 @@ function executeTests (tests) {
         dbg = {stderr: true, stdout: true, decodeAo: true, checkAo: true};
       } else if (Array.isArray(t.debug)) {
         t.debug.forEach(d => dbg[d] = true);
+      } else if (typeof t.debug === 'object') {
+        dbg = t.debug;
       }
 
       let clause = '';
@@ -553,9 +573,13 @@ function executeTests (tests) {
       const ctxObject = {};
       if (t.modifiers) {
         const ctx = {};
-        for (const key of ['resolve', 'reject', 'throw']) {
-          if (key in t.modifiers) {
+        const validModifiers = ['resolve', 'reject', 'throw', 'error', 'resolve-error'];
+        for (const key of Object.keys(t.modifiers)) {
+          if (validModifiers.indexOf(key) >= 0) {
             ctx[key] = t.modifiers[key];
+          } else {
+            // eslint-disable-next-line no-console
+            console.error('invalid modifier:', key);
           }
         }
         if (Object.keys(ctx).length) {

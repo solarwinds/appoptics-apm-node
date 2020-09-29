@@ -566,6 +566,8 @@ exports.makeSettings = function (settings) {
     doMetrics: true,
     source: 1,              // local agent config
     rate: ao.sampleRate,
+    tokenBucketRate: 8,
+    tokenBucketCapacity: 100,
   }
 
   Object.assign(s, settings);

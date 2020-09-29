@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 'use strict';
 
+const util = require('util');
+
 const aoLambdaTest = 'ao-lambda-test';
 
 async function fakeLambdaPromiser (event, context) {
@@ -30,6 +32,9 @@ async function fakeLambdaPromiser (event, context) {
   let response = {statusCode: 200};
   if (modifiers.resolve) {
     response = modifiers.resolve;
+  }
+  if (modifiers['resolve-error']) {
+    response = new Error(modifiers['resolve-error']);
   }
 
   return Promise.resolve(response);
@@ -74,6 +79,15 @@ module.exports = {
     const ix = handler.lastIndexOf('.');
     const handlerName = handler.slice(ix + 1);
     return module.exports[handlerName];
+  },
+
+  debugFuncP (event, context) {
+
+    return Promise.resolve('nothing');
+  },
+
+  debugFuncCB (event, context) {
+    console.error(util.inspect(event), util.inspect(context));
   },
 
   // just make sure everything is as it is expected to be. the agent
@@ -126,7 +140,7 @@ module.exports = {
         return reject;
       })
       .then(r => {
-        console.log(JSON.stringify(output))
+        console.log(JSON.stringify(output));
         return r;
       });
   },

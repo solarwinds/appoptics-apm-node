@@ -19,18 +19,10 @@ const LogEntries = require('./log-entries');
 const lambdaTestFunction = 'nodejs-apig-function-9FHBV1SLUTCC';
 const lambdaApmLayer = 'appoptics-apm-layer';
 const xt = 'X-Trace';
+const ignoreVersions = 'AO_TEST_LAMBDA_IGNORE_VERSIONS' in process.env;
 
 let apmVersion;
 let aobVersion;
-
-const p1 = fsp.readFile('package.json', 'utf8')
-  .then(text => {
-    apmVersion = JSON.parse(text).version;
-  });
-const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
-  .then(text => {
-    aobVersion = JSON.parse(text).version;
-  });
 
 let functionArn;
 let fnConfig;
@@ -39,11 +31,26 @@ let initEvent;
 
 describe('verify the lambda layer works', function () {
   before(function () {
+    if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
+      const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
+      const m = versions.match(/^apm v(.+), bindings v(.+)/);
+      expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+)/').exist;
+      ({1: apmVersion, 2: aobVersion} = m);
+      return;
+    }
+    const p1 = fsp.readFile('package.json', 'utf8')
+      .then(text => {
+        apmVersion = JSON.parse(text).version;
+      });
+    const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
+      .then(text => {
+        aobVersion = JSON.parse(text).version;
+      });
     // wait for the io to complete
     return Promise.all([p1, p2]);
   });
 
-  it('should be testing the same version on lambda', function () {
+  it('should be testing a compatible layer on lambda', function () {
     this.timeout(10 * 60 * 1000);
     return awsUtil.getFunctionConfiguration(lambdaTestFunction)
       // find lambdaApmLayer
@@ -67,30 +74,37 @@ describe('verify the lambda layer works', function () {
         }
         return {fnConfig, layerArn: arn, layerVersion: m[1]};
       })
-      // make sure it matches the local versions
+      // make sure it matches the local versions or was overridden.
       .then(r => {
         return awsUtil.getLayerVersionByArn(r.layerArn)
           .then(layer => {
-            const m = layer.Description.match(/^apm v(.+), bindings v(.+)$/);
+            const m = layer.Description.match(/^apm v(.+), bindings v(.+), auto v(.+)$/);
             if (!m) {
               throw new Error('cannot find versions');
             }
-            expect(apmVersion).equal(m[1]);
-            expect(aobVersion).equal(m[2]);
-            return (fnConfig = r.fnConfig);
+            const {1: remoteApm, 2: remoteAob} = m;
+            fnConfig = r.fnConfig;
+            if (!ignoreVersions) {
+              expect(apmVersion).equal(remoteApm, `local ${apmVersion} must match remote ${remoteApm}`);
+              expect(aobVersion).equal(remoteAob, `local ${aobVersion} must match remote ${remoteAob}`);
+            }
+            return fnConfig;
           });
       });
   });
 
-  it('should invoke the function, verify the version, and check logs', function () {
+  it('should invoke the function, double check the version, and check logs', function () {
     this.timeout(10 * 60 * 1000);
     // and double check by asking the function to return the versions too.
     const payload = JSON.stringify({cmds: ['versions', 'context']});
     return awsUtil.invoke(fnConfig.FunctionArn, payload)
       .then(r => {
-        expect(r.Payload.body.response.versions.ao).equal(apmVersion);
-        expect(r.Payload.body.response.versions.aob).equal(aobVersion);
-        expect(r.Payload.body.response.context).an('object');
+        expect(r).property('Payload').property('body').property('response').property('versions');
+        if (!ignoreVersions) {
+          expect(r.Payload.body.response.versions.ao).equal(apmVersion);
+          expect(r.Payload.body.response.versions.aob).equal(aobVersion);
+        }
+        expect(r.Payload.body.response).property('context').an('object');
         return r.Payload.body.response;
       })
       .then(response => {
@@ -132,7 +146,7 @@ describe('verify the lambda layer works', function () {
 
               if (events[i].Label === 'entry') {
                 entryIx = i;
-                checkLambdaEntry(events[i]);
+                checkLambdaEntry(events[i], 'invoke');
               } else if (events[i].Label === 'exit') {
                 checkLambdaExit(events[i], events[entryIx]);
               } else {
@@ -154,7 +168,7 @@ describe('verify the lambda layer works', function () {
     checkInit(initEvent);
   })
 
-  it('should fetch correctly work through the api gateway', function () {
+  it('should fetch correctly through the api gateway', function () {
     this.timeout(10 * 60 * 1000);
 
     // TODO BAM add cloudformation describe-stack-resource call to get api
@@ -168,6 +182,7 @@ describe('verify the lambda layer works', function () {
     const httpPath = '/latest';
     const target = `${host}${stage}${httpPath}`;
     const url = `${protocol}://${target}${queryParams}`;
+    const options = {apiid, region, queryParams, protocol, host, stage, httpPath, target, url};
 
     return axios.get(url)
       .then(response => {
@@ -185,8 +200,10 @@ describe('verify the lambda layer works', function () {
         expect(data.event).an('object');
         // the api gateway can be bound to a specific version
         expect(data.versions).an('object');
-        expect(data.versions).property('ao', apmVersion, 'agent version must match');
-        expect(data.versions).property('aob', aobVersion, 'bindings version must match');
+        if (!ignoreVersions) {
+          expect(data.versions).property('ao', apmVersion, 'agent version must match');
+          expect(data.versions).property('aob', aobVersion, 'bindings version must match');
+        }
 
         expect(data.invocations).property('count').gte(1);
         const invocations = data.invocations.count;
@@ -204,6 +221,7 @@ describe('verify the lambda layer works', function () {
           logStreamName,
           requestId,
           invocations,
+          options,
         };
       })
       .then(r => {
@@ -236,15 +254,15 @@ describe('verify the lambda layer works', function () {
 
               expect(events[i].Layer).equal('nodejs-lambda-userHandler');
               if (events[i].Label === 'entry') {
-                checkLambdaEntry(events[i]);
+                checkLambdaEntry(events[i], 'apig', r.options);
                 // check for additional api gateway kv pairs
-                expect(events[i].Method).equal('GET');
+                expect(events[i].HTTPMethod).equal('GET');
                 //expect(events[i].URL).equal(httpPath);
-                debugger; // Path needs to be URL (with query params)
-                expect(events[i]).property('Path', httpPath);
-                expect(events[i]).property('Proto', protocol);
+                expect(events[i]).property('URL', httpPath);
+                expect(events[i]).property('Forwarded-Proto', protocol);
+                expect(events[i]).property('Forwarded-Port').oneOf([443, '443']);
+                expect(events[i]).property('Forwarded-For').match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
                 expect(events[i]).property('HTTP-Host', host);
-                expect(events[i]).property('Port').oneOf([443, '443']);
                 entryIx = i;
 
               } else if (events[i].Label === 'exit') {
@@ -289,8 +307,13 @@ function checkInit (event) {
   expect(event).property('Hostname').a('string');
 }
 
-function checkLambdaEntry (event, apig) {
-  expect(event).property('Spec').equal('lambda');
+function checkLambdaEntry (event, invocationType, options) {
+  expect(invocationType).oneOf(['apig', 'invoke']);
+  if (invocationType === 'apig') {
+    expect(event).property('Spec').equal('aws-lambda:ws');
+  } else if (invocationType === 'invoke') {
+    expect(event).property('Spec').equal('aws-lambda');
+  }
   expect(event).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
   expect(event).property('InvocationCount').gte(1);
   expect(event).property('InvokedFunctionARN', functionArn);
@@ -300,9 +323,9 @@ function checkLambdaEntry (event, apig) {
 
   expect(event).property('TID').a('number');
   expect(event).property('Timestamp_u').a('number');
-  if (apig) {
-    expect(event).property('Hostname').a('string');
-    expect(event).property('HTTP-Host', 'xyzzy', 'this should fail');
+  if (invocationType === 'apig') {
+    expect(event).property('HTTP-Host', options.host);
+    expect(event).property('Hostname').match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/);
   }
 }
 
