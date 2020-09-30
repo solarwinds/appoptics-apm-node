@@ -25,7 +25,8 @@ SUITES_SKIPPED=0
 
 # if one of the strings in SKIP is found in a test file name that file will be skipped so
 # it's best to start with "test/" and provide as much of the path as possible.
-SKIP=${SKIP:-"test/solo/notifications"}
+# notification are disabled for now, so skip testing.
+SKIP="test/solo/notifications $SKIP"
 
 function skipThis() {
     for s in $SKIP
