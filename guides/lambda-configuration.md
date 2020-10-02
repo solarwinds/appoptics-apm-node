@@ -5,12 +5,12 @@ general configuration options see `configuration.md` in the same directory.
 
 ## Prerequisite
 
-Add the `appoptics-apm-layer` to your function
+Add the `appoptics-node` layer to your function
 - screen shots?
-- select `arn:aws:lambda:${your-function's-region}:858939916050:layer:appoptics-apm-layer`:41
+- select `arn:aws:lambda:${your-function's-region}:858939916050:layer:appoptics-node`:41
 - forwarder setup already done (where to document this - each agent?)
 
-choose `Specify an ARN` and select `....` - how to find/see available `appoptics-apm-layer`
+choose `Specify an ARN` and select `....` - how to find/see available `appoptics-node`
 versions for node? where to see?
 
 ## no-code change instrumentation
@@ -42,7 +42,8 @@ module.exports.handler = myHandlerEchoEvent;
 to instrument make the following changes:
 
 ```js
-const ao = require('appoptics-apm');     // require the agent - contained in appoptics-apm-layer
+// require the agent - contained in appoptics-node layer
+const ao = require('appoptics-apm');
 
 async function myHandlerEvent (event, context) {
   return {statusCode: 200, body: JSON.stringify(event)};
@@ -53,7 +54,7 @@ module.exports.handler = ao.wrapLambdaHandler(myHandlerEchoEvent);
 ```
 
 ## even more manual installation
-- create your own layer that includes the appoptics-apm-code? this is complicated as it involves
+- create your own layer that includes the appoptics-apm code? this is complicated as it involves
 building the bindings agent in an amazon linux container. punt.
 
 ## fine tuning
