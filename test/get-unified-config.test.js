@@ -60,7 +60,7 @@ function doChecks (cfg, overrides = {}) {
   if (expected.serviceName === undefined) delete expected.serviceName;
 
   if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === 'lambda') {
-    if (!('sampleRate' in expected)) expected.sampleRate = 300000; // the lambda default
+    if (!('sampleRate' in expected)) expected.sampleRate = 1000000; // the lambda default
   }
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
