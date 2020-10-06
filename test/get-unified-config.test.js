@@ -55,12 +55,15 @@ function doChecks (cfg, overrides = {}) {
   expect(cfg.file).equal(expected);
 
   expected = Object.assign({}, expectedGlobalDefaults, overrides.global);
-  // special to allow undefined serviceKey/serviceName to remove key
-  if (expected.serviceKey === undefined) delete expected.serviceKey;
-  if (expected.serviceName === undefined) delete expected.serviceName;
 
-  if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === 'lambda') {
-    if (!('sampleRate' in expected)) expected.sampleRate = 1000000; // the lambda default
+  if (overrides.remove) {
+    overrides.remove.forEach(r => {
+      delete expected[r];
+    })
+  }
+
+  if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === '') {
+    if (!('sampleRate' in expected)) expected.sampleRate = 1000000; // the  default
   }
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
@@ -85,7 +88,8 @@ function doChecks (cfg, overrides = {}) {
   expected = overrides.settingsErrors || [];
   expect(cfg.settingsErrors).an('array').deep.equal(expected, 'settingsErrors mismatch');
 
-  expected = overrides.fatals || ['not a valid serviceKey: '];
+  // not a valid serviceKey is not fatal when in lambda
+  expected = overrides.fatals || (cfg.execEnv.id === 'lambda' ? [] : ['not a valid serviceKey: ']);
   expect(cfg.fatals).an('array').deep.equal(expected, 'fatals mismatch');
 
   expected = overrides.errors || [];
@@ -495,7 +499,22 @@ describe('get-unified-config', function () {
 
       // the serviceKey is not valid and should be reported
       const fatals = [`not a valid serviceKey: ${serviceKey}`];
-      const expected = Object.assign({global: {serviceName: undefined, serviceKey: ''}, fatals});
+      const expected = Object.assign({global: {serviceKey: ''}, fatals});
+      doChecks(cfg, expected);
+    });
+
+    it('settings ignored in a lambda environment should not be set', function () {
+      process.env.LAMBDA_TASK_ROOT = '/var/task'
+      process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
+
+      process.env.APPOPTICS_PROXY = 'proxy-thing';
+      process.env.APPOPTICS_HOSTNAME_ALIAS = 'bruce-place';
+      process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 200;
+
+      const cfg = guc();
+
+      const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout', 'serviceKey'];
+      const expected = {global: {sampleRate: 1000000}, remove};
       doChecks(cfg, expected);
     });
 
@@ -503,6 +522,7 @@ describe('get-unified-config', function () {
       process.env.LAMBDA_TASK_ROOT = '/var/task'
       process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
 
+      const sampleRate = 1000000;
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
@@ -514,11 +534,12 @@ describe('get-unified-config', function () {
       expect(cfg.execEnv).property('id', 'lambda');
 
       // no service key is supplied so there shouldn't be a serviceKey property.
-      const globals = {tokenBucketRate, tokenBucketCapacity, serviceKey: undefined};
+      const globals = {tokenBucketRate, tokenBucketCapacity, sampleRate};
+      const remove = ['serviceKey'];
 
       // the default check for fatals is "not a valid serviceKey:" so override it
       const fatals = [];
-      const expected = Object.assign({global: globals, fatals});
+      const expected = Object.assign({global: globals, fatals, remove});
       doChecks(cfg, expected);
     });
 
