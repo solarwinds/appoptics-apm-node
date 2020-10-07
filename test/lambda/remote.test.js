@@ -17,7 +17,9 @@ const awsUtil = require('./aws-util.js');
 const LogEntries = require('./log-entries');
 
 const lambdaTestFunction = 'nodejs-apig-function-9FHBV1SLUTCC';
-const lambdaApmLayer = 'appoptics-node';
+// allow testing against a different layer depending on what the lambdaTestFunction
+// is configured with.
+const lambdaApmLayer = process.env.AO_TEST_LAMBDA_LAYER_NAME || 'appoptics-node';
 const xt = 'X-Trace';
 const ignoreVersions = 'AO_TEST_LAMBDA_IGNORE_VERSIONS' in process.env;
 
