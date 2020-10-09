@@ -8,12 +8,20 @@ const fs = require('fs');
 // assures that compatible versions of both are loaded.
 const level = require('level');
 const dbPath = '/tmp/test-db';
-const db = level(dbPath);
 
 const pkg = require('level/package')
 
 describe('probes.level ' + pkg.version, function () {
+  let db;
   let emitter;
+
+  before(function (done) {
+    level(dbPath, {}, function (err, database) {
+      if (err) done(err);
+      db = database;
+      done();
+    });
+  });
 
   //
   // Intercept appoptics messages for analysis
@@ -29,10 +37,17 @@ describe('probes.level ' + pkg.version, function () {
   });
   after(function (done) {
     try {
-      fs.rmdirSync(dbPath, {recursive: true});
-      done();
+      // readdir options weren't implemented until v12.10.0 so
+      // just manually delete things. and call done() even if
+      // there is an exception.
+      const files = fs.readdirSync(dbPath);
+      for (const f of files) {
+        fs.unlinkSync(`${dbPath}/${f}`);
+      }
+      fs.rmdir(dbPath, done);
     } catch (e) {
-      ao.loggers.debug(`failed to rm -rf ${dbPath}`);
+      ao.loggers.debug(`failed to rm -rf ${dbPath}`, e);
+      done();
     }
   });
 
