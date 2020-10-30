@@ -537,7 +537,7 @@ describe('custom', function () {
       const logChecks = [
         // verify nothing bad happens when run function is missing
         {level: 'error', message: 'ao.instrument() run function is'},
-        {level: 'error', message: `${psoct} requires function, not ${typeof missing}`},
+        {level: 'error', message: `${psoct} requires a function, not ${typeof missing}`},
         // verify nothing bad happens when spanInfo() is missing
         {level: 'error', message: 'ao.runInstrument found no span name or span-info()'},
         {level: 'error', message: `${psoct} span argument must be a string or function, not ${typeof protoSpan}`},
