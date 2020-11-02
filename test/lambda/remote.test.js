@@ -26,15 +26,16 @@ const ignoreVersions = 'AO_TEST_LAMBDA_IGNORE_VERSIONS' in process.env;
 // modifying the test descriptions after the start doesn't work.
 let apmVersion = getLambdaVersion('package.json');
 let aobVersion = getLambdaVersion('node_modules/appoptics-bindings/package.json');
+let autoVersion = getLambdaVersion('node_modules/appoptics-auto-lambda/package.json');
 let remoteApm;
 let remoteAob;
 
 // allow testing a different version than local if desired.
 if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
   const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
-  const m = versions.match(/^apm v(.+), bindings v(.+)/);
-  expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+)/').exist;
-  ([, apmVersion, aobVersion] = m);
+  const m = versions.match(/^apm v(.+), bindings v(.+), auto v(.+)/);
+  expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+), auto v(.+)/').exist;
+  ([, apmVersion, aobVersion, autoVersion] = m);
 }
 
 let functionArn;
@@ -42,7 +43,7 @@ let fnConfig;
 let fnInvocations;
 let initEvent;
 
-describe(`test lambda layer ${apmVersion}, ${aobVersion} works`, function () {
+describe(`lambda layer ${apmVersion}, ${aobVersion}, ${autoVersion} works`, function () {
   before(function () {
     //if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
     //  const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
@@ -58,7 +59,7 @@ describe(`test lambda layer ${apmVersion}, ${aobVersion} works`, function () {
     //return Promise.all([p1, p2]);
   });
 
-  it('get lambda function configuration and versions from description', function () {
+  it('verify lambda function configuration and versions from description', function () {
     this.timeout(10 * 60 * 1000);
     return awsUtil.getFunctionConfiguration(lambdaTestFunction)
       // find lambdaApmLayer
@@ -111,6 +112,7 @@ describe(`test lambda layer ${apmVersion}, ${aobVersion} works`, function () {
         if (!ignoreVersions) {
           expect(r.Payload.body.response.versions.ao).equal(apmVersion);
           expect(r.Payload.body.response.versions.aob).equal(aobVersion);
+          expect(r.Payload.body.response.versions.auto).equal(autoVersion);
         }
         expect(r.Payload.body.response).property('context').an('object');
         return r.Payload.body.response;
