@@ -7,7 +7,7 @@ const globalInstalls = `${prefix}${nvm_dir}/versions/node/${version}/lib/node_mo
 process.env.NODE_PATH += globalInstalls;
 
 
-const fsp = require('fs').promises;
+const getLambdaVersion = require('./get-lambda-version');
 
 const axios = require('axios');
 const expect = require('chai').expect;
@@ -37,18 +37,13 @@ describe('verify the lambda layer works', function () {
       const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
       const m = versions.match(/^apm v(.+), bindings v(.+)/);
       expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+)/').exist;
-      ({1: apmVersion, 2: aobVersion} = m);
+      ([, apmVersion, aobVersion] = m);
       return;
     }
-    const p1 = fsp.readFile('package.json', 'utf8')
-      .then(text => {
-        apmVersion = JSON.parse(text).version;
-      });
-    const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
-      .then(text => {
-        aobVersion = JSON.parse(text).version;
-      });
-    // wait for the io to complete
+    const p1 = getLambdaVersion('package.json')
+      .then(v => apmVersion = v);
+    const p2 = getLambdaVersion('node_modules/appoptics-bindings/package.json')
+      .then(v => aobVersion = v);
     return Promise.all([p1, p2]);
   });
 
@@ -84,7 +79,7 @@ describe('verify the lambda layer works', function () {
             if (!m) {
               throw new Error('cannot find versions');
             }
-            const {1: remoteApm, 2: remoteAob} = m;
+            const [, remoteApm, remoteAob] = m;
             fnConfig = r.fnConfig;
             if (!ignoreVersions) {
               expect(apmVersion).equal(remoteApm, `local ${apmVersion} must match remote ${remoteApm}`);
