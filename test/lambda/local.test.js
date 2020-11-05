@@ -34,8 +34,7 @@ const {aoLambdaTest} = require(testFile);
 // need to spawn task executing runnable script so stdout/stderr are captured.
 // task should be a function in a module that is wrapped by our code.
 // the function should execute an async outbound http call and a sync span
-// verify that the events are correct (first pass - event count is right)
-//   then decode base64/bson events
+// verify that the events are correct.
 //
 
 const xTraceS = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084301';
