@@ -31,7 +31,6 @@
 
 * [ao](#ao)
     * [.logLevel](#ao.logLevel)
-    * [.serviceKey](#ao.serviceKey)
     * [.loggers](#ao.loggers)
     * [.traceMode](#ao.traceMode)
     * [.tracing](#ao.tracing)
@@ -56,6 +55,7 @@
     * [.sendMetrics(metrics, [gopts])](#ao.sendMetrics) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
     * [.getFormattedTraceId()](#ao.getFormattedTraceId) ⇒ <code>string</code>
     * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
+    * [.wrapLambdaHandler([handler])](#ao.wrapLambdaHandler) ⇒ <code>function</code>
 
 <a name="ao.logLevel"></a>
 
@@ -75,16 +75,6 @@ ao.logLevel = 'warn,error'
 ```js
 var settings = ao.logLevel
 ```
-<a name="ao.serviceKey"></a>
-
-### ao.serviceKey
-**Kind**: static property of [<code>ao</code>](#ao)  
-**Properties**
-
-| Type | Description |
-| --- | --- |
-| <code>string</code> | the service key |
-
 <a name="ao.loggers"></a>
 
 ### ao.loggers
@@ -674,6 +664,32 @@ logger.info(ao.insertLogObject({
     more: 'there will be an added ao property'
 }))
 ```
+<a name="ao.wrapLambdaHandler"></a>
+
+### ao.wrapLambdaHandler([handler]) ⇒ <code>function</code>
+Wrap the lambda handler async function so it can be traced by AppOptics APM.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>function</code> - - an async function, wrapping handler, to be used
+                      instead of handler.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [handler] | <code>function</code> | wraps your lambda handler function so it                               is instrumented. your handler must return                               a promise if it is not an async function. |
+
+**Example**  
+```js
+const ao = require('appoptics-apm');
+
+const wrappedHandler = ao.wrapLambdaHandler(myHandler);
+
+async function myHandler(event, context) {
+  // implementation
+}
+
+// set the handler to the wrapped function.
+exports.handler = wrappedHandler;
+```
 <a name="Span"></a>
 
 ## Span
@@ -684,6 +700,7 @@ logger.info(ao.insertLogObject({
     * _instance_
         * [.descend(name, data)](#Span+descend) ⇒ [<code>Span</code>](#Span)
         * [.run(fn)](#Span+run) ⇒
+        * [.runPromise(fn, [opts])](#Span+runPromise) ⇒
         * [.runAsync(fn)](#Span+runAsync) ⇒
         * [.runSync(fn)](#Span+runSync) ⇒
         * [.enter(data)](#Span+enter)
@@ -758,6 +775,26 @@ span.run(function () {
 span.run(function (wrap) {
   asyncCallToTrace(wrap(callback))
 })
+```
+<a name="Span+runPromise"></a>
+
+### span.runPromise(fn, [opts]) ⇒
+Run an promise-returning function within the context of this span.
+
+**Kind**: instance method of [<code>Span</code>](#Span)  
+**Returns**: the value returned by fn()  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| fn | <code>function</code> |  | the promise-returning function to run within the span context |
+| [opts] | <code>object</code> |  | an options object |
+| [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | add a backtrace KV to the span |
+
+**Example**  
+```js
+span.runPromise(async function () {
+  return axios.get('https://google.com');
+});
 ```
 <a name="Span+runAsync"></a>
 
