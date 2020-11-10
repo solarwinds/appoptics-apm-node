@@ -25,6 +25,11 @@ span will never complete because there is no callback mechanism underlying
 must be called. It is not possible for `span.run()` to detect whether the function will
 return a promise or not. `span.run()` may still be used with synchronous and callback-based
 functions. Previously this would work because promise-spans were really callback-spans.
+- `ao.serviceKey` - this property has been removed; it is no longer valid in all cases. If
+you require the service key in your code either fetch it from the environment or read your
+configuration file.
+- in v8 if `APPOPTICS_LOG_SETTINGS` was the empty string then the default logging 'error,warn'
+would be used. in v9 that means no logging is enabled.
 - some error messages have changed to be more consistent.
 
 
