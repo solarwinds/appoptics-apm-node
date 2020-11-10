@@ -667,7 +667,7 @@ logger.info(ao.insertLogObject({
 <a name="ao.wrapLambdaHandler"></a>
 
 ### ao.wrapLambdaHandler([handler]) ⇒ <code>function</code>
-Wrap the lambda handler async function so it can be traced by AppOptics APM.
+Wrap the lambda handler function so it can be traced by AppOptics APM.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>function</code> - - an async function, wrapping handler, to be used
@@ -675,7 +675,7 @@ Wrap the lambda handler async function so it can be traced by AppOptics APM.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [handler] | <code>function</code> | wraps your lambda handler function so it                               is instrumented. your handler must return                               a promise if it is not an async function. |
+| [handler] | <code>function</code> | wraps your lambda handler function so it                               is instrumented. your handler must return                               a promise, be a JavaScript async function,                               or implement the callback signature. |
 
 **Example**  
 ```js
@@ -683,12 +683,29 @@ const ao = require('appoptics-apm');
 
 const wrappedHandler = ao.wrapLambdaHandler(myHandler);
 
-async function myHandler(event, context) {
+async function myHandler (event, context) {
   // implementation
+  // ...
 }
 
 // set the handler to the wrapped function.
 exports.handler = wrappedHandler;
+```
+**Example**  
+```js
+const ao = require('appoptics-apm');
+
+const wrappedHandler = ao.wrapLambdaHandler(myHandler);
+
+function myHandler (event, context, callback) {
+  // implementation
+  // ...
+  if (error) {
+    callback(error);
+  }
+
+  callback(null, result);
+}
 ```
 <a name="Span"></a>
 
@@ -779,7 +796,9 @@ span.run(function (wrap) {
 <a name="Span+runPromise"></a>
 
 ### span.runPromise(fn, [opts]) ⇒
-Run an promise-returning function within the context of this span.
+Run a promise-returning function within the context of this span. It
+will throw an exception if the function's return value does not have
+.then and .catch methods.
 
 **Kind**: instance method of [<code>Span</code>](#Span)  
 **Returns**: the value returned by fn()  

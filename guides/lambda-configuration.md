@@ -9,7 +9,7 @@ If you haven't already, set up the forwarder. This only needs to be done once pe
 for the account.
 
 Add the `appoptics-node` layer to your function
-- find the current version for your region(s) at https://files.appoptics.com/lambda-layers/node/
+- find the current version for your region(s) at https://files.appoptics.com/lambda-layers/appoptics-node/
 - copy the arn (e.g., `arn:aws:lambda:us-east-1:085151004374:layer:appoptics-node:7`)
 
 Add the `appoptics-node` layer to your function using one of the following methods
