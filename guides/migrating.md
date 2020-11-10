@@ -1,11 +1,43 @@
 ### Table of Contents
+[Migrating v8 => v9](#v8tov9)<br>
 [Migrating v7 => v8](#v7tov8)<br>
 [Migrating v5 => v6](#v5tov6)
+
+<a name="v8tov9"></a>
+## appoptics-apm migration guide v8 => v9
+
+If you are using `appoptics-apm` out-of-the-box with no custom instrumentation
+then no migration is necessary. You can stop reading now.
+
+### Background
+
+In order to detect error conditions in the AWS lambda environment it was necessary
+to replace the promise-to-callback shim in `pStartOrContinueTrace()` with direct
+support of promises.
+
+### Summary of changes
+
+- in previous versions if the function passed to `pStartOrContinueTrace()` did not
+return a `thenable` the span would be completed by making the callback. In v9, the
+span will never complete because there is no callback mechanism underlying
+`pStartOrContinueTrace()`.
+- calling `span.run()` will not work for spans that return promises. `span.runPromise()`
+must be called. It is not possible for `span.run()` to detect whether the function will
+return a promise or not. `span.run()` may still be used with synchronous and callback-based
+functions. Previously this would work because promise-spans were really callback-spans.
+- `ao.serviceKey` - this property has been removed; it is no longer valid in all cases. If
+you require the service key in your code either fetch it from the environment or read your
+configuration file.
+- in v8 if `APPOPTICS_LOG_SETTINGS` was the empty string then the default logging 'error,warn'
+would be used. in v9 that means no logging is enabled.
+- some error messages have changed to be more consistent.
+
+
 
 <a name="v7tov8"></a>
 ## appoptics-apm migration guide v7 => v8
 
-If you using `appoptics-apm` out-of-the-box with no custom instrumentation
+If you are using `appoptics-apm` out-of-the-box with no custom instrumentation
 then no migration is necessary. You can stop reading now.
 
 ### Background

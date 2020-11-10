@@ -144,9 +144,9 @@ exports.appoptics = function (done) {
   return emitter
 }
 
-exports.doChecks = function (emitter, checks, done) {
-  const addr = emitter.server.address()
-  emitter.removeAllListeners('message')
+exports.doChecks = function (emitter, checks, done, opt = {}) {
+  const addr = emitter.server.address();
+  emitter.removeAllListeners('message');
 
   log.test.info(`doChecks(${checks.length}) server address ${addr.address}:${addr.port}`)
 
@@ -155,6 +155,10 @@ exports.doChecks = function (emitter, checks, done) {
       log.test.messages('mock (' + addr.port + ') received message', msg)
     }
     const check = checks.shift()
+    if (opt.debug) {
+      // eslint-disable-next-line no-console
+      console.log('checking', check);
+    }
     if (check) {
       if (emitter.skipOnMatchFail) {
         try {
@@ -181,6 +185,10 @@ exports.doChecks = function (emitter, checks, done) {
     }
   }
 
+  if (opt.debug) {
+    // eslint-disable-next-line no-console
+    console.log('doChecks() debug on');
+  }
   emitter.on('message', onMessage)
 }
 
@@ -262,7 +270,7 @@ exports.test = function (emitter, test, validations, done) {
   // */
   // copy the caller's array so we can modify it without surprising
   // the caller.
-  validations = validations.map(e => e)
+  validations = validations.slice();
   validations.unshift(noop)
   validations.push(noop)
 
@@ -295,7 +303,7 @@ exports.test = function (emitter, test, validations, done) {
       span.exit()
       //done
     })
-  })
+  }, {newContext: true});
 }
 
 exports.httpTest = function (emitter, test, validations, done) {
@@ -508,6 +516,8 @@ function checkLogMessages (checks) {
     if (!(level in levelsToCheck && counter < checks.length)) {
       return
     }
+    // eslint-disable-next-line no-debugger
+    if (checkLogMessages.debug) debugger;
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {

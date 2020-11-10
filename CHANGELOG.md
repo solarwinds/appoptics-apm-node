@@ -157,12 +157,15 @@ Features
 Bug fix
 - don't log an error when `req.socket.remoteAddress` is undefined.
 
-### vNext
+### v9.0.0
 
 Features
 - lambda support
 - enable all logging to be suppressed via APPOPTICS_LOG_SETTINGS=''
 - capture agent version in init message
+
+Breaking change
+- removed `ao.serviceKey` property.
 
 Bug fix
 - change config file name `appoptics-apm.{js|json}` => `appoptics-apm-config.{js|json}`

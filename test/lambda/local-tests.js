@@ -5,6 +5,19 @@ const util = require('util');
 
 const aoLambdaTest = 'ao-lambda-test';
 
+//
+// structure - fakeLambdaPromise and fakeLambdaCallbacker are invoked by one
+// of the "agent<x>P" and "agent<x>CB" functions. The property "ao-lambda-test"
+// might be added to the context object to modify the default behavior of the
+// fake<x> functions.
+//
+// if "ao-lambda-test" is empty the functions with return {statusCode: 200}.
+//
+// "ao-lambda-test" can specify that fakeLambdaPromiser reject with a specific
+// value, throw with a specific string, or resolve with a different value. for
+// fakeLambdaCallbacker it can specify an error to return via the callback, an
+// exception to throw, or a resolve value.
+//
 async function fakeLambdaPromiser (event, context) {
   if (typeof event !== 'object') {
     throw new TypeError('event must be an object in the handler');
@@ -68,6 +81,11 @@ function fakeLambdaCallbacker (event, context, callback) {
   // callback using "lambda-supplied" callback
   callback(error, response);
 }
+
+//
+// decode the input from command line json and invoke the
+// requested function.
+//
 
 const aos = Symbol.for('AppOptics.Apm.Once');
 

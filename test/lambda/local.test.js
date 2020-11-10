@@ -34,8 +34,7 @@ const {aoLambdaTest} = require(testFile);
 // need to spawn task executing runnable script so stdout/stderr are captured.
 // task should be a function in a module that is wrapped by our code.
 // the function should execute an async outbound http call and a sync span
-// verify that the events are correct (first pass - event count is right)
-//   then decode base64/bson events
+// verify that the events are correct.
 //
 
 const xTraceS = '2B9F41282812F1D348EE79A1B65F87656AAB20C705D5AD851C0152084301';
@@ -133,11 +132,12 @@ describe('test lambda promise functions with mock apig events', function () {
   });
 
   const tests = [{
-    desc: 'apig-${version}${x-trace-clause} should insert x-trace header',
+    desc: 'apig-${version}${x-trace-clause} insert x-trace when headers are present',
     test: 'agentEnabledP',
     xtrace: xTraceS,
     options: {},
-    debug: ['stderr'],
+    //debug: ['stdout'],
+    modifiers: {resolve: {statusCode: 200, headers: {'x-bruce': 'headers present'}}},
     testDataChecks (o) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).exist;
@@ -147,10 +147,12 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.resolve.headers['x-trace'].slice(-2)).equal('01', 'sample bit doesn\'t match');
     }
   }, {
-    desc: 'apig-${version}${x-trace-clause} should insert x-trace header',
+    desc: 'apig-${version}${x-trace-clause} insert x-trace when headers are present',
     test: 'agentEnabledP',
     xtrace: xTraceU,
-    options: {},
+    //options: {logging: 'debug,span,error,warn'},
+    //debug: ['stdout', 'stderr'],
+    modifiers: {resolve: {statusCode: 200, headers: {'x-bruce': 'headers present'}}},
     testDataChecks (o) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).exist;
@@ -160,7 +162,7 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.resolve.headers['x-trace'].slice(-2)).equal('00', 'sample bit doesn\'t match');
     }
   }, {
-    desc: 'apig-${version}${x-trace-clause} don\'t insert x-trace header',
+    desc: 'apig-${version}${x-trace-clause} don\'t insert x-trace header when no headers',
     test: 'agentEnabledP',
     xtrace: undefined,
     options: {},
@@ -171,15 +173,15 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(o.resolve).not.property('headers');
     }
   }, {
-    desc: 'apig-${version} invalid v1 response does not generate an error',
+    desc: 'apig-${version} invalid v1 response generates an error',
     test: 'agentEnabledP',
     xtrace: undefined,
     modifiers: {resolve: 'invalid-resolve-value-for-v1'},
     options: {},
     extraAoDataChecks (organized) {
-      expect(organized.topEvents.exit).not.property('ErrorClass');
-      expect(organized.topEvents.exit).not.property('ErrorMsg');
-      expect(organized.topEvents.exit).not.property('Backtrace');
+      expect(organized.topEvents.exit).property('ErrorClass');
+      expect(organized.topEvents.exit).property('ErrorMsg');
+      expect(organized.topEvents.exit).property('Backtrace');
     },
     testDataChecks (o) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
@@ -199,16 +201,17 @@ describe('test lambda promise functions with mock apig events', function () {
       const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       if (en === 'v2') {
-        expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', this.modifiers.resolve);
-        expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+        expect(o.resolve).equal(this.modifiers.resolve);
+        //expect(o.resolve).property('statusCode', 200);
+        //expect(o.resolve).property('body', this.modifiers.resolve);
+        //expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
       } else {
         expect(o.resolve).equal(this.modifiers.resolve);
       }
       expect(o.reject).not.exist;
     }
   }, {
-    desc: 'apig-${version} string => body (only v2)${x-trace-clause}',
+    desc: 'apig-${version} string response is not modified${x-trace-clause}',
     test: 'agentEnabledP',
     xtrace: xTraceS,
     modifiers: {resolve: 'string-resolve-value'},
@@ -217,27 +220,23 @@ describe('test lambda promise functions with mock apig events', function () {
       expect(organized.topEvents).not.deep.equal({}, 'topEvents should be present');
     },
     testDataChecks (o, options) {
-      const {en} = options;
+      //const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
-      if (en === 'v2') {
-        expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', this.modifiers.resolve);
-        expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
-      } else {
-        expect(o.resolve).equal(this.modifiers.resolve);
-      }
+      expect(o.resolve).equal(this.modifiers.resolve);
       expect(o.reject).not.exist;
     }
   }, {
+    // this test is not so useful now that response only adds x-trace when a headers
+    // object is present.
     desc: 'apig-${version} a string is not modified when no x-trace',
     test: 'agentEnabledP',
     xtrace: undefined,
     modifiers: {resolve: 'string-resolve-value'},
     options: {},
     extraAoDataChecks (organized) {
-      expect(organized.topEvents.exit).not.property('ErrorClass');
-      expect(organized.topEvents.exit).not.property('ErrorMsg');
-      expect(organized.topEvents.exit).not.property('Backtrace');
+      expect(organized.topEvents.exit).property('ErrorClass');
+      expect(organized.topEvents.exit).property('ErrorMsg');
+      expect(organized.topEvents.exit).property('Backtrace');
     },
     testDataChecks (o, options) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
@@ -257,34 +256,36 @@ describe('test lambda promise functions with mock apig events', function () {
       const {en} = options;
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       if (en === 'v2') {
-        expect(o.resolve).property('statusCode', 200);
-        expect(o.resolve).property('body', JSON.stringify(this.modifiers.resolve));
+        // no longer insert statusCode; requires inference of lambda's actions.
+        //expect(o.resolve).property('statusCode', 200);
+        expect(o.resolve).property('body', this.modifiers.resolve.body);
       } else {
         const resolveKeys = Object.keys(this.modifiers.resolve);
         for (const k of resolveKeys) {
           expect(o.resolve[k]).equal(this.modifiers.resolve[k]);
         }
       }
-      expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
-      expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1));
+      //expect(o.resolve).property('headers').property('x-trace').match(/2B[0-9A-F]{56}0(0|1)/);
+      //expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1));
       expect(o.reject).not.exist;
     }
   }, {
-    desc: 'report statusCode but not error when the function rejects',
+    desc: 'report statusCode and error when the function rejects',
     test: 'agentEnabledP',
     xtrace: undefined,
     modifiers: {reject: 404},
     options: {},
     extraAoDataChecks (organized) {
-      expect(organized.topEvents.exit).not.property('ErrorClass');
-      expect(organized.topEvents.exit).not.property('ErrorMsg');
-      expect(organized.topEvents.exit).not.property('Backtrace');
+      expect(organized.topEvents.exit).property('ErrorClass');
+      expect(organized.topEvents.exit).property('ErrorMsg');
+      expect(organized.topEvents.exit).property('Backtrace');
     },
     testDataChecks (o, options) {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).not.exist;
       expect(o.reject).exist;
-      expect(o.reject.statusCode).equal(this.modifiers.reject, `errorCode should be ${this.modifiers.reject}`);
+      // no longer set status code when rejecting
+      expect(o.reject.statusCode).not.exist;
     }
 
   }, {
@@ -365,9 +366,9 @@ describe('test lambda callback functions with mock apig events', function () {
       expect(o.initialao).equal(false, 'the agent should not have been loaded');
       expect(o.resolve).exist;
       expect(o.resolve).property('statusCode').equal(200, 'statusCode should be 200');
-      expect(o.resolve).property('headers').an('object').property('x-trace');
-      expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(this.xtrace.slice(2, 42), 'task IDs don\'t match');
-      expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1), 'sample bit doesn\'t match');
+      //expect(o.resolve).property('headers').an('object').property('x-trace');
+      //expect(o.resolve.headers['x-trace'].slice(2, 42)).equal(this.xtrace.slice(2, 42), 'task IDs don\'t match');
+      //expect(o.resolve.headers['x-trace'].slice(-1)).equal(this.xtrace.slice(-1), 'sample bit doesn\'t match');
     }
   }];
   executeTests(tests);
@@ -562,6 +563,8 @@ function executeTests (tests) {
         const sampled = xtrace.slice(-1) === '1' ? 'sampled' : 'unsampled';
         clause = ` ${sampled} x-trace`;
         testEvent.headers['x-trace'] = xtrace;
+        // eslint-disable-next-line no-console
+        if (dbg.event) {console.log(testEvent)}
       } else {
         clause = ' no x-trace';
       }
@@ -600,7 +603,11 @@ function executeTests (tests) {
       doit(description, function () {
         const previousLogging = process.env.APPOPTICS_LOG_SETTINGS;
         if (options.logging) {
-          process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',');
+          if (Array.isArray(options.logging)) {
+            process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',');
+          } else {
+            process.env.APPOPTICS_LOG_SETTINGS = options.logging;
+          }
         }
         return exec(`node -e 'require("${testFile}").${test}(${clEvent}, ${clContext})'`)
           .then(r => {

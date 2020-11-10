@@ -25,14 +25,18 @@ describe('composite.axios', function () {
     emitter.close(done);
   })
 
+  function xtraceComponents (xtrace) {
+    const taskId = xtrace.slice(2, 42);
+    const opId = xtrace.slice(42, 58);
+    const flags = xtrace.slice(-2);
+    return [taskId, opId, flags];
+  }
+
   const check = {
     xtrace: function (msg) {
       const xtrace = msg['X-Trace'];
       expect(msg).property('X-Trace');
-      const taskId = xtrace.slice(2, 42);
-      const opId = xtrace.slice(42, 58);
-      const flags = xtrace.slice(-2);
-      return [taskId, opId, flags];
+      return xtraceComponents(xtrace);
     },
     server: {
       entry: function (msg) {
@@ -223,28 +227,36 @@ describe('composite.axios', function () {
     //
     // Verify behaviour of asyncrony within a request
     //
-    it('should trace correctly within asyncrony', function (done) {
+    it('should trace correctly within asyncrony', function () {
       const server = http.createServer(function (req, res) {
         setTimeout(function () {
           res.end('done');
         }, 10);
       })
 
-      helper.doChecks(emitter, [
-        function (msg) {
-          check.server.entry(msg);
-        },
-        function (msg) {
-          check.server.exit(msg);
-        }
-      ], function () {
-        server.close(done);
+      const pb = new Promise((resolve, reject) => {
+
+        helper.doChecks(emitter, [
+          function (msg) {
+            check.server.entry(msg);
+          },
+          function (msg) {
+            check.server.exit(msg);
+          }
+        ], function () {
+          server.close(resolve);
+        })
       })
 
-      server.listen(function () {
-        const port = server.address().port;
-        axios('http://localhost:' + port);
+      const pa = new Promise((resolve, reject) => {
+        server.listen(function () {
+          const port = server.address().port;
+          axios('http://localhost:' + port)
+            .then(resolve);
+        });
       })
+
+      return Promise.all([pa, pb]);
     })
 
     //
@@ -397,7 +409,7 @@ describe('composite.axios', function () {
     //
     // Validate that server.setTimeout(...) exits correctly
     //
-    it('should exit when timed out', function (done) {
+    it('should exit when timed out', function () {
       const server = http.createServer(function (req, res) {
         setTimeout(function () {
           res.end('done');
@@ -412,24 +424,35 @@ describe('composite.axios', function () {
         reached = true;
       })
 
-      helper.doChecks(emitter, [
-        function (msg) {
-          check.server.entry(msg);
-        },
-        function (msg) {
-          check.server.exit(msg);
-          expect(msg).property('Status', 500);
-        }
-      ], function () {
-        expect(reached).equal(true);
-        server.close(done);
+      const pa = new Promise((resolve, reject) => {
+        helper.doChecks(emitter, [
+          function (msg) {
+            check.server.entry(msg);
+          },
+          function (msg) {
+            check.server.exit(msg);
+            expect(msg).property('Status', 500);
+          }
+        ], function () {
+          expect(reached).equal(true);
+          server.close(resolve);
+        });
       });
 
-      server.listen(function () {
-        const port = server.address().port;
-        axios(`http://localhost:${port}`)
-          .catch(e => e);
+      const pb = new Promise((resolve, reject) => {
+        server.listen(function () {
+          const port = server.address().port;
+          axios(`http://localhost:${port}`)
+            .catch(e => {
+              if (e.message !== 'Request failed with status code 500') {
+                reject(e);
+              }
+            })
+            .then(resolve);
+        });
       });
+
+      return Promise.all([pa, pb]);
     })
   })
 
@@ -494,7 +517,7 @@ describe('composite.axios', function () {
 
         helper.test(emitter, mod, [
           function (msg) {
-            check.client.entry(msg);     // sometimes a semicolon is needed
+            check.client.entry(msg);     // sometimes a semicolon really is needed
             [ptaskId, popId, pflags] = check.xtrace(msg);
             expect(msg).property('RemoteURL', ctx.data.url);
             expect(msg).property('IsService', 'yes');
@@ -524,6 +547,82 @@ describe('composite.axios', function () {
           }
         ], done)
       });
+    });
+
+    it('should trace http client and server using axios.get', function () {
+      let resolve;
+      let reject;
+      const p = new Promise((res, rej) => {resolve = res; reject = rej});
+
+      const url2 = 'http://www.google.com/';
+      const server = http.createServer(function (req, res) {
+        axios.get(url2)
+          .then(response => {
+            if (response.status !== 200) {
+              ao.loggers.error('status', response.status);
+            }
+            res.end('done');
+            server.close();
+          })
+          .catch(err => {
+            ao.loggers.error('error', err);
+            res.statusCode = 422;
+            res.end({geterror: err.toString()});
+            server.close();
+            reject(err);
+          })
+          .then(resolve);
+      });
+      let ptaskId, popId, pflags;
+
+      server.listen(function () {
+        const url = `http://localhost:${server.address().port}`;
+        axios.get(url)
+          .then(response => {
+            expect(response).property('headers').property('x-trace');
+            const xt = xtraceComponents(response.headers['x-trace']);
+            expect(xt[0]).equal(ptaskId);
+            expect(xt[1]).equal(popId);
+            expect(xt[2]).equal(pflags);
+          })
+          .catch(e => {
+            reject(e);
+          });
+
+
+        helper.doChecks(emitter, [
+          function (msg) {
+            check.server.entry(msg);
+          },
+          // check request.get('google')
+          function (msg) {
+            check.client.entry(msg);     // sometimes a semicolon really is needed
+            [ptaskId, popId, pflags] = check.xtrace(msg);
+            expect(msg).property('RemoteURL', url2);
+            expect(msg).property('IsService', 'yes');
+          },
+          function (msg) {
+            check.client.exit(msg);
+            expect(msg).property('HTTPStatus', 200);
+            const xt = check.xtrace(msg);
+            expect(xt[0]).equal(ptaskId);
+            expect(xt[1]).not.equal(popId);
+            expect(xt[2]).equal(pflags);
+            [, popId] = xt;
+          },
+          function (msg) {
+            check.server.exit(msg);
+            const xt = check.xtrace(msg);
+            expect(xt[0]).equal(ptaskId);
+            expect(xt[1]).not.equal(popId);
+            expect(xt[2]).equal(pflags);
+            [, popId] = xt;
+          },
+        ],
+        () => undefined)
+      });
+
+      return p;
     })
 
     it('should trace http using request.get.then', function (done) {

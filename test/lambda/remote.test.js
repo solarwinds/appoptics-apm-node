@@ -7,7 +7,7 @@ const globalInstalls = `${prefix}${nvm_dir}/versions/node/${version}/lib/node_mo
 process.env.NODE_PATH += globalInstalls;
 
 
-const fsp = require('fs').promises;
+const getLambdaVersion = require('./get-lambda-version');
 
 const axios = require('axios');
 const expect = require('chai').expect;
@@ -23,36 +23,43 @@ const lambdaApmLayer = process.env.AO_TEST_LAMBDA_LAYER_NAME || 'appoptics-node'
 const xt = 'X-Trace';
 const ignoreVersions = 'AO_TEST_LAMBDA_IGNORE_VERSIONS' in process.env;
 
-let apmVersion;
-let aobVersion;
+// modifying the test descriptions after the start doesn't work.
+let apmVersion = getLambdaVersion('package.json');
+let aobVersion = getLambdaVersion('node_modules/appoptics-bindings/package.json');
+let autoVersion = getLambdaVersion('node_modules/appoptics-auto-lambda/package.json');
+let remoteApm;
+let remoteAob;
+
+// allow testing a different version than local if desired.
+if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
+  const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
+  const m = versions.match(/^apm v(.+), bindings v(.+), auto v(.+)/);
+  expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+), auto v(.+)/').exist;
+  ([, apmVersion, aobVersion, autoVersion] = m);
+}
 
 let functionArn;
 let fnConfig;
 let fnInvocations;
 let initEvent;
 
-describe('verify the lambda layer works', function () {
+describe(`lambda layer ${apmVersion}, ${aobVersion}, ${autoVersion} works`, function () {
   before(function () {
-    if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
-      const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
-      const m = versions.match(/^apm v(.+), bindings v(.+)/);
-      expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+)/').exist;
-      ({1: apmVersion, 2: aobVersion} = m);
-      return;
-    }
-    const p1 = fsp.readFile('package.json', 'utf8')
-      .then(text => {
-        apmVersion = JSON.parse(text).version;
-      });
-    const p2 = fsp.readFile('node_modules/appoptics-bindings/package.json')
-      .then(text => {
-        aobVersion = JSON.parse(text).version;
-      });
-    // wait for the io to complete
-    return Promise.all([p1, p2]);
+    //if (process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS) {
+    //  const versions = process.env.AO_TEST_LAMBDA_LOCAL_VERSIONS;
+    //  const m = versions.match(/^apm v(.+), bindings v(.+)/);
+    //  expect(m, 'AO_TEST_LAMBDA_LOCAL_VERSIONS must match /^apm v(.+), bindings v(.+)/').exist;
+    //  ([, apmVersion, aobVersion] = m);
+    //  return;
+    //}
+    //const p1 = getLambdaVersion('package.json')
+    //  .then(v => apmVersion = v);
+    //const p2 = getLambdaVersion('node_modules/appoptics-bindings/package.json')
+    //  .then(v => aobVersion = v);
+    //return Promise.all([p1, p2]);
   });
 
-  it('should be testing a compatible layer on lambda', function () {
+  it('verify lambda function configuration and versions from description', function () {
     this.timeout(10 * 60 * 1000);
     return awsUtil.getFunctionConfiguration(lambdaTestFunction)
       // find lambdaApmLayer
@@ -84,7 +91,7 @@ describe('verify the lambda layer works', function () {
             if (!m) {
               throw new Error('cannot find versions');
             }
-            const {1: remoteApm, 2: remoteAob} = m;
+            ([, remoteApm, remoteAob] = m);
             fnConfig = r.fnConfig;
             if (!ignoreVersions) {
               expect(apmVersion).equal(remoteApm, `local ${apmVersion} must match remote ${remoteApm}`);
@@ -95,7 +102,7 @@ describe('verify the lambda layer works', function () {
       });
   });
 
-  it('should invoke the function, double check the version, and check logs', function () {
+  it('invoke the lambda function, verify versions, and check logs', function () {
     this.timeout(10 * 60 * 1000);
     // and double check by asking the function to return the versions too.
     const payload = JSON.stringify({cmds: ['versions', 'context']});
@@ -105,6 +112,7 @@ describe('verify the lambda layer works', function () {
         if (!ignoreVersions) {
           expect(r.Payload.body.response.versions.ao).equal(apmVersion);
           expect(r.Payload.body.response.versions.aob).equal(aobVersion);
+          expect(r.Payload.body.response.versions.auto).equal(autoVersion);
         }
         expect(r.Payload.body.response).property('context').an('object');
         return r.Payload.body.response;
