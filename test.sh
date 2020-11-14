@@ -1,5 +1,4 @@
-#!/bin/bash
-# shellcheck disable=SC2003,SC2006 # don't mind backticks or expr
+#!/bin/sh
 
 #
 # script to run tests
@@ -13,8 +12,19 @@
 # has been initialized.
 #
 
-ERRORS=( )          # list of "GROUP test test test GROUP ..." which failed
-SKIPPED=( )         # as above for tests that were skipped
+ERRORS=""          # list of "GROUP test test test GROUP ..." which failed
+errorCount=0
+SKIPPED=""         # as above for tests that were skipped
+skipCount=0
+
+addError() {
+  ERRORS="$ERRORS $1"
+  errorCount=$((errorCount + 1))
+}
+addSkip() {
+  SKIPPED="$SKIPPED $1"
+  skipCount=$((skipCount + 1))
+}
 
 GROUPS_PASSED=0
 GROUPS_FAILED=0
@@ -28,71 +38,69 @@ SUITES_SKIPPED=0
 # notification are disabled for now, so skip testing.
 SKIP="test/solo/notifications $SKIP"
 
-function skipThis() {
-    for s in $SKIP
-    do
-        if [[ "$1" == *"$s"* ]]; then
-            return 1
-        fi
-    done
-    return 0
+skipThis() {
+  for s in $SKIP
+  do
+    case $1 in
+      *"$s"*) return 1
+    esac
+  done
+  return 0
 }
 
 # if ONLY_GROUPS is not empty and the group name is not in ONLY_GROUPS then skip the group.
 # this allows running only a subset of suites and, combined with SKIP, to exclude specific tests
 # within that subset.
-function executeGroup() {
-    [ -z "$ONLY_GROUPS" ] && return 0
-    for s in $ONLY_GROUPS
-    do
-        if [[ "$1" == "$s" ]]; then
-            return 0
-        fi
-    done
-    return 1
+executeGroup() {
+  [ -z "$ONLY_GROUPS" ] && return 0
+  for s in $ONLY_GROUPS
+  do
+    if [ "$1" = "$s" ]; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 # executeTests name pattern
-function executeTestGroup() {
-    local group_name=$1
-    local test_pattern=$2
+executeTestGroup() {
+    _group_name=$1
+    _test_pattern=$2
 
-    local group_skipped
+    _group_skipped
 
-    if ! executeGroup "$group_name"; then
-        group_skipped=true
-        #GROUPS_SKIPPED=`expr $GROUPS_SKIPPED + 1`
-        #return
+    if ! executeGroup "$_group_name"; then
+        _group_skipped=true
     fi
 
-    local new_errors=""
-    local new_skipped=""
+    _new_errors=""
+    _new_skipped=""
 
-    for F in $test_pattern
+    for F in $_test_pattern
     do
-        if [ -n "$group_skipped" ] || ! skipThis "$F"; then
-            new_skipped="$new_skipped $F"
-            SUITES_SKIPPED=`expr $SUITES_SKIPPED + 1`
+        if [ -n "$_group_skipped" ] || ! skipThis "$F"; then
+            _new_skipped="$_new_skipped $F"
+            SUITES_SKIPPED=$((SUITES_SKIPPED + 1))
         else
             if [ -n "$SIMULATE" ]; then
                 echo "simulating test $F"
-                SUITES_PASSED=`expr $SUITES_PASSED + 1`
+                SUITES_PASSED=$((SUITES_PASSED + 1))
             elif ! mocha "$F"; then
-                new_errors="$new_errors $F"
-                SUITES_FAILED=`expr $SUITES_FAILED + 1`
+                _new_errors="$_new_errors $F"
+                SUITES_FAILED=$((SUITES_FAILED + 1))
             else
-                SUITES_PASSED=`expr $SUITES_PASSED + 1`
+                SUITES_PASSED=$((SUITES_PASSED + 1))
             fi
         fi
     done
-    if [ -z "$new_errors" ] && [ -z "$group_skipped" ]; then
-        GROUPS_PASSED=`expr $GROUPS_PASSED + 1`
-    elif [ -z "$group_skipped" ]; then
-        GROUPS_FAILED=`expr $GROUPS_FAILED + 1`
-        ERRORS+=( "$group_name:$new_errors" )
+    if [ -z "$_new_errors" ] && [ -z "$_group_skipped" ]; then
+        GROUPS_PASSED=$((GROUPS_PASSED + 1))
+    elif [ -z "$_group_skipped" ]; then
+        GROUPS_FAILED=$((GROUPS_FAILED + 1))
+        addError "$_group_name:$_new_errors"
     fi
-    if [ -n "$new_skipped" ]; then
-        SKIPPED+=( "$group_name:$new_skipped" )
+    if [ -n "$_new_skipped" ]; then
+        addSkip "$_group_name:$_new_skipped"
     fi
 }
 
@@ -148,9 +156,9 @@ executeTestGroup "PROBES" "test/probes/*.test.js"
 [ $SUITES_PASSED -ne 1 ] && sps=s
 [ $GROUPS_PASSED -ne 1 ] && gps=s
 [ $SUITES_FAILED -ne 1 ] && sfs=s
-[ ${#ERRORS[*]} -ne 1 ] && gfs=s
+[ $errorCount -ne 1 ] && gfs=s
 [ $SUITES_SKIPPED -ne 1 ] && sss=s
-[ ${#SKIPPED[*]} -ne 1 ] && gss=s
+[ $skipCount -ne 1 ] && gss=s
 
 if [ -t 1 ]; then
     NC='\033[0m'
@@ -168,16 +176,16 @@ echo "$"
 # shellcheck disable=2059
 if [ ${#ERRORS[*]} -ne 0 ]; then
     printf "${GREEN}$SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed${NC}\n"
-    printf "${RED}$SUITES_FAILED suite${sfs} in ${#ERRORS[*]} group${gfs} failed${NC}\n"
-    for ix in "${!ERRORS[@]}"
+    printf "${RED}$SUITES_FAILED suite${sfs} in $errorCount group${gfs} failed${NC}\n"
+    for error in $ERRORS
     do
-        printf "${RED}    ${ERRORS[$ix]}${NC}\n"
+        printf "${RED}    $error${NC}\n"
     done
     if [ $SUITES_SKIPPED -ne 0 ]; then
-        printf "${YELLOW}$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped${NC}\n"
-        for ix in "${!SKIPPED[@]}"
+        printf "${YELLOW}$SUITES_SKIPPED suite${sss} in $skipCount group${gss} skipped${NC}\n"
+        for skip in $SKIPPED
         do
-            printf "${YELLOW}    ${SKIPPED[$ix]}${NC}\n"
+            printf "${YELLOW}    $skip${NC}\n"
         done
     fi
 
@@ -185,10 +193,10 @@ if [ ${#ERRORS[*]} -ne 0 ]; then
 else
     printf "${GREEN}No errors - $SUITES_PASSED suite${sps} in $GROUPS_PASSED group${gps} passed${NC}\n"
     if [ $SUITES_SKIPPED -ne 0 ]; then
-        printf "${YELLOW}$SUITES_SKIPPED suite${sss} in ${#SKIPPED[*]} group${gss} skipped${NC}\n"
-        for ix in "${!SKIPPED[@]}"
+        printf "${YELLOW}$SUITES_SKIPPED suite${sss} in $skipCount group${gss} skipped${NC}\n"
+        for skip in $SKIPPED
         do
-            printf "${YELLOW}    ${SKIPPED[$ix]}${NC}\n"
+            printf "${YELLOW}    $skip${NC}\n"
         done
     fi
     exit 0
