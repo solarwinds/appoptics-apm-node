@@ -38,13 +38,7 @@ describe(`probes.${p} websocket`, function () {
   const previousHttpClientEnabled = ao.probes[`${p}-client`].enabled;
   let clear
   let originalFlag
-  // idk why eslint-disable-line prefer-const doesn't work
-  let socketServer;     // eslint-disable-line
 
-  before(function (done) {
-    socketServer = new SocketServer({port: 8888});
-    done();
-  });
   before(function (done) {
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
@@ -180,6 +174,7 @@ describe(`probes.${p} websocket`, function () {
     });
 
     it(`${p} connect to a public server`, function (done) {
+      this.timeout(10000);
       const options = makeOptions(parsedUrl);
 
       helper.test(
