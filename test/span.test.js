@@ -32,6 +32,7 @@ describe('span', function () {
     emitter.close(done)
   })
   afterEach(function () {
+    // clears any unused log message checks
     if (clear) {
       clear()
       clear = undefined
@@ -802,10 +803,9 @@ describe('span', function () {
       {level: 'error', message: 'Error: Invalid type for KV'},
       {level: 'error', message: 'Error: Invalid type for KV'},
       {level: 'error', message: 'Error: Invalid type for KV'},
-    ]
+    ];
 
-    let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(logChecks)
+    [, clear] = helper.checkLogMessages(logChecks);
 
     span.run(function () {
       span.info(data)
@@ -826,9 +826,8 @@ describe('span', function () {
 
     const logChecks = [
       {level: 'error', message: 'test span info call could not find last event'}
-    ]
-    let getCount  // eslint-disable-line
-    [getCount, clear] = helper.checkLogMessages(logChecks)
+    ];
+    [, clear] = helper.checkLogMessages(logChecks);
 
     span.info(data)
     Event.prototype.send = send
@@ -987,8 +986,6 @@ describe('span', function () {
     // evaluate brittleness using different timers
     const timeout = callback => setTimeout(callback, 1);
 
-    // The weird indentation is to match depth of trigerring code,
-    // it might make it easier to match a span entry to its exit.
     const checks = [
       // Start async outer
       helper.checkEntry('outer', trackOuter),

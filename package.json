@@ -1,6 +1,9 @@
 {
   "name": "appoptics-apm",
-  "version": "8.1.0",
+  "version": "9.1.0",
+  "appoptics": {
+    "version-suffix": "lambda-1"
+  },
   "description": "Agent for AppOptics APM",
   "main": "lib/index.js",
   "bin": {
@@ -29,7 +32,7 @@
     "metrics",
     "apm"
   ],
-  "license": "SEE LICENSE IN https://docs.appoptics.com/kb/apm_tracing/librato-open-license/",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/appoptics/appoptics-apm-node"
@@ -41,7 +44,7 @@
     "ace-context": "^1.0.1",
     "array-flatten": "^2.1.2",
     "cls-hooked": "^4.2.2",
-    "debug-custom": "^1.0.5",
+    "debug-custom": "^1.1.0",
     "glob": "^7.0.3",
     "methods": "~1.1.0",
     "minimist": "^1.2.3",
@@ -53,9 +56,10 @@
     "@hapi/vision": "^5.5.2",
     "amqp": "^0.2.6",
     "amqplib": "^0.5.3",
+    "appoptics-auto-lambda": "git+https://github.com/appoptics/apm-node-auto-lambda.git",
     "aws-sdk": "^2.440.0",
     "axios": "^0.19.0",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "bson": "^4.0.4",
@@ -71,8 +75,8 @@
     "express": "^4.16.4",
     "generic-pool": "^3.7.1",
     "hapi": "^18.1.0",
-    "jsdoc-to-markdown": "^4.0.1",
-    "koa": "^2.7.0",
+    "jsdoc-to-markdown": "^6.0.1",
+    "koa": "^2.13.0",
     "koa-ejs": "^4.2.0",
     "koa-resource-router": "^0.4.0",
     "koa-route": "^3.2.0",
@@ -83,15 +87,15 @@
     "mkdirp": "^0.5.1",
     "mongodb": "^3.5.7",
     "mongodb-core": "^3.1.11",
-    "mongoose": "^5.4.19",
+    "mongoose": "^5.9.9",
     "morgan": "^1.9.1",
     "mysql": "^2.16.0",
     "nyc": "^13.3.0",
-    "oracledb": "^2.3.0",
+    "oracledb": "^5.0.0",
     "pg": "^7.9.0",
     "pino": "^5.15.0",
     "q": "^2.0.3",
-    "raw-body": "^2.3.2",
+    "raw-body": "^2.3.3",
     "redis": "^2.8.0",
     "request": "^2.61.0",
     "request-promise-native": "^1.0.7",
@@ -99,13 +103,13 @@
     "should": "^8.3.1",
     "supertest": "^3.4.2",
     "tedious": "^6.6.2",
-    "testeachversion": "^8.2.0",
+    "testeachversion": "^9.0.0",
     "vision": "^5.4.4",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0",
     "ws": "^7.2.0"
   },
   "optionalDependencies": {
-    "appoptics-bindings": "^10.0.0"
+    "appoptics-bindings": "https://api.github.com/repos/appoptics/appoptics-bindings-node/tarball/lambda"
   }
 }

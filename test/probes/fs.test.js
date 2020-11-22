@@ -34,8 +34,8 @@ describe('probes.fs once', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
-        msg.should.have.property('Layer', 'fake')
+        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Layer', 'fake')
       }
     ], done)
   })
@@ -74,7 +74,7 @@ describe('probes.fs', function () {
     if (!checks[name + '-entry']) {
       checks[name + '-entry'] = function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Operation', name)
+        expect(msg).property('Operation', name)
       }
       checks[name + '-entry'].realName = name
       checks[name + '-exit'] = function (msg) {
@@ -409,11 +409,11 @@ describe('probes.fs', function () {
         const steps = [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Operation', call.name);
+            expect(msg).property('Operation', call.name);
             if (call.type === 'path') {
-              msg.should.have.property('FilePath', args[0]);
+              expect(msg).property('FilePath', args[0]);
             } else if (call.type === 'fd') {
-              msg.should.have.property('FileDescriptor', args[0]);
+              expect(msg).property('FileDescriptor', args[0]);
             }
           }
         ]
@@ -438,7 +438,7 @@ describe('probes.fs', function () {
         steps.push(function (msg) {
           checks.exit(msg);
           if (call.name === 'open') {
-            msg.should.have.property('FileDescriptor');
+            expect(msg).property('FileDescriptor');
           }
         })
 
@@ -480,10 +480,10 @@ describe('probes.fs', function () {
         const steps = [
           function (msg) {
             checks.entry(msg)
-            msg.should.have.property('Operation', name)
+            expect(msg).property('Operation', name)
             switch (call.type) {
               case 'path':
-                msg.should.have.property('FilePath', args[0])
+                expect(msg).property('FilePath', args[0])
                 break
             }
           }
@@ -551,14 +551,14 @@ describe('probes.fs', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Operation', 'openSync')
-        msg.should.have.property('FilePath', 'does-not-exist')
+        expect(msg).property('Operation', 'openSync')
+        expect(msg).property('FilePath', 'does-not-exist')
       },
       function (msg) {
         checks.exit(msg)
-        msg.should.have.property('ErrorClass', 'Error')
-        msg.should.have.property('Backtrace')
-        msg.should.have.property('ErrorMsg').and.startWith('ENOENT')
+        expect(msg).property('ErrorClass', 'Error')
+        expect(msg).property('Backtrace')
+        expect(msg).property('ErrorMsg').a('string').match(/^ENOENT/)
       }
     ], reset)
   });
@@ -579,14 +579,14 @@ describe('probes.fs', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Operation', 'openSync')
-        msg.should.have.property('FilePath', 'does-not-exist')
+        expect(msg).property('Operation', 'openSync')
+        expect(msg).property('FilePath', 'does-not-exist')
       },
       function (msg) {
         checks.exit(msg)
-        msg.should.not.have.property('ErrorClass');
-        msg.should.not.have.property('Backtrace');
-        msg.should.not.have.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass');
+        expect(msg).not.property('Backtrace');
+        expect(msg).not.property('ErrorMsg');
       }
     ], reset)
   });
@@ -605,14 +605,14 @@ describe('probes.fs', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Operation', 'open')
-        msg.should.have.property('FilePath', 'does-not-exist')
+        expect(msg).property('Operation', 'open')
+        expect(msg).property('FilePath', 'does-not-exist')
       },
       function (msg) {
         checks.exit(msg)
-        msg.should.have.property('ErrorClass', 'Error')
-        msg.should.have.property('Backtrace')
-        msg.should.have.property('ErrorMsg').and.startWith('ENOENT')
+        expect(msg).property('ErrorClass', 'Error');
+        expect(msg).property('Backtrace');
+        expect(msg).property('ErrorMsg').a('string').match(/^ENOENT/);
       }
     ], reset)
   })
@@ -631,14 +631,14 @@ describe('probes.fs', function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Operation', 'open')
-        msg.should.have.property('FilePath', 'does-not-exist')
+        expect(msg).property('Operation', 'open')
+        expect(msg).property('FilePath', 'does-not-exist')
       },
       function (msg) {
         checks.exit(msg)
-        msg.should.not.have.property('ErrorClass');
-        msg.should.not.have.property('Backtrace');
-        msg.should.not.have.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass');
+        expect(msg).not.property('Backtrace');
+        expect(msg).not.property('ErrorMsg');
       }
     ], reset)
   })

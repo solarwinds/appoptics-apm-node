@@ -77,10 +77,6 @@ describe('basics', function () {
     expect(ao.sampleSource).equal(100)
   })
 
-  ifaob('should get the service key', function () {
-    ao.serviceKey.should.be.a.String
-  })
-
   ifaob('should be able to check an Event\'s sample flag', function () {
     const md0 = new ao.addon.Event.makeRandom()
     const md1 = new ao.addon.Event.makeRandom(1)

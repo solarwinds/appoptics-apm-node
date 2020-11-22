@@ -19,6 +19,17 @@ The signature is `ao.instrument (span, runner, config, callback)`.
 - `runner` is a function that will run the function to be instrumented (see below).
 - `config` [optional] allows non-default settings to be specified.
 - `callback` is only present if the function to be instrumented is asynchronous.
+- returns the value returned by the `runner` function
+
+There is also a promise-based equivalent, `ao.pInstrument(...)` in which the runner
+function must return a promise.
+
+The signature is `ao.pInstrument (span, pRunner, config)`.
+
+- `span` as above
+- `pRunner` is the function to be instrumented. It must return a promise.
+- `config` as above
+- returns the promise returned by the `pRunner` function.
 
 #### Span
 
@@ -104,6 +115,8 @@ this is not required. If it is something other than a string or an error object,
 it will simply be passed through as expected, without trying to report it. An
 error is reported as is while a string is converted to an error then reported.
 
+There is no callback argument for `pInstrument()`.
+
 #### Putting all that together
 
 So if we wanted to use `ao.instrument(...)` to patch an async `abc.xyz` call,
@@ -186,7 +199,12 @@ ao.startOrContinueTrace(headers['X-Trace'], 'abc', done => {
 ```
 
 To get the current xtrace id to pass along through a header or some other
-method, you can use the `ao.xtraceId` getter.
+method, you can use the `ao.traceId` getter.
+
+There is also a promise-based equivalent, `ao.pStartOrContinueTrace(...)` in which
+the runner function returns a promise. The first three (or four if using options)
+arguments are the same as `ao.pStartOrContinueTrace()`, but there is no callback
+function, and the return value is the promise returned by the `runner` function.
 
 ### Info and error events
 

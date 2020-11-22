@@ -27,7 +27,7 @@ services:
         # - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/scribe-collector.crt}
         - AO_TEST_COLLECTOR_CERT=${AO_COLLECTOR_CERT:-test/certs/java-collector.crt}
         # - AO_TEST_COLLECTOR=${AO_COLLECTOR:-scribe-collector:4444}
-        - AO_TEST_COLLECTOR=${AO_COLLECTOR:-java-collector:12222}
+        - AO_TEST_COLLECTOR=${APPOPTICS_COLLECTOR:-java-collector:12222}
         # the next two set liboboe to send to the mock collector
         # for testing. these should be set to run the test suite.
         - AO_TEST_REPORTER=udp

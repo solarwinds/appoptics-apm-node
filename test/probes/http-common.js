@@ -185,7 +185,13 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         port = server.address().port
-        request(`${p}://localhost:${port}/foo?bar=baz`);
+        request(
+          `${p}://localhost:${port}/foo?bar=baz`,
+          function (error, response, body) {
+            expect(response.headers).exist;
+            expect(response.headers).property('x-trace');
+          }
+        );
       })
     })
 
@@ -219,7 +225,12 @@ describe(`probes.${p}`, function () {
           headers: {
             'X-Trace': origin.toString()
           }
-        })
+        },
+        function (error, response, body) {
+          expect(response.headers).exist;
+          expect(response.headers).property('x-trace');
+          expect(origin.taskId).equal(response.headers['x-trace'].slice(2, 42));
+        });
       })
     });
 
@@ -285,12 +296,17 @@ describe(`probes.${p}`, function () {
         request({
           url: `${p}://localhost:${port}`,
           headers: {'X-Trace': xtrace}
-        })
+        },
+        function (error, response, body) {
+          expect(response.headers).exist;
+          expect(response.headers).property('x-trace');
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42));
+        });
       })
     })
 
     //
-    // it should not create a trace at all when the http is disabled
+    // it should not create a trace at all when http is disabled
     //
     it(`should not report anything when ${p} probe is disabled`, function (done) {
 
