@@ -67,7 +67,7 @@ executeTestGroup() {
     _group_name=$1
     _test_pattern=$2
 
-    _group_skipped
+    _group_skipped=
 
     if ! executeGroup "$_group_name"; then
         _group_skipped=true
