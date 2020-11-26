@@ -822,7 +822,7 @@ function checkAoData (aoData, options = {}) {
       expect(topEvents.entry).property('URL', en === 'v2' ? event.rawPath : event.path);
     }
 
-    expect(topEvents.exit).property('TransactionName', `${getMethod(en)}.${fnName}`);
+    expect(topEvents.exit).property('TransactionName', `${getMethod(en)}.${context.functionName}`);
     expect(topEvents.exit).property('TID');
 
     expect(topEvents.entry).property(xt).match(/2B[0-9A-F]{56}0(0|1)/);
