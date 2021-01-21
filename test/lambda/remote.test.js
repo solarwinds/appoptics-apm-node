@@ -1,5 +1,3 @@
-'use strict';
-
 const nvm_dir = process.env.NVM_DIR;
 const version = process.version;
 const prefix = process.env.NODE_PATH ? ':' : '';
@@ -25,7 +23,13 @@ const ignoreVersions = 'AO_TEST_LAMBDA_IGNORE_VERSIONS' in process.env;
 
 // modifying the test descriptions after the start doesn't work.
 let apmVersion = getLambdaVersion('package.json');
-let aobVersion = getLambdaVersion('node_modules/appoptics-bindings/package.json');
+let aobVersion;
+try {
+  aobVersion = getLambdaVersion('node_modules/appoptics-bindings/package.json');
+} catch (e) {}
+if (!aobVersion) {
+  aobVersion = getLambdaVersion('node_modules/@appoptics/apm-bindings/package.json');
+}
 let autoVersion = getLambdaVersion('node_modules/appoptics-auto-lambda/package.json');
 let remoteApm;
 let remoteAob;
