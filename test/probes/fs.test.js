@@ -591,6 +591,34 @@ describe('probes.fs', function () {
     ], reset)
   });
 
+  it('should suppress statSync errors when requested', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    ao.probes.fs.ignoreErrors = {stat: {ENOENT: true}};
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
+    helper.test(emitter, function (done) {
+      try {
+        fs.statSync('does-not-exist', 'r')
+      }
+      catch (e) { }
+      process.nextTick(done)
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        expect(msg).property('Operation', 'statSync')
+        expect(msg).property('FilePath', 'does-not-exist')
+      },
+      function (msg) {
+        checks.exit(msg)
+        expect(msg).not.property('ErrorClass');
+        expect(msg).not.property('Backtrace');
+        expect(msg).not.property('ErrorMsg');
+      }
+    ], reset)
+  });
+
   it('should report open errors', function (done) {
     const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
     delete ao.probes.fs.ignoreErrors;
@@ -632,6 +660,32 @@ describe('probes.fs', function () {
       function (msg) {
         checks.entry(msg)
         expect(msg).property('Operation', 'open')
+        expect(msg).property('FilePath', 'does-not-exist')
+      },
+      function (msg) {
+        checks.exit(msg)
+        expect(msg).not.property('ErrorClass');
+        expect(msg).not.property('Backtrace');
+        expect(msg).not.property('ErrorMsg');
+      }
+    ], reset)
+  });
+
+  it('should suppress stat errors when requested', function (done) {
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
+    ao.probes.fs.ignoreErrors = {stat: {ENOENT: true}};
+    function reset (err) {
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
+      done(err);
+    }
+    helper.test(emitter, function (done) {
+      fs.stat('does-not-exist', 'r', function (err) {
+        done();
+      })
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        expect(msg).property('Operation', 'stat')
         expect(msg).property('FilePath', 'does-not-exist')
       },
       function (msg) {
