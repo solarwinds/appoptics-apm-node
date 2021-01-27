@@ -1,3 +1,5 @@
+'use strict';
+
 const nvm_dir = process.env.NVM_DIR;
 const version = process.version;
 const prefix = process.env.NODE_PATH ? ':' : '';

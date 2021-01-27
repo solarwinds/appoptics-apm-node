@@ -3,15 +3,17 @@
   "env": {
     "node": true,
     "es6": true,
-    // NOTE: not all tests pass eslint
     "mocha": true
   },
 
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "script"
   },
 
+  // 0 - off
+  // 1 - warn
+  // 2 - error (exit code 1)
   "rules": {
     // Possible Errors
     // http://eslint.org/docs/rules/#possible-errors
@@ -39,6 +41,7 @@
     "valid-typeof": 2,
     "no-var": 2,
     "object-curly-spacing": [2, "never"],
+    "no-constant-condition": [2, { "checkLoops": false }],
 
     // Best Practices
     // http://eslint.org/docs/rules/#best-practices
