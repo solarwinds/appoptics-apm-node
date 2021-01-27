@@ -16,15 +16,18 @@ const assert = require('assert');
 
 describe('verify that a swoken is handled correctly', function () {
   it('the service name should be lower case', function () {
-    assert.equal(ao.cfg.serviceKey, `${swoken}:${name.toLowerCase()}`);
+    assert.strictEqual(ao.cfg.serviceKey, `${swoken}:${name.toLowerCase()}`);
   });
 
   it('shouldn\'t change the environment variable', function () {
-    assert.equal(process.env.APPOPTICS_SERVICE_KEY, `${swoken}:${name}`);
+    assert.strictEqual(process.env.APPOPTICS_SERVICE_KEY, `${swoken}:${name}`);
   });
 
   it('should validate with the collector using the swoken', function () {
-    const ready = ao.readyToSample(5000);
-    assert(ready);
+    const o = {};
+    const ready = ao.readyToSample(5000, o);
+    assert.strictEqual(o.status, 1, `expected status 1, not ${o.status}`);
+    // return value should be true
+    assert.strictEqual(ready, true, 'should return boolean true');
   });
 })
