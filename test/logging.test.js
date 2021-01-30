@@ -1,3 +1,5 @@
+'use strict';
+
 const helper = require('./helper')
 const ao = require('..')
 const spawnSync = require('child_process').spawnSync;

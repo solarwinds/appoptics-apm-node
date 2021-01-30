@@ -11,7 +11,7 @@ const request = require('request')
 const pkg = require('restify/package.json')
 const opts = {
   name: 'restify-test'
-}
+};
 
 if (!semver.satisfies(process.version, '>=4')) {
   describe('probes.restify', function () {
@@ -52,11 +52,11 @@ describe(`probes.restify ${pkg.version}`, function () {
   after(function (done) {
     emitter.close(done)
     // turn on if desired for testing context
-    if (false && ao.requestStore.getMetrics) {
+    if (ao.requestStore.getMetrics) {
       process.on('exit', function () {
         ao.requestStore._hook.disable();
         interpretMetrics(ao.requestStore.getMetrics());
-      })
+      });
     }
     ao.probes.fs.enabled = fsState
     ao.probes.restify.collectBacktraces = previousTraces;

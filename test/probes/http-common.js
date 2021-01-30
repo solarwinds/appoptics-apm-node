@@ -1081,19 +1081,12 @@ describe(`probes.${p}`, function () {
           server.on('error', e => {
             done(e);
           });
-          if (false) {
-            driver.get(url, {timeout: 1}, function (res) {
-              res.on('error', done.bind(null, null));
-              res.emit('error', error);
-            }).on('error', e => done(e === error ? null : e));
-          } else {
-            driver.get(url, function (res) {
-              res.on('error', done);
-            })
-              .on('error', e => {
-                done(e.code === 'ECONNRESET' ? null : e);
-              });
-          }
+          driver.get(url, function (res) {
+            res.on('error', done);
+          })
+            .on('error', e => {
+              done(e.code === 'ECONNRESET' ? null : e);
+            });
         }, [
           function (msg) {
             check.client.entry(msg)
@@ -1149,21 +1142,14 @@ describe(`probes.${p}`, function () {
           server.on('error', e => {
             done(e === error ? null : e);
           });
-          if (false) {
-            driver.get(url, {timeout: 1}, function (res) {
-              res.on('error', done.bind(null, null));
-              res.emit('error', error);
-            }).on('error', e => done(e === error ? null : e));
-          } else {
-            driver.get(url, function (res) {
-              res.on('error', e => {
-                if (e !== error) {
-                  done(e);
-                }
-              });
-              res.emit('error', (error = new Error('REQ-PROC-ERR')));
+          driver.get(url, function (res) {
+            res.on('error', e => {
+              if (e !== error) {
+                done(e);
+              }
             });
-          }
+            res.emit('error', (error = new Error('REQ-PROC-ERR')));
+          });
         }, [
           function (msg) {
             check.client.entry(msg)
