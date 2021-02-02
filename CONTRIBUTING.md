@@ -2,6 +2,7 @@ Table of Contents
 =================
 
 * [Contributing](#contributing)
+  * [Certificate of Origin](#certificate-of-origin)
   * [Dev environment](#dev-environment)
     * [Setup](#setup)
   * [Testing](#testing)
@@ -16,12 +17,29 @@ Table of Contents
 
 # Contributing
 
+## Certificate of origin
+
+Ours is the same as node's:
+
+By making a contribution to this project, I certify that:
+
+a) The contribution was created in whole or in part by me and I have the right to submit it under the open source license indicated in the file; or
+
+b) The contribution is based upon previous work that, to the best of my knowledge, is covered under an appropriate open source license and I have the right under that license to submit that work with modifications, whether created in whole or in part by me, under the same open source license (unless I am permitted to submit under a different license), as indicated in the file; or
+
+c) The contribution was provided directly to me by some other person who certified (a), (b) or (c) and I have not modified it.
+
+d) I understand and agree that this project and the contribution are public and that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the open source license(s) involved.
+
 ## Dev environment
 
 The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-apm-node) requires
-node (version 8+, 10+ preferred), docker, and a bash shell. It's generally easiest to work at a bash
+node (12+ preferred), docker and docker-compose, and a bash shell. It's generally easiest to work at a bash
 command prompt for editing and running tests from that prompt that interact with exposed ports from
 the docker containers created by the `docker-compose.yml` file.
+
+You should follow the eslint configuration in `.eslintrc.json`. The `semi` rule is just a warning because many files
+were written with a no-semicolon style but all new code should adhere to the rule.
 
 
 ### Setup
@@ -30,7 +48,7 @@ The primary environment for testing is Docker. Unit tests can be run without doc
 requires databases and servers to test against. `docker-compose.yml` defines a complete environment for
 testing.
 
-`env.sh` is desiged to be sourced,
+`env.sh` is desiged to be sourced:
 
 `$ source env.sh <args>` in order to set up environment variables for different testing scenarios.
 
@@ -85,39 +103,53 @@ The repo includes code comment based API docs, which can be generated with
 
 ## Project layout
 
+```
+lib/                # core modules that implement the agent
+lib/probes          # code that patches auto-instrumented modules
+test/               # mocha test suite
+test/certs/         # certs for communicating with java-collector
+test/docker/        # docker files for test environments
+test/java-collector # local collector usable for testing
+test/probes/        # tests for probes
+test/<other-dir>/   # subgroup of tests
+test/utility/       # utility for finding problem with a hanging test
+```
+
+`lib/get-unified-config.js` handles configuration, pulling from the config
+file and the environment. `lib/probe-defaults.js` exports the defaults for
+probes. `lib/index.js` is the startup code.
+
 Individual module instrumentation can be found in `lib/probes/${module}.js`,
-while the corresponding tests can be found at `test/probes/${module}.test.js`
-and benchmarks can be found at `test/probes/${module}.bench.js`.
+while the corresponding tests can be found at `test/probes/${module}.test.js`,
+and supporting components, if present, are in `test/probes/${module}/`.
 
-The default config values are all described in `lib/defaults.js`, and get
-applied to the core module that exposes the custom API in `lib/index.js`.
-The lower-level `Span` and `Event` types are described in `lib/span.js`
-and `lib/event.js`.
+## 2 minute overview
 
-The patching mechanism works by intercepting `require(...)` calls in
-`lib/require-patch.js`. The require patch interface includes a `register(...)`
-function, which could be useful for testing patches outside of the appoptics
-module before merging into the core project.
+`/lib/index.js` runs when the user's code requires `appoptics-apm`. It uses
+`lib/get-unified-config.js` to determine the configuration and sets up the
+agent. Eventually it reads the files in `lib/probes` and enables patching.
+
+The patching mechanism works by intercepting `require(...)` calls. It is in
+`lib/require-patch.js`.
 
 Tests live in the `test` directory, with a `test/probes` subdirectory for tests
 specific to a given instrumented module. The file in `test` follow a naming
 scheme of `${name}.test.js` for files intended to be run by the test runner,
-`${name}.bench.js` for files intended to be run the benchmark runner, and files
-with the normal scheme of `${name}.js` are just meant to be used by other files
+files with the normal scheme of `${name}.js` are just meant to be used by other files
 in the test directory.
 
 ## Process
 
 ### Baseline
 
-The code is written with JavaScript features supported by node v6 and above. Until
-the minimum supported version is 8 this means, for example, that `async/await` can't
-be used because it generates JavaScript syntax errors.
+The code is written with JavaScript features supported by node v8 and above. At this
+time the lowest version of node officially supported in v10, so additional features
+maybe be used going forward.
 
 ### Testing
 
-This is an abbreviated version of the testing section above so that it falls in the
-develop, test, release sequence.
+mocha is not a devDependency because mocha is a installed globally in our
+development environment.
 
 The most basic testing requires that various backend servers are available; these are
 supplied using docker. In the `appoptics-apm-node` root directory run:
@@ -132,7 +164,6 @@ the `AO_TOKEN_PROD` environment variable be defined as holding the secret token 
 
 `env.sh` defines environment variables for the testing modules; it must be sourced,
 not invoked as an executable. To setup the environment for the `npm test` command run
-
 
 `. env.sh bash`.
 
