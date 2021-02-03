@@ -77,7 +77,7 @@ as you can simulate. `npm install` fetches a `tgz` file from the npm repository.
 3. PRE-PUBLISH STEPS
     * create a release in `appoptics/appoptics-apm-node` and write appropriate release notes.
         * detail any breaking changes.
-    * update https://github.com/librato/ao-kb-docs/tree/master/kb/apm_tracing/nodejs as needed. this is typically
+    * create a [Documentation Jira](https://swicloud.atlassian.net/wiki/spaces/CSS/pages/386760723/Documentation+Change+Process) as needed. this is typically
     for changes in the supported packages matrix.
     * execute `git pull` or `git fetch` followed by a merge or rebase to make sure that there
     have not been any changes to github that are not reflected in the local copy. if there have been
@@ -107,8 +107,6 @@ as you can simulate. `npm install` fetches a `tgz` file from the npm repository.
 6. REMARKS
     * !!! npm packages, once published, cannot be changed, deleting a package does not make it
     possible to publish a new version with the same version number.
-    * if a commit is extremely simple (remove console.log, change comments) i often commit
-    directly to master.
     * if a commit only impacts testing or files not included in a published release (excluded by
     `.npmignore`) a PR may be merged without review.
 
@@ -123,11 +121,10 @@ These are:
 
 - the todo application. this was originally google's todomvc-mongodb and was created as a simple
 showcase for angular. because the changes to make it a facility to test our agent were so extensive
-and of no general use the repository was cloned, and renamed, and is now `bmacnaughton/todo`.
+and of no general use the repository was cloned, and renamed, and is now https://github.com/appoptics/apm-node-todo.
 - `multiload`. this was originally developed, in very skeletal form, as part the coding challenge of
 bmacnaughton's interview . the can be used to drive a mixed load of transactions against the todo
-server. it's extensible but not particularly well documented. it can be found at
-`bmacnaughton/multiload`.
+server. it's extensible but not particularly well documented. it can be found at https://github.com/appoptics/apm-node-multiload.
 - `testeachversion`. this is derived from Stephen Belanger's `alltheversions`. it is primarily used
 for the test matrix (`appoptics/node-apm-matrix`) but can be used locally for development as well (it's
 particularly useful to make sure all versions work when modifying a single package's probe file).
@@ -136,8 +133,7 @@ package to be tested. there are a number of command line options for selecting s
 the location of the versions file, etc. but the primary documentation is the code. it produces two
 files - a summary file and a details file. both file names include the version of node, the os, and a
 timestamp. the details file contains the raw test output is helpful when investigating why tests failed;
-the summary file is a JSON file that can be interpreted by `humanize` (see next bullet). `testeachversion`
-can be found in `bmacnaughton/testeachversion`. (this package is part of devDependencies.)
+the summary file is a JSON file that can be interpreted by `humanize` (see next bullet). It can be found in https://github.com/appoptics/apm-node-testeachversion (this package is part of devDependencies.)
 - `humanize-logs` is part of `testeachversion` and is mapped to `humanize` in the `node_modules/.bin/`
 directory. it interprets the content of the summary files produced by `testeachversion` either singly
 or in aggregate. various options exist and are documented in the help and, as usual, in the code.
