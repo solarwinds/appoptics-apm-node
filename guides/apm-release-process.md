@@ -61,7 +61,7 @@ as you can simulate. `npm install` fetches a `tgz` file from the npm repository.
     * do a clean install in an empty directory like `npm install ../appoptics-apm@5.2.1.tgz` and
     verify tests work (after using `env.sh` to set up environment variables).
   - verify that it installs in an application
-    * clone a copy of `bmacnaughton/todo` as the test application (or at a minimum
+    * clone a copy of https://github.com/appoptics/apm-node-todo as the test application (or at a minimum
     `rm -rf node_modules/*` in an existing todo installation.)
     * use npm to install from the `tgz` file, like `npm install ../path-to-apm-repo/appoptics-apm@5.2.1.tgz`
     * run `source env.sh key service-name` to set up `APPOPTICS_SERVICE_KEY`. It requires that `AO_TOKEN_STG`
