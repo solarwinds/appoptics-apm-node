@@ -4,6 +4,10 @@
 // this file defines the versions that will be tested when using
 // testeachversion.
 //
+// it helps speed up the test matrix run if combinations known to fail
+// are excluded from the tests. 'bcrypt' and 'pg' show two ways to limit
+// tests.
+//
 
 const {VersionSpec} = require('testeachversion')
 const semver = require('semver');
@@ -107,7 +111,7 @@ test('mysql', '>= 2.1.0')
 test('oracledb', '>= 2.0.14')
 
 test('pino', '>= 2.3.0');
-test('pg', '>= 4.5.5 < 7.0.0 || >= 7.5.0')
+test('pg', node('gte', '14.0.0') ? '>= 8.0.3' : '>= 4.5.5 < 7.0.0 || >= 7.5.0');
 /*
 test('pg', {
   ranges: [
