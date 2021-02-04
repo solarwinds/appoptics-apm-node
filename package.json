@@ -1,6 +1,6 @@
 {
   "name": "appoptics-apm",
-  "version": "10.0.0-rc1",
+  "version": "10.0.0",
   "appoptics": {
     "version-suffix": "lambda-2"
   },
@@ -13,7 +13,8 @@
     "test": "./test.sh",
     "prepack": "./prepack.js",
     "docs": "cat lib/index.js lib/api.js lib/span.js lib/event.js > api-docs-temp.js && jsdoc2md -f api-docs-temp.js > guides/api.md && rm api-docs-temp.js",
-    "install-deps": "./deps.sh"
+    "install-deps": "./deps.sh",
+    "lint": "eslint --quiet lib/*.js lib/**/*.js test/*.js test/**/*.js prepack.js"
   },
   "author": "Bruce A. MacNaughton <bruce@solarwinds.cloud>",
   "contributors": [
@@ -110,6 +111,6 @@
     "ws": "^7.2.0"
   },
   "optionalDependencies": {
-    "@appoptics/apm-bindings": "^11.0.0-rc1"
+    "@appoptics/apm-bindings": "^11.0.0"
   }
 }

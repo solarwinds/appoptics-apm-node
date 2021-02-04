@@ -1,3 +1,5 @@
+/* eslint-disable */
+// this is disabled because it will only be updated based on user request
 var helper = require('../helper')
 var ao = helper.ao
 var addon = ao.addon

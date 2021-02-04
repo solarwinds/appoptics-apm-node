@@ -429,7 +429,7 @@ if (module.__parent__ === undefined) {
         console.log(fConfig);
         process.exit(1);
       }
-      if (verbose || true) console.log('FUNCTION CONFIGURATION', fConfig);
+      if (verbose) console.log('FUNCTION CONFIGURATION', fConfig);
 
 
       if (args['publish-new-version']) {

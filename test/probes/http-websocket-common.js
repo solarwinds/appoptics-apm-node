@@ -1,4 +1,6 @@
-'use strict'
+'use strict';
+
+/* global BigInt */
 
 //
 // common file for http and https tests.

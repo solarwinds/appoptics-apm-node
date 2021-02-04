@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const {ao, startTest, endTest} = require('../1.test-common.js')
+const {startTest, endTest} = require('../1.test-common.js')
 
 describe('probes/dummy vz.z.z', function () {
   before(function () {
