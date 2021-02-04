@@ -19,14 +19,19 @@ This document is intended for the SolarWinds developers responsible for releasin
     * make changes and commit them.
     * N.B. mocha and eslint are globally installed in the development environment. they are not installed by executing
     `npm install` in the `appoptics-apm-node` root directory. if your setup varies take this into account.
-    * if your editor does integrate eslint then execute `npm run eslint`. regarding eslint - it's preferred to require
-    semi-colons but the code has substantial groups
+    * if your editor does not integrate eslint then execute `npm run eslint`. regarding eslint - it's preferred to require
+    semi-colons but the code has substantial chunks of code that were written without semicolons so that rule is a warning,
+    not an error.
     * run tests `npm test`. It is often useful to run a subset of tests using the globally installed
     mocha, e.g.,
       - `mocha test/*.test.js` to run the basic test suite
       - `mocha test/probes/*.test.js` to test the probes
       - `mocha test/probes/fs.test.js` to test only the `fs` instrumentation.
       - `test.sh` runs groups of tests and outputs a useful summary. `npm test` executes `test.sh`.
+      - the `test/lambda/remote.test.js` will fail if the version doesn't match the version of the lambda agent. run
+      tests with `AO_TEST_LAMBDA_IGNORE_VERSIONS=true npm test` in order to skip the version checks. the intention of
+      the check is to verify that the lambda layer installed on the remote test application matches (i.e., we're testing
+      the lambda layer that we intend to).
     * install changes in local todo application using one of the two following methods and test:
       - `npm install https://api.github.com/repos/appoptics/appoptics-apm-node/tarball/test-10.1.0-rc` where `test-10.1.0-rc`
       is the branch to install.
@@ -98,6 +103,10 @@ as you can simulate. `npm install` fetches a `tgz` file from the npm repository.
     publish from the root of the project using `npm publish --otp=xyzzyx`. (the one-time-password is
     required if using token-based 2fa which should be required for logging into an account that
     publishes). if it is not a production release be sure to add `--tag=rc` or `--tag=alpha` or similar.
+    there are no hard and fast rules regarding `rc` or `alpha` but try to use `alpha` for a release
+    that is for internal testing only and `rc` for a release that is intended for customer testing. if
+    no `--tag` is specified the release will get the `latest` tag and will become the default for users
+    executing the `npm install appoptics-apm` command.
 
 5. Follow-up
     * announce new version in #ao-releases in Slack.
@@ -121,10 +130,10 @@ These are:
 
 - the todo application. this was originally google's todomvc-mongodb and was created as a simple
 showcase for angular. because the changes to make it a facility to test our agent were so extensive
-and of no general use the repository was cloned, and renamed, and is now https://github.com/appoptics/apm-node-todo.
+and of no general use the repository was cloned, and renamed, and is now [apm-node-todo](https://github.com/appoptics/apm-node-todo).
 - `multiload`. this was originally developed, in very skeletal form, as part the coding challenge of
-bmacnaughton's interview . the can be used to drive a mixed load of transactions against the todo
-server. it's extensible but not particularly well documented. it can be found at https://github.com/appoptics/apm-node-multiload.
+bmacnaughton's interview . this can be used to drive a mixed load of transactions against the todo
+server. it's extensible but not particularly well documented. it can be found at [apm-node-multiload](https://github.com/appoptics/apm-node-multiload).
 - `testeachversion`. this is derived from Stephen Belanger's `alltheversions`. it is primarily used
 for the test matrix (`appoptics/node-apm-matrix`) but can be used locally for development as well (it's
 particularly useful to make sure all versions work when modifying a single package's probe file).
@@ -133,7 +142,7 @@ package to be tested. there are a number of command line options for selecting s
 the location of the versions file, etc. but the primary documentation is the code. it produces two
 files - a summary file and a details file. both file names include the version of node, the os, and a
 timestamp. the details file contains the raw test output is helpful when investigating why tests failed;
-the summary file is a JSON file that can be interpreted by `humanize` (see next bullet). It can be found in https://github.com/appoptics/apm-node-testeachversion (this package is part of devDependencies.)
+the summary file is a JSON file that can be interpreted by `humanize` (see next bullet). It can be found in [apm-node-testeachversion](https://github.com/appoptics/apm-node-testeachversion) (this package is part of devDependencies.)
 - `humanize-logs` is part of `testeachversion` and is mapped to `humanize` in the `node_modules/.bin/`
 directory. it interprets the content of the summary files produced by `testeachversion` either singly
 or in aggregate. various options exist and are documented in the help and, as usual, in the code.

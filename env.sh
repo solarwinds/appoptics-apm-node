@@ -121,8 +121,8 @@ elif [[ "$ARG" = "prod" ]]; then
     export APPOPTICS_COLLECTOR=collector.appoptics.com
     export APPOPTICS_SERVICE_KEY=${AO_TOKEN_PROD}:ao-node-test
     export APPOPTICS_REPORTER=ssl
-elif [[ "$ARG" = "bam-local-mongo" ]]; then
-    # I have local copies running so this reassigns the ports that docker uses.
+elif [[ "$ARG" = "local-mongo" ]]; then
+    # I have local copies running so this just uses those ports.
     AO_TEST_MONGO_2_6_HOST_PORT=27027
     AO_TEST_MYSQL_HOST_PORT=33306
 elif [[ "$ARG" = "travis" ]]; then

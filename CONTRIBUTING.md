@@ -36,10 +36,18 @@ d) I understand and agree that this project and the contribution are public and 
 The dev environment for [appoptics-apm](https://github.com/appoptics/appoptics-apm-node) requires
 node (12+ preferred), docker and docker-compose, and a bash shell. It's generally easiest to work at a bash
 command prompt for editing and running tests from that prompt that interact with exposed ports from
-the docker containers created by the `docker-compose.yml` file.
+the docker containers created by the `docker-compose.yml` file. `nvm` is not strictly required but is
+highly recommended; `env.sh` expects `nvm` to be installed.
+
+The tests run using `mocha` and `expect` (from `chai`). A few older tests use `should`. If modifying a
+test that uses `should` convert it to use `expect`.
 
 You should follow the eslint configuration in `.eslintrc.json`. The `semi` rule is just a warning because many files
-were written with a no-semicolon style but all new code should adhere to the rule.
+were written with a no-semicolon style but all new code should adhere to the rule. The rule to insert a space between
+a function name and the opening parenthesis, e.g., `function apm ()` but not when calling a function, `apm()`, is to
+make it easier to search for function definitions.
+
+`env.sh` implements various settings that can be helpful. The file is the primary documentation.
 
 
 ### Setup
