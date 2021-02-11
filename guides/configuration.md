@@ -130,7 +130,7 @@ These environment variables may be set:
 | Variable Name        | Default  | Description |
 | -------------------- | -------- | ----------- |
 |APPOPTICS_ENABLED|`true`|The agent is enabled. Set to `false` to disable.|
-|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable.|
+|APPOPTICS_LOG_SETTINGS|`'error,warn'`|Categories to log. If set this takes precedence over the deprecated DEBUG environment variable. If set to empty it suppresses all agent log messages.|
 |APPOPTICS_PROXY||Proxy that does not require authentication: `http://proxy-server:3306`. Proxy that does require Basic Authentication: `http://user:password@proxy-server:3306`.|
 |APPOPTICS_APM_CONFIG_NODE|`'$PWD/appoptics-apm'`|The location of the configuration file.|
 |APPOPTICS_DEBUG_LEVEL|`'2'`|Logging level for low-level library. Higher numbers get more logging. Possible values: 1 to 6|

@@ -544,6 +544,9 @@ Send custom metrics. There are two types of metrics:
                  value is associated with this type)
 2) value-based - a specific value (or sum of values if count > 1).
 
+The metrics submitted are aggregated by metric name and tag(s), then
+sent every 60 seconds.
+
 **Kind**: static method of [<code>ao</code>](#ao)  
 
 | Param | Type | Default | Description |
