@@ -13,6 +13,7 @@ const guc = require(`${relativeDir}/lib/get-unified-config`);
 const expectedGlobalDefaults = {
   enabled: true,
   serviceKey: '',
+  stdoutClearNonblocking: 1,
   triggerTraceEnabled: true,
   traceMode: 1,
   logLevel: 2,
