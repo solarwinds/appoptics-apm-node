@@ -13,7 +13,6 @@ const guc = require(`${relativeDir}/lib/get-unified-config`);
 const expectedGlobalDefaults = {
   enabled: true,
   serviceKey: '',
-  stdoutClearNonblocking: 1,
   triggerTraceEnabled: true,
   traceMode: 1,
   logLevel: 2,
@@ -63,8 +62,10 @@ function doChecks (cfg, overrides = {}) {
     })
   }
 
-  if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === '') {
-    if (!('sampleRate' in expected)) expected.sampleRate = 1000000; // the  default
+  if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === 'lambda') {
+    // verify expected defaults in the lambda environment
+    if (!('sampleRate' in expected)) expected.sampleRate = 1000000;
+    if (!('stdoutClearNonblocking' in expected)) expected.stdoutClearNonblocking = 1;
   }
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
@@ -515,17 +516,18 @@ describe('get-unified-config', function () {
       const cfg = guc();
 
       const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout', 'serviceKey'];
-      const expected = {global: {sampleRate: 1000000}, remove};
-      doChecks(cfg, expected);
+      doChecks(cfg, {remove});
     });
 
-    it('token bucket parameters should work in a lambda environment', function () {
+    it('should accept certain parameters in a lambda environment', function () {
       process.env.LAMBDA_TASK_ROOT = '/var/task'
       process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
 
       const sampleRate = 1000000;
+      const stdoutClearNonblocking = 0;
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = stdoutClearNonblocking;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
       process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
 
@@ -535,7 +537,7 @@ describe('get-unified-config', function () {
       expect(cfg.execEnv).property('id', 'lambda');
 
       // no service key is supplied so there shouldn't be a serviceKey property.
-      const globals = {tokenBucketRate, tokenBucketCapacity, sampleRate};
+      const globals = {tokenBucketRate, tokenBucketCapacity, sampleRate, stdoutClearNonblocking};
       const remove = ['serviceKey'];
 
       // the default check for fatals is "not a valid serviceKey:" so override it
@@ -544,9 +546,10 @@ describe('get-unified-config', function () {
       doChecks(cfg, expected);
     });
 
-    it('token bucket parameters should be flagged in a non-lambda environment', function () {
+    it('should flag certain parameters in a non-lambda environment', function () {
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = 99;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
       process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
 
@@ -554,14 +557,12 @@ describe('get-unified-config', function () {
 
       expect(cfg.execEnv).property('type', 'linux');
 
-      // no service key is supplied so there shouldn't the default fatals
-      // of "not a valid serviceKey: " should occur.
-      const globals = {};
       const unusedEnvVars = [
+        'APPOPTICS_STDOUT_CLEAR_NONBLOCKING=99',
         `APPOPTICS_TOKEN_BUCKET_RATE=${tokenBucketRate}`,
         `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
       ];
-      const expected = Object.assign({debug: false, global: globals, unusedEnvVars});
+      const expected = Object.assign({debug: false, unusedEnvVars});
       doChecks(cfg, expected);
     });
 
