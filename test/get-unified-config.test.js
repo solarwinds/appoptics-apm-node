@@ -217,7 +217,6 @@ describe('get-unified-config', function () {
 
   describe('configuration file', function () {
     it('should default correctly when no config file or env vars', function () {
-      debugger
       const cfg = guc();
 
       doChecks(cfg);
@@ -775,7 +774,6 @@ describe('get-unified-config', function () {
       const config = {transactionSettings: {type: 'url', string: 'i\'m a shrimp', tracing: 'disabled'}};
       writeConfigJSON(config);
 
-      debugger
       const cfg = guc();
 
       const transactionSettings = toInternalTransactionSettings(config.transactionSettings);
