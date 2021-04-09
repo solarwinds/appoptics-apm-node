@@ -63,9 +63,11 @@ function doChecks (cfg, overrides = {}) {
   }
 
   if (cfg.execEnv.type === 'serverless' && cfg.execEnv.id === 'lambda') {
-    // verify expected defaults in the lambda environment
-    if (!('sampleRate' in expected)) expected.sampleRate = 1000000;
-    if (!('stdoutClearNonblocking' in expected)) expected.stdoutClearNonblocking = 1;
+    // set some lambda defaults in expected.
+    if (!('sampleRate' in expected)) {
+      expected.sampleRate = 1000000;
+    }
+    delete expected.serviceKey;
   }
   expect(cfg.global).deep.equal(expected, 'global mismatch');
 
@@ -145,6 +147,18 @@ function toTransactionSettingsError (settings, message) {
     error: message,
     spec: settings
   }
+}
+
+// mock the lambda environment and return the prototype global expected
+// value.
+function setupLambdaEnv () {
+  // simulate lambda environment
+  process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-bam-func';
+  process.env.LAMBDA_TASK_ROOT = '/var/task';
+
+  return {
+    stdoutClearNonblocking: 1,
+  };
 }
 
 
@@ -456,7 +470,50 @@ describe('get-unified-config', function () {
       const config = {triggerTraceEnabled: false};
       const warnings = ['APPOPTICS_TRIGGER_TRACE is deprecated; it will be invalid in the future'];
       doChecks(cfg, {global: config, warnings});
-    })
+    });
+
+    it('should omit a setting when the execution environment is wrong', function () {
+      const key = 'APPOPTICS_TOKEN_BUCKET_CAPACITY';
+      const canonicalKey = 'tokenBucketCapacity';
+      const tokenBucketCapacity = 10000;
+      process.env[key] = tokenBucketCapacity;
+
+      // by default this is not a lambda environment.
+      const settingId = 'lambda';
+
+      const cfg = guc();
+
+      const config = {};
+      const debuggings = [`omitting ${canonicalKey}: eeid: ${settingId} !== undefined`];
+      const unusedEnvVars = [
+        `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
+      ];
+      doChecks(cfg, {global: config, debuggings, unusedEnvVars});
+      // doChecks() doesn't check debugging information.
+      expect(cfg.debuggings).deep.equal(debuggings);
+    });
+
+    it('should use a setting when the execution environment is correct', function () {
+      const key = 'APPOPTICS_TOKEN_BUCKET_CAPACITY';
+      const canonicalKey = 'tokenBucketCapacity';
+      process.env[key] = 10000;
+
+      const config = setupLambdaEnv();
+      config[canonicalKey] = 10000;
+
+      const cfg = guc();
+
+      doChecks(cfg, {global: config});
+    });
+
+    it('should use a default for execution-environment-specific keys', function () {
+      const config = setupLambdaEnv();
+      expect(config['stdoutClearNonblocking']).equal(1);
+
+      const cfg = guc();
+
+      doChecks(cfg, {global: config});
+    });
 
     it('should handle sampleRate and samplePercent', function () {
       const tests = [
@@ -506,43 +563,43 @@ describe('get-unified-config', function () {
     });
 
     it('settings ignored in a lambda environment should not be set', function () {
-      process.env.LAMBDA_TASK_ROOT = '/var/task'
-      process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
 
       process.env.APPOPTICS_PROXY = 'proxy-thing';
       process.env.APPOPTICS_HOSTNAME_ALIAS = 'bruce-place';
       process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 200;
 
+      const global = setupLambdaEnv();
+
       const cfg = guc();
 
-      const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout', 'serviceKey'];
-      doChecks(cfg, {remove});
+      const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout'];
+      const expected = {global, remove};
+      doChecks(cfg, expected);
     });
 
     it('should accept certain parameters in a lambda environment', function () {
-      process.env.LAMBDA_TASK_ROOT = '/var/task'
-      process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-node-bam';
-
-      const sampleRate = 1000000;
+      const samplePercent = 50.5;
       const stdoutClearNonblocking = 0;
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
       process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = stdoutClearNonblocking;
+      process.env.APPOPTICS_SAMPLE_PERCENT = samplePercent;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
       process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
+
+      const globals = setupLambdaEnv();
+
+      // samplePercent is turned into a sampleRate behind the scenes
+      const sampleRate = Math.round(samplePercent * 10000);
+
+      Object.assign(globals, {tokenBucketRate, tokenBucketCapacity, stdoutClearNonblocking, sampleRate});
 
       const cfg = guc();
 
       expect(cfg.execEnv).property('type', 'serverless');
       expect(cfg.execEnv).property('id', 'lambda');
 
-      // no service key is supplied so there shouldn't be a serviceKey property.
-      const globals = {tokenBucketRate, tokenBucketCapacity, sampleRate, stdoutClearNonblocking};
-      const remove = ['serviceKey'];
-
-      // the default check for fatals is "not a valid serviceKey:" so override it
-      const fatals = [];
-      const expected = Object.assign({global: globals, fatals, remove});
+      const expected = Object.assign({global: globals});
       doChecks(cfg, expected);
     });
 
@@ -717,6 +774,7 @@ describe('get-unified-config', function () {
       const cfg = guc();
 
       const transactionSettings = toInternalTransactionSettings(config.transactionSettings);
+
       doChecks(cfg, {transactionSettings});
     })
 
