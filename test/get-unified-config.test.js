@@ -151,13 +151,13 @@ function toTransactionSettingsError (settings, message) {
 
 // mock the lambda environment and return the prototype global expected
 // value.
-function setupLambdaEnv() {
+function setupLambdaEnv () {
   // simulate lambda environment
   process.env.AWS_LAMBDA_FUNCTION_NAME = 'f2-bam-func';
   process.env.LAMBDA_TASK_ROOT = '/var/task';
 
   return {
-    testKeyWithDefault: 42,
+    stdoutClearNonblocking: 1,
   };
 }
 
@@ -480,7 +480,6 @@ describe('get-unified-config', function () {
 
       // by default this is not a lambda environment.
       const settingId = 'lambda';
-      const envId = 'linux';
 
       const cfg = guc();
 
@@ -508,10 +507,8 @@ describe('get-unified-config', function () {
     });
 
     it('should use a default for execution-environment-specific keys', function () {
-      const key = 'APPOPTICS_TEST_KEY_WITH_DEFAULT';
-      const canonicalKey = 'testKeyWithDefault';
-
       const config = setupLambdaEnv();
+      expect(config['stdoutClearNonblocking']).equal(1);
 
       const cfg = guc();
 
@@ -572,42 +569,44 @@ describe('get-unified-config', function () {
       process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 200;
 
       const global = setupLambdaEnv();
-      global.sampleRate = 1000000;
 
       const cfg = guc();
 
-      const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout', 'serviceKey'];
+      const remove = ['proxy', 'hostnameAlias', 'ec2MetadataTimeout'];
       const expected = {global, remove};
       doChecks(cfg, expected);
     });
 
-    it('token bucket parameters should work in a lambda environment', function () {
-      const sampleRate = 1000000;
+    it('should accept certain parameters in a lambda environment', function () {
+      const samplePercent = 50.5;
+      const stdoutClearNonblocking = 0;
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = stdoutClearNonblocking;
+      process.env.APPOPTICS_SAMPLE_PERCENT = samplePercent;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
       process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
 
       const globals = setupLambdaEnv();
-      Object.assign(globals, {tokenBucketRate, tokenBucketCapacity, sampleRate});
+
+      // samplePercent is turned into a sampleRate behind the scenes
+      const sampleRate = Math.round(samplePercent * 10000);
+
+      Object.assign(globals, {tokenBucketRate, tokenBucketCapacity, stdoutClearNonblocking, sampleRate});
 
       const cfg = guc();
 
       expect(cfg.execEnv).property('type', 'serverless');
       expect(cfg.execEnv).property('id', 'lambda');
 
-      // no service key is supplied so there shouldn't be a serviceKey property.
-      const remove = ['serviceKey'];
-
-      // the default check for fatals is "not a valid serviceKey:" so override it
-      const fatals = [];
-      const expected = Object.assign({global: globals, fatals, remove});
+      const expected = Object.assign({global: globals});
       doChecks(cfg, expected);
     });
 
-    it('token bucket parameters should be flagged in a non-lambda environment', function () {
+    it('should flag certain parameters in a non-lambda environment', function () {
       const tokenBucketRate = 100;
       const tokenBucketCapacity = 1000;
+      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = 99;
       process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate;
       process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity;
 
@@ -615,14 +614,12 @@ describe('get-unified-config', function () {
 
       expect(cfg.execEnv).property('type', 'linux');
 
-      // no service key is supplied so there shouldn't the default fatals
-      // of "not a valid serviceKey: " should occur.
-      const globals = {};
       const unusedEnvVars = [
+        'APPOPTICS_STDOUT_CLEAR_NONBLOCKING=99',
         `APPOPTICS_TOKEN_BUCKET_RATE=${tokenBucketRate}`,
         `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
       ];
-      const expected = Object.assign({debug: false, global: globals, unusedEnvVars});
+      const expected = Object.assign({debug: false, unusedEnvVars});
       doChecks(cfg, expected);
     });
 
