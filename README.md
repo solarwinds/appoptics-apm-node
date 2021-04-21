@@ -93,4 +93,4 @@ Get started with the [contribution guide](https://github.com/appoptics/appoptics
 
 Copyright (c) 2016, 2017, 2018 SolarWinds, LLC
 
-Released under the [Librato Open License](https://docs.appoptics.com/kb/apm_tracing/librato-open-license/)
+Released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
