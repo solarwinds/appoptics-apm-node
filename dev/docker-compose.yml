@@ -1,0 +1,196 @@
+services:
+  dev-agent:
+    container_name: dev-agent
+    image: dev-agent
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "${PWD}:/usr/src/work"
+      - ~/.gitconfig:/root/.gitconfig
+      - ~/.ssh:/root/.ssh 
+      - ~/.aws/credentials:/root/.aws/credentials
+      - ~/.aws/config:/root/.aws/config
+    working_dir: /usr/src/work
+    env_file:
+      - ../.env
+    environment:
+      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
+      APPOPTICS_COLLECTOR: localhost:7832
+      APPOPTICS_REPORTER: udp
+
+      AO_TEST_CASSANDRA_2_2: cassandra:9042
+      AO_TEST_MEMCACHED_1_4: memcached:11211
+      AO_TEST_MONGODB_2_4: mongo_2_4:27017
+      AO_TEST_MONGODB_2_6: mongo_2_6:27017
+      AO_TEST_MONGODB_3_0: mongo_3_0:27017
+      AO_TEST_MYSQL: mysql:3306
+      AO_TEST_POSTGRES: postgres:5432
+      AO_TEST_SQLSERVER_EX: mssql:1433
+      AO_TEST_RABBITMQ_3_5: rabbitmq:5672
+      AO_TEST_REDIS_3_0: redis:6379
+
+      AO_TEST_ORACLE: oracle:1521
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "9229:9229"
+    #
+    # wait for the dependencies. (this container doesn't really do anything unless
+    # running the tests in this context. in that case it is easy enough to invoke
+    # env.sh manually as that is the way the tests are run.)
+    #
+    depends_on:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3_0
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+      - oracle
+    links:
+      - cassandra
+      - memcached
+      - mongo_2_4
+      - mongo_2_6
+      - mongo_3_0
+      - mssql
+      - mysql
+      - postgres
+      - rabbitmq
+      - redis
+      - oracle
+    command: >
+        bash -c "npm install --unsafe-perm
+        && /bin/bash"
+
+  # Containers required for testing supported probes. Each
+  cassandra:
+    container_name: "cassandra"
+    image: cassandra:2 # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      # host:container
+      - "9042:9042"
+
+  memcached:
+    container_name: "memcached"
+    image: memcached # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "11211:11211"
+
+
+  mongo_2_4:
+    container_name: "mongo_2_4" 
+    image: mongo:2.4 # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      # host:container
+      - "27016:27017"
+
+  mongo_2_6:
+    container_name: "mongo_2_6"
+    image: mongo:2.6 # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "27017:27017"
+
+  mongo_3_0:
+    container_name: "mongo_3_0"
+    image: mongo:3 # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "27018:27017"
+
+  mysql:
+    container_name: "mysql_5_7"
+    image: "mysql:5.7.13"
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    ports:
+      - "3306:3306"
+
+  mssql:
+    container_name: "mssql"
+    image: "mssql"
+    build:
+      context: .
+      dockerfile: ./services/mssql.Dockerfile
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "1433:1433"
+
+  oracle:
+    container_name: "oracle"
+    image: "oracle"
+    build:
+      context: .
+      dockerfile: ./services/oracle.Dockerfile
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "1521:1521"
+
+  postgres:
+    container_name: "postgres"
+    image: "postgres"
+    build:
+      context: .
+      dockerfile: ./services/postgres.Dockerfile
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "5432:5432"
+    environment:
+      # sets password to this so make pg.test.js agree
+      - POSTGRES_PASSWORD=xyzzy
+
+  rabbitmq:
+    container_name: "rabbitmq" 
+    image: rabbitmq:3-management # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "5672:5672"
+      - "5671:5671"
+
+  redis:
+    container_name: "redis"
+    image: redis  # default image no setup needed
+    logging:
+      options:
+        max-file: "1"
+        max-size: 50m
+    ports:
+      - "6379:6379"
