@@ -14,7 +14,11 @@
     "prepack": "./prepack.js",
     "gen-docs": "cat lib/index.js lib/api.js lib/span.js lib/event.js > api-docs-temp.js && jsdoc2md -f api-docs-temp.js > guides/api.md && rm api-docs-temp.js",
     "install-deps": "./deps.sh",
-    "lint": "eslint --quiet lib/*.js lib/**/*.js test/*.js test/**/*.js prepack.js"
+    "lint": "eslint --quiet lib/*.js lib/**/*.js test/*.js test/**/*.js prepack.js",
+    "dev": "dev/start.sh",
+    "dev:oneoff": "dev/oneoff.sh",
+    "dev:repo:reset": "dev/repo/reset.sh",
+    "dev:reinstall": "rm -rf node_modules && npm install --unsafe-perm"
   },
   "author": "Bruce A. MacNaughton <bruce@solarwinds.cloud>",
   "contributors": [
