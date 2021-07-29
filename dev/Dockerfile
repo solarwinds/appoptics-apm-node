@@ -2,9 +2,7 @@ FROM ubuntu:20.04
 SHELL ["/bin/bash", "-c"]
 
 # tools
-RUN su - \
-    && apt update \
-    && apt-get install sudo -y \
+RUN apt update \
     && apt -y install \
                 curl \
                 git \
@@ -15,14 +13,6 @@ RUN su - \
                 postgresql-server-dev-12 \
                 zip \
                 unzip
-
-# install docker (inception)
-RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
-    sudo sh get-docker.sh
-
-# install docker compose (inception++)
-RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose
 
 # install nvm
 ENV NVM_DIR /root/.nvm
