@@ -1,5 +1,32 @@
-# used for development
-node_modules
+# anything, anywhere starting with __ or ~~
+__*
+~~*
+
+# Local development
+*.env
+*.dev
+
+# Apple
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# js
+node_modules/
+
+# artifacts
+build/
+build-tmp*/
+dist/
+
 coverage
 test-db
 notes
@@ -11,6 +38,4 @@ docs
 *.swo
 # npm pack output
 *.tgz
-# logs from various sources
-ubuntu-18.04-node-*
 *.log
