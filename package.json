@@ -13,7 +13,6 @@
     "test": "./test.sh",
     "prepack": "./prepack.js",
     "gen-docs": "cat lib/index.js lib/api.js lib/span.js lib/event.js > api-docs-temp.js && jsdoc2md -f api-docs-temp.js > guides/api.md && rm api-docs-temp.js",
-    "install-deps": "./deps.sh",
     "lint": "eslint --quiet lib/*.js lib/**/*.js test/*.js test/**/*.js prepack.js",
     "dev": "dev/start.sh",
     "dev:oneoff": "dev/oneoff.sh",
@@ -24,7 +23,8 @@
   "contributors": [
     "Stephen Belanger <admin@stephenbelanger.com>",
     "Ross Hendry <rh@kpv-lab.co.uk>",
-    "Jiri Tomek <jiri.tomek@solarwinds.com>"
+    "Jiri Tomek <jiri.tomek@solarwinds.com>",
+    "Ron Ilan <ron.ilan@solarwinds.com>"
   ],
   "keywords": [
     "tracing",
@@ -61,7 +61,7 @@
     "@hapi/vision": "^5.5.2",
     "amqp": "^0.2.6",
     "amqplib": "^0.5.3",
-    "appoptics-auto-lambda": "git+https://github.com/appoptics/apm-node-auto-lambda.git",
+    "appoptics-auto-lambda": "git+https://github.com/appoptics/apm-node-auto-lambda.git#2130a7b8be77fe3689edef9007552dfbdd903f7b",
     "aws-sdk": "^2.440.0",
     "axios": "^0.19.0",
     "bcrypt": "^5.0.0",
@@ -98,7 +98,8 @@
     "mysql": "^2.16.0",
     "nyc": "^13.3.0",
     "oracledb": "^5.0.0",
-    "pg": "^7.9.0",
+    "pg": "^8.7.1",
+    "pg-native": "^3.0.0",
     "pino": "^5.15.0",
     "q": "^2.0.3",
     "raw-body": "^2.3.3",
