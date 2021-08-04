@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# script used to clone main repo into dev repo.
+# script used to clone main repo into dev repo
 # trigger via npm run.
 # no other usage.
 # always WIP.
 
 name="appoptics-apm-node"
+
+# from here down shared between repos
 
 if [ -f /.dockerenv ]; then 
   echo "Do not run from inside a container."
@@ -13,6 +15,7 @@ if [ -f /.dockerenv ]; then
 fi
 
 dev_name="${name}-dev"
+dev_remote=$(git config --get remote.dev.url)
 
 # for the current branch - make sure name and S3 are setup to dev.
 init_branch() {
@@ -21,9 +24,15 @@ init_branch() {
   git commit -am "dev init !"
 }
 
-## reset remote repo
-git push -f dev --all
-git push dev --tags
+# dev set to dev repo
+if [[ $dev_remote == *${dev_name}.git ]]; then
+  ## reset remote repo
+  git push -f dev --all
+  git push dev --tags
+else
+  echo "Dev remote not configured correctly."
+  exit
+fi
 
 # clone clone a fresh one
 cd ../ || exit
