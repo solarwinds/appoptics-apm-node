@@ -75,7 +75,7 @@ npm install --save appoptics-apm@latest
 ## Support
 
 If you find a bug or would like to request an enhancement, feel free to file
-an issue. For all other support requests, please email support@appoptics.com.
+an issue. For all other support requests, please email technicalsupport@solarwinds.com.
 
 ## Contributing
 
