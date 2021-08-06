@@ -61,7 +61,7 @@ module.exports.handler = ao.wrapLambdaHandler(myHandlerEchoEvent);
 ## fine tuning
 - it is possible to adjust the sample rate but requires tweaking internal settings and taking
 the lambda function configuration and the expected loads into consideration. please contact
-customer support (support@appoptics.com) in order to adjust the sample rate.
+customer support (technicalsupport@solarwinds.com) in order to adjust the sample rate.
 
 
 
