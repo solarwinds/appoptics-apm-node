@@ -5,6 +5,9 @@
 # no other usage.
 # always WIP.
 
+# check that the docker engine is running
+docker ps > /dev/null || exit
+
 cleanup() {
     docker-compose  -f ./dev/docker-compose.yml down -v --remove-orphans
     # remove artifacts left locally by previous npm install
