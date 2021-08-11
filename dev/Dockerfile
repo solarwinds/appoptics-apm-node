@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 SHELL ["/bin/bash", "-c"]
 
-#general tools
+# general tools
 RUN apt update \
     && apt -y install \
                 curl \
@@ -52,9 +52,7 @@ RUN apt -y install \
             libaio1 \
             postgresql-server-dev-12 \
             zip \
-            unzip \
-            gnupg \
-            software-properties-common
+            unzip
 
 # get and install oracle library
 RUN curl -LO https://download.oracle.com/otn_software/linux/instantclient/195000/instantclient-basic-linux.x64-19.5.0.0.0dbru.zip \
