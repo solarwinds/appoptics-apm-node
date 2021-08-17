@@ -1,5 +1,7 @@
 #!/bin/sh
 
+group_to_run=$1
+
 #
 # script to run tests
 #
@@ -67,8 +69,9 @@ executeGroup() {
 executeTestGroup() {
     _group_name=$1
     _test_pattern=$2
+    _options=$3
 
-    _group_skipped=
+    _group_skipped=""
 
     if ! executeGroup "$_group_name"; then
         _group_skipped=true
@@ -83,10 +86,11 @@ executeTestGroup() {
             _new_skipped="$_new_skipped $F"
             SUITES_SKIPPED=$((SUITES_SKIPPED + 1))
         else
+            # shellcheck disable=SC2086
             if [ -n "$SIMULATE" ]; then
                 echo "simulating test $F"
                 SUITES_PASSED=$((SUITES_PASSED + 1))
-            elif ! mocha "$F"; then
+            elif ! npx mocha $_options "$F"; then
                 _new_errors="$_new_errors $F"
                 SUITES_FAILED=$((SUITES_FAILED + 1))
             else
@@ -105,42 +109,43 @@ executeTestGroup() {
     fi
 }
 
+# CI environments (github actions in particular) seem to intermittently
+# take a long time.
+[ -n "$CI" ] && timeout="--timeout=10000"
 
 #
 # run unit tests with the addon enabled
 #
-executeTestGroup "CORE" "test/*.test.js"
+if [ "$group_to_run" = "CORE" ] || [ ! "$group_to_run" ]; then executeTestGroup "CORE" "test/*.test.js" "$timeout"; fi
 
 #
 # run unit tests without the addon disabled
 #
-executeTestGroup "NO-ADDON" "test/no-addon/*.test.js"
+if [ "$group_to_run" = "NO-ADDON" ] || [ ! "$group_to_run" ]; then executeTestGroup "NO-ADDON" "test/no-addon/*.test.js" "$timeout"; fi
 
 #
 # originally these tests were the only ones to run one-at-a-time
 # because it's not possible to change the oboe logging level after
 # initialization time. now they don't really need to be separate.
 #
-executeTestGroup "SOLO" "test/solo/*.test.js"
-
-
+if [ "$group_to_run" = "SOLO" ]  || [ ! "$group_to_run" ]; then executeTestGroup "SOLO" "test/solo/*.test.js" "$timeout"; fi
 #
 # verify that both types of tokens work
 #
-executeTestGroup "SWOKEN" "test/swoken/*.test.js"
-executeTestGroup "TOKEN" "test/token/*.test.js"
+if [ "$group_to_run" = "SWOKEN" ] || [ ! "$group_to_run" ]; then executeTestGroup "SWOKEN" "test/swoken/*.test.js" "$timeout"; fi
+if [ "$group_to_run" = "TOKEN" ] || [ ! "$group_to_run" ]; then executeTestGroup "TOKEN" "test/token/*.test.js" "$timeout"; fi
 
 #
 # this tests the http client through using the request package with promises. it's
 # a step in the direction of end-to-end testing that should incorporate a server and
 # verifying that the appoptics.com collector received the traces.
 #
-executeTestGroup "COMPOSITE" "test/composite/*.test.js"
+if [ "$group_to_run" = "COMPOSITE" ] || [ ! "$group_to_run" ]; then executeTestGroup "COMPOSITE" "test/composite/*.test.js" "$timeout"; fi
 
 #
 # this group has lambda-specific tests
 #
-executeTestGroup "LAMBDA" "test/lambda/*.test.js"
+if [ "$group_to_run" = "LAMBDA" ] || [ ! "$group_to_run" ]; then executeTestGroup "LAMBDA" "test/lambda/*.test.js"; fi
 
 #
 # run the probe tests
@@ -148,8 +153,7 @@ executeTestGroup "LAMBDA" "test/lambda/*.test.js"
 # they are last because at least one test might not close emitters or timers. that test causes
 # node to hang.
 #
-executeTestGroup "PROBES" "test/probes/*.test.js"
-
+if [ "$group_to_run" = "PROBES" ] || [ ! "$group_to_run" ]; then executeTestGroup "PROBES" "test/probes/*.test.js"; fi
 
 #=======================================
 # provide a summary of the test results.

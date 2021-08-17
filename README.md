@@ -61,7 +61,7 @@ require in the code will just get a reference to the results of the command line
 
 ## Configuration
 
-See the [Configuration Guide](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/configuration.md)
+See the [Configuration Guide](https://github.com/appoptics/appoptics-apm-node/blob/master/CONFIGURATION.md)
 
 ## Upgrading
 
@@ -77,17 +77,6 @@ npm install --save appoptics-apm@latest
 If you find a bug or would like to request an enhancement, feel free to file
 an issue. For all other support requests, please email technicalsupport@solarwinds.com.
 
-## Contributing
-
-You are obviously a person of great sense and intelligence. We welcome
-contributions whether documentation, a bug fix, new instrumentation for
-a framework or anything else.
-
-We look forward to your PRs. Please provide tests for any new functionality
-you submit. We don't want to break any of your additions when more changes
-are made.
-
-Get started with the [contribution guide](https://github.com/appoptics/appoptics-apm-node/blob/master/guides/contributing.md).
 
 ## License
 

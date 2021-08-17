@@ -1,33 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-// add this check because withFileTypes was added in 10.10.0. for simplicity
-// just require node 12.
-if (process.versions.node.split('.').shift() < 12) {
-  // eslint-disable-next-line no-console
-  console.error(`appoptics-apm must be released using node >= 12; using ${process.version}`);
-  process.exit(1);
-}
-
 const fs = require('fs');
-
 const files = fs.readdirSync('.', 'utf8');
 
 let errorCount = 0;
-
-//
-// make sure that there are no ubuntu-* files left around
-//
-for (let i = files.length - 1; i >= 0; i--) {
-  if (files[i].indexOf('ubuntu-') === 0) {
-    errorCount += 1;
-  }
-}
-
-if (errorCount) {
-  // eslint-disable-next-line no-console
-  console.error('ubuntu-* files found - delete before packing or publishing');
-}
 
 //
 // make sure api-sim supplies all the functions in api. this doesn't verify that
