@@ -62,3 +62,5 @@ remote=$(git config --get remote.origin.url)
 if [[ $PWD == *${dev_name} ]] && [[ $remote == *${dev_name}.git ]]; then
   git push --all origin
 fi
+
+git checkout master
