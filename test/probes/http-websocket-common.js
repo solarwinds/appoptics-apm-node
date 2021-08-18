@@ -175,7 +175,7 @@ describe(`probes.${p} websocket`, function () {
       ], done)
     });
 
-    it(`${p} connect to a public server`, function (done) {
+    it.skip(`${p} connect to a public server`, function (done) {
       this.timeout(10000);
       const options = makeOptions(parsedUrl);
 
@@ -217,7 +217,7 @@ describe(`probes.${p} websocket`, function () {
       );
     });
 
-    it('WebSocket connect to a public server', function (done) {
+    it.skip('WebSocket connect to a public server', function (done) {
       helper.test(
         emitter,
         function (xdone) {
@@ -243,7 +243,7 @@ describe(`probes.${p} websocket`, function () {
       );
     });
 
-    it(`${p} connect with missing headers should fail`, function (done) {
+    it.skip(`${p} connect with missing headers should fail`, function (done) {
       const options = makeOptions(parsedUrl);
       // a server should disconnect if the key is missing
       delete options.headers['Sec-WebSocket-Version'];
