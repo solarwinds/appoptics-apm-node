@@ -1,0 +1,54 @@
+name: Push - Core Tests (on push)
+
+# workflow is for a branch push only and ignores master.
+# push to master (which is also pull request merge) has a more elaborate workflow to run
+# github repo is configured with branch protection on master.
+on: 
+  push:
+    branches-ignore:
+      - 'master'
+      # any branch with a name ending in -no-action will not trigger this workflow.
+      - '*-no-action'
+
+  workflow_dispatch:
+    inputs: 
+      node:
+        required: false
+        description: 'A node version (e.g 10.16.0)'
+        default: '14' # TODO: update to 16 when support is added
+
+jobs:
+  core-tests:
+    name: Core Tests
+    runs-on: ubuntu-latest # environment job will run in
+
+    env:
+      AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
+      AO_TOKEN_PROD: ${{ secrets.AO_TOKEN_PROD }}
+      # tests run against a "local" udp "collector"
+      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
+      APPOPTICS_COLLECTOR: localhost:7832
+      APPOPTICS_REPORTER: udp
+      APPOPTICS_SERVICE_KEY: ${{ secrets.AO_TOKEN_STG }}:ao-node-test
+
+    steps:
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Setup Node ${{ github.event.inputs.node || '14' }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ github.event.inputs.node || '14' }}
+
+      - name: Show Environment Info
+        run: |
+          printenv
+          node --version
+          npm --version 
+          cat /etc/os-release
+
+      - name: NPM Install
+        run: npm install  --unsafe-perm
+
+      - name: Run Core Tests
+        run: npm run test:core
