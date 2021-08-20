@@ -10,7 +10,7 @@ jobs:
 
     # Docker Hub image that `container-job` executes (our runner)
     container: 
-      image: ghcr.io/appoptics/appoptics-apm-node-dev/node-agent-runner:latest
+      image: ghcr.io/${{ github.repository }}/node-agent-runner:latest
       env:
         AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
         AO_TOKEN_PROD: ${{ secrets.AO_TOKEN_PROD }}
