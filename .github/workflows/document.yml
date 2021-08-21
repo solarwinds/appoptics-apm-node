@@ -240,10 +240,6 @@ jobs:
         run: |
           git checkout -b test-each-version-${{ steps.date.outputs.date }}
 
-      - name: Create Directory
-        run: |
-          mkdir -p supported-components-data
-
       - name: Download Test Matrix Artifacts
         uses: actions/download-artifact@v2
         with:
