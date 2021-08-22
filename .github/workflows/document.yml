@@ -1,0 +1,271 @@
+name: Document - Test Each Version Matrix (manual)
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  test-each-version:
+    name: Test Each Version
+    runs-on: ubuntu-latest
+
+    # Docker Hub image that `container-job` executes (our runner)
+    container: 
+      image: ghcr.io/${{ github.repository }}/node-agent-runner:latest
+      env:
+        AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
+        AO_TOKEN_PROD: ${{ secrets.AO_TOKEN_PROD }}
+        # tests run against a "local" udp "collector"
+        APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
+        APPOPTICS_COLLECTOR: localhost:7832
+        APPOPTICS_REPORTER: udp
+        APPOPTICS_SERVICE_KEY: ${{ secrets.AO_TOKEN_STG }}:ao-node-test
+        AO_TEST_CASSANDRA_2_2: cassandra:9042
+        AO_TEST_MEMCACHED_1_4: memcached:11211
+        AO_TEST_MONGODB_2_4: mongo_2_4:27017
+        AO_TEST_MONGODB_2_6: mongo_2_6:27017
+        AO_TEST_MONGODB_3_0: mongo_3_0:27017
+        AO_TEST_SQLSERVER_EX: mssql:1433
+        AO_TEST_MYSQL: mysql:3306
+        AO_TEST_ORACLE: oracle:1521
+        AO_TEST_POSTGRES: postgres:5432
+        AO_TEST_RABBITMQ_3_5: rabbitmq:5672
+        AO_TEST_REDIS_3_0: redis:6379
+
+    # Service containers to run with `runner-job`
+    services:
+      cassandra:
+        image: cassandra:2 
+        options: >-
+          --health-cmd "nodetool ring"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - "9042:9042"
+      memcached:
+        image: memcached 
+        ports:
+          - "11211:11211"
+      mongo_2_4:
+        image: mongo:2.4 
+        ports:
+          # host:container
+          - "27016:27017"
+      mongo_2_6:
+        image: mongo:2.6 
+        ports:
+          - "27017:27017"
+      mongo_3_0:
+        image: mongo:3 
+        ports:
+          # host:container
+          - "27018:27017"
+      mssql:
+        image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
+        ports:
+          - "1433:1433"
+      mysql:
+        image: "mysql:5.7.13"
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          MYSQL_ROOT_PASSWORD: admin
+        ports:
+          - "3306:3306"
+      oracle:
+        image: "freundallein/oracledb" # TODO: hummmm
+        ports:
+          - "1521:1521"
+      postgres:
+        image: "postgres"
+        options: >-
+          --health-cmd "pg_isready"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - "5432:5432"
+        env:
+          # sets password to this so make pg.test.js agree
+          POSTGRES_PASSWORD: xyzzy
+      rabbitmq:
+        image: rabbitmq:3-management 
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - "5672:5672"
+          - "5671:5671"
+      redis:
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    strategy:
+      fail-fast: false
+      matrix: 
+        node: ['10', '12', '14']
+        pkg: [
+          '@hapi/hapi',
+          '@hapi/vision',
+          'amqplib',
+          'bcrypt',
+          'bluebird',
+          'bunyan',
+          'cassandra-driver',
+          'co-render',
+          'director',
+          'express',
+          'generic-pool',
+          'hapi',
+          'http',
+          'https',
+          'koa',
+          'koa-resource-router',
+          'koa-route',
+          'koa-router',
+          'level',
+          'memcached',
+          'mongodb',
+          'mongodb-core',
+          'mongoose',
+          'morgan',
+          'mysql',
+          'oracledb',
+          'pg',
+          'pino',
+          'q',
+          'raw-body',
+          'redis',
+          'restify',
+          'tedious',
+          'vision',
+          'winston',
+          # core modules
+          'crypto',
+          'fs',
+          'http',
+          'https',
+          'zlib'
+        ]
+
+    steps:
+      # the working directory is created by the runner and mounted to the container.
+      # container user is root and the runner is not a user in the container.
+      # this is a github actions design flaw.
+      # when npm 7 is run as root, scripts are always run with the effective uid and gid of the working directory owner.
+      # node 16 can't install under default setup.
+      # specifying workdir for container and path for checkout does not work due to bug.
+      - name: Change Owner of Container Working Directory
+        run: chown root:root .
+
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node  }}
+
+      - name: Show Environment Info
+        run: |
+          printenv
+          node --version
+          npm --version 
+          cat /etc/os-release
+
+      - name: NPM Install
+        run: npm install  --unsafe-perm
+
+      - name: Create tmp Directory
+        run: |
+          mkdir -p docs/tmp
+
+      - name: Test ${{ matrix.pkg }} versions
+        # in testeachversion we may fail tests, and want to keep going.
+        continue-on-error: true
+        # some packages take a long time.
+        timeout-minutes: 30
+        run: npx testeachversion --verbose -l ./docs/tmp -p ${{ matrix.pkg }}
+
+      - name: Rename Result Artifacts
+        # substitution needed because:
+        # 1. files contain characters that are illegal for uploaded files
+        # 2. we need to keep a specific file name pattern for testeachversion to process later
+        # 3. we want to use matrix data to tag the files
+        # bash needed for substitution. 
+        shell: bash
+        run: .github/scripts/testeachversion-rename-files.sh docs/tmp ${{ matrix.node }} ${{ matrix.pkg }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: supported-components-data
+          path: docs/tmp/ # or path/to/artifact
+
+
+  create-pull-request:
+    name: Create Pull Request
+    runs-on: ubuntu-latest # environment job will run in
+    needs:  test-each-version
+
+    steps:
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Init Git
+        run: |
+         git config user.name "GitHub Actions"
+         git config user.email noreply@github.com
+
+      # job is running on the github runner not in pre-configured container
+      - name: Set Time Zone & Current Date
+        id: date
+        run: |
+          sudo timedatectl set-timezone America/Los_Angeles
+          echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')" # must be valid branch name
+
+      - name: Create Git Branch
+        run: |
+          git checkout -b test-each-version-${{ steps.date.outputs.date }}
+
+      - name: Download Test Matrix Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: docs/
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+
+      - name: NPM Install
+        run: npm install testeachversion
+
+      - name: Humanize
+        # clean output needed because the merge of multiple matrix runs results in unreadable format (not human...)
+        # bash needed for sed. 
+        shell: bash
+        run: |
+          npx humanize -m docs/supported-components-data > ./docs/supported-components.human
+          .github/scripts/testeachversion-clean-output.sh docs/supported-components.human
+
+      - name: Commit Results
+        run: |
+          git add docs
+          git commit --message "Test Each Version Results ${{ steps.date.outputs.date }}"
+          git push origin test-each-version-${{ steps.date.outputs.date }}
+
+      - name: Open Pull Request
+        run: gh pr create --title "Test Each Version Results ${{ steps.date.outputs.date }}" --body ""
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
