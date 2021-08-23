@@ -20,6 +20,14 @@ if (!hasAsyncAwait) {
   throw new Error('hapi@17 testing requires async/await')
 }
 
+// above node 14, hapi version must be over 18, which means must be at @hapi/hapi.
+// below node 11 hapi version must be below 18, which means must be at hapi.
+// process.env.hapiVersion is set when running the @hapi/hapi test
+
+// don't run what is not supported
+if(semver.gte(nodeVersion, '16.0.0') && !process.env.hapiVersion) return null
+if(semver.lt(nodeVersion, '11.0.0') && process.env.hapiVersion) return null
+
 // if testing the @hapi scoped package then hapiVersion is set to @hapi
 const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi';
 const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision';
