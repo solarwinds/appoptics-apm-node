@@ -35,7 +35,7 @@ jobs:
         AO_TEST_RABBITMQ_3_5: rabbitmq:5672
         AO_TEST_REDIS_3_0: redis:6379
 
-    # Service containers to run with `runner-job`
+    # Service containers to run with runner-job`
     services:
       cassandra:
         image: cassandra:2 
@@ -47,20 +47,40 @@ jobs:
         ports:
           - "9042:9042"
       memcached:
-        image: memcached 
+        image: memcached
+        options: >-
+          --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - "11211:11211"
       mongo_2_4:
-        image: mongo:2.4 
+        image: mongo:2.4
+        options: >-
+          --health-cmd "mongo --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           # host:container
           - "27016:27017"
       mongo_2_6:
-        image: mongo:2.6 
+        image: mongo:2.6
+        options: >-
+          --health-cmd "mongo --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - "27017:27017"
       mongo_3_0:
         image: mongo:3 
+        options: >-
+          --health-cmd "mongo --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           # host:container
           - "27018:27017"
