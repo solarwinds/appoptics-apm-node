@@ -1,0 +1,56 @@
+2021-08-22T21:59:23.438Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-08-22T21:59:23.439Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-08-22T21:59:23.439Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-08-22T21:59:23.439Z appoptics:debug using context provider: ace-context
+2021-08-22T21:59:23.514Z appoptics:debug apm 10.0.1, bindings 11.0.0, oboe 10.1.0
+2021-08-22T21:59:23.587Z appoptics:patching patched crypto 
+2021-08-22T21:59:23.626Z appoptics:patching patched https 
+2021-08-22T21:59:23.627Z appoptics:patching patched http 
+2021-08-22T21:59:23.689Z appoptics:patching patched zlib 
+2021-08-22T21:59:23.741Z appoptics:patching fs.realpath - adding native method
+2021-08-22T21:59:23.742Z appoptics:patching patched fs 
+2021-08-22T21:59:23.792Z appoptics:debug starting runtimeMetrics
+
+
+  probes.http
+    http-server
+      ✓ UDP might lose a message running locally
+      ✓ should send traces for http routing and response spans
+      ✓ should continue tracing when receiving an xtrace id header
+      ✓ should forward sampling data in always trace mode
+      ✓ should not continue tracing when receiving a bad xtrace id header
+      ✓ should not report anything when http probe is disabled
+      ✓ should not send a span or metrics when a string or regex filter matches (101ms)
+      ✓ should trace correctly within asyncrony
+2021-08-22T21:59:24.254Z appoptics:debug http.test: before creating server lastEvent = nodejs:entry 2b-e2925a38316d55633d818afb21fc49f045784d08-1aa402caab8b2007-01
+2021-08-22T21:59:24.256Z appoptics:debug http: ule nodejs:entry 2b-e2925a38316d55633d818afb21fc49f045784d08-1aa402caab8b2007-01
+      ✓ should support query param filtering
+      ✓ should map X-Forwarded-For header to event.kv.Forwarded-For
+      ✓ should map X-Forwarded-Host header to event.kv.Forwarded-Host
+      ✓ should map X-Forwarded-Port header to event.kv.Forwarded-Port
+      ✓ should map X-Forwarded-Proto header to event.kv.Forwarded-Proto
+      ✓ should map X-Request-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Time header to event.kv.Queue-Time
+      ✓ should map a specific header to ClientIP when specified
+      ✓ should set ClientIP when req['client-ip-header'] is undefined
+      ✓ should report request errors
+      ✓ should report response errors
+      ✓ should exit when timed out
+    http-client
+2021-08-22T21:59:24.329Z appoptics:debug http: ule nodejs:entry 2b-60cc0366c376fd6081aa21c740087f49ee429b4a-a5fc0e1e9eb4ee8f-01
+      ✓ should trace http request
+      ✓ should support object-based requests
+      ✓ should trace streaming http request
+      ✓ should support query filtering
+      ✓ should report socket errors sending request
+      ✓ should report socket errors when no server is listening
+      ✓ should report socket errors when the server hangs up
+      ✓ should not report an error if req.abort() is called
+      ✓ should report an error when the server has a socket error
+      - should report response errors handling request
+
+
+  30 passing (340ms)
+  1 pending
+
