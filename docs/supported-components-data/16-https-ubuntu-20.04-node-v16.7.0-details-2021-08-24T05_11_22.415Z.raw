@@ -1,0 +1,58 @@
+2021-08-24T05:11:22.718Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-08-24T05:11:22.719Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-08-24T05:11:22.719Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-08-24T05:11:22.720Z appoptics:debug using context provider: ace-context
+2021-08-24T05:11:22.791Z appoptics:debug apm 10.0.1, bindings 11.0.0, oboe 10.1.0
+2021-08-24T05:11:22.844Z appoptics:patching patched crypto 
+2021-08-24T05:11:22.871Z appoptics:patching patched https 
+2021-08-24T05:11:22.872Z appoptics:patching patched http 
+2021-08-24T05:11:22.927Z appoptics:patching patched zlib 
+2021-08-24T05:11:23.002Z appoptics:patching fs.realpath - adding native method
+2021-08-24T05:11:23.003Z appoptics:patching patched fs 
+2021-08-24T05:11:23.081Z appoptics:debug starting runtimeMetrics
+
+
+  probes.https
+    https-server
+      ✓ UDP might lose a message running locally
+(node:835) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+      ✓ should send traces for https routing and response spans (51ms)
+      ✓ should continue tracing when receiving an xtrace id header
+      ✓ should forward sampling data in always trace mode
+      ✓ should not continue tracing when receiving a bad xtrace id header
+      ✓ should not report anything when https probe is disabled
+      ✓ should not send a span or metrics when a string or regex filter matches (101ms)
+      ✓ should trace correctly within asyncrony
+2021-08-24T05:11:23.434Z appoptics:debug https.test: before creating server lastEvent = nodejs:entry 2b-e46f4160dd417e5380c8b4d188be2b0c4b3195dc-34ed93b58b317db2-01
+2021-08-24T05:11:23.438Z appoptics:debug http: ule nodejs:entry 2b-e46f4160dd417e5380c8b4d188be2b0c4b3195dc-34ed93b58b317db2-01
+      ✓ should support query param filtering
+      ✓ should map X-Forwarded-For header to event.kv.Forwarded-For
+      ✓ should map X-Forwarded-Host header to event.kv.Forwarded-Host
+      ✓ should map X-Forwarded-Port header to event.kv.Forwarded-Port
+      ✓ should map X-Forwarded-Proto header to event.kv.Forwarded-Proto
+      ✓ should map X-Request-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Time header to event.kv.Queue-Time
+      ✓ should map a specific header to ClientIP when specified
+      ✓ should set ClientIP when req['client-ip-header'] is undefined
+      ✓ should report request errors
+      ✓ should report response errors
+      ✓ should exit when timed out
+    https-client
+2021-08-24T05:11:23.562Z appoptics:debug http: ule nodejs:entry 2b-77b8b199c74e1ff30e5315e468f6f84e6ef2a9c4-d798044f0caca6c1-01
+      ✓ should trace https request
+      ✓ should support object-based requests
+      ✓ should trace streaming https request
+      ✓ should support query filtering
+      ✓ should report socket errors sending request
+      ✓ should report socket errors when no server is listening
+      ✓ should report socket errors when the server hangs up
+      ✓ should not report an error if req.abort() is called
+      ✓ should report an error when the server has a socket error
+      - should report response errors handling request
+
+
+  30 passing (439ms)
+  1 pending
+
