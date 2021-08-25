@@ -41,15 +41,14 @@ jobs:
       # *** IMPORTANT: 
       # by default any package published to npm registry is tagged with 'latest'. to set other pass --tag. 
       # any pre-release package (has - in version), regardless of name defined with version preid, will be npm tagged with 'prerelease'.
-      # package is scoped to organization (@appoptics/apm-binding) set --access public to avoid 402 Payment Required
       - name: NPM Publish (alpha)
-        run: npm publish --tag prerelease --access public
+        run: npm publish --tag prerelease
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         if: ${{ contains(github.ref, '-') }}
 
       - name: NPM Publish (latest)
-        run: npm publish --access public
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         if: ${{ !contains(github.ref, '-') }}
