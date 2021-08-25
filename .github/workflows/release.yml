@@ -1,0 +1,54 @@
+name: Release - NPM Publish (on push tag)
+
+on: 
+  push: 
+    tags: 
+      # triggered only by major/minor/patch tags and those specifically tagged alpha. 
+      # standard prerelease tags do not trigger.
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-alpha.*'
+
+jobs:
+  npm-publish:
+    name: NPM Publish
+    runs-on: ubuntu-latest 
+    # stopgap. we should not get unless there is a tag ref.
+    # but there are several triggering issues open for GithHub runner.
+    # so recheck.
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+
+    steps:
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Show Environment Info
+        run: |
+          printenv
+          node --version
+          npm --version 
+          cat /etc/os-release
+  
+      - name: Setup Node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'  # Setup .npmrc file to publish to npm
+
+      # prepack script requires files and those in turn require specific packages
+      - name: NPM Install prepack packages
+        run: npm install shimmer debug-custom
+
+      # *** IMPORTANT: 
+      # by default any package published to npm registry is tagged with 'latest'. to set other pass --tag. 
+      # any pre-release package (has - in version), regardless of name defined with version preid, will be npm tagged with 'prerelease'.
+      - name: NPM Publish (alpha)
+        run: npm publish --tag prerelease
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        if: ${{ contains(github.ref, '-') }}
+
+      - name: NPM Publish (latest)
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        if: ${{ !contains(github.ref, '-') }}
