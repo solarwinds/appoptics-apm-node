@@ -35,7 +35,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'  # Setup .npmrc file to publish to npm
 
       # prepack script requires files and those in turn require specific packages
-      - name: NPM Install shimmer
+      - name: NPM Install prepack packages
         run: npm install shimmer debug-custom
 
       # *** IMPORTANT: 
