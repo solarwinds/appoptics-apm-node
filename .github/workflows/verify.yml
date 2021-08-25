@@ -1,0 +1,117 @@
+name: Verify - Install & Trace (after Release)
+
+on:
+  workflow_run:
+    workflows: ["Release - NPM Publish (on push tag)"]
+    types: [completed]
+
+  workflow_dispatch:
+    inputs: 
+      appoptics-version:
+        required: false
+        description: 'appoptics-apm version (e.g. appoptics-apm@prerelease)'
+        default: 'appoptics-apm@latest'
+
+jobs:
+  load-target-group:
+    name: Load Target Group Config JSON from Bindings Repo
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout appoptics/appoptics-bindings-node ${{ github.ref }}
+        uses: actions/checkout@v2
+        with:
+          repository: appoptics/appoptics-bindings-node
+
+      - name: Load target group data
+        id: set-matrix
+        # json load script is does variable substitution based on repo where workflow runs
+        # this workflow runs in the agent repo thus needs to "tweak" environment for correct load.
+        run: |
+          export GITHUB_REPOSITORY=appoptics/appoptics-bindings-node
+          .github/scripts/matrix-from-json.sh .github/config/target-group.json
+
+  install-trae:
+    name: Install and Trace
+    runs-on: ubuntu-latest  # environment job will run in
+    needs: load-target-group
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.load-target-group.outputs.matrix) }}
+    container:
+        image:  ${{ matrix.image }}
+
+    env:
+      # override defaults
+      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
+      APPOPTICS_COLLECTOR: collector-stg.appoptics.com
+
+    steps:
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Show Environment Info
+        run: |
+          printenv
+          node --version
+          npm --version 
+          cat /etc/os-release
+
+      # of all bad options, this is the cleanest way to branch the version of the package
+      - name: NPM Install (appoptics-apm version from Input)
+        run: |
+          version=${{ github.event.inputs.appoptics-version }}
+          npm install
+          npm install $version --unsafe-perm
+        working-directory: .github/utils
+        if: ${{ github.event.inputs.appoptics-version }}
+
+      - name: NPM Install (appoptics-apm version from Package)
+        run: |
+          version=appoptics-apm@$(node -e "console.log(require('../../package.json').version)")
+          npm install
+          npm install $version --unsafe-perm
+        working-directory: .github/utils
+        if: ${{ !github.event.inputs.appoptics-version }}
+
+      # when installing the package, the binding dependency is either built from source or downloaded as pre-built tarball
+      # in either case, the binary has to be present. if it is not, it is a failed install and the step will fail
+      - name: Check Artifacts
+        run: |
+          ls node_modules/@appoptics/apm-bindings/dist/napi-v*/apm_bindings.node 
+          ls node_modules/@appoptics/apm-bindings/dist/napi-v*/ao_metrics.node
+        working-directory: .github/utils
+
+      # confirms thst server can be instrumented via .readyToSample
+      - name: Preflight Staging Server
+        run: |
+          image=${{ matrix.image  }}
+          pre=ghcr.io/appoptics/appoptics-bindings-node/
+          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TOKEN_STG }}:${image#"$pre"}
+          node server.js --preflight
+        working-directory: .github/utils
+
+      # results of step should be visually examined in https://my-stg.appoptics.com/
+      - name: Start Server & use Client
+        # own images name are full url. remove that to make a nice service name
+        # use client multiple times to make an easily noticeable mark on UI
+        run: |
+          image=${{ matrix.image  }}
+          pre=ghcr.io/appoptics/appoptics-bindings-node/
+          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TOKEN_STG }}:${image#"$pre"}
+          node server.js & node client.js --total 20
+        working-directory: .github/utils
+
+      # confirms that production server can be instrumented via .readyToSample
+      # override APPOPTICS_COLLECTOR
+      - name: Preflight Production Server
+        run: |
+          image=${{ matrix.image  }}
+          pre=ghcr.io/appoptics/appoptics-bindings-node/
+          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TOKEN_PROD }}:${image#"$pre"}
+          export APPOPTICS_COLLECTOR=collector.appoptics.com
+          node server.js --preflight
+        working-directory: .github/utils
