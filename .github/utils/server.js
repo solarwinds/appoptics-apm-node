@@ -3,7 +3,7 @@ const ao = require('appoptics-apm')
 const http = require('http')
 const arg = require('arg')
 
-// pass -preflight to only check that server can be instrumented.
+// pass --preflight to only check that server can be instrumented without starting it
 const args = arg({ '--preflight': Boolean })
 
 const preflight = async () => {
@@ -13,7 +13,6 @@ const preflight = async () => {
 }
 
 const setServer = async () => {
-  // server must be instrumented and will exit with error if not
   await preflight()
 
   // simple server using the native http module
@@ -31,7 +30,7 @@ const setServer = async () => {
   })
 }
 
-// iife invokes an async function with try/catch
+// IIFE invokes an async function with try/catch
 // used to manage the UnhandledPromiseRejectionWarning warning
 (async function () {
   try {

@@ -5,7 +5,7 @@ const arg = require('arg')
 const args = arg({ '--pace': Number, '--total': Number, '--trys': Number })
 
 const pace = args['--pace'] || 1 // requests per second
-let total = args['--total'] || 1 // how many tomes to request all 4 verbs
+let total = args['--total'] || 1 // number of times to request all 4 verbs
 let trys = args['--trys'] || 10 // max number of trys to connect to server (prevents CI hangups)
 
 const hostname = '127.0.0.1'
@@ -23,7 +23,7 @@ const run = async () => {
     console.log(`Will request ${total} times`)
     total -= 1
 
-    // don't do much other than hit the endpoint with the verb
+    // don't do much other than hit the endpoint with each verb
     res = await fetch(`http://${hostname}:${port}/`)
     body = await res.text()
     console.log(`Sent GET. Server replied: ${body}`)
@@ -66,7 +66,7 @@ const run = async () => {
   if (trys <= 0) throw new Error('Failed to connect to server')
 }
 
-// iife invokes an async function with try/catch
+// IIFE invokes an async function with try/catch
 // used to manage the UnhandledPromiseRejectionWarning warning
 (async function () {
   try {
