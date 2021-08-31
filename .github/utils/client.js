@@ -2,14 +2,14 @@
 const fetch = require('node-fetch')
 const arg = require('arg')
 
-const args = arg({ '--pace': Number, '--total': Number, '--trys': Number })
+const args = arg({ '--pace': Number, '--total': Number, '--trys': Number, '--port': Number })
 
 const pace = args['--pace'] || 1 // requests per second
 let total = args['--total'] || 1 // number of times to request all 4 verbs
 let trys = args['--trys'] || 10 // max number of trys to connect to server (prevents CI hangups)
 
 const hostname = '127.0.0.1'
-const port = 3000
+const port = args['--port'] || 3000
 
 const run = async () => {
   const sleep = async (ms = 0) => {

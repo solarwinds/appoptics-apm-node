@@ -4,7 +4,7 @@ const http = require('http')
 const arg = require('arg')
 
 // pass --preflight to only check that server can be instrumented without starting it
-const args = arg({ '--preflight': Boolean })
+const args = arg({ '--preflight': Boolean, '--port': Number })
 
 const preflight = async () => {
   // server must be instrumented and will exit with error if not
@@ -17,7 +17,7 @@ const setServer = async () => {
 
   // simple server using the native http module
   const hostname = '127.0.0.1'
-  const port = 3000
+  const port = args['--port'] || 3000
 
   const server = http.createServer((req, res) => {
     res.statusCode = 200
