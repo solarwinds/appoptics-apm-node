@@ -15,10 +15,11 @@ try {
 }
 
 const host = process.env.AO_TEST_ORACLE || 'oracle'
-const database = process.env.AO_TEST_ORACLE_DBNAME || 'xe'
+// those are "hard set" for the test image
+const database = 'xe'
 const config = {
-  user: process.env.AO_TEST_ORACLE_USERNAME || 'system',
-  password: process.env.AO_TEST_ORACLE_PASSWORD || 'oracle',
+  user: 'system',
+  password: 'topsecret',
   connectString: host + '/' + database,
 }
 let descValid = describe.skip;
