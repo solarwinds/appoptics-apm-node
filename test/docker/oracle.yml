@@ -1,2 +1,0 @@
-FROM freundallein/oracledb
-
