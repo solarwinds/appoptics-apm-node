@@ -97,12 +97,6 @@ elif [[ "$ARG" = "bash" ]]; then
     # if different port then use default user/password settings
     export AO_TEST_MYSQL_USERNAME=${AO_TEST_MYSQL_HOST_USERNAME:root}
     export AO_TEST_MYSQL_PASSWORD=${AO_TEST_MYSQL_HOST_PASSWORD+}
-    # this requires an entry in /etc/hosts because this
-    # isn't run in a container it can't use docker names.
-    # use the IP address from "docker inspect ao_oracle_1"
-    export AO_TEST_ORACLE=localhost:1521
-    export AO_TEST_ORACLE_USERNAME=system
-    export AO_TEST_ORACLE_PASSWORD=oracle
     # defaults should be fine.
     #export AO_TEST_POSTGRES_USER=postgres
     #export AO_TEST_POSTGRES_PASSWORD=
@@ -137,12 +131,6 @@ elif [[ "$ARG" = "travis" ]]; then
     #export AO_TEST_MYSQL=localhost:3306
     #export AO_TEST_MYSQL_USERNAME=root
     #export AO_TEST_MYSQL_PASSWORD=admin
-    ## this requires an entry in /etc/hosts because this
-    ## isn't run in a container it can't use docker names.
-    ## use the IP address from "docker inspect ao_oracle_1"
-    #export AO_TEST_ORACLE=oracledb.com
-    #export AO_TEST_ORACLE_USERNAME=system
-    #export AO_TEST_ORACLE_PASSWORD=oracle
     ## defaults should be fine.
     ##export AO_TEST_POSTGRES_USER=postgres
     ##export AO_TEST_POSTGRES_PASSWORD=
