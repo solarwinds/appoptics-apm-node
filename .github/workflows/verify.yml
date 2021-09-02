@@ -48,6 +48,8 @@ jobs:
       # override defaults
       APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
       APPOPTICS_COLLECTOR: collector-stg.appoptics.com
+      # workflow is "simulating" an end user
+      NODE_ENV: production
 
     steps:
       - name: Checkout ${{ github.ref }}
