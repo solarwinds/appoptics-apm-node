@@ -61,6 +61,17 @@ if(node('lt', '16.0.0')) {
       }
     ]
   });
+  test('vision', {
+    ranges: [
+      {
+        range: '>= 4.0.0 < 5.0.0',
+        dependencies: ['hapi@16']
+      }, {
+        range: '>= 5.0.0',
+        dependencies: ['hapi@17']
+      }
+    ]
+  });
 }
 
 if(node('gte', '11.0.0')) {
@@ -72,7 +83,16 @@ if(node('gte', '11.0.0')) {
       },
     ]
   });
+  test('@hapi/vision', {
+    ranges: [
+      {
+        range: '*',
+        dependencies: ['hapi@18']
+      }
+    ]
+  });
 }
+
 
 // koa has so many parts and pieces this can get complicated
 test('koa', {
@@ -137,27 +157,6 @@ test('redis', '>= 0.8.0');
 test('restify', '>= 4.1.0');
 
 test('tedious', '>= 0.1.5');
-
-test('vision', {
-  ranges: [
-    {
-      range: '>= 4.0.0 < 5.0.0',
-      dependencies: ['hapi@16']
-    }, {
-      range: '>= 5.0.0',
-      dependencies: ['hapi@17']
-    }
-  ]
-});
-
-test('@hapi/vision', {
-  ranges: [
-    {
-      range: '*',
-      dependencies: ['hapi@18']
-    }
-  ]
-});
 
 test('winston', '>= 1.0.0');
 
