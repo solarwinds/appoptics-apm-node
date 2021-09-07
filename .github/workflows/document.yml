@@ -147,8 +147,6 @@ jobs:
           'express',
           'generic-pool',
           'hapi',
-          'http',
-          'https',
           'koa',
           'koa-resource-router',
           'koa-route',
@@ -257,6 +255,9 @@ jobs:
       - name: Create Git Branch
         run: |
           git checkout -b test-each-version-${{ steps.date.outputs.date }}
+
+      - name: Clear supported-components-data
+        run: rm -rf docs/supported-components-data
 
       - name: Download Test Matrix Artifacts
         uses: actions/download-artifact@v2
