@@ -262,7 +262,7 @@ function makeSignedHeaders (test) {
       // force it 5 minutes and 1 second ago.
       ts -= 60 * 5 + 1
     }
-    options = options.replace('${ts}', ts)
+    options = options.replace('${ts}', ts) // eslint-disable-line no-template-curly-in-string
   }
   const headers = { 'x-trace-options': options }
 

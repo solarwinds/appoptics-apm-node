@@ -73,7 +73,7 @@ describe('probes.mongodb-core UDP', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -122,20 +122,20 @@ function makeTests (db_host, host, isReplicaSet) {
   // skip specific tests to faciliate test debugging.
   beforeEach(function () {
     const current = this.currentTest
-    const doThese = {
-      databases: true,
-      collections: true,
-      queries: true,
-      indexes: true,
-      cursors: true,
-      aggregations: true
-    }
-    if (current.parent && !(current.parent.title in doThese)) {
-    }
+    // const doThese = {
+    //   databases: true,
+    //   collections: true,
+    //   queries: true,
+    //   indexes: true,
+    //   cursors: true,
+    //   aggregations: true
+    // }
+    // if (current.parent && !(current.parent.title in doThese)) {
+    // }
     // skip specific titles
-    const skipTheseTitles = []
-    if (skipTheseTitles.indexOf(current.title) >= 0) {
-    }
+    // const skipTheseTitles = []
+    // if (skipTheseTitles.indexOf(current.title) >= 0) {
+    // }
     // do only these specific titles
     const doTheseTitles = [
       'should drop',

@@ -164,7 +164,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
           done()
         }, [
           function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Label').oneOf('entry', 'exit')
             msg.should.have.property('Layer', 'fake')
           }
         ], done)

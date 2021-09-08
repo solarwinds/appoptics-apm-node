@@ -1,4 +1,8 @@
 /* global it, describe, before, beforeEach, after, afterEach */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
 
 //

@@ -45,7 +45,7 @@ describe('probes/koa ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -55,7 +55,7 @@ describe('probes/koa ' + pkg.version, function () {
     let app
     let error = false
     try {
-      app = new koa()
+      app = new koa() // eslint-disable-line new-cap
     } catch (e) {
       error = e
     }

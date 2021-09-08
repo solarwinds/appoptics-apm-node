@@ -166,7 +166,7 @@ describe('probes.pg ' + pkg.version, function () {
           done()
         }, [
           function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Label').oneOf('entry', 'exit')
             msg.should.have.property('Layer', 'fake')
           }
         ], done)

@@ -1,4 +1,8 @@
 /* global it, describe, before, beforeEach, afterEach */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
 
 const ao = require('../..')
@@ -135,7 +139,7 @@ describe(`probes.morgan ${version}`, function () {
   }
 
   function makeLogger (format = 'tiny') {
-    return logger = morgan(format, { stream })
+    return morgan(format, { stream })
   }
 
   // used by each test
@@ -197,7 +201,7 @@ describe(`probes.morgan ${version}`, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)

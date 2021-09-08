@@ -1,4 +1,5 @@
 /* global it, describe, before, after */
+
 'use strict'
 
 const helper = require('../helper')
@@ -18,7 +19,7 @@ if (!semver.satisfies(process.version, '>=4')) {
   describe('probes.restify', function () {
     it.skip('not supported for node version < 4', function () {})
   })
-  describe = function () {}
+  process.exit()
 }
 
 const restify = require('restify')
@@ -89,7 +90,7 @@ describe(`probes.restify ${pkg.version}`, function () {
       done()
     }, [
       function (msg) {
-        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Label').oneOf(['entry', 'exit'])
         expect(msg).property('Layer', 'fake')
       }
     ], done)

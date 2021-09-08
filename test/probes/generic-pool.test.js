@@ -1,4 +1,8 @@
 /* global it, describe, before, after */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
 
 const semver = require('semver')
@@ -33,7 +37,7 @@ if (!v3) {
     create: function (cb) {
       gpDebug(`pool create() called n=${n}`)
       if (n >= max) {
-        cb('done')
+        cb('done') // eslint-disable-line node/no-callback-literal
       } else {
         n += 1
         cb(null, { bar: n })
@@ -51,7 +55,7 @@ if (!v3) {
     create: function () {
       gpDebug(`pool create() called n=${n}`)
       if (n >= max) {
-        return Promise.reject()
+        return Promise.reject() // eslint-disable-line prefer-promise-reject-errors
       }
       n += 1
       return Promise.resolve({ bar: n })

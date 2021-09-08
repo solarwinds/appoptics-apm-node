@@ -1,4 +1,3 @@
-/* global it, describe */
 'use strict'
 
 const Resource = require('koa-resource-router')

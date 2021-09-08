@@ -35,7 +35,7 @@ describe('probes.fs once', function () {
       done()
     }, [
       function (msg) {
-        expect(msg).property('Label').oneOf(['entry', 'exit']),
+        expect(msg).property('Label').oneOf(['entry', 'exit'])
         expect(msg).property('Layer', 'fake')
       }
     ], done)

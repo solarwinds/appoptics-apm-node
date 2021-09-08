@@ -151,6 +151,7 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
   //
   // Tests
   //
+  // eslint-disable-next-line no-unused-vars
   function controllerTest (method) {
     return function (done) {
       const server = makeServer()
@@ -292,7 +293,7 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)

@@ -25,10 +25,6 @@ if (major >= 3) {
   const WinstonTransport = require('winston-transport')
   // define a transport class for this
   class TransportV3 extends WinstonTransport {
-    constructor (opts) {
-      super(opts)
-    }
-
     log (info, cb) {
       this.emit('test-log', info)
       cb()
@@ -231,7 +227,7 @@ describe(`winston v${version}`, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
