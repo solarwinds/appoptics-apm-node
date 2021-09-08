@@ -1,11 +1,13 @@
 module.exports = {
   env: {
-    browser: true,
     commonjs: true,
-    es2021: true
+    es2021: true,
+    node: true
   },
+  plugins: ['yaml'],
   extends: [
-    'standard'
+    'standard',
+    'plugin:yaml/recommended'
   ],
   parserOptions: {
     ecmaVersion: 12
