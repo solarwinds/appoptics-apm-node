@@ -8,10 +8,10 @@ const request = require('request')
 const requestpn = require('request-promise-native')
 const http = require('http')
 
-const expect = require('chai').expect;
+const expect = require('chai').expect
 
 describe('probes.request', function () {
-  const ctx = {driver: http, p: 'http'};
+  const ctx = { driver: http, p: 'http' }
   let emitter
 
   //
@@ -37,7 +37,7 @@ describe('probes.request', function () {
     },
     server: {
       entry: function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:entry')
       },
       info: function (msg) {
         msg.should.have.property('Label', 'info')
@@ -46,12 +46,12 @@ describe('probes.request', function () {
         msg.should.have.property('Label', 'error')
       },
       exit: function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:exit');
+        expect(`${msg.Layer}:${msg.Label}`).equal('nodejs:exit')
       }
     },
     client: {
       entry: function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:entry')
       },
       info: function (msg) {
         msg.should.have.property('Label', 'info')
@@ -60,7 +60,7 @@ describe('probes.request', function () {
         msg.should.have.property('Label', 'error')
       },
       exit: function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:exit');
+        expect(`${msg.Layer}:${msg.Label}`).equal('http-client:exit')
       }
     }
   }
@@ -163,7 +163,7 @@ describe('probes.request', function () {
       const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        {level: 'warn', message: `invalid X-Trace string "${xtrace}"`},
+        { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
       ]
       helper.checkLogMessages(logChecks)
 
@@ -250,7 +250,7 @@ describe('probes.request', function () {
     // Verify query param filtering support
     //
     it('should support query param filtering', function (done) {
-      ao.probes['http-client'].enabled = false;
+      ao.probes['http-client'].enabled = false
       conf.includeRemoteUrlParams = false
       const server = http.createServer(function (req, res) {
         res.end('done')
@@ -265,15 +265,15 @@ describe('probes.request', function () {
           check.server.exit(msg)
         }
       ], function (err) {
-        conf.includeRemoteUrlParams = true;
-        ao.probes['http-client'].enabled = true;
+        conf.includeRemoteUrlParams = true
+        ao.probes['http-client'].enabled = true
         server.close(done.bind(null, err))
       })
 
       server.listen(function () {
         const port = server.address().port
-        request(`http://localhost:${port}/foo?bar=baz`);
-      });
+        request(`http://localhost:${port}/foo?bar=baz`)
+      })
     })
 
     //
@@ -444,7 +444,7 @@ describe('probes.request', function () {
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port}
+        ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/client')
 
         helper.test(emitter, mod, [
@@ -469,7 +469,6 @@ describe('probes.request', function () {
 
     it('should trace http using request.get.on', function (done) {
       const server = http.createServer(function (req, res) {
-
         request.get('http://www.google.com')
           .on('response', function (response) {
             if (response.statusCode !== 200) {
@@ -481,19 +480,19 @@ describe('probes.request', function () {
           .on('error', function (err) {
             ao.loggers.error('error', err)
             res.statusCode = 422
-            res.end({geterror: err.toString()})
+            res.end({ geterror: err.toString() })
             server.close()
           })
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port}
+        ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/client')
         let ptaskId, popId, pflags
 
         helper.test(emitter, mod, [
           function (msg) {
-            check.client.entry(msg);     // sometimes a semicolon is needed
+            check.client.entry(msg); // sometimes a semicolon is needed
             [ptaskId, popId, pflags] = check.xtrace(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
@@ -529,10 +528,9 @@ describe('probes.request', function () {
       const options = {
         method: 'get',
         url: 'http://www.google.com',
-        resolveWithFullResponse: true,
+        resolveWithFullResponse: true
       }
       const server = http.createServer(function (req, res) {
-
         requestpn(options)
           .then(function (response) {
             if (response.statusCode !== 200) {
@@ -544,19 +542,19 @@ describe('probes.request', function () {
           .catch(function (err) {
             ao.loggers.error('error', err)
             res.statusCode = 422
-            res.end({geterror: err.toString()})
+            res.end({ geterror: err.toString() })
             server.close()
           })
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port}
+        ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/client')
         let ptaskId, popId, pflags
 
         helper.test(emitter, mod, [
           function (msg) {
-            check.client.entry(msg);     // sometimes a semicolon is needed
+            check.client.entry(msg); // sometimes a semicolon is needed
             [ptaskId, popId, pflags] = check.xtrace(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
@@ -588,7 +586,6 @@ describe('probes.request', function () {
       })
     })
 
-
     it('should support object-based requests', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
@@ -596,7 +593,7 @@ describe('probes.request', function () {
       })
 
       server.listen(function () {
-        const d = ctx.data = {port: server.address().port}
+        const d = ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/client-object')
         const url = 'http://' + d.hostname + ':' + d.port + d.path
 
@@ -627,7 +624,7 @@ describe('probes.request', function () {
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port}
+        ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/stream')
 
         helper.test(emitter, mod, [
@@ -659,7 +656,7 @@ describe('probes.request', function () {
       })
 
       server.listen(function () {
-        ctx.data = {port: server.address().port}
+        ctx.data = { port: server.address().port }
         const mod = helper.run(ctx, 'http/query-filtering')
 
         helper.test(emitter, mod, [
@@ -688,55 +685,55 @@ describe('probes.request', function () {
       // the handler function should not called because the socket is aborted
       // by the client end as soon as a socket is assigned.
       const server = http.createServer({}, function (req, res) {
-        throw new Error('unexpected request');
-      });
+        throw new Error('unexpected request')
+      })
 
       server.listen(function () {
-        const port = server.address().port;
-        const url = `http://localhost:${port}/?foo=bar`;
-        const error = new Error('ECONN-FAKE');
+        const port = server.address().port
+        const url = `http://localhost:${port}/?foo=bar`
+        const error = new Error('ECONN-FAKE')
 
         helper.test(
           emitter,
           function (done) {
             const req = request(url, function (err, res) {
-              done(err.message === 'ECONN-FAKE' ? undefined : err);
-              //res.on('end', () => done(error));
-              //res.resume();
+              done(err.message === 'ECONN-FAKE' ? undefined : err)
+              // res.on('end', () => done(error));
+              // res.resume();
             })
             req.on('error', e => {
-              server.close();
-              done(e !== error ? e : undefined);
-            });
+              server.close()
+              done(e !== error ? e : undefined)
+            })
             // simulate a socket error. just emitting an error doesn't simulate
             // a socket error because the request completes. when a real socket
             // error occurs there will be no server response.
             req.on('socket', socket => {
-              socket.destroy(error);
-            });
+              socket.destroy(error)
+            })
           }, [
             function (msg) {
-              check.client.entry(msg);
-              expect(msg).property('RemoteURL', url.replace(`:${port}`, ''));
-              expect(msg).property('IsService', 'yes');
+              check.client.entry(msg)
+              expect(msg).property('RemoteURL', url.replace(`:${port}`, ''))
+              expect(msg).property('IsService', 'yes')
             },
             function (msg) {
-              check.client.error(msg);
-              expect(msg).property('ErrorClass', 'Error');
-              expect(msg).property('ErrorMsg', error.message);
-              expect(msg).property('Backtrace', error.stack);
+              check.client.error(msg)
+              expect(msg).property('ErrorClass', 'Error')
+              expect(msg).property('ErrorMsg', error.message)
+              expect(msg).property('Backtrace', error.stack)
             },
             function (msg) {
-              check.client.exit(msg);
+              check.client.exit(msg)
               // there is no HTTPStatus because the HTTP transaction didn't
               // complete.
-              //expect(msg).property('HTTPStatus', 200)
+              // expect(msg).property('HTTPStatus', 200)
             }
           ],
           done
         )
-      });
-    });
+      })
+    })
 
     it('should report response errors', function (done) {
       const server = http.createServer(function (req, res) {

@@ -1,15 +1,15 @@
 'use strict'
 
 const assert = require('assert')
-const {startTest, endTest} = require('../1.test-common.js')
+const { startTest, endTest } = require('../1.test-common.js')
 
 describe('probes/dummy vz.z.z', function () {
   before(function () {
-    startTest(__filename, {customFormatter: 'terse'})
-    //ao.requestStore.dumpCtx()
+    startTest(__filename, { customFormatter: 'terse' })
+    // ao.requestStore.dumpCtx()
   })
   after(function () {
-    //ao.requestStore.dumpCtx()
+    // ao.requestStore.dumpCtx()
     endTest()
   })
   beforeEach(function () {
