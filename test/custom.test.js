@@ -1,4 +1,6 @@
+/* global it, describe */
 'use strict'
+
 const ao = require('..')
 const fs = require('fs');
 const Emitter = require('events').EventEmitter

@@ -1,3 +1,4 @@
+/* global it */
 'use strict'
 
 const helper = require('../../helper')

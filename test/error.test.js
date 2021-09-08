@@ -1,4 +1,6 @@
+/* global it, describe, before, beforeEach, after */
 'use strict'
+
 const helper = require('./helper')
 const ao = require('..')
 const Span = ao.Span

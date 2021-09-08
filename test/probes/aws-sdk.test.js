@@ -1,3 +1,4 @@
+/* global it, describe */
 'use strict'
 
 const {ao} = require('../1.test-common.js'); // eslint-disable-line

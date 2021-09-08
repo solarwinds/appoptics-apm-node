@@ -1,3 +1,4 @@
+/* global it, describe, before, after, afterEach */
 'use strict'
 
 const helper = require('./helper')

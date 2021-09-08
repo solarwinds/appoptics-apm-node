@@ -1,4 +1,6 @@
+/* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
+
 const helper = require('./helper')
 const ao = helper.ao
 const aob = ao.addon

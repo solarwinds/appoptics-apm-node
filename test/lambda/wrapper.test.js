@@ -1,3 +1,4 @@
+/* global it, describe */
 'use strict'
 
 const nvm_dir = process.env.NVM_DIR

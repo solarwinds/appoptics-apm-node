@@ -1,3 +1,4 @@
+/* global it, describe */
 'use strict'
 
 process.env.AO_TEST_NO_BINDINGS = '1'

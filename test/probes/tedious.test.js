@@ -1,3 +1,4 @@
+/* global it, describe, before, beforeEach, after */
 'use strict'
 
 if (!process.env.AO_TEST_SQLSERVER_EX) {

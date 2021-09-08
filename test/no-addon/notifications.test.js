@@ -1,3 +1,5 @@
+/* global it, describe */
+
 'use strict'
 
 const aob = require('../../lib/addon-sim')

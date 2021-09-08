@@ -1,3 +1,4 @@
+/* global describe, before */
 'use strict'
 
 const { ao } = require('../1.test-common')

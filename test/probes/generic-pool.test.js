@@ -1,3 +1,4 @@
+/* global it, describe, before, after */
 'use strict'
 
 const semver = require('semver')

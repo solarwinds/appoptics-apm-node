@@ -1,3 +1,4 @@
+/* global it, describe, before, after, afterEach */
 'use strict'
 
 const fs = require('fs')

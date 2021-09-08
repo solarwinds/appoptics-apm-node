@@ -1,3 +1,4 @@
+/* global it, describe */
 'use strict'
 
 // oboe's notifier will send default log messages

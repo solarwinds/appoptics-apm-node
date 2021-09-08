@@ -1,3 +1,4 @@
+/* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
 
 /* global BigInt */

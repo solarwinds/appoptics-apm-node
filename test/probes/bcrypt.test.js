@@ -1,3 +1,4 @@
+/* global it, describe, before, after */
 'use strict'
 
 const { ao, startTest, endTest } = require('../1.test-common.js')

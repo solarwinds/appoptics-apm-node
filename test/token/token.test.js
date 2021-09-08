@@ -1,3 +1,4 @@
+/* global it, describe */
 'use strict'
 
 // the following three must be in sync, i.e., all refer to staging or production
