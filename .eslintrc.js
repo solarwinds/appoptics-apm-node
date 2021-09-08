@@ -7,7 +7,8 @@ module.exports = {
   plugins: ['yaml'],
   extends: [
     'standard',
-    'plugin:yaml/recommended'
+    'plugin:yaml/recommended',
+    'plugin:json/recommended'
   ],
   parserOptions: {
     ecmaVersion: 12
