@@ -7,10 +7,9 @@ const should = require('should') // eslint-disable-line no-unused-vars
 
 const makeSettings = helper.makeSettings
 
-
 describe('error', function () {
-  const conf = {enabled: true}
-  let error;
+  const conf = { enabled: true }
+  let error
   let emitter
   let realSampleTrace
 
@@ -43,7 +42,7 @@ describe('error', function () {
     ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
   })
   after(function (done) {
@@ -52,7 +51,7 @@ describe('error', function () {
   })
 
   beforeEach(function () {
-    error = new Error(this.currentTest.title.replace(/' '/g, '-'));
+    error = new Error(this.currentTest.title.replace(/' '/g, '-'))
   })
 
   //
@@ -75,7 +74,7 @@ describe('error', function () {
   // Tests
   //
   it('should add error properties to event', function () {
-    const md = ao.addon.Event.makeRandom(1);
+    const md = ao.addon.Event.makeRandom(1)
     const event = new Event('error-test', 'info', md)
     const err = new Error('test')
     event.error = err
@@ -86,7 +85,7 @@ describe('error', function () {
   })
 
   it('should set error multiple times (keeping last)', function () {
-    const md = ao.addon.Event.makeRandom(1);
+    const md = ao.addon.Event.makeRandom(1)
     const event = new Event('error-test', 'info', md)
     const first = new Error('first')
     const second = new Error('second')
@@ -281,7 +280,7 @@ describe('error', function () {
     span._internal = function () {
       throw new Error('should not have triggered an _internal call')
     }
-    span.error({foo: 'bar'})
+    span.error({ foo: 'bar' })
     span.error(undefined)
     span.error(new Date())
     span.error(/foo/)
@@ -306,7 +305,7 @@ describe('error', function () {
       ao.reportError(error)
       ao.reportError(error)
       done()
-    }, [ validate, validate ], done)
+    }, [validate, validate], done)
   })
 
   it('should not send error events when not in a span', function () {
@@ -314,7 +313,7 @@ describe('error', function () {
     const span = Span.makeEntrySpan('test', settings, {})
 
     const logChecks = [
-      {level: 'error', message: 'test span error call could not find last event'},
+      { level: 'error', message: 'test span error call could not find last event' }
     ]
     helper.checkLogMessages(logChecks)
 
@@ -327,5 +326,4 @@ describe('error', function () {
     span.error(error)
     Event.prototype.send = send
   })
-
 })

@@ -1,6 +1,6 @@
 'use strict'
 
-const {ao} = require('./1.test-common')
+const { ao } = require('./1.test-common')
 exports.ao = ao
 const debug = ao.logger.debug
 const realPort = ao.port
@@ -27,7 +27,7 @@ exports.clsCheck = function () {
     throw new Error('CLS: NO ACTIVE ao-request-store NAMESPACE')
   }
 }
-function ids (x) {return [x.substr(2, 40), x.substr(42, 16)]}
+function ids (x) { return [x.substr(2, 40), x.substr(42, 16)] }
 exports.ids = ids
 
 exports.noop = function () {}
@@ -99,15 +99,15 @@ exports.appoptics = function (done) {
   server.on('error', emitter.emit.bind(emitter, 'error'))
   server.on('message', function (msg) {
     const port = server.address().port
-    const parsed = BSON.deserialize(msg, {promoteBuffers: true});
+    const parsed = BSON.deserialize(msg, { promoteBuffers: true })
     for (const key in parsed) {
       if (parsed[key] instanceof Buffer) {
-        parsed[key] = parsed[key].toString('utf8');
+        parsed[key] = parsed[key].toString('utf8')
       }
     }
     log.test.messages('mock appoptics (port ' + port + ') received', parsed)
     if (emitter.log) {
-      console.log(parsed)     // eslint-disable-line no-console
+      console.log(parsed) // eslint-disable-line no-console
     }
     emitter.emit('message', parsed)
 
@@ -145,8 +145,8 @@ exports.appoptics = function (done) {
 }
 
 exports.doChecks = function (emitter, checks, done, opt = {}) {
-  const addr = emitter.server.address();
-  emitter.removeAllListeners('message');
+  const addr = emitter.server.address()
+  emitter.removeAllListeners('message')
 
   log.test.info(`doChecks(${checks.length}) server address ${addr.address}:${addr.port}`)
 
@@ -157,14 +157,13 @@ exports.doChecks = function (emitter, checks, done, opt = {}) {
     const check = checks.shift()
     if (opt.debug) {
       // eslint-disable-next-line no-console
-      console.log('checking', check);
+      console.log('checking', check)
     }
     if (check) {
       if (emitter.skipOnMatchFail) {
         try {
           check(msg)
-        }
-        catch (e) {
+        } catch (e) {
           checks.unshift(check)
         }
       } else {
@@ -187,7 +186,7 @@ exports.doChecks = function (emitter, checks, done, opt = {}) {
 
   if (opt.debug) {
     // eslint-disable-next-line no-console
-    console.log('doChecks() debug on');
+    console.log('doChecks() debug on')
   }
   emitter.on('message', onMessage)
 }
@@ -210,7 +209,7 @@ const aoAggregate = Symbol('ao.test.aggregate')
 exports.setAggregate = function (emitter, agConfig) {
   // set the property on the emitter. add messages and opIdMap if not
   // present.
-  emitter[aoAggregate] = Object.assign({messages: [], opIdMap: {}}, agConfig)
+  emitter[aoAggregate] = Object.assign({ messages: [], opIdMap: {} }, agConfig)
   return emitter
 }
 
@@ -254,7 +253,6 @@ exports.aggregate = function (emitter, config, done) {
   emitter.on('message', onMessage)
 }
 
-
 exports.test = function (emitter, test, validations, done) {
   function noop () {}
   // noops skip testing the 'outer' span.
@@ -270,7 +268,7 @@ exports.test = function (emitter, test, validations, done) {
   // */
   // copy the caller's array so we can modify it without surprising
   // the caller.
-  validations = validations.slice();
+  validations = validations.slice()
   validations.unshift(noop)
   validations.push(noop)
 
@@ -288,7 +286,7 @@ exports.test = function (emitter, test, validations, done) {
   }
 
   ao.requestStore.run(function () {
-    const template = {doSample: ao.traceMode === 'enabled', doMetrics: ao.traceMode === 'enabled'};
+    const template = { doSample: ao.traceMode === 'enabled', doMetrics: ao.traceMode === 'enabled' }
     const span = ao.Span.makeEntrySpan('outer', exports.makeSettings(template))
     // span.async = true
     log.test.span('helper.test outer: %l', span)
@@ -301,9 +299,9 @@ exports.test = function (emitter, test, validations, done) {
         return done(err)
       }
       span.exit()
-      //done
+      // done
     })
-  }, {newContext: true});
+  }, { newContext: true })
 }
 
 exports.httpTest = function (emitter, test, validations, done) {
@@ -443,9 +441,9 @@ function edgeTracker (parent, fn) {
 exports.checkEntry = checkEntry
 function checkEntry (name, fn) {
   return function (msg) {
-    expect(msg).property('X-Trace');
-    const pair = `${msg.Layer}:${msg.Label}`;
-    expect(pair).equal(`${name}:entry`);
+    expect(msg).property('X-Trace')
+    const pair = `${msg.Layer}:${msg.Label}`
+    expect(pair).equal(`${name}:entry`)
     if (fn) fn(msg)
   }
 }
@@ -453,9 +451,9 @@ function checkEntry (name, fn) {
 exports.checkExit = checkExit
 function checkExit (name, fn) {
   return function (msg) {
-    expect(msg).property('X-Trace');
-    const pair = `${msg.Layer}:${msg.Label}`;
-    expect(pair).equal(`${name}:exit`);
+    expect(msg).property('X-Trace')
+    const pair = `${msg.Layer}:${msg.Label}`
+    expect(pair).equal(`${name}:exit`)
     if (fn) fn(msg)
   }
 }
@@ -492,7 +490,7 @@ function checkData (data, fn) {
     // does the caller want the message to perform additional checks,
     // logging, or something else?
     if (fn) {
-      fn(msg);
+      fn(msg)
     }
   }
 }
@@ -517,7 +515,7 @@ function checkLogMessages (checks) {
       return
     }
     // eslint-disable-next-line no-debugger
-    if (checkLogMessages.debug) debugger;
+    if (checkLogMessages.debug) debugger
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
@@ -574,13 +572,13 @@ exports.makeSettings = function (settings) {
   const s = {
     doSample: true,
     doMetrics: true,
-    source: 1,              // local agent config
+    source: 1, // local agent config
     rate: ao.sampleRate,
     tokenBucketRate: 8,
-    tokenBucketCapacity: 100,
+    tokenBucketCapacity: 100
   }
 
-  Object.assign(s, settings);
-  s.traceTaskId = s.metadata = ao.addon.Event.makeRandom(s.doSample);
-  return s;
+  Object.assign(s, settings)
+  s.traceTaskId = s.metadata = ao.addon.Event.makeRandom(s.doSample)
+  return s
 }

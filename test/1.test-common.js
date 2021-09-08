@@ -39,9 +39,8 @@ function endTest (options = {}) {
 }
 
 const debugOptions = {
-  enable: false,
+  enable: false
 }
-
 
 function applyOptions (options) {
   // work when using standard cls-hooked.
@@ -78,7 +77,7 @@ function clsFormatTerse (active) {
     name: active.lastSpan ? ls.name : '<none>',
     label: active.lastEvent ? le.Label : '<none>',
     iuc: active._iuc,
-    xuc: active._xuc,
+    xuc: active._xuc
   }
   return util.inspect(terse)
 }
@@ -108,7 +107,7 @@ function clsFormatAbbrev (active) {
 }
 
 // make function available without explicit imports
-ao.g.testing = startTest     // replace no-op
+ao.g.testing = startTest // replace no-op
 ao.g.startTest = startTest
 ao.g.endTest = endTest
 

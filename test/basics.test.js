@@ -7,8 +7,7 @@ const expect = require('chai').expect
 const helper = require('./helper')
 const makeSettings = helper.makeSettings
 
-
-let ifaob    // execute or skip test depending on whether bindings are loaded.
+let ifaob // execute or skip test depending on whether bindings are loaded.
 let MAX_SAMPLE_RATE
 
 if (ao.addon) {
@@ -18,7 +17,6 @@ if (ao.addon) {
   ifaob = it.skip
   MAX_SAMPLE_RATE = 1000000
 }
-
 
 describe('basics', function () {
   it('should set trace mode as string or integer and always get a string', function () {
@@ -52,11 +50,10 @@ describe('basics', function () {
 
   // TODO: check helper.checkLogMessages and why substitution happens at .github but not locally
   ifaob.skip('should handle invalid sample rates correctly', function () {
-
     const logChecks = [
-      {level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN]},
-      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000]},
-      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0]},
+      { level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN] },
+      { level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000] },
+      { level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0] }
     ]
     helper.checkLogMessages(logChecks)
 
@@ -93,7 +90,7 @@ describe('basics', function () {
     const span = Span.makeEntrySpan('test', makeSettings())
 
     span.run(function () {
-      expect(ao.tracing).equal(true);
+      expect(ao.tracing).equal(true)
     })
   })
 
@@ -139,7 +136,7 @@ describe('basics', function () {
 
   it('should not re-execute appoptics even if deleted from the require.cache', function () {
     const logChecks = [
-      {level: 'warn', message: 'appoptics-apm is being executed more than once'},
+      { level: 'warn', message: 'appoptics-apm is being executed more than once' }
     ]
     helper.checkLogMessages(logChecks)
     const key = require.resolve('..')

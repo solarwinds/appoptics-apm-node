@@ -2,8 +2,8 @@
 
 const helper = require('./helper')
 const should = require('should')
-const expect = require('chai').expect;
-const util = require('util');
+const expect = require('chai').expect
+const util = require('util')
 
 const ao = require('..')
 const addon = ao.addon
@@ -24,9 +24,8 @@ describe('span', function () {
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // don't count from any previous tests.
-    ao._stats.span.totalCreated = 0;
-    ao._stats.span.topSpansCreated = 0;
-
+    ao._stats.span.totalCreated = 0
+    ao._stats.span.topSpansCreated = 0
   })
   after(function (done) {
     emitter.close(done)
@@ -62,24 +61,24 @@ describe('span', function () {
 
     span.should.have.property('events')
 
-    expect(span.events.entry).property('event');
-    const taskId = span.events.entry.taskId;
-    expect(taskId).not.equal('0'.repeat(40));
-    expect(span.events.entry.opId).not.equal('0'.repeat(16));
-    expect(span.events.entry.event.toString()).match(/2B[0-9A-F]{56}01/);
+    expect(span.events.entry).property('event')
+    const taskId = span.events.entry.taskId
+    expect(taskId).not.equal('0'.repeat(40))
+    expect(span.events.entry.opId).not.equal('0'.repeat(16))
+    expect(span.events.entry.event.toString()).match(/2B[0-9A-F]{56}01/)
 
-    expect(span.events.exit).property('event');
-    expect(span.events.exit.taskId).equal(taskId);
-    expect(span.events.exit.opId).not.equal('0'.repeat(16));
-    expect(span.events.exit.opId).not.equal(span.events.entry.opId);
+    expect(span.events.exit).property('event')
+    expect(span.events.exit.taskId).equal(taskId)
+    expect(span.events.exit.opId).not.equal('0'.repeat(16))
+    expect(span.events.exit.opId).not.equal(span.events.entry.opId)
   })
 
-  //===========================
+  //= ==========================
   // Verify base span reporting
-  //===========================
+  //= ==========================
   it('should report sync boundaries', function (done) {
     const name = 'test'
-    const data = {Foo: 'bar'}
+    const data = { Foo: 'bar' }
     const span = Span.makeEntrySpan(name, makeSettings(), data)
 
     const e = span.events
@@ -96,12 +95,12 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    span.runSync(function () {});
+    span.runSync(function () {})
   })
 
   it('should report async boundaries', function (done) {
     const name = 'test'
-    const data = {Foo: 'bar'}
+    const data = { Foo: 'bar' }
     const span = Span.makeEntrySpan(name, makeSettings(), data)
 
     const e = span.events
@@ -132,12 +131,12 @@ describe('span', function () {
     })
   })
 
-  //=============================================
+  //= ============================================
   // Verify behaviour when reporting nested spans
-  //=============================================
+  //= ============================================
   it('should report nested sync boundaries', function (done) {
-    const outerData = {Foo: 'bar'}
-    const innerData = {Baz: 'buz'}
+    const outerData = { Foo: 'bar' }
+    const innerData = { Baz: 'buz' }
     let inner
 
     const checks = [
@@ -160,7 +159,7 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
 
     outer.run(function () {
       inner = ao.lastSpan.descend('inner', innerData)
@@ -169,8 +168,8 @@ describe('span', function () {
   })
 
   it('should report nested boundaries of async event within sync event', function (done) {
-    const outerData = {Foo: 'bar'}
-    const innerData = {Baz: 'buz'}
+    const outerData = { Foo: 'bar' }
+    const innerData = { Baz: 'buz' }
     let inner
 
     const checks = [
@@ -197,15 +196,15 @@ describe('span', function () {
 
     helper.doChecks(emitter, checks, done)
 
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
 
     outer.run(function () {
-      inner = ao.lastSpan.descend('inner', innerData);
+      inner = ao.lastSpan.descend('inner', innerData)
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
-          expect(err).not.exist;
-          expect(res).exist;
-          expect(res).equal('foo');
+          expect(err).not.exist
+          expect(res).exist
+          expect(res).equal('foo')
         })
 
         process.nextTick(function () {
@@ -216,10 +215,10 @@ describe('span', function () {
   })
 
   it('should report nested boundaries of sync event within async event', function (done) {
-    const outerData = {Foo: 'bar'}
-    const innerData = {Baz: 'buz'}
+    const outerData = { Foo: 'bar' }
+    const innerData = { Baz: 'buz' }
     let inner
-    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData);
+    const outer = Span.makeEntrySpan('outer', makeSettings(), outerData)
 
     const checks = [
       // Outer entry (async)
@@ -247,12 +246,12 @@ describe('span', function () {
 
     outer.run(function (wrap) {
       const delayed = wrap(function (err, res) {
-        expect(err).not.exist;
-        expect(res).exist;
-        expect(res).equal('foo');
+        expect(err).not.exist
+        expect(res).exist
+        expect(res).equal('foo')
 
         inner = ao.lastSpan.descend('inner', innerData)
-        inner.run(function () {});
+        inner.run(function () {})
       })
 
       process.nextTick(function () {
@@ -261,12 +260,12 @@ describe('span', function () {
     })
   })
 
-  //========================================================================
-  //========================================================================
+  //= =======================================================================
+  //= =======================================================================
   // skeletonized span handling. these are unsampled traces that create an
   // entry span and a single skeleton span that is used for all other spans.
-  //========================================================================
-  //========================================================================
+  //= =======================================================================
+  //= =======================================================================
 
   // unsampled messages should not be sent but the skeleton span should
   // allow everything to work through to calling sendReport(). if there is
@@ -278,50 +277,50 @@ describe('span', function () {
   //
   // set options.verbose to print what's going to be tested.
   function setupMockEventSending (sequencing, options = {}) {
-    let sendReportCalls = 0;
-    let sendCalls = 0;
-    let counter = 0;
-    const errors = [];
+    let sendReportCalls = 0
+    let sendCalls = 0
+    let counter = 0
+    const errors = []
 
-    const originalSendReport = Event.prototype.sendReport;
+    const originalSendReport = Event.prototype.sendReport
     Event.prototype.sendReport = function testSendReport (...args) {
       if (!this.ignore) {
-        ao.lastEvent = this;
+        ao.lastEvent = this
       }
       if (counter >= sequencing.length) {
-        errors.push(util.format({found: this, expected: 'nothing'}));
-        return;
+        errors.push(util.format({ found: this, expected: 'nothing' }))
+        return
       }
-      const event = {};
+      const event = {}
       for (const key in sequencing[counter]) {
-        event[key] = this[key];
+        event[key] = this[key]
       }
       if (options.verbose) {
         // eslint-disable-next-line no-console
-        console.log('checking', sequencing[counter], '==', event);
+        console.log('checking', sequencing[counter], '==', event)
       }
 
       try {
-        expect(event).deep.equal(sequencing[counter]);
+        expect(event).deep.equal(sequencing[counter])
       } catch (e) {
-        errors.push(util.format({counter, event, expected: sequencing[counter]}));
+        errors.push(util.format({ counter, event, expected: sequencing[counter] }))
       }
-      counter += 1;
-      sendReportCalls += 1;
-    };
-    const originalSend = Event.prototype.send;
+      counter += 1
+      sendReportCalls += 1
+    }
+    const originalSend = Event.prototype.send
     Event.prototype.send = function testSend (...args) {
-      sendCalls += 1;
-    };
+      sendCalls += 1
+    }
 
     return function getResults () {
-      Event.prototype.sendReport = originalSendReport;
-      Event.prototype.send = originalSend;
+      Event.prototype.sendReport = originalSendReport
+      Event.prototype.send = originalSend
       return {
         sendReportCalls,
         sendCalls,
-        errors,
-      };
+        errors
+      }
     }
   }
 
@@ -329,122 +328,122 @@ describe('span', function () {
   // base span reporting
   //
   it('should skeletonize unsampled sync boundaries', function () {
-    let inner;
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan('outer', settings);
+    let inner
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan('outer', settings)
 
     const sequencing = [
-      {Layer: 'outer', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: 'outer', Label: 'exit'},
-    ];
+      { Layer: 'outer', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: 'outer', Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
     outer.run(function () {
-      inner = ao.lastSpan.descend('inner');
-      inner.run(function () {});
-    });
+      inner = ao.lastSpan.descend('inner')
+      inner.run(function () {})
+    })
 
-    const {sendReportCalls, sendCalls} = getResults();
-    expect(sendReportCalls).equal(4);
-    expect(sendCalls).equal(0);
-  });
+    const { sendReportCalls, sendCalls } = getResults()
+    expect(sendReportCalls).equal(4)
+    expect(sendCalls).equal(0)
+  })
 
   it('should skeletonize unsampled async boundaries', function (done) {
-    const name = 'test-async-boundaries';
-    const settings = makeSettings({doSample: false});
-    const span = Span.makeEntrySpan(name, settings);
+    const name = 'test-async-boundaries'
+    const settings = makeSettings({ doSample: false })
+    const span = Span.makeEntrySpan(name, settings)
 
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: name, Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: name, Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
     span.runAsync(function (wrap) {
       const cb = wrap(function (err, res) {
-        expect(err).not.exist;
-        res.should.equal('foo');
-        const {sendReportCalls, sendCalls, errors} = getResults();
-        expect(sendReportCalls).equal(4);
-        expect(sendCalls).equal(0);
-        expect(errors.length).equal(0, `${errors}`);
-        done();
-      });
+        expect(err).not.exist
+        res.should.equal('foo')
+        const { sendReportCalls, sendCalls, errors } = getResults()
+        expect(sendReportCalls).equal(4)
+        expect(sendCalls).equal(0)
+        expect(errors.length).equal(0, `${errors}`)
+        done()
+      })
 
       // our async span invokes a synchronous span
       process.nextTick(function () {
-        const inner = ao.lastSpan.descend('inner');
-        inner.run(() => {});
-        cb(null, 'foo');
-      });
-    });
+        const inner = ao.lastSpan.descend('inner')
+        inner.run(() => {})
+        cb(null, 'foo')
+      })
+    })
   })
 
   //
   // Verify behaviour when reporting nested spans
   //
   it('should skeletonize unsampled nested sync boundaries', function () {
-    const name = 'nested-sync-boundaries';
-    let inner;
+    const name = 'nested-sync-boundaries'
+    let inner
 
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: name, Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: name, Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings)
 
     outer.run(function () {
-      inner = ao.lastSpan.descend('inner');
-      inner.run(function () {});
-    });
+      inner = ao.lastSpan.descend('inner')
+      inner.run(function () {})
+    })
 
-    const {sendReportCalls, sendCalls, errors} = getResults();
-    expect(sendReportCalls).equal(4);
-    expect(sendCalls).equal(0);
-    expect(errors.length).equal(0, `${errors}`);
-  });
+    const { sendReportCalls, sendCalls, errors } = getResults()
+    expect(sendReportCalls).equal(4)
+    expect(sendCalls).equal(0)
+    expect(errors.length).equal(0, `${errors}`)
+  })
 
   it('should skeletonize unsampled async span within sync spans', function (done) {
-    const name = 'nested-async-in-sync';
-    let inner;
+    const name = 'nested-async-in-sync'
+    let inner
 
     // the delay to complete the async span results in the sync event
     // completing first.
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: name, Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: name, Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings)
 
     outer.run(function () {
-      inner = ao.lastSpan.descend('inner');
+      inner = ao.lastSpan.descend('inner')
       inner.run(function (wrap) {
         const delayed = wrap(function (err, res) {
-          expect(err).not.exist;
-          expect(res).equal('foo');
-          const {sendReportCalls, sendCalls, errors} = getResults();
-          expect(sendReportCalls).equal(4);
-          expect(sendCalls).equal(0);
-          expect(errors.length).equal(0, `${errors}`);
-          done();
+          expect(err).not.exist
+          expect(res).equal('foo')
+          const { sendReportCalls, sendCalls, errors } = getResults()
+          expect(sendReportCalls).equal(4)
+          expect(sendCalls).equal(0)
+          expect(errors.length).equal(0, `${errors}`)
+          done()
         })
 
         process.nextTick(function () {
@@ -455,202 +454,200 @@ describe('span', function () {
   })
 
   it('should skeletonize a sync span within async span', function (done) {
-    const name = 'nested-sync-in-async';
-    let inner;
+    const name = 'nested-sync-in-async'
+    let inner
 
     // the async span was the last span executed when the sync span is
     // run even though the async span completed.
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: name, Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: name, Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings)
 
     outer.run(function (wrapper) {
       const wrappedAsyncCompletion = wrapper(function (err, res) {
-        expect(err).not.exist;
-        expect(res).equal('foo');
+        expect(err).not.exist
+        expect(res).equal('foo')
 
         inner = ao.lastSpan.descend('inner')
-        inner.run(function () {});
+        inner.run(function () {})
 
-        const {sendReportCalls, sendCalls, errors} = getResults();
-        expect(sendReportCalls).equal(4);
-        expect(sendCalls).equal(0);
-        expect(errors.length).equal(0, `${errors}`);
-        done();
-      });
+        const { sendReportCalls, sendCalls, errors } = getResults()
+        expect(sendReportCalls).equal(4)
+        expect(sendCalls).equal(0)
+        expect(errors.length).equal(0, `${errors}`)
+        done()
+      })
 
       process.nextTick(function () {
         wrappedAsyncCompletion(null, 'foo')
-      });
-    });
-  });
+      })
+    })
+  })
 
   it('should skeletonize multiple levels of sync events', function () {
-    const name = 'multiple-sync-levels';
-    const outerData = {Foo: 'bar'};
-    const maxDepth = 3;
-    let depth = 0;
+    const name = 'multiple-sync-levels'
+    const outerData = { Foo: 'bar' }
+    const maxDepth = 3
+    let depth = 0
 
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: name, Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: name, Label: 'exit' }
+    ]
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings, outerData);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings, outerData)
 
     function digDeeper () {
-      depth += 1;
+      depth += 1
       if (depth > maxDepth) {
-        return;
+        return
       }
-      const span = ao.lastSpan.descend(`inner-${depth}`);
-      span.run(digDeeper);
+      const span = ao.lastSpan.descend(`inner-${depth}`)
+      span.run(digDeeper)
     }
 
-    outer.run(digDeeper);
+    outer.run(digDeeper)
 
-    const {sendReportCalls, sendCalls, errors} = getResults();
-    expect(errors.length).equal(0, `${errors}`);
-    expect(sendReportCalls).equal(8);
-    expect(sendCalls).equal(0);
-
-  });
+    const { sendReportCalls, sendCalls, errors } = getResults()
+    expect(errors.length).equal(0, `${errors}`)
+    expect(sendReportCalls).equal(8)
+    expect(sendCalls).equal(0)
+  })
 
   it('should skeletonize multiple levels of async events', function () {
-    const name = 'multiple-async';
-    const maxDepth = 3;
-    let depth = 0;
+    const name = 'multiple-async'
+    const maxDepth = 3
+    let depth = 0
 
     const sequencing = [
-      {Layer: name, Label: 'entry'},
-      {Layer: name, Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-      {Layer: '__skeleton__', Label: 'entry'},
-      {Layer: '__skeleton__', Label: 'exit'},
-    ];
+      { Layer: name, Label: 'entry' },
+      { Layer: name, Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' },
+      { Layer: '__skeleton__', Label: 'entry' },
+      { Layer: '__skeleton__', Label: 'exit' }
+    ]
 
-    let resolver;
+    let resolver
 
     const p = new Promise(resolve => {
-      resolver = resolve;
-    });
+      resolver = resolve
+    })
 
-    const getResults = setupMockEventSending(sequencing, {verbose: false});
+    const getResults = setupMockEventSending(sequencing, { verbose: false })
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings)
 
     // invoke async spans
     function asyncDigDeeper (wrapper) {
-      depth += 1;
+      depth += 1
 
       const wrappedAsyncFunction = wrapper(function (err, res) {
-        expect(err).not.exist;
-        expect(res).equal(`arg-${depth}`);
+        expect(err).not.exist
+        expect(res).equal(`arg-${depth}`)
 
         // if maxDepth's been reached don't dig deeper.
         if (depth > maxDepth) {
-          resolver();
-          return;
+          resolver()
+          return
         }
 
-        const span = ao.lastSpan.descend(`inner-${depth}`);
-        span.run(asyncDigDeeper);
-      });
+        const span = ao.lastSpan.descend(`inner-${depth}`)
+        span.run(asyncDigDeeper)
+      })
 
-      process.nextTick(() => wrappedAsyncFunction(null, `arg-${depth}`));
+      process.nextTick(() => wrappedAsyncFunction(null, `arg-${depth}`))
     }
 
-    outer.run(asyncDigDeeper);
+    outer.run(asyncDigDeeper)
 
     return p.then(() => {
-      const {sendReportCalls, sendCalls, errors} = getResults();
-      expect(errors.length).equal(0, `${errors}`);
-      expect(sendReportCalls).equal(8, 'sendReportCalls');
-      expect(sendCalls).equal(0, 'send should never be called');
-    });
-
-  });
+      const { sendReportCalls, sendCalls, errors } = getResults()
+      expect(errors.length).equal(0, `${errors}`)
+      expect(sendReportCalls).equal(8, 'sendReportCalls')
+      expect(sendCalls).equal(0, 'send should never be called')
+    })
+  })
 
   it('should skeletonize multiple levels of sync and async events', function () {
-    const name = 'multiple-sync-async';
-    const maxDepth = 3;
-    let depth = 0;
+    const name = 'multiple-sync-async'
+    const maxDepth = 3
+    let depth = 0
 
     const sequencing = [
-      {Layer: name, Label: 'entry'},          // enter outer
-      {Layer: '__skeleton__', Label: 'entry'},    // unconditional asyncDigDeeper
-      {Layer: '__skeleton__', Label: 'exit'},     // exit unconditional asyncDigDeeper
-      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 1 sync
-      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 2 async
-      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 1 sync
-      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 2 async
-      {Layer: '__skeleton__', Label: 'entry'},    // enter depth 3 sync
-      {Layer: '__skeleton__', Label: 'exit'},     // exit depth 3 sync
-      {Layer: name, Label: 'exit'},           // exit outer
-    ];
+      { Layer: name, Label: 'entry' }, // enter outer
+      { Layer: '__skeleton__', Label: 'entry' }, // unconditional asyncDigDeeper
+      { Layer: '__skeleton__', Label: 'exit' }, // exit unconditional asyncDigDeeper
+      { Layer: '__skeleton__', Label: 'entry' }, // enter depth 1 sync
+      { Layer: '__skeleton__', Label: 'entry' }, // enter depth 2 async
+      { Layer: '__skeleton__', Label: 'exit' }, // exit depth 1 sync
+      { Layer: '__skeleton__', Label: 'exit' }, // exit depth 2 async
+      { Layer: '__skeleton__', Label: 'entry' }, // enter depth 3 sync
+      { Layer: '__skeleton__', Label: 'exit' }, // exit depth 3 sync
+      { Layer: name, Label: 'exit' } // exit outer
+    ]
 
-    let resolver;
+    let resolver
 
     const p = new Promise(resolve => {
-      resolver = resolve;
-    });
-    const verbose = false;
+      resolver = resolve
+    })
+    const verbose = false
 
-    const getResults = setupMockEventSending(sequencing, {verbose});
+    const getResults = setupMockEventSending(sequencing, { verbose })
 
     function alternatingRunner (span) {
-      const sync = depth & 1;
-      const fn = sync ? syncDigDeeper : asyncDigDeeper;
-      span.run(fn);
+      const sync = depth & 1
+      const fn = sync ? syncDigDeeper : asyncDigDeeper
+      span.run(fn)
     }
 
     // invoke sync spans
     function syncDigDeeper () {
-      const thisDepth = depth;
-      depth += 1;
+      const thisDepth = depth
+      depth += 1
 
       if (verbose) {
         // eslint-disable-next-line no-console
-        console.log(`entering ${thisDepth} sync`);
+        console.log(`entering ${thisDepth} sync`)
       }
 
       // if more depth allowed descend another level.
       if (depth <= maxDepth) {
-        const span = ao.lastSpan.descend(`inner-${depth}`);
-        alternatingRunner(span);
+        const span = ao.lastSpan.descend(`inner-${depth}`)
+        alternatingRunner(span)
       }
 
       if (verbose) {
         // eslint-disable-next-line no-console
-        console.log(`exiting ${thisDepth} sync`);
+        console.log(`exiting ${thisDepth} sync`)
       }
     }
 
     // invoke async spans
     function asyncDigDeeper (wrapper) {
-      const thisDepth = depth;
-      depth += 1;
+      const thisDepth = depth
+      depth += 1
 
       if (verbose) {
         // eslint-disable-next-line no-console
@@ -662,57 +659,56 @@ describe('span', function () {
           // eslint-disable-next-line no-console
           console.log(`exiting ${thisDepth} async`)
         }
-        expect(err).not.exist;
-        expect(res).equal(`arg-${depth}`);
+        expect(err).not.exist
+        expect(res).equal(`arg-${depth}`)
 
         // if maxDepth's been reached don't dig deeper.
         if (depth > maxDepth) {
-          return;
+          return
         }
 
-        const span = ao.lastSpan.descend(`inner-${depth}`);
-        alternatingRunner(span);
-      });
+        const span = ao.lastSpan.descend(`inner-${depth}`)
+        alternatingRunner(span)
+      })
 
       process.nextTick(() => {
         wrappedAsyncFunction(null, `arg-${depth}`)
-      });
+      })
     }
 
-    const settings = makeSettings({doSample: false});
-    const outer = Span.makeEntrySpan(name, settings);
+    const settings = makeSettings({ doSample: false })
+    const outer = Span.makeEntrySpan(name, settings)
 
     outer.run(function (wrapper) {
-      const span = ao.lastSpan.descend(`inner-${depth}`);
-      span.run(asyncDigDeeper);
+      const span = ao.lastSpan.descend(`inner-${depth}`)
+      span.run(asyncDigDeeper)
       const outerAsyncWrapped = wrapper(function (err, res) {
-        expect(err).not.exist;
-        expect(res).equal('outer-done');
-        resolver();
-      });
+        expect(err).not.exist
+        expect(res).equal('outer-done')
+        resolver()
+      })
 
       // do this so it doesn't take a full second and half. basically
       // make the outer span take longer than all the inner spans.
       const iid = setInterval(function () {
         if (depth > maxDepth) {
-          outerAsyncWrapped(null, 'outer-done');
-          clearInterval(iid);
+          outerAsyncWrapped(null, 'outer-done')
+          clearInterval(iid)
         }
-      }, 50);
-    });
+      }, 50)
+    })
 
     return p.then(() => {
-      const {sendReportCalls, sendCalls, errors} = getResults();
-      expect(errors.length).equal(0, `${errors}`);
-      expect(sendReportCalls).equal(10, 'sendReportCalls');
-      expect(sendCalls).equal(0, 'send should never be called');
-    });
+      const { sendReportCalls, sendCalls, errors } = getResults()
+      expect(errors.length).equal(0, `${errors}`)
+      expect(sendReportCalls).equal(10, 'sendReportCalls')
+      expect(sendCalls).equal(0, 'send should never be called')
+    })
+  })
 
-  });
-
-  //===========================================================
+  //= ==========================================================
   // Special events
-  //===========================================================
+  //= ==========================================================
   it('should send info events', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
     const data = {
@@ -722,7 +718,7 @@ describe('span', function () {
     const checks = [
       helper.checkEntry('test'),
       helper.checkInfo(data),
-      helper.checkExit('test'),
+      helper.checkExit('test')
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -739,7 +735,7 @@ describe('span', function () {
     const checks = [
       helper.checkEntry('test'),
       helper.checkError(err),
-      helper.checkExit('test'),
+      helper.checkExit('test')
     ]
 
     helper.doChecks(emitter, checks, done)
@@ -767,15 +763,15 @@ describe('span', function () {
     bExit.kv.should.have.property('ErrorMsg', 'Exit error string')
   })
 
-  //===================================================
+  //= ==================================================
   // Safety and correctness
-  //===================================================
+  //= ==================================================
   it('should only send valid properties', function (done) {
     const span = Span.makeEntrySpan('test', makeSettings(), {})
 
     const data = {
       Array: [],
-      Object: {bar: 'baz'},
+      Object: { bar: 'baz' },
       Function: function () {},
       Date: new Date(),
       String: 'bix'
@@ -793,19 +789,19 @@ describe('span', function () {
         msg.should.not.have.property('Function')
         msg.should.not.have.property('Date')
       }),
-      helper.checkExit('test'),
+      helper.checkExit('test')
     ]
 
     helper.doChecks(emitter, checks, done)
 
     const logChecks = [
-      {level: 'error', message: 'Error: Invalid type for KV'},
-      {level: 'error', message: 'Error: Invalid type for KV'},
-      {level: 'error', message: 'Error: Invalid type for KV'},
-      {level: 'error', message: 'Error: Invalid type for KV'},
+      { level: 'error', message: 'Error: Invalid type for KV' },
+      { level: 'error', message: 'Error: Invalid type for KV' },
+      { level: 'error', message: 'Error: Invalid type for KV' },
+      { level: 'error', message: 'Error: Invalid type for KV' }
     ];
 
-    [, clear] = helper.checkLogMessages(logChecks);
+    [, clear] = helper.checkLogMessages(logChecks)
 
     span.run(function () {
       span.info(data)
@@ -813,10 +809,10 @@ describe('span', function () {
   })
 
   it('should not send info events when not in a span', function () {
-    const span = Span.makeEntrySpan('test', makeSettings({doSample: false}), {})
+    const span = Span.makeEntrySpan('test', makeSettings({ doSample: false }), {})
     delete span.topSpan
 
-    const data = {Foo: 'bar'}
+    const data = { Foo: 'bar' }
 
     const send = Event.prototype.send
     Event.prototype.send = function () {
@@ -825,9 +821,9 @@ describe('span', function () {
     }
 
     const logChecks = [
-      {level: 'error', message: 'test span info call could not find last event'}
+      { level: 'error', message: 'test span info call could not find last event' }
     ];
-    [, clear] = helper.checkLogMessages(logChecks);
+    [, clear] = helper.checkLogMessages(logChecks)
 
     span.info(data)
     Event.prototype.send = send
@@ -844,7 +840,7 @@ describe('span', function () {
       helper.checkEntry('test'),
       helper.checkInfo(data),
       helper.checkInfo(data),
-      helper.checkExit('test'),
+      helper.checkExit('test')
     ], done)
 
     span.run(function () {
@@ -869,16 +865,16 @@ describe('span', function () {
     span.info(1)
   })
 
-  //=====================================================
+  //= ====================================================
   // Structural integrity
-  //=====================================================
+  //= ====================================================
   it('should chain internal event edges', function (done) {
     const n = 10 + Math.floor(Math.random() * 10)
     const span = Span.makeEntrySpan('test', makeSettings(), {})
 
     const tracker = helper.edgeTracker()
 
-    const checks = [ tracker, tracker ]
+    const checks = [tracker, tracker]
     for (let i = 0; i < n; i++) {
       checks.push(tracker)
     }
@@ -889,7 +885,7 @@ describe('span', function () {
       if (Math.random() > 0.5) {
         span.error(new Error('error ' + i))
       } else {
-        span.info({index: i})
+        span.info({ index: i })
       }
     }
 
@@ -903,8 +899,8 @@ describe('span', function () {
   it('should chain internal events around sync sub span', function (done) {
     const span = Span.makeEntrySpan('outer', makeSettings(), {})
 
-    const before = {state: 'before'}
-    const after = {state: 'after'}
+    const before = { state: 'before' }
+    const after = { state: 'after' }
 
     const track = helper.edgeTracker()
 
@@ -931,8 +927,8 @@ describe('span', function () {
   it('should chain internal events around async sub span', function (done) {
     const span = Span.makeEntrySpan('outer', makeSettings(), {})
 
-    const before = {state: 'before'}
-    const after = {state: 'after'}
+    const before = { state: 'before' }
+    const after = { state: 'after' }
 
     const trackOuter = helper.edgeTracker()
     const trackInner = helper.edgeTracker()
@@ -973,8 +969,8 @@ describe('span', function () {
   it('should properly attribute dangling info/error events', function (tdone) {
     const span = new Span.makeEntrySpan('outer', makeSettings(), {})
 
-    const before = {state: 'before'}
-    const after = {state: 'after'}
+    const before = { state: 'before' }
+    const after = { state: 'after' }
     const error = new Error('wat')
 
     const trackOuter = helper.edgeTracker()
@@ -984,7 +980,7 @@ describe('span', function () {
     const trackInner4 = helper.edgeTracker(trackInner3)
 
     // evaluate brittleness using different timers
-    const timeout = callback => setTimeout(callback, 1);
+    const timeout = callback => setTimeout(callback, 1)
 
     const checks = [
       // Start async outer
@@ -1018,28 +1014,28 @@ describe('span', function () {
       helper.checkExit('outer', trackInner2),
 
       // Finish async inner-4
-      helper.checkExit('inner-4', trackInner4),
+      helper.checkExit('inner-4', trackInner4)
     ]
 
     function done () {
-      tdone();
+      tdone()
     }
 
     helper.doChecks(emitter, checks, done)
 
     ao.requestStore.run(function () {
       span.enter()
-      const sub1 = span.descend('inner-1');
-      sub1.run(function () {                            // inner 1 entry
-        ao.reportInfo(before);                          // info
+      const sub1 = span.descend('inner-1')
+      sub1.run(function () { // inner 1 entry
+        ao.reportInfo(before) // info
 
         const sub2 = span.descend('inner-3')
-        sub2.run(function (wrap) {                      // inner 3 entry
+        sub2.run(function (wrap) { // inner 3 entry
           timeout(wrap(function () {
-            ao.reportError(error);                      // deferred error
+            ao.reportError(error) // deferred error
 
-            const sub2 = span.descend('inner-4');
-            sub2.run(function (wrap) {                  // inner 4 entry
+            const sub2 = span.descend('inner-4')
+            sub2.run(function (wrap) { // inner 4 entry
               timeout(wrap(function () {}))
             })
           }))
@@ -1058,11 +1054,10 @@ describe('span', function () {
   })
 
   it('should generate the expected stats', function () {
-    const stats = ao._stats.span;
-    expect(stats.topSpansActive).equal(0, 'no topSpans should be active');
-    expect(stats.otherSpansActive).equal(0, 'no spans should be active');
-    expect(stats.totalCreated).equal(46, 'total spans created should be correct');
-    expect(stats.topSpansCreated).equal(27, 'total traces created should be correct');
+    const stats = ao._stats.span
+    expect(stats.topSpansActive).equal(0, 'no topSpans should be active')
+    expect(stats.otherSpansActive).equal(0, 'no spans should be active')
+    expect(stats.totalCreated).equal(46, 'total spans created should be correct')
+    expect(stats.topSpansCreated).equal(27, 'total traces created should be correct')
   })
-
 })
