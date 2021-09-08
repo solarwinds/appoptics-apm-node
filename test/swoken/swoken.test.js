@@ -4,7 +4,7 @@
 // as well as REPORTER specifying that the COLLECTOR should be used.
 process.env.APPOPTICS_COLLECTOR = 'collector.appoptics.com';
 process.env.APPOPTICS_REPORTER = 'ssl';
-const swoken = process.env.AO_TOKEN_PROD;
+const swoken = process.env.AO_TOKEN_PROD || process.env.AO_TOKEN_STG;
 
 const name = 'swoken-Modification-test';
 

@@ -90,7 +90,7 @@ executeTestGroup() {
             if [ -n "$SIMULATE" ]; then
                 echo "simulating test $F"
                 SUITES_PASSED=$((SUITES_PASSED + 1))
-            elif ! npx mocha $_options "$F"; then
+            elif ! npx mocha --exit $_options "$F"; then
                 _new_errors="$_new_errors $F"
                 SUITES_FAILED=$((SUITES_FAILED + 1))
             else
