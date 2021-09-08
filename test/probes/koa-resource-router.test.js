@@ -1,10 +1,9 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const pkg = require('koa-resource-router/package')
-
 
 let canGenerator = false
 try {

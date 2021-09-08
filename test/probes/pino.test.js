@@ -1,14 +1,14 @@
 'use strict'
 
-const ao = require('../..');
+const ao = require('../..')
 
-const helper = require('../helper');
-const expect = require('chai').expect;
-const os = require('os');
-const semver = require('semver');
+const helper = require('../helper')
+const expect = require('chai').expect
+const os = require('os')
+const semver = require('semver')
 
-const pino = require('pino');
-const {version} = require('pino/package.json');
+const pino = require('pino')
+const { version } = require('pino/package.json')
 
 // NOTE - context pino 5.12.2 with flatstr 1.0.9
 // this test sometimes fails with "SyntaxError: Unexpected token '%'" which is
@@ -18,38 +18,38 @@ const {version} = require('pino/package.json');
 // not handled by the try-catch clauses in flatstr.
 // https://github.com/davidmarkclements/flatstr/issues/5
 
-const major = semver.major(version);
-let streamSym;
+const major = semver.major(version)
+let streamSym
 if (major >= 5) {
-  streamSym = pino.symbols.streamSym;
+  streamSym = pino.symbols.streamSym
 }
-const {EventEmitter} = require('events');
+const { EventEmitter } = require('events')
 
-//> child.info('message to love')
-//{"level": 30, "time": 1554384912925, "pid": 31188, "hostname": "uxpanapa", "a": 100, "msg": "message to love", "v": 1}
-//undefined
+// > child.info('message to love')
+// {"level": 30, "time": 1554384912925, "pid": 31188, "hostname": "uxpanapa", "a": 100, "msg": "message to love", "v": 1}
+// undefined
 //  > logger.info({a: 88})
-//{"level": 30, "time": 1554385436410, "pid": 31188, "hostname": "uxpanapa", "a": 88, "v": 1}
-//undefined
+// {"level": 30, "time": 1554385436410, "pid": 31188, "hostname": "uxpanapa", "a": 88, "v": 1}
+// undefined
 //  > logger.info({message: 'what i wanna say'})
-//{"level": 30, "time": 1554385458227, "pid": 31188, "hostname": "uxpanapa", "message": "what i wanna say", "v": 1}
-//undefined
+// {"level": 30, "time": 1554385458227, "pid": 31188, "hostname": "uxpanapa", "message": "what i wanna say", "v": 1}
+// undefined
 //  > logger.info('my message to you', {a: 1001})
-//{"level": 30, "time": 1554385477498, "pid": 31188, "hostname": "uxpanapa", "msg": "my message to you {\"a\":1001}", "v": 1}
-//undefined
+// {"level": 30, "time": 1554385477498, "pid": 31188, "hostname": "uxpanapa", "msg": "my message to you {\"a\":1001}", "v": 1}
+// undefined
 //  > logger.info({a: 1001}, 'my message to you')
-//{"level": 30, "time": 1554385692908, "pid": 31188, "hostname": "uxpanapa", "a": 1001, "msg": "my message to you", "v": 1}
+// {"level": 30, "time": 1554385692908, "pid": 31188, "hostname": "uxpanapa", "a": 1001, "msg": "my message to you", "v": 1}
 //
 
 const template1 = {
   level: 30,
   time: 0,
   pid: process.pid,
-  hostname: os.hostname(),
+  hostname: os.hostname()
 }
 
 const template2 = {
-  v: 1,
+  v: 1
 }
 
 /**
@@ -61,65 +61,64 @@ const template2 = {
  * obj - the object specified in the call to the logger.
  */
 function makeExpected (pre, msg, post) {
-  pre = makePre(pre);
-  post = makePost(post);
-  return Object.assign({}, pre, {msg}, post);
+  pre = makePre(pre)
+  post = makePost(post)
+  return Object.assign({}, pre, { msg }, post)
 }
 
 function makePre (obj) {
-  return Object.assign({}, template1, obj);
+  return Object.assign({}, template1, obj)
 }
 
 function makePost (obj) {
-  return Object.assign({}, obj, template2);
+  return Object.assign({}, obj, template2)
 }
 
 function checkEventInfo (eventInfo, level, message, traceId) {
   // check the time first. just make sure it's kind of close
-  eventInfo = JSON.parse(eventInfo);
-  expect(eventInfo.time).within(Date.now() - 150, Date.now() + 100);
+  eventInfo = JSON.parse(eventInfo)
+  expect(eventInfo.time).within(Date.now() - 150, Date.now() + 100)
   // if the time is good reset it to be exact so expect().eql will work
-  const post = traceId ? {ao: {traceId}} : {};
+  const post = traceId ? { ao: { traceId } } : {}
   const expected = makeExpected(
-    {level: pino.levels.values[level], time: eventInfo.time},
+    { level: pino.levels.values[level], time: eventInfo.time },
     message,
     post
-  );
-  expect(eventInfo).deep.equal(expected);
+  )
+  expect(eventInfo).deep.equal(expected)
 }
 
 //
 // get a trace string via a different function than the logging insertion uses.
 //
 function getTraceIdString () {
-  const firstEvent = ao.requestStore.get('topSpan').events.entry.event;
+  const firstEvent = ao.requestStore.get('topSpan').events.entry.event
   // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32);
+  return firstEvent.toString(2 | 16 | 32)
 }
 
-const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
+const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
 
-
-//=================================
+//= ================================
 // pino tests
-//=================================
+//= ================================
 describe(`pino v${version}`, function () {
-  let logger;
-  let emitter;
-  let counter = 0;
-  let pfx;
-  let spanName;
-  let stream;
-  const logEmitter = new EventEmitter();
-  const debugging = false;
+  let logger
+  let emitter
+  let counter = 0
+  let pfx
+  let spanName
+  let stream
+  const logEmitter = new EventEmitter()
+  const debugging = false
 
   // used by each test
-  let eventInfo;
+  let eventInfo
 
-  before (function () {
+  before(function () {
     // listen to our fake stream.
     logEmitter.addListener('test-log', function (s) {
-      eventInfo = s;
+      eventInfo = s
     })
   })
 
@@ -129,7 +128,7 @@ describe(`pino v${version}`, function () {
     //
     if (major >= 5) {
       // make the logger
-      logger = pino();
+      logger = pino()
 
       //
       // modify the logger so that it emits logging so it can be checked. implement
@@ -137,17 +136,17 @@ describe(`pino v${version}`, function () {
       //
       stream = logger[streamSym] = {
         write (s) {
-          logEmitter.emit('test-log', s);
+          logEmitter.emit('test-log', s)
           if (debugging) {
             console.log(s);  // eslint-disable-line
           }
         },
         flush () {},
-        flushSync () {},
+        flushSync () {}
       }
-      Object.setPrototypeOf(stream, EventEmitter.prototype);
+      Object.setPrototypeOf(stream, EventEmitter.prototype)
     } else if (major >= 2) {
-      logger = pino();
+      logger = pino()
 
       //
       // modify the logger so that it emits logging so it can be checked. implement
@@ -155,34 +154,33 @@ describe(`pino v${version}`, function () {
       //
       stream = logger.stream = {
         write (s) {
-          logEmitter.emit('test-log', s);
+          logEmitter.emit('test-log', s)
           if (debugging) {
             console.log(s);   // eslint-disable-line
           }
         },
         flush () {},
-        flushSync () {},
+        flushSync () {}
       }
-      Object.setPrototypeOf(stream, EventEmitter.prototype);
+      Object.setPrototypeOf(stream, EventEmitter.prototype)
 
       // listen to our fake stream.
       logEmitter.addListener('test-log', function (s) {
-        eventInfo = s;
+        eventInfo = s
       })
     } else {
-      throw new RangeError(`pino test - unsupported version: ${version}`);
+      throw new RangeError(`pino test - unsupported version: ${version}`)
     }
   })
 
-
   beforeEach(function () {
     // provide unique spans for up to 100 tests
-    pfx = ('0' + counter++).slice(-2);
-    spanName = `${pfx}-test`;
+    pfx = ('0' + counter++).slice(-2)
+    spanName = `${pfx}-test`
 
     // the following are global to all tests so they can use a common
     // check function.
-    eventInfo = undefined;
+    eventInfo = undefined
   })
 
   //
@@ -191,8 +189,8 @@ describe(`pino v${version}`, function () {
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    ao.cfg.insertTraceIdsIntoLogs = true;
-    ao.probes.fs.enabled = false;
+    ao.cfg.insertTraceIdsIntoLogs = true
+    ao.probes.fs.enabled = false
 
     emitter = helper.appoptics(done)
   })
@@ -215,26 +213,26 @@ describe(`pino v${version}`, function () {
   })
 
   insertModes.forEach(mode => {
-    const maybe = mode === false ? 'not ' : '';
-    eventInfo = undefined;
+    const maybe = mode === false ? 'not ' : ''
+    eventInfo = undefined
 
     it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
-      const level = 'info';
-      const message = `synchronous traced setting = ${mode}`;
-      let traceId;
+      const level = 'info'
+      const message = `synchronous traced setting = ${mode}`
+      let traceId
 
-      ao.cfg.insertTraceIdsIntoLogs = mode;
+      ao.cfg.insertTraceIdsIntoLogs = mode
 
       function localDone () {
-        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId);
-        done();
+        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId)
+        done()
       }
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString();
+          traceId = getTraceIdString()
           // log
-          logger.info(message);
+          logger.info(message)
         })
         done()
       }, [
@@ -251,60 +249,60 @@ describe(`pino v${version}`, function () {
   })
 
   insertModes.forEach(mode => {
-    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : '';
+    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : ''
 
     it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function () {
-      const level = 'info';
-      const message = `synchronous unsampled setting = ${mode}`;
-      let traceId;
+      const level = 'info'
+      const message = `synchronous unsampled setting = ${mode}`
+      let traceId
 
       // these are reset in beforeEach() so set in each test.
-      ao.cfg.insertTraceIdsIntoLogs = mode;
-      ao.traceMode = 0;
-      ao.sampleRate = 0;
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      ao.traceMode = 0
+      ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString();
-        expect(traceId[traceId.length - 1] === '0', 'traceId shoud be unsampled');
-        logger.info(message);
-        return 'test-done';
+        traceId = getTraceIdString()
+        expect(traceId[traceId.length - 1] === '0', 'traceId shoud be unsampled')
+        logger.info(message)
+        return 'test-done'
       }
 
-      const xtrace = ao.addon.Event.makeRandom(0).toString();
-      const result = ao.startOrContinueTrace(xtrace, spanName, test);
+      const xtrace = ao.addon.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(xtrace, spanName, test)
 
-      expect(result).equal('test-done');
-      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId);
+      expect(result).equal('test-done')
+      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId)
     })
   })
 
   it('mode=\'always\' should always insert a trace ID even if not tracing', function () {
-    const level = 'info';
-    const message = 'always insert';
+    const level = 'info'
+    const message = 'always insert'
 
-    ao.cfg.insertTraceIdsIntoLogs = 'always';
+    ao.cfg.insertTraceIdsIntoLogs = 'always'
 
-    logger.info(message);
+    logger.info(message)
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`);
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
-    const level = 'error';
-    const message = 'asynchronous instrumentation';
-    let traceId;
+    const level = 'error'
+    const message = 'asynchronous instrumentation'
+    let traceId
 
     function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString();
-      logger.error(message);
+      traceId = getTraceIdString()
+      logger.error(message)
       setTimeout(function () {
-        cb();
-      }, 100);
+        cb()
+      }, 100)
     }
 
     helper.test(emitter, function (done) {
@@ -322,23 +320,23 @@ describe(`pino v${version}`, function () {
   })
 
   it('should insert trace IDs in promise-based instrumented code', function (done) {
-    const level = 'info';
-    const message = 'promise instrumentation';
-    let traceId;
-    const result = 99;
+    const level = 'info'
+    const message = 'promise instrumentation'
+    let traceId
+    const result = 99
 
     function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString();
+      traceId = getTraceIdString()
       logger[level](message)
       return new Promise((resolve, reject) => {
         setTimeout(function () {
-          resolve(result);
-        }, 25);
+          resolve(result)
+        }, 25)
       })
     }
 
@@ -346,7 +344,7 @@ describe(`pino v${version}`, function () {
       emitter,
       function (done) {
         ao.pInstrument(spanName, promiseFunction).then(r => {
-          expect(r).equal(result);
+          expect(r).equal(result)
           done()
         })
       }, [
@@ -362,25 +360,25 @@ describe(`pino v${version}`, function () {
   })
 
   it('should insert trace IDs using the function directly', function (done) {
-    const level = 'info';
-    ao.cfg.insertTraceIdsIntoLogs = false;
-    const message = 'helper and synchronous %s';
-    let traceId;
+    const level = 'info'
+    ao.cfg.insertTraceIdsIntoLogs = false
+    const message = 'helper and synchronous %s'
+    let traceId
 
     function localDone () {
-      const m = message.replace('%s', traceId);
-      checkEventInfo(eventInfo, level, m);
-      done();
+      const m = message.replace('%s', traceId)
+      checkEventInfo(eventInfo, level, m)
+      done()
     }
 
     helper.test(
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString();
-          logger[level](message, getTraceIdString());
+          traceId = getTraceIdString()
+          logger[level](message, getTraceIdString())
         })
-        done();
+        done()
       },
       [
         function (msg) {
@@ -393,8 +391,6 @@ describe(`pino v${version}`, function () {
         }
       ],
       localDone
-    );
+    )
   })
-
 })
-

@@ -1,16 +1,16 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 const noop = helper.noop
-const once = require('../../lib/utility').once;
+const once = require('../../lib/utility').once
 
 const concat = require('concat-stream')
 const zlib = require('zlib')
 
-const expect = require('chai').expect;
+const expect = require('chai').expect
 
-const semver = require('semver');
+const semver = require('semver')
 
 const classes = [
   'Deflate',
@@ -33,10 +33,10 @@ const methods = [
 ]
 
 if (semver.gte(process.version, '11.7.0')) {
-  classes.push('BrotliCompress');
-  classes.push('BrotliDecompress');
-  methods.push('brotliCompress');
-  methods.push('brotliDecompress');
+  classes.push('BrotliCompress')
+  classes.push('BrotliDecompress')
+  methods.push('brotliCompress')
+  methods.push('brotliDecompress')
 }
 
 describe('probes.zlib once', function () {
@@ -58,7 +58,7 @@ describe('probes.zlib once', function () {
   it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
       ao.instrument('fake', noop)
-      done ()
+      done()
     }, [
       function (msg) {
         msg.should.have.property('Label').oneOf('entry', 'exit'),
@@ -69,7 +69,7 @@ describe('probes.zlib once', function () {
 })
 
 describe('probes.zlib', function () {
-  const options = {chunkSize: 1024}
+  const options = { chunkSize: 1024 }
   let emitter
   let realSampleTrace = ao.addon.Context.sampleTrace
 
@@ -82,7 +82,7 @@ describe('probes.zlib', function () {
     ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
   })
   after(function (done) {
@@ -153,16 +153,16 @@ describe('probes.zlib', function () {
   // Brotli
   before(function (done) {
     if (semver.lt(process.version, '11.7.0')) {
-      done();
-      return;
+      done()
+      return
     }
-    inputs.BrotliCompress = test;
-    outputs.BrotliDecompress = test;
+    inputs.BrotliCompress = test
+    outputs.BrotliDecompress = test
     zlib.brotliCompress(test, function (err, res) {
-      if (err) return done(err);
-      inputs.BrotliDecompress = res;
-      outputs.BrotliCompress = res;
-      done();
+      if (err) return done(err)
+      inputs.BrotliDecompress = res
+      outputs.BrotliCompress = res
+      done()
     })
   })
 
@@ -175,8 +175,8 @@ describe('probes.zlib', function () {
 
       it(`should support ${method}`, function (done) {
         // make sure the function exists
-        expect(zlib).property(method);
-        expect(typeof zlib[method]).equal('function');
+        expect(zlib).property(method)
+        expect(typeof zlib[method]).equal('function')
         // run the test
         helper.test(emitter, function (done) {
           zlib[method](inputs[className], function (err, buf) {
@@ -204,8 +204,8 @@ describe('probes.zlib', function () {
       const syncMethod = method + 'Sync'
       it(`should support ${syncMethod}`, function (done) {
         // make sure the function exists
-        expect(zlib).property(syncMethod);
-        expect(typeof zlib[syncMethod]).equal('function');
+        expect(zlib).property(syncMethod)
+        expect(typeof zlib[syncMethod]).equal('function')
         // test
         helper.test(emitter, function (done) {
           try {
@@ -231,20 +231,20 @@ describe('probes.zlib', function () {
     classes.forEach(function (name) {
       it(`should support ${name}`, function (done) {
         // make sure the function exists
-        expect(zlib).property(name);
-        expect(typeof zlib[name]).equal('function');
+        expect(zlib).property(name)
+        expect(typeof zlib[name]).equal('function')
         // test
         helper.test(emitter, function (done) {
           const inst = new (zlib[name])(options)
           inst.should.be.an.instanceOf(zlib[name])
 
           const oneDone = once(function () {
-            process.nextTick(done);
+            process.nextTick(done)
           })
 
           inst.on('error', done)
-          inst.on('close', oneDone);
-          inst.on('end', oneDone);
+          inst.on('close', oneDone)
+          inst.on('end', oneDone)
 
           inst.pipe(concat(function (buf) {
             buf.toString().should.equal(outputs[name].toString())
@@ -269,23 +269,23 @@ describe('probes.zlib', function () {
 
   describe('creators', function () {
     classes.forEach(function (name) {
-      const creator = 'create' + name;
+      const creator = 'create' + name
       it(`should support ${creator}`, function (done) {
         // make sure the function exists
-        expect(zlib).property(name);
-        expect(typeof zlib[name]).equal('function');
+        expect(zlib).property(name)
+        expect(typeof zlib[name]).equal('function')
         // test
         helper.test(emitter, function (done) {
           const inst = new zlib[creator](options)
           inst.should.be.an.instanceOf(zlib[name])
 
           const oneDone = once(function () {
-            process.nextTick(done);
+            process.nextTick(done)
           })
 
           inst.on('error', done)
-          inst.on('close', oneDone);
-          inst.on('end', oneDone);
+          inst.on('close', oneDone)
+          inst.on('end', oneDone)
 
           inst.pipe(concat(function (buf) {
             buf.toString().should.equal(outputs[name].toString())
@@ -332,5 +332,4 @@ describe('probes.zlib', function () {
       }
     ], done)
   })
-
 })

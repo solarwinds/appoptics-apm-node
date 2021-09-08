@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 
 const pkg = require('amqplib/package')
 
@@ -158,7 +158,6 @@ describe('probes.amqplib ' + pkg.version, function () {
         }
       ], done)
     })
-
   }
 
   describe('promises', function () {
@@ -219,5 +218,4 @@ describe('probes.amqplib ' + pkg.version, function () {
 
     makeTests(context)
   })
-
 })

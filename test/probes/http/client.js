@@ -1,7 +1,7 @@
 'use strict'
 
 exports.data = function (ctx) {
-  return {url: `${ctx.p}://localhost:${ctx.data.port}/?foo=bar`};
+  return { url: `${ctx.p}://localhost:${ctx.data.port}/?foo=bar` }
 }
 
 exports.run = function (ctx, done) {

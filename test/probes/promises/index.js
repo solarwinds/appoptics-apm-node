@@ -26,7 +26,6 @@ function indirectDone (done) {
   }
 }
 
-
 module.exports = function (Promise) {
   function delay (n) {
     return new Promise(function (resolve) {
@@ -38,7 +37,7 @@ module.exports = function (Promise) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      //ao.requestStore.set('lastSpan', true)
+      // ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
@@ -58,7 +57,7 @@ module.exports = function (Promise) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      //ao.requestStore.set('lastSpan', true)
+      // ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       const p = new Promise(function (resolve, reject) {
@@ -86,14 +85,14 @@ module.exports = function (Promise) {
     d.run(function () {
       ao.requestStore.run(function () {
         // Hack to look like there's a previous span
-        //ao.requestStore.set('lastSpan', true)
+        // ao.requestStore.set('lastSpan', true)
 
         ao.requestStore.set('foo', 'bar')
         delay(100).then(function () {
           const foo = ao.requestStore.get('foo')
           should.exist(foo)
           foo.should.equal('bar')
-          //ao.requestStore.get('foo').should.equal('bar')
+          // ao.requestStore.get('foo').should.equal('bar')
           t.done()
         }, done)
       })
@@ -111,7 +110,7 @@ module.exports = function (Promise) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
       // Hack to look like there's a previous span
-      //ao.requestStore.set('lastSpan', true)
+      // ao.requestStore.set('lastSpan', true)
 
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {

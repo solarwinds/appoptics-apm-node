@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 ao.g.testing(__filename)
 
 const assert = require('assert')
@@ -36,7 +36,6 @@ describe('probes/koa ' + pkg.version, function () {
     emitter.close(done)
   })
 
-
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
   it('UDP might lose a message', function (done) {
@@ -52,15 +51,15 @@ describe('probes/koa ' + pkg.version, function () {
   })
 
   it('should allow creating the app with or without "new"', function () {
-    let app = undefined
+    let app
     let error = false
     try {
       app = new koa()
     } catch (e) {
       error = e
     }
-    assert (app !== undefined, 'a koa app should be returned')
-    assert (error === false, 'should allow "new koa()"')
+    assert(app !== undefined, 'a koa app should be returned')
+    assert(error === false, 'should allow "new koa()"')
 
     app = undefined
     try {
@@ -68,8 +67,8 @@ describe('probes/koa ' + pkg.version, function () {
     } catch (e) {
       error = e
     }
-    assert (app !== undefined, 'a koa app should be returned')
-    assert (error === false, 'should allow "koa()"')
+    assert(app !== undefined, 'a koa app should be returned')
+    assert(error === false, 'should allow "koa()"')
   })
 
   //

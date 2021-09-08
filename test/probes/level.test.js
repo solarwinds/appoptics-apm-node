@@ -1,27 +1,27 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
-const fs = require('fs');
+const fs = require('fs')
 // require level in order to test levelup/leveldown because level
 // assures that compatible versions of both are loaded.
-const level = require('level');
-const dbPath = '/tmp/test-db';
+const level = require('level')
+const dbPath = '/tmp/test-db'
 
 const pkg = require('level/package')
 
 describe('probes.level ' + pkg.version, function () {
-  let db;
-  let emitter;
+  let db
+  let emitter
 
   before(function (done) {
     level(dbPath, {}, function (err, database) {
-      if (err) done(err);
-      db = database;
-      done();
-    });
-  });
+      if (err) done(err)
+      db = database
+      done()
+    })
+  })
 
   //
   // Intercept appoptics messages for analysis
@@ -31,25 +31,25 @@ describe('probes.level ' + pkg.version, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)
-  });
+  })
   after(function (done) {
-    emitter.close(done);
-  });
+    emitter.close(done)
+  })
   after(function (done) {
     try {
       // readdir options weren't implemented until v12.10.0 so
       // just manually delete things. and call done() even if
       // there is an exception.
-      const files = fs.readdirSync(dbPath);
+      const files = fs.readdirSync(dbPath)
       for (const f of files) {
-        fs.unlinkSync(`${dbPath}/${f}`);
+        fs.unlinkSync(`${dbPath}/${f}`)
       }
-      fs.rmdir(dbPath, done);
+      fs.rmdir(dbPath, done)
     } catch (e) {
-      ao.loggers.debug(`failed to rm -rf ${dbPath}`, e);
-      done();
+      ao.loggers.debug(`failed to rm -rf ${dbPath}`, e)
+      done()
     }
-  });
+  })
 
   const check = {
     'levelup-entry': function (msg) {
@@ -125,8 +125,8 @@ describe('probes.level ' + pkg.version, function () {
   it('should support array batch', function (done) {
     helper.test(emitter, function (done) {
       db.batch([
-        {type: 'put', key: 'foo', value: 'bar'},
-        {type: 'del', key: 'foo'},
+        { type: 'put', key: 'foo', value: 'bar' },
+        { type: 'del', key: 'foo' }
       ], done)
     }, [
       function (msg) {

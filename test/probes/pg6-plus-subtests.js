@@ -1,8 +1,6 @@
 'use strict'
 
-
 module.exports = function (ao, ctx) {
-
   // common checks
   const checks = {
     entry: function (msg) {
@@ -49,8 +47,8 @@ module.exports = function (ao, ctx) {
   }
 
   const basic = {
-    cb: {test: cBasic, text: cBasicText},
-    p: {test: pBasic, text: pBasicText},
+    cb: { test: cBasic, text: cBasicText },
+    p: { test: pBasic, text: pBasicText },
     checks: basicChecks
   }
 
@@ -81,7 +79,7 @@ module.exports = function (ao, ctx) {
   function cPrepared (done) {
     ctx.client.getNoRelease(function (err, client) {
       client.query(
-        {text: preparedQuery, name: 'select n', values: ['1']},
+        { text: preparedQuery, name: 'select n', values: ['1'] },
         function (err, results) {
           if (err) {
             ctx.client.release(client)
@@ -89,7 +87,7 @@ module.exports = function (ao, ctx) {
             return
           }
           client.query(
-            {name: 'select n', values: ['2']},
+            { name: 'select n', values: ['2'] },
             function (err) {
               ctx.client.release(client)
               done(err)
@@ -108,10 +106,10 @@ module.exports = function (ao, ctx) {
         client = results
       })
       .then(() => {
-        return client.query({text: preparedQuery, name: 'select n', values: ['1']})
+        return client.query({ text: preparedQuery, name: 'select n', values: ['1'] })
       })
       .then(results => {
-        return client.query({name: 'select n', values: ['2']})
+        return client.query({ name: 'select n', values: ['2'] })
       })
       .then(results => {
         ctx.client.release(client)
@@ -124,8 +122,8 @@ module.exports = function (ao, ctx) {
   }
 
   const prepared = {
-    cb: {test: cPrepared, text: cPreparedText},
-    p: {test: pPrepared, text: pPreparedText},
+    cb: { test: cPrepared, text: cPreparedText },
+    p: { test: pPrepared, text: pPreparedText },
     checks: preparedChecks
   }
 
@@ -172,8 +170,8 @@ module.exports = function (ao, ctx) {
   }
 
   const sanitize = {
-    cb: {test: cSanitize, text: cSanitizeText},
-    p: {test: pSanitize, text: pSanitizeText},
+    cb: { test: cSanitize, text: cSanitizeText },
+    p: { test: pSanitize, text: pSanitizeText },
     checks: sanitizeChecks
   }
 
@@ -215,8 +213,8 @@ module.exports = function (ao, ctx) {
   }
 
   const trim = {
-    cb: {test: cTrim, text: cTrimText},
-    p: {test: pTrim, text: pTrimText},
+    cb: { test: cTrim, text: cTrimText },
+    p: { test: pTrim, text: pTrimText },
     checks: trimChecks
   }
 
@@ -249,8 +247,8 @@ module.exports = function (ao, ctx) {
   }
 
   const disabled = {
-    cb: {test: cDisabled, text: cDisabledText},
-    p: {test: pDisabled, text: pDisabledText},
+    cb: { test: cDisabled, text: cDisabledText },
+    p: { test: pDisabled, text: pDisabledText },
     checks: disabledChecks
   }
 
@@ -259,6 +257,6 @@ module.exports = function (ao, ctx) {
     prepared,
     sanitize,
     trim,
-    disabled,
+    disabled
   }
 }

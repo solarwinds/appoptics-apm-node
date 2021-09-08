@@ -1,7 +1,7 @@
 'use strict'
 
 const expect = require('chai').expect
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 const helper = require('../helper')
 const semver = require('semver')
 
@@ -13,17 +13,17 @@ const pkg = require('mongoose/package')
 // use built-in Promise, replacing mongoose's own implementation (deprecated)
 mongoose.Promise = Promise
 
-let host = process.env.AO_TEST_MONGODB_3_0
-  || process.env.AO_TEST_MONGODB_2_6
-  || process.env.AO_TEST_MONGODB_2_4
-  || 'localhost:27017'
+let host = process.env.AO_TEST_MONGODB_3_0 ||
+  process.env.AO_TEST_MONGODB_2_6 ||
+  process.env.AO_TEST_MONGODB_2_4 ||
+  'localhost:27017'
 
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   host = process.env.AO_TEST_MONGODB_3_0 || 'localhost:27017'
 }
 
 const major = semver.major(pkg.version)
-const moduleName = semver.gte(pkg.version, '5.7.0') ? 'mongodb' : 'mongodb-core';
+const moduleName = semver.gte(pkg.version, '5.7.0') ? 'mongodb' : 'mongodb-core'
 
 // use AO_IX if present. It provides a unique ID to prevent collisions
 // during matrix testing. It's not needed when testing only one instance
@@ -31,7 +31,7 @@ const moduleName = semver.gte(pkg.version, '5.7.0') ? 'mongodb' : 'mongodb-core'
 const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
 
 describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
-  const mongoOpts = major >= 5 ? {useNewUrlParser: true} : {useMongoClient: true}
+  const mongoOpts = major >= 5 ? { useNewUrlParser: true } : { useMongoClient: true }
 
   const Cat = mongoose.model(dbn, new Schema({
     name: String
@@ -54,25 +54,25 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // make them more readable
-    backtraces = ao.probes[moduleName].collectBacktraces;
-    ao.probes[moduleName].collectBacktraces = false;
+    backtraces = ao.probes[moduleName].collectBacktraces
+    ao.probes[moduleName].collectBacktraces = false
     // and don't let file IO complicate the results
     fsenabled = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
   })
   after(function (done) {
     ao.probes.fs.enabled = fsenabled
-    ao.probes[moduleName].collectBacktraces = backtraces;
+    ao.probes[moduleName].collectBacktraces = backtraces
     emitter.close(done)
   })
 
   beforeEach(function () {
     if (this.currentTest.title.indexOf('should connect and queue queries using a') === 0) {
-      //ao.logLevelAdd('test:messages')
+      // ao.logLevelAdd('test:messages')
     }
   })
   afterEach(function () {
-    //ao.logLevelRemove('test:messages')
+    // ao.logLevelRemove('test:messages')
   })
 
   //
@@ -80,22 +80,22 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
   //
   const check = {
     base: function (msg) {
-      expect(msg).to.include({Spec: 'query'})
-      expect(msg).to.include({Flavor: 'mongodb'})
+      expect(msg).to.include({ Spec: 'query' })
+      expect(msg).to.include({ Flavor: 'mongodb' })
       expect(msg).to.have.property('RemoteHost')
       expect(msg.RemoteHost).to.match(/:\d*$/)
     },
     common: function (msg) {
-      expect(msg).to.include({Database: dbn})
+      expect(msg).to.include({ Database: dbn })
     },
     entry: function (msg) {
-      expect(msg).to.include({Layer: moduleName});
-      expect(msg).to.include({Label: 'entry'})
+      expect(msg).to.include({ Layer: moduleName })
+      expect(msg).to.include({ Label: 'entry' })
       check.base(msg)
     },
     exit: function (msg) {
-      expect(msg).to.include({Layer: moduleName});
-      expect(msg).to.include({Label: 'exit'})
+      expect(msg).to.include({ Layer: moduleName })
+      expect(msg).to.include({ Label: 'exit' })
     }
   }
 
@@ -122,7 +122,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
 
   const cat3 = {
     name: 'Mimi'
-  };
+  }
 
   //
   // the following tests basically check the same thing as the mongodb-core
@@ -146,7 +146,6 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       }
     })
 
-
     //
     // add
     //
@@ -166,11 +165,10 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     }
 
     function testAddCat (done) {
-
       function entry (msg) {
         check.entry(msg)
         check.common(msg)
-        expect(msg).to.include({QueryOp: 'insert'})
+        expect(msg).to.include({ QueryOp: 'insert' })
         expect(msg.Insert_Document).to.be.a('String')
         const q = JSON.parse(msg.Insert_Document)
         expect(q).to.be.an('Array')
@@ -200,7 +198,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       const findQuery = Object.assign({}, cat)
       return function findFunction (done) {
         if (type === 'callback') {
-          Cat.findOne(findQuery, function (err, item, rows) {done(err)})
+          Cat.findOne(findQuery, function (err, item, rows) { done(err) })
         } else {
           Cat.findOne(findQuery)
             .then(r => done())
@@ -214,8 +212,8 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       function entry (msg) {
         check.entry(msg)
         check.common(msg)
-        expect(msg).to.include({QueryOp: 'find'})
-        expect(msg).to.include({Query: JSON.stringify(findQuery)})
+        expect(msg).to.include({ QueryOp: 'find' })
+        expect(msg).to.include({ Query: JSON.stringify(findQuery) })
       }
       function exit (msg) {
         check.exit(msg)
@@ -241,7 +239,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       const deleteQuery = Object.assign({}, cat)
       return function deleteFunction (done) {
         if (type === 'callback') {
-          Cat[mongoDelete](deleteQuery, function (err, deletedCat) {done(err)})
+          Cat[mongoDelete](deleteQuery, function (err, deletedCat) { done(err) })
         } else {
           Cat[mongoDelete](deleteQuery)
             .then(deletedCat => done())
@@ -249,15 +247,14 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       }
     }
 
-
     function testDeleteCat (done) {
       const deleteQuery = JSON.stringify([cat1])
 
       function entry (msg) {
         check.entry(msg)
         check.common(msg)
-        expect(msg).to.include({QueryOp: 'remove'})
-        expect(msg).to.include({Query: deleteQuery})
+        expect(msg).to.include({ QueryOp: 'remove' })
+        expect(msg).to.include({ Query: deleteQuery })
       }
       function exit (msg) {
         check.exit(msg)
@@ -316,7 +313,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
         return function (msg) {
           check.entry(msg)
           check.common(msg)
-          expect(msg).to.include({QueryOp: 'insert'})
+          expect(msg).to.include({ QueryOp: 'insert' })
           expect(msg.Insert_Document).to.be.a('String')
 
           const q = JSON.parse(msg.Insert_Document)
@@ -332,8 +329,8 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
       function findEntry (msg) {
         check.entry(msg)
         check.common(msg)
-        expect(msg).to.include({QueryOp: 'find'})
-        expect(msg).to.include({Query: JSON.stringify(cat1)})
+        expect(msg).to.include({ QueryOp: 'find' })
+        expect(msg).to.include({ Query: JSON.stringify(cat1) })
       }
 
       const entry1 = makeInsertEntry(cat1)
@@ -401,8 +398,8 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
           makeAddFunction(cat2)(three)
           makeAddFunction(cat3)(three)
           // leave commented out until the reordering is understood.
-          //makeFindFunction(cat1)(three)
-          //makeDeleteFunction(cat1)(three)
+          // makeFindFunction(cat1)(three)
+          // makeDeleteFunction(cat1)(three)
         },
         steps,
         function testDone (err, config) {
@@ -416,7 +413,6 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
         }
       )
     })
-
   }
 
   describe('promises', function () {
@@ -427,7 +423,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     runTests('callback')
   })
 
-  function ids (x) {return [x.substr(2, 40), x.substr(42, 16)]}
+  function ids (x) { return [x.substr(2, 40), x.substr(42, 16)] }
 
   function showMessage (m) {
     const text = [`${m.Layer}:${m.Label} ${ids(m['X-Trace']).join(':')}`]
@@ -450,7 +446,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     const messages = config.messages
     const m0 = messages[0]
     // verify that the first entry is outer:entry
-    expect(m0).to.include({Layer: 'outer', Label: 'entry'})
+    expect(m0).to.include({ Layer: 'outer', Label: 'entry' })
     const [m0tid, m0oid] = helper.ids(m0['X-Trace'])
     const entries = {}
 
@@ -466,7 +462,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
 
       if (m.Label === 'entry') {
         // entries should edge back to the outer entry
-        expect(m).to.include({Edge: m0oid})
+        expect(m).to.include({ Edge: m0oid })
         entries[oid] = m
       } else if (m.Label === 'exit') {
         // should edge back to one of the entries (specific one?)
@@ -483,5 +479,4 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     const opids = [m0oid].concat(Object.keys(entries))
     expect(mx.Edge).to.be.oneOf(opids)
   }
-
 })

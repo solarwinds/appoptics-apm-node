@@ -6,7 +6,7 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const {ao} = require('../../1.test-common')
+const { ao } = require('../../1.test-common')
 
 const semver = require('semver')
 
@@ -30,10 +30,9 @@ if (semver.satisfies(nodeVersion, '> 0.8')) {
   }
 }
 
-
 describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function () {
   let emitter
-  let port = 3500;
+  let port = 3500
 
   //
   // Intercept appoptics messages for analysis
@@ -84,8 +83,8 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
     let server
 
     if (semver.gte(hapiPkg.version, '17.0.0')) {
-      server = new hapi.Server({port: ++port})
-      p = server.register({plugin: require('vision')})
+      server = new hapi.Server({ port: ++port })
+      p = server.register({ plugin: require('vision') })
       p.then(() => {
         if (config.views) {
           server.views(config.views)
@@ -284,7 +283,6 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
     })
   }
 
-
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
   it('UDP might lose a message', function (done) {
@@ -302,13 +300,13 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
   const httpMethods = ['get', 'post', 'put', 'delete']
   if (hapi && vision) {
     httpMethods.forEach(function (method) {
-      //it('should forward controller/action data from ' + method + ' request', controllerTest(method))
+      // it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
     it('should trace render span', renderTest)
   } else {
     httpMethods.forEach(function (method) {
-      //it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
+      // it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it.skip('should skip when disabled', disabledTest)
     it.skip('should trace render span', renderTest)

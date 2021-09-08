@@ -1,8 +1,8 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
-const expect = require('chai').expect;
+const { ao } = require('../1.test-common')
+const expect = require('chai').expect
 
 const noop = helper.noop
 
@@ -48,9 +48,9 @@ describe('probes.fs', function () {
 
   beforeEach(function (done) {
     // wait a tenth of a second between tests.
-    //setTimeout(function () {
+    // setTimeout(function () {
     //  done()
-    //}, 100)
+    // }, 100)
     done()
   })
 
@@ -59,12 +59,12 @@ describe('probes.fs', function () {
   //
   const checks = {
     entry: function (msg) {
-      const explicit = `${msg.Layer}:${msg.Label}`;
-      expect(explicit).equal('fs:entry', 'Layer and Label must match');
+      const explicit = `${msg.Layer}:${msg.Label}`
+      expect(explicit).equal('fs:entry', 'Layer and Label must match')
     },
     exit: function (msg) {
-      const explicit = `${msg.Layer}:${msg.Label}`;
-      expect(explicit).equal('fs:exit', 'Layer and Label must match');
+      const explicit = `${msg.Layer}:${msg.Label}`
+      expect(explicit).equal('fs:exit', 'Layer and Label must match')
     }
   }
 
@@ -105,7 +105,7 @@ describe('probes.fs', function () {
     ao.traceMode = 'always'
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
   })
   after(function (done) {
@@ -286,7 +286,7 @@ describe('probes.fs', function () {
           return []
         }
         if (semver.satisfies(v, '<6') || semver.satisfies(v, '>6.3')) {
-          return resolved.split('/').slice(1).map(function () {return span('lstat')})
+          return resolved.split('/').slice(1).map(function () { return span('lstat') })
         }
         return []
       }
@@ -395,7 +395,6 @@ describe('probes.fs', function () {
   ]
 
   describe('async', function () {
-
     calls.forEach(function (call) {
       if (result(call.exclude)) {
         return
@@ -409,11 +408,11 @@ describe('probes.fs', function () {
         const steps = [
           function (msg) {
             checks.entry(msg)
-            expect(msg).property('Operation', call.name);
+            expect(msg).property('Operation', call.name)
             if (call.type === 'path') {
-              expect(msg).property('FilePath', args[0]);
+              expect(msg).property('FilePath', args[0])
             } else if (call.type === 'fd') {
-              expect(msg).property('FileDescriptor', args[0]);
+              expect(msg).property('FileDescriptor', args[0])
             }
           }
         ]
@@ -436,9 +435,9 @@ describe('probes.fs', function () {
 
         // Push the exit check
         steps.push(function (msg) {
-          checks.exit(msg);
+          checks.exit(msg)
           if (call.name === 'open') {
-            expect(msg).property('FileDescriptor');
+            expect(msg).property('FileDescriptor')
           }
         })
 
@@ -457,11 +456,9 @@ describe('probes.fs', function () {
         })
       })
     })
-
   })
 
   describe('sync', function () {
-
     // Turn on sync mode to adjust the call list values
     before(function () {
       mode = 'sync'
@@ -536,17 +533,16 @@ describe('probes.fs', function () {
   })
 
   it('should fail openSync calls gracefully', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    delete ao.probes.fs.ignoreErrors;
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    delete ao.probes.fs.ignoreErrors
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       try {
         fs.openSync('does-not-exist', 'r')
-      }
-      catch (e) {}
+      } catch (e) {}
       process.nextTick(done)
     }, [
       function (msg) {
@@ -561,20 +557,19 @@ describe('probes.fs', function () {
         expect(msg).property('ErrorMsg').a('string').match(/^ENOENT/)
       }
     ], reset)
-  });
+  })
 
   it('should suppress openSync errors when requested', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    ao.probes.fs.ignoreErrors = { open: { ENOENT: true } }
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       try {
         fs.openSync('does-not-exist', 'r')
-      }
-      catch (e) {}
+      } catch (e) {}
       process.nextTick(done)
     }, [
       function (msg) {
@@ -584,25 +579,24 @@ describe('probes.fs', function () {
       },
       function (msg) {
         checks.exit(msg)
-        expect(msg).not.property('ErrorClass');
-        expect(msg).not.property('Backtrace');
-        expect(msg).not.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass')
+        expect(msg).not.property('Backtrace')
+        expect(msg).not.property('ErrorMsg')
       }
     ], reset)
-  });
+  })
 
   it('should suppress statSync errors when requested', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {stat: {ENOENT: true}};
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    ao.probes.fs.ignoreErrors = { stat: { ENOENT: true } }
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       try {
         fs.statSync('does-not-exist', 'r')
-      }
-      catch (e) { }
+      } catch (e) { }
       process.nextTick(done)
     }, [
       function (msg) {
@@ -612,23 +606,23 @@ describe('probes.fs', function () {
       },
       function (msg) {
         checks.exit(msg)
-        expect(msg).not.property('ErrorClass');
-        expect(msg).not.property('Backtrace');
-        expect(msg).not.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass')
+        expect(msg).not.property('Backtrace')
+        expect(msg).not.property('ErrorMsg')
       }
     ], reset)
-  });
+  })
 
   it('should report open errors', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    delete ao.probes.fs.ignoreErrors;
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    delete ao.probes.fs.ignoreErrors
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       fs.open('does-not-exist', 'r', function (err) {
-        done();
+        done()
       })
     }, [
       function (msg) {
@@ -638,23 +632,23 @@ describe('probes.fs', function () {
       },
       function (msg) {
         checks.exit(msg)
-        expect(msg).property('ErrorClass', 'Error');
-        expect(msg).property('Backtrace');
-        expect(msg).property('ErrorMsg').a('string').match(/^ENOENT/);
+        expect(msg).property('ErrorClass', 'Error')
+        expect(msg).property('Backtrace')
+        expect(msg).property('ErrorMsg').a('string').match(/^ENOENT/)
       }
     ], reset)
   })
 
   it('should suppress open errors when requested', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {open: {ENOENT: true}};
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    ao.probes.fs.ignoreErrors = { open: { ENOENT: true } }
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       fs.open('does-not-exist', 'r', function (err) {
-        done();
+        done()
       })
     }, [
       function (msg) {
@@ -664,23 +658,23 @@ describe('probes.fs', function () {
       },
       function (msg) {
         checks.exit(msg)
-        expect(msg).not.property('ErrorClass');
-        expect(msg).not.property('Backtrace');
-        expect(msg).not.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass')
+        expect(msg).not.property('Backtrace')
+        expect(msg).not.property('ErrorMsg')
       }
     ], reset)
-  });
+  })
 
   it('should suppress stat errors when requested', function (done) {
-    const previousIgnoreErrors = ao.probes.fs.ignoreErrors;
-    ao.probes.fs.ignoreErrors = {stat: {ENOENT: true}};
+    const previousIgnoreErrors = ao.probes.fs.ignoreErrors
+    ao.probes.fs.ignoreErrors = { stat: { ENOENT: true } }
     function reset (err) {
-      ao.probes.fs.ignoreErrors = previousIgnoreErrors;
-      done(err);
+      ao.probes.fs.ignoreErrors = previousIgnoreErrors
+      done(err)
     }
     helper.test(emitter, function (done) {
       fs.stat('does-not-exist', 'r', function (err) {
-        done();
+        done()
       })
     }, [
       function (msg) {
@@ -690,9 +684,9 @@ describe('probes.fs', function () {
       },
       function (msg) {
         checks.exit(msg)
-        expect(msg).not.property('ErrorClass');
-        expect(msg).not.property('Backtrace');
-        expect(msg).not.property('ErrorMsg');
+        expect(msg).not.property('ErrorClass')
+        expect(msg).not.property('Backtrace')
+        expect(msg).not.property('ErrorMsg')
       }
     ], reset)
   })

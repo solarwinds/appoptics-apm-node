@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const semver = require('semver')
 
@@ -25,7 +25,7 @@ describe('probes.memcached ' + pkg.version, function () {
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -313,5 +313,4 @@ describe('probes.memcached ' + pkg.version, function () {
       done(err)
     })
   })
-
 })

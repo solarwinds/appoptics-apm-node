@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const conf = ao.probes.pg
 
@@ -41,7 +41,7 @@ try {
 describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   let emitter
   let realSampleTrace
-  const ctx = {ao, tName, addr}
+  const ctx = { ao, tName, addr }
 
   it('should sanitize SQL by default', function () {
     conf.should.have.property('sanitizeSql', true)
@@ -72,7 +72,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   before(function () {
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -86,13 +86,12 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   // remove any leftover context
   //
   after(function () {
-    ao.resetRequestStore();
-  });
+    ao.resetRequestStore()
+  })
 
   //
   // database cleanup at end
   //
-
 
   //
   // Yes, this is super janky. But necessary because switching to
@@ -124,7 +123,6 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
   const subtests = require('./pg6-plus-subtests')(ao, ctx)
 
   Object.keys(drivers).forEach(function (type) {
-
     const driver = drivers[type]
     if (driver.skip) {
       describe.skip(driver.description, test)
@@ -133,7 +131,6 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
     }
 
     function test (done) {
-
       after(function (done) {
         const p1 = ctx._client ? ctx._client.end() : Promise.resolve()
         // the pool waits for the delayed releases to finish
@@ -154,7 +151,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
           })
         }
         Promise.all([p1, p2])
-          .then (results => {
+          .then(results => {
             done()
           })
       })
@@ -177,14 +174,14 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
       //
       it('should create the pg testing context', function (done) {
         this.timeout(10000)
-        const tmpAuth = extend(extend({}, auth), {database: 'postgres'})
+        const tmpAuth = extend(extend({}, auth), { database: 'postgres' })
         let client = new postgres.Client(tmpAuth)
         let pool
 
         client.connect()
           .then(() => {
             // delete the database so i can see what error occurs on the query
-            //return client.query('drop database if exists test;')
+            // return client.query('drop database if exists test;')
           })
           .then(() => {
             return client.query('select datname from pg_catalog.pg_database where datname = \'test\';')
@@ -214,7 +211,7 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
             ctx._client = client
           })
           .then(results => {
-            pool = new postgres.Pool(Object.assign({max: 2}, auth))
+            pool = new postgres.Pool(Object.assign({ max: 2 }, auth))
           })
           .catch(err => {
             done(err)
@@ -235,16 +232,15 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
               },
               release: function () {}
             }
-            return results;
+            return results
           })
-          .then(done);
+          .then(done)
       })
 
       //
       // test each function with callbacks then promises.
       //
       describe('using client', function () {
-
         for (const t in subtests) {
           it(subtests[t].cb.text, function (done) {
             helper.test(
@@ -355,14 +351,13 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
       // acts sort of like a pg client.
       //
       const poolPretendingToBeClient = {
-        query: pooledClient,
+        query: pooledClient
       }
       const poolFunctions = {
         get: () => poolPretendingToBeClient,
         getNoRelease: poolAcquireClient,
-        release: poolReleaseClient,
+        release: poolReleaseClient
       }
-
 
       function pooledClient (...args) {
         // if the last arg is a function use the callback form otherwise
@@ -429,8 +424,6 @@ describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
           }
         }, ctx.delayms)
       }
-
     }
   })
-
 })

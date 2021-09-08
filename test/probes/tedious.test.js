@@ -11,8 +11,8 @@ if (!process.env.AO_TEST_SQLSERVER_EX) {
 }
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
-const expect = require('chai').expect;
+const { ao } = require('../1.test-common')
+const expect = require('chai').expect
 
 const conf = ao.probes.tedious
 
@@ -23,7 +23,7 @@ const Request = tedious.Request
 const TYPES = tedious.TYPES
 
 // test with and without a database name
-let dbname;
+let dbname
 
 let addr
 if (process.env.AO_TEST_SQLSERVER_EX) {
@@ -73,7 +73,6 @@ describe('probes.tedious ' + pkg.version, function () {
     ], done)
   })
 
-
   it('should sanitize SQL by default', function () {
     conf.should.have.property('sanitizeSql', true)
     conf.sanitizeSql = false
@@ -84,7 +83,7 @@ describe('probes.tedious ' + pkg.version, function () {
       msg.should.have.property('Layer', 'mssql')
       msg.should.have.property('Label', 'entry')
       if (dbname) {
-        expect(msg).property('Database', dbname);
+        expect(msg).property('Database', dbname)
       }
       msg.should.have.property('Flavor', 'mssql')
       msg.should.have.property('RemoteHost', addr.toString())
@@ -96,11 +95,11 @@ describe('probes.tedious ' + pkg.version, function () {
   }
 
   if (addr) {
-    dbname = 'test';
+    dbname = 'test'
     it('should support basic queries with a database name', test_basic)
     it('should support parameters with a database name', test_parameters)
     it('should support sanitization with a database name', test_sanitization)
-    dbname = undefined;
+    dbname = undefined
     it('should support basic queries with no database name', test_basic)
     it('should support parameters with no database name', test_parameters)
     it('should support sanitization with no database name', test_sanitization)
@@ -204,11 +203,11 @@ describe('probes.tedious ' + pkg.version, function () {
         tdsVersion: '7_1',
         encrypt: false
       }
-    };
-    if (dbname) {
-      settings.options.database = dbname;
     }
-    const connection = new Connection(settings);
+    if (dbname) {
+      settings.options.database = dbname
+    }
+    const connection = new Connection(settings)
 
     connection.on('connect', function () {
       connection.execSql(fn())
@@ -220,5 +219,4 @@ describe('probes.tedious ' + pkg.version, function () {
       return v.name === name
     }).shift().value
   }
-
 })

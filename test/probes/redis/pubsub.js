@@ -6,7 +6,7 @@ function hostAndPort (ctx) {
   const possibilities = [
     ctx.redis,
     ctx.redis.options,
-    ctx.redis.connectionOption,
+    ctx.redis.connectionOption
   ]
   let o
   while (o = possibilities.shift()) {

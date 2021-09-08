@@ -1,6 +1,6 @@
 'use strict'
 
-const {startTest, endTest} = require('../1.test-common.js')
+const { startTest, endTest } = require('../1.test-common.js')
 
 const pkg = require('bluebird/package')
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const semver = require('semver')
 
@@ -70,7 +70,7 @@ describe('probes.raw-body ' + pkg.version, function () {
     const app = express()
 
     // Attach body parsers
-    app.use(body.urlencoded({extended: false}))
+    app.use(body.urlencoded({ extended: false }))
     app.use(body.json())
 
     app.use(function (req, res) {
@@ -167,5 +167,4 @@ describe('probes.raw-body ' + pkg.version, function () {
       })(done)
     })
   }
-
 })

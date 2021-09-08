@@ -1,7 +1,7 @@
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 
 const noop = helper.noop
 const addon = ao.addon
@@ -9,13 +9,13 @@ const addon = ao.addon
 const semver = require('semver')
 const mongodb = require('mongodb-core')
 
-const expect = require('chai').expect;
+const expect = require('chai').expect
 
 const pkg = require('mongodb-core/package.json')
 
 // this is here just to make the code slightly more similar to the mongodb.test.js
 // code.
-const moduleName = 'mongodb-core';
+const moduleName = 'mongodb-core'
 
 // just because it's not really documented particularly well in mongo docs
 // the namespace argument (the first argument, a string, to most calls) is
@@ -23,8 +23,8 @@ const moduleName = 'mongodb-core';
 // collection against which
 
 let hosts = {
-  '2.4': process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
-  '2.6': process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
+  2.4: process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
+  2.6: process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
   '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
   'replica set': process.env.AO_TEST_MONGODB_SET
 }
@@ -46,8 +46,8 @@ if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
 // during matrix testing. It's not needed when testing only one instance
 // at a time locally.
 
-const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '');
-const cn = `coll-${dbn}`;
+const dbn = 'test' + (process.env.AO_IX ? '-' + process.env.AO_IX : '')
+const cn = `coll-${dbn}`
 
 describe('probes.mongodb-core UDP', function () {
   let emitter
@@ -95,7 +95,7 @@ function makeTests (db_host, host, isReplicaSet) {
   let db
 
   const options = {
-    writeConcern: {w: 1},
+    writeConcern: { w: 1 },
     ordered: true
   }
 
@@ -108,46 +108,46 @@ function makeTests (db_host, host, isReplicaSet) {
     ao.traceMode = 'always'
     ao.probes[moduleName].collectBacktraces = false
     emitter = helper.appoptics(function () {
-      done();
-    });
-  });
+      done()
+    })
+  })
   afterEach(function (done) {
     ao.probes.fs.enabled = true
     emitter.close(function () {
-      done();
-    });
-  });
+      done()
+    })
+  })
 
   // skip specific tests to faciliate test debugging.
   beforeEach(function () {
-    const current = this.currentTest;
+    const current = this.currentTest
     const doThese = {
       databases: true,
       collections: true,
       queries: true,
       indexes: true,
       cursors: true,
-      aggregations: true,
+      aggregations: true
     }
     if (current.parent && !(current.parent.title in doThese)) {
     }
     // skip specific titles
-    const skipTheseTitles = [];
+    const skipTheseTitles = []
     if (skipTheseTitles.indexOf(current.title) >= 0) {
     }
     // do only these specific titles
     const doTheseTitles = [
       'should drop',
       'should distinct',
-      'should count',
-    ];
+      'should count'
+    ]
     if (doTheseTitles.length && doTheseTitles.indexOf(current.title) >= 0) {
-      //ao.logger.addEnabled('span');
+      // ao.logger.addEnabled('span');
     }
-  });
+  })
   afterEach(function () {
-    //ao.logger.removeEnabled('span');
-  });
+    // ao.logger.removeEnabled('span');
+  })
 
   //
   // Open a fresh mongodb connection for each test
@@ -199,7 +199,7 @@ function makeTests (db_host, host, isReplicaSet) {
     }
     db.command(`${dbn}.$cmd`, {
       dropDatabase: 1
-    }, function () {done()})
+    }, function () { done() })
   })
   after(function () {
     if (db) {
@@ -212,19 +212,19 @@ function makeTests (db_host, host, isReplicaSet) {
       msg.should.have.property('Spec', 'query')
       msg.should.have.property('Flavor', 'mongodb')
       msg.should.have.property('RemoteHost')
-      expect(msg.RemoteHost).oneOf(db_host.split(','));
+      expect(msg.RemoteHost).oneOf(db_host.split(','))
     },
     common: function (msg) {
       msg.should.have.property('Database', `${dbn}`)
     },
     entry: function (msg) {
-      const explicit = `${msg.Layer}:${msg.Label}`;
-      expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct');
+      const explicit = `${msg.Layer}:${msg.Label}`
+      expect(explicit).equal(`${moduleName}:entry`, 'message Layer and Label must be correct')
       check.base(msg)
     },
     exit: function (msg) {
-      const explicit = `${msg.Layer}:${msg.Label}`;
-      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct');
+      const explicit = `${msg.Layer}:${msg.Label}`
+      expect(explicit).equal(`${moduleName}:exit`, 'message Layer and Label must be correct')
     }
   }
 
@@ -254,7 +254,7 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           db.command(
             `${dbn}.$cmd`,
-            {dropDatabase: 1},
+            { dropDatabase: 1 },
             done
           )
         }, steps, tdone)
@@ -285,10 +285,10 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {create: cn},
+          db.command(`${dbn}.$cmd`, { create: cn },
             function (e, data) {
               if (e) {
-                ao.loggers.error(`error creating "${cn}"`, e);
+                ao.loggers.error(`error creating "${cn}"`, e)
                 done(e)
                 return
               }
@@ -355,7 +355,7 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.command(`${dbn}.$cmd`, {drop: `coll2-${dbn}`},
+          db.command(`${dbn}.$cmd`, { drop: `coll2-${dbn}` },
             function (e, data) {
               if (e) {
                 ao.loggers.debug(`error dropping "coll2-${dbn}`, e)
@@ -392,14 +392,14 @@ function makeTests (db_host, host, isReplicaSet) {
         steps.push(exit)
 
         helper.test(emitter, function (done) {
-          db.insert(`${dbn}.data-${dbn}`, [{a: 1}, {a: 2}], options, done)
+          db.insert(`${dbn}.data-${dbn}`, [{ a: 1 }, { a: 2 }], options, done)
         }, steps, done)
       })
 
       it('should update', function (done) {
-        const query = {a: 1}
+        const query = { a: 1 }
         const update = {
-          $set: {b: 1}
+          $set: { b: 1 }
         }
 
         function entry (msg) {
@@ -430,8 +430,8 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should findAndModify', function (done) {
-        const query = {a: 1}
-        const update = {a:1, b: 2}
+        const query = { a: 1 }
+        const update = { a: 1, b: 2 }
 
         function entry (msg) {
           check.entry(msg)
@@ -463,7 +463,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should distinct', function (done) {
-        const query = {a: 1}
+        const query = { a: 1 }
         const key = 'b'
 
         function entry (msg) {
@@ -495,7 +495,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should count', function (done) {
-        const query = {a: 1}
+        const query = { a: 1 }
 
         function entry (msg) {
           check.entry(msg)
@@ -524,7 +524,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should remove', function (done) {
-        const query = {a: 1}
+        const query = { a: 1 }
 
         function entry (msg) {
           check.entry(msg)
@@ -563,7 +563,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
       it('should create_indexes', function (done) {
         const index = {
-          key: {a: 1, b: 2},
+          key: { a: 1, b: 2 },
           name: 'data'
         }
 
@@ -588,7 +588,7 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           db.command(`${dbn}.$cmd`, {
             createIndexes: `${dbn}.data-${dbn}`,
-            indexes: [ index ]
+            indexes: [index]
           }, options, done)
         }, steps, done)
       })
@@ -619,7 +619,7 @@ function makeTests (db_host, host, isReplicaSet) {
       })
 
       it('should drop_indexes', function (done) {
-        const index = {a: 1, b: 2}
+        const index = { a: 1, b: 2 }
 
         function entry (msg) {
           check.entry(msg)
@@ -653,7 +653,7 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           const cursor = db.cursor(`${dbn}.data-${dbn}`, {
             find: `${dbn}.data-${dbn}`,
-            query: {a: 1}
+            query: { a: 1 }
           }, options)
           cursor.next(done)
         }, [
@@ -672,10 +672,10 @@ function makeTests (db_host, host, isReplicaSet) {
         const group = {
           ns: `${dbn}.data-${dbn}`,
           key: {},
-          initial: {count: 0},
-          $reduce: function (doc, out) {out.count++}.toString(),
+          initial: { count: 0 },
+          $reduce: function (doc, out) { out.count++ }.toString(),
           out: 'inline',
-          cond: {a: {$gte: 0}}
+          cond: { a: { $gte: 0 } }
         }
 
         function entry (msg) {
@@ -713,8 +713,8 @@ function makeTests (db_host, host, isReplicaSet) {
 
       it('should map_reduce', function (done) {
         // eslint-disable-next-line no-undef
-        function map () {emit(this.a, 1)}
-        function reduce (k, vals) {return 1}
+        function map () { emit(this.a, 1) }
+        function reduce (k, vals) { return 1 }
 
         function entry (msg) {
           check.entry(msg)
