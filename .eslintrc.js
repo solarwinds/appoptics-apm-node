@@ -14,5 +14,9 @@ module.exports = {
     ecmaVersion: 12
   },
   rules: {
+    'node/handle-callback-err': 'warn',
+    'node/no-deprecated-api': 'warn',
+    'camelcase': 'warn',
+    'no-eval': 'warn'
   }
 }
