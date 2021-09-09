@@ -1,4 +1,8 @@
 /* global it, describe, before, after, afterEach */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
 
 const helper = require('./helper')
@@ -48,7 +52,7 @@ describe('span', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -968,7 +972,7 @@ describe('span', function () {
   })
 
   it('should properly attribute dangling info/error events', function (tdone) {
-    const span = new Span.makeEntrySpan('outer', makeSettings(), {})
+    const span = new Span.makeEntrySpan('outer', makeSettings(), {}) // eslint-disable-line new-cap
 
     const before = { state: 'before' }
     const after = { state: 'after' }

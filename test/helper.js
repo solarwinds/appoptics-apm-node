@@ -71,7 +71,7 @@ let udpPort = 7832
 
 if (process.env.APPOPTICS_REPORTER_UDP) {
   const parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
-  if (parts.length == 2) udpPort = parts[1]
+  if (parts.length === 2) udpPort = parts[1]
 }
 
 log.test.info('helper found real port = ' + realPort)

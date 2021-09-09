@@ -1,6 +1,9 @@
 /* global it, describe */
 'use strict'
 
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 const ao = require('..')
 const Span = ao.Span
 const expect = require('chai').expect
@@ -50,7 +53,7 @@ describe('basics', function () {
   })
 
   // TODO: check helper.checkLogMessages and why substitution happens at .github but not locally
-  ifaob.skip('should handle invalid sample rates correctly', function () {
+  ifaob('should handle invalid sample rates correctly', function () {
     const logChecks = [
       { level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN] },
       { level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000] },
@@ -77,8 +80,8 @@ describe('basics', function () {
   })
 
   ifaob('should be able to check an Event\'s sample flag', function () {
-    const md0 = new ao.addon.Event.makeRandom()
-    const md1 = new ao.addon.Event.makeRandom(1)
+    const md0 = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
+    const md1 = new ao.addon.Event.makeRandom(1) // eslint-disable-line new-cap
 
     expect(ao.sampling(md0)).equal(false)
     expect(ao.sampling(md0.toString())).equal(false)
@@ -87,7 +90,7 @@ describe('basics', function () {
   })
 
   ifaob('should be able to detect if it is in a trace', function () {
-    ao.tracing.should.be.false
+    expect(ao.tracing).to.be.false
     const span = Span.makeEntrySpan('test', makeSettings())
 
     span.run(function () {
@@ -101,7 +104,7 @@ describe('basics', function () {
     ao.traceMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.getTraceSettings()
-    s.should.not.be.false
+    expect(s).to.not.be.false
 
     ao.sampleRate = 1
     const samples = []

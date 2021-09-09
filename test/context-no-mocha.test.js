@@ -25,7 +25,8 @@ async function t1 (main) {
   const res = ao.pStartOrContinueTrace(
     null,
     main, // span name
-    () => p = psoon(1, 2, 3, 5), // promise-returning runner
+    // promise-returning runner
+    () => p = psoon(1, 2, 3, 5), // eslint-disable-line no-return-assign
     { enabled: true }
   )
 

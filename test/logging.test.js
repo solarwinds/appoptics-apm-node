@@ -192,7 +192,7 @@ describe('logging', function () {
   it('should handle the appoptics extended xtrace (%x) format', function () {
     let [logger, getter] = makeLogHandler()
     debug.log = logger
-    const md = new ao.addon.Event.makeRandom()
+    const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     ao.loggers.error('xtrace %x', md)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
@@ -264,7 +264,7 @@ describe('logging', function () {
   })
 
   it('should handle the appoptics extended event (%e) format', function () {
-    const md = new ao.addon.Event.makeRandom()
+    const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     const edge = false
     const event = new ao.Event('log-event', 'entry', md, edge)
     const name = 'log-event:entry'
