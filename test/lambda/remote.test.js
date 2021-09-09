@@ -1,4 +1,8 @@
 /* global it, describe, before */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
 
 const nvm_dir = process.env.NVM_DIR

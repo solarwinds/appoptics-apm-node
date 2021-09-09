@@ -31,7 +31,7 @@ async function execCommandLine (cmdline, options = {}) {
     // eslint-disable-next-line no-unused-vars
     const cp = exec(cmdline, options, function (error, stdout, stderr) {
       if (error) {
-        reject({ error, stdout, stderr })
+        reject({ error, stdout, stderr }) // eslint-disable-line prefer-promise-reject-errors
       } else {
         resolve(stdout, stderr)
       }

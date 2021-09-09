@@ -83,7 +83,7 @@ describe('composite.axios', function () {
         done()
       }, [
         function (msg) {
-          expect(msg).property('Label').oneOf(['entry', 'exit']),
+          expect(msg).property('Label').oneOf(['entry', 'exit'])
           expect(msg).property('Layer', 'fake')
         }
       ], done)
@@ -552,7 +552,7 @@ describe('composite.axios', function () {
     it('should trace http client and server using axios.get', function () {
       let resolve
       let reject
-      const p = new Promise((res, rej) => { resolve = res; reject = rej })
+      const p = new Promise((res, rej) => { resolve = res; reject = rej }) // eslint-disable-line promise/param-names
 
       const url2 = 'http://www.google.com/'
       const server = http.createServer(function (req, res) {

@@ -29,7 +29,7 @@ async function fakeLambdaPromiser (event, context) {
   const modifiers = context[aoLambdaTest] || {}
 
   if (typeof modifiers.reject === 'number') {
-    return Promise.reject({ statusCode: modifiers.reject })
+    return Promise.reject({ statusCode: modifiers.reject }) // eslint-disable-line prefer-promise-reject-errors
   }
 
   if (typeof modifiers.throw === 'string') {

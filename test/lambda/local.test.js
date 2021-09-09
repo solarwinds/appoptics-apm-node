@@ -1,4 +1,11 @@
 /* global it, describe, beforeEach */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
+// TODO: fix this
+/* eslint-disable no-template-curly-in-string */
+
 'use strict'
 
 const nvm_dir = process.env.NVM_DIR
@@ -550,7 +557,7 @@ function executeTests (tests) {
       if (t.debug === true) {
         dbg = { stderr: true, stdout: true, decodeAo: true, checkAo: true }
       } else if (Array.isArray(t.debug)) {
-        t.debug.forEach(d => dbg[d] = true)
+        t.debug.forEach(d => dbg[d] = true) // eslint-disable-line no-return-assign
       } else if (typeof t.debug === 'object') {
         dbg = t.debug
       }
