@@ -1,3 +1,4 @@
+/* global it, describe, before, after */
 'use strict'
 
 const base = process.cwd()
@@ -6,7 +7,7 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const ao = global[Symbol.for('AppOptics.Apm.Once')];
+const ao = global[Symbol.for('AppOptics.Apm.Once')]
 
 const semver = require('semver')
 
@@ -25,18 +26,18 @@ if (!hasAsyncAwait) {
 // process.env.hapiVersion is set when running the @hapi/hapi test
 
 // don't run what is not supported
-if(semver.gte(nodeVersion, '16.0.0') && !process.env.hapiVersion) return null
-if(semver.lt(nodeVersion, '11.0.0') && process.env.hapiVersion) return null
+if (semver.gte(nodeVersion, '16.0.0') && !process.env.hapiVersion) process.exit()
+if (semver.lt(nodeVersion, '11.0.0') && process.env.hapiVersion) process.exit()
 
 // if testing the @hapi scoped package then hapiVersion is set to @hapi
-const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi';
-const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision';
+const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi'
+const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision'
 
-const hapi = require(hapiName);
-const vision = require(visionName);
+const hapi = require(hapiName)
+const vision = require(visionName)
 
-const pkg = require(`${visionName}/package.json`);
-const hapiPkg = require(`${hapiName}/package.json`);
+const pkg = require(`${visionName}/package.json`)
+const hapiPkg = require(`${hapiName}/package.json`)
 
 if (semver.lt(hapiPkg.version, '17.0.0')) {
   throw new Error('vision-5-and-above requires hapi version 17+')
@@ -45,14 +46,14 @@ if (semver.lt(hapiPkg.version, '17.0.0')) {
 let plugins
 let hapiText
 if (semver.gte(pkg.version, '5.0.0')) {
-  plugins = {plugin: require(visionName)};
-  hapiText = `${hapiName} ${hapiPkg.version}`;
+  plugins = { plugin: require(visionName) }
+  hapiText = `${hapiName} ${hapiPkg.version}`
   hapiText = ' hapi ' + hapiPkg.version
 }
 
 describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   let emitter
-  let port = 3500;
+  let port = 3500
 
   //
   // Intercept appoptics messages for analysis
@@ -98,7 +99,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   async function makeServer (config) {
     config = config || {}
 
-    const server = new hapi.Server({port: ++port})
+    const server = new hapi.Server({ port: ++port })
     const p = server.register(plugins)
 
     return p.then(() => {
@@ -194,7 +195,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, h) {
-        return h.view(helloDotEjs, {name: request.params.name})
+        return h.view(helloDotEjs, { name: request.params.name })
       }
     })
 
@@ -250,7 +251,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
       method: 'GET',
       path: '/hello/{name}',
       handler: function hello (request, h) {
-        return h.view(helloDotEjs, {name: request.params.name})
+        return h.view(helloDotEjs, { name: request.params.name })
       }
     })
 
@@ -280,11 +281,10 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
 
     await server.start()
 
-    request({method: 'GET', url: `http://localhost:${port}/hello/world`})
+    request({ method: 'GET', url: `http://localhost:${port}/hello/world` })
 
     return p
   }
-
 
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
@@ -294,7 +294,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)

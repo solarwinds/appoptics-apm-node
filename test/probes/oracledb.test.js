@@ -1,12 +1,13 @@
+/* global it, describe, before, after, afterEach */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const log = ao.loggers
 
 let oracledb
-let pkg = {version: '0.0.0'}
+let pkg = { version: '0.0.0' }
 try {
   oracledb = require('oracledb')
   pkg = require('oracledb/package')
@@ -20,18 +21,18 @@ const database = 'xe'
 const config = {
   user: 'system',
   password: 'topsecret',
-  connectString: host + '/' + database,
+  connectString: host + '/' + database
 }
-let descValid = describe.skip;
+let descValid = describe.skip
 
 if (oracledb && host && database && config.user && config.password) {
-  descValid = describe;
+  descValid = describe
 }
 
 descValid(`probes.oracledb ${pkg.version}`, function () {
   let emitter
   let realSampleTrace
-  let lastConnection;
+  let lastConnection
 
   //
   // Intercept appoptics messages for analysis
@@ -43,7 +44,7 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -55,9 +56,9 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
 
   afterEach(function () {
     if (!lastConnection) {
-      return Promise.resolve();
+      return Promise.resolve()
     }
-    return lastConnection.close();
+    return lastConnection.close()
   })
 
   it('UDP might lose a message', function (done) {
@@ -66,7 +67,7 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -112,10 +113,10 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
       function query (err, connection) {
         log.debug('test_basic query callback invoked')
         if (err) {
-          log.debug('error in query callback', err);
-          return done(err);
+          log.debug('error in query callback', err)
+          return done(err)
         }
-        lastConnection = connection;
+        lastConnection = connection
         connection.execute('SELECT 1 FROM DUAL', done)
       }
       log.debug('test_basic being executed')
@@ -137,7 +138,7 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
       oracledb.isAutoCommit = false
       function query (err, connection) {
         if (err) return done(err)
-        lastConnection = connection;
+        lastConnection = connection
         connection.execute('SELECT 1 FROM DUAL', done)
       }
 
@@ -167,7 +168,7 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
 
           return function (err) {
             if (err) return done(err)
-            lastConnection = connection;
+            lastConnection = connection
             connection.execute('SELECT 1 FROM DUAL', [], options, done)
           }
         }
@@ -208,5 +209,4 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
       }
     ], done)
   }
-
 })

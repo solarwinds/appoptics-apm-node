@@ -1,12 +1,13 @@
+/* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
 
 const helper = require('../helper')
-const {ao, startTest, endTest} = require('../1.test-common')
+const { ao, startTest, endTest } = require('../1.test-common')
 
 const noop = helper.noop
 const conf = ao.probes['cassandra-driver']
 
-const should = require('should')  // eslint-disable-line no-unused-vars
+const should = require('should') // eslint-disable-line no-unused-vars
 const hosts = helper.Address.from(
   process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
@@ -14,8 +15,7 @@ const hosts = helper.Address.from(
 const ks = 'test' + (process.env.AO_IX || '')
 
 if (helper.skipTest(module.filename)) {
-  describe = function () {};
-  return;
+  process.exit()
 }
 
 //
@@ -32,7 +32,7 @@ const pkg = require('cassandra-driver/package')
 
 describe('probes.cassandra-driver ' + pkg.version, function () {
   this.timeout(10000)
-  const ctx = {ao}
+  const ctx = { ao }
   let emitter
   let client
   let prevDebug
@@ -85,14 +85,14 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     // Construct database client
     //
     // TODO BAM add cassandra DB server version output.
-    //select peer, release_version from system.peers;
-    //select release_version from system.local;
+    // select peer, release_version from system.peers;
+    // select release_version from system.local;
     // TODO BAM some of these should really not be "before" but
     // should be separate tests.
     before(function (done) {
       const testClient = new cassandra.Client({
-        contactPoints: hosts.map(function (v) {return v.host}),
-        protocolOptions: {port: hosts[0].port},
+        contactPoints: hosts.map(function (v) { return v.host }),
+        protocolOptions: { port: hosts[0].port },
         localDataCenter: 'datacenter1'
       })
       function shutdown () {
@@ -105,8 +105,8 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     })
     before(function () {
       client = ctx.cassandra = new cassandra.Client({
-        contactPoints: hosts.map(function (v) {return v.host}),
-        protocolOptions: {port: hosts[0].port},
+        contactPoints: hosts.map(function (v) { return v.host }),
+        protocolOptions: { port: hosts[0].port },
         keyspace: ks,
         localDataCenter: 'datacenter1'
       })
@@ -135,7 +135,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     beforeEach(function () {
       prevDebug = ao.logLevel
       if (this.currentTest.title === 'should trace a prepared query') {
-        //ao.logLevel += ',test:messages'
+        // ao.logLevel += ',test:messages'
       }
     })
 
@@ -150,7 +150,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
         done()
       }, [
         function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Label').oneOf('entry', 'exit')
           msg.should.have.property('Layer', 'fake')
         }
       ], done)
@@ -324,9 +324,9 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
 
   function test_query_shortening (done) {
     helper.test(emitter, function (done) {
-      const query = 'SELECT '
-        + range(300).map(function () { return 'now()' }).join(', ')
-        + ' FROM system.local'
+      const query = 'SELECT ' +
+        range(300).map(function () { return 'now()' }).join(', ') +
+        ' FROM system.local'
 
       query.length.should.be.above(2048)
       ctx.cassandra.execute(query, done)
@@ -355,5 +355,4 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
       return items
     }
   }
-
 })

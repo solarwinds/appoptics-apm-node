@@ -1,33 +1,39 @@
+/* global it, describe, after, beforeEach, afterEach */
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
+
 'use strict'
+
 const ao = require('..')
-const fs = require('fs');
+const fs = require('fs')
 const Emitter = require('events').EventEmitter
 const helper = require('./helper')
 const should = require('should')
-const expect = require('chai').expect;
-const aob = ao.addon;
+const expect = require('chai').expect
+const aob = ao.addon
 const Span = ao.Span
 const Event = ao.Event
 
-const Q = require('q');
-const bluebird = require('bluebird');
+const Q = require('q')
+const bluebird = require('bluebird')
 
 const makeSettings = helper.makeSettings
 
-const soon = global.setImmediate || process.nextTick;
+const soon = global.setImmediate || process.nextTick
 
 function psoon () {
   return new Promise((resolve, reject) => {
-    soon(resolve);
+    soon(resolve)
   })
 }
 
 function qpsoon () {
-  return Q.delay(1);
+  return Q.delay(1)
 }
 
 function bbpsoon () {
-  return bluebird.delay(1);
+  return bluebird.delay(1)
 }
 
 // Without the native liboboe bindings present,
@@ -64,41 +70,39 @@ if (aob.version === 'not loaded') {
       ao.traceId
     })
   })
-  return
 }
 
-ao.requestStore.captureHooks = false;
+ao.requestStore.captureHooks = false
 
-//================================
+//= ===============================
 // custom tests with addon enabled
-//================================
+//= ===============================
 describe('custom', function () {
   const oSpanSendNon = Span.sendNonHttpSpan
   const oEventSend = Event.send
-  const conf = {enabled: true}
+  const conf = { enabled: true }
   let emitter
   let counter = 0
   let pfx
   let main
 
   after(function () {
-    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`);
-  });
-
+    ao.loggers.debug(`enters ${ao.Span.entrySpanEnters} exits ${ao.Span.entrySpanExits}`)
+  })
 
   beforeEach(function () {
     // provide up to 100 tests with a unique prefix
     pfx = ('0' + counter++).slice(-2)
     main = `${pfx}-test`
-  });
+  })
 
   beforeEach(function () {
     if (this.currentTest.title === 'should continue from previous trace id') {
-      //ao.logLevelAdd('test:*');
+      // ao.logLevelAdd('test:*');
     } else {
-      //ao.logLevelRemove('test:span');
+      // ao.logLevelRemove('test:span');
     }
-  });
+  })
 
   //
   // Intercept appoptics messages for analysis
@@ -107,15 +111,14 @@ describe('custom', function () {
     ao.sampleRate = aob.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     emitter = helper.appoptics(done)
-  });
+  })
   afterEach(function (done) {
     Span.sendNonHttpSpan = oSpanSendNon
     Event.send = oEventSend
     emitter.close(done)
-  });
+  })
   // clear any debug marker
-  afterEach(() => delete helper.checkLogMessages.debug);
-
+  afterEach(() => delete helper.checkLogMessages.debug)
 
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
@@ -125,7 +128,7 @@ describe('custom', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -225,7 +228,7 @@ describe('custom', function () {
         function () {
           return {
             name: main,
-            kvpairs: {Foo: 'bar'}
+            kvpairs: { Foo: 'bar' }
           }
         }, soon, done)
     }, [
@@ -289,12 +292,12 @@ describe('custom', function () {
   })
 
   it('should report custom info events within a span', function (done) {
-    const data = {Foo: 'bar'}
+    const data = { Foo: 'bar' }
     let last
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return {name: main}
+        return { name: main }
       }, function (callback) {
         ao.reportInfo(data)
         callback()
@@ -389,7 +392,7 @@ describe('custom', function () {
         msg.should.have.property('Edge', inner[1].events.internal[0].opId)
         msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'exit')
-      },
+      }
     ]
 
     function after (n, cb) {
@@ -401,7 +404,6 @@ describe('custom', function () {
     }
 
     helper.test(emitter, function (done) {
-
       function makeInner (data, done) {
         const name = 'inner-' + data.Index
         const span = ao.lastSpan.descend(name)
@@ -432,12 +434,12 @@ describe('custom', function () {
   })
 
   it('should report partitioned spans', function (done) {
-    const data = {Foo: 'bar', Partition: 'bar'}
+    const data = { Foo: 'bar', Partition: 'bar' }
     let last
 
     helper.test(emitter, function (done) {
       ao.instrument(function (span) {
-        return {name: main}
+        return { name: main }
       }, function (callback) {
         ao.reportInfo(data)
         callback()
@@ -466,7 +468,7 @@ describe('custom', function () {
 
   it('standard version should fail gracefully when invalid arguments are given', function (done) {
     helper.test(emitter, function (done) {
-      function build (span) {return {name: main}}
+      function build (span) { return { name: main } }
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
       const found = []
       let i = 0
@@ -481,12 +483,12 @@ describe('custom', function () {
       let count = 0
 
       const logChecks = [
-        {level: 'error', message: 'ao.instrument() run function is'},
-        {level: 'error', message: 'ao.runInstrument found no span name or span-info()'},
-        {level: 'error', message: 'ao.runInstrument failed to build span'},
-        {level: 'error', message: 'ao.runInstrument failed to build span'},
-        {level: 'error', message: 'no name supplied to runInstrument by span-info()'},
-      ];
+        { level: 'error', message: 'ao.instrument() run function is' },
+        { level: 'error', message: 'ao.runInstrument found no span name or span-info()' },
+        { level: 'error', message: 'ao.runInstrument failed to build span' },
+        { level: 'error', message: 'ao.runInstrument failed to build span' },
+        { level: 'error', message: 'no name supplied to runInstrument by span-info()' }
+      ]
       helper.checkLogMessages(logChecks)
 
       // Verify nothing bad happens when run function is missing
@@ -505,7 +507,7 @@ describe('custom', function () {
 
       expected.push('nnrun')
       // Verify the runner is still run when spaninfo fails to return a name
-      ao.instrument(function () {return {}}, getInc())
+      ao.instrument(function () { return {} }, getInc())
       found.should.deepEqual(expected)
       count.should.equal(5)
 
@@ -515,7 +517,7 @@ describe('custom', function () {
 
   it('promise version should fail gracefully when invalid arguments are given', function (tdone) {
     helper.test(emitter, function (done) {
-      function build (span) {return {name: main}}
+      function build (span) { return { name: main } }
       // (i)nstrument, (s)tartOrContinueTrace
       const expected = ['ibuild', 'irun', 'sbuild', 'srun']
       const found = []
@@ -530,71 +532,71 @@ describe('custom', function () {
       function run () {}
       let count = 0
 
-      const missing = undefined;
+      const missing = undefined
 
       // just make the messages a little shorter.
-      const psoct = 'pStartOrContinueTrace';
+      const psoct = 'pStartOrContinueTrace'
       const logChecks = [
         // verify nothing bad happens when run function is missing
-        {level: 'error', message: 'ao.instrument() run function is'},
-        {level: 'error', message: `${psoct} requires a function, not ${typeof missing}`},
+        { level: 'error', message: 'ao.instrument() run function is' },
+        { level: 'error', message: `${psoct} requires a function, not ${typeof missing}` },
         // verify nothing bad happens when spanInfo() is missing
-        {level: 'error', message: 'ao.runInstrument found no span name or span-info()'},
-        {level: 'error', message: `${psoct} span argument must be a string or function, not ${typeof protoSpan}`},
+        { level: 'error', message: 'ao.runInstrument found no span name or span-info()' },
+        { level: 'error', message: `${psoct} span argument must be a string or function, not ${typeof protoSpan}` },
         // verify the runner is still run when spanInfo fails to return a correct object
-        {level: 'error', message: 'ao.runInstrument failed to build span'},
-        {level: 'error', message: `${psoct} span-info bad values: name`},
+        { level: 'error', message: 'ao.runInstrument failed to build span' },
+        { level: 'error', message: `${psoct} span-info bad values: name` },
         // verify the runner is still run when spanInfo() fails to return a name
-        {level: 'error', message: 'no name supplied to runInstrument by span-info()'},
-        {level: 'error', message: `${psoct} span-info bad values: name`},
-      ];
+        { level: 'error', message: 'no name supplied to runInstrument by span-info()' },
+        { level: 'error', message: `${psoct} span-info bad values: name` }
+      ]
 
-      const [getCount] = helper.checkLogMessages(logChecks);
-      //helper.checkLogMessages.debug = true;
+      const [getCount] = helper.checkLogMessages(logChecks)
+      // helper.checkLogMessages.debug = true;
 
       // Verify nothing bad happens when run function is missing
-      ao.pInstrument(build, missing);
-      ao.pStartOrContinueTrace(null, build, missing);
+      ao.pInstrument(build, missing)
+      ao.pStartOrContinueTrace(null, build, missing)
 
       // Verify nothing bad happens when spanInfo is missing
-      ao.pInstrument(missing, run);
-      ao.pStartOrContinueTrace(null, missing, run);
+      ao.pInstrument(missing, run)
+      ao.pStartOrContinueTrace(null, missing, run)
 
       // Verify the runner is still run when spanInfo() fails to return an object
       ao.pInstrument(getInc(), getInc())
       ao.pStartOrContinueTrace(null, getInc(), getInc())
 
-      expect(found).deep.equal(expected);
-      expect(count).equal(4);
+      expect(found).deep.equal(expected)
+      expect(count).equal(4)
 
       // (n)o (n)ame run...
-      expected.push('nnrun');
-      expected.push('nnrun');
+      expected.push('nnrun')
+      expected.push('nnrun')
       // Verify the runner is still run when spanInfo() fails to return a name
-      ao.pInstrument(function () {return {}}, getInc());
-      ao.pStartOrContinueTrace(null, () => {return {}}, getInc());
+      ao.pInstrument(function () { return {} }, getInc())
+      ao.pStartOrContinueTrace(null, () => { return {} }, getInc())
 
-      expect(found).deep.equal(expected);
-      expect(count).equal(6);
+      expect(found).deep.equal(expected)
+      expect(count).equal(6)
 
       // verify that all the log messages where checked.
-      expect(getCount()).equal(logChecks.length, 'all error messages should have been checked');
+      expect(getCount()).equal(logChecks.length, 'all error messages should have been checked')
 
       done()
-    }, [], tdone);
+    }, [], tdone)
   })
 
   it('should handle errors correctly between spanInfo and run functions', function (done) {
     helper.test(emitter, function (tdone) {
       const err = new Error('nope')
-      function build (span) {return {name: main}}
-      function nope () {count++; throw err}
-      function inc () {count++}
+      function build (span) { return { name: main } }
+      function nope () { count++; throw err }
+      function inc () { count++ }
       let count = 0
 
       const logChecks = [
-        {level: 'error', message: 'ao.runInstrument failed to build span'},
-        {level: 'error', message: 'ao.runInstrument failed to build span'},
+        { level: 'error', message: 'ao.runInstrument failed to build span' },
+        { level: 'error', message: 'ao.runInstrument failed to build span' }
       ]
       helper.checkLogMessages(logChecks)
 
@@ -605,7 +607,7 @@ describe('custom', function () {
 
       // Verify that errors thrown in the runner function *do* propagate
       count = 0
-      function validateError (e) {return e === err}
+      function validateError (e) { return e === err }
       should.throws(function () {
         ao.instrument(build, nope)
       }, validateError)
@@ -614,7 +616,7 @@ describe('custom', function () {
       }, validateError)
       count.should.equal(2)
 
-      tdone();
+      tdone()
     }, [], done)
   })
 
@@ -628,7 +630,6 @@ describe('custom', function () {
       metricsSent = true
       return txname
     }
-
 
     helper.doChecks(emitter, [
       function (msg) {
@@ -673,18 +674,16 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = aob.Event.makeRandom(0).toString();
-    const res = ao.startOrContinueTrace(xtrace, main, function () {return test}, conf)
+    const xtrace = aob.Event.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(xtrace, main, function () { return test }, conf)
 
     res.should.equal(test)
     metricsSent.should.equal(0)
     eventsSent.should.equal(0)
-
   })
 
   // Verify startOrContinueTrace creates a new trace when not already tracing.
   it('should start a fresh trace for async function', function (done) {
-
     let last
     helper.doChecks(emitter, [
       function (msg) {
@@ -705,12 +704,12 @@ describe('custom', function () {
     const test = 'foo'
     const res = ao.startOrContinueTrace(
       null,
-      main,                          // span name
-      function (cb) {                // runner
-        setTimeout(function () {cb(1, 2, 3, 5)}, 100)
+      main, // span name
+      function (cb) { // runner
+        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line node/no-callback-literal
         return test
       },
-      conf,                          // configuration
+      conf, // configuration
       function callback () {
         arguments.should.have.property('0', 1)
         arguments.should.have.property('1', 2)
@@ -726,153 +725,154 @@ describe('custom', function () {
     // the promise-returning function for the span
     function psoon (...args) {
       return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(args), 100);
-      });
+        setTimeout(() => resolve(args), 100)
+      })
     }
 
-    let last;
+    let last
     const pa = new Promise((resolve, reject) => {
       helper.doChecks(emitter, [
         function (msg) {
-          expect(msg).property('Layer', main);
-          expect(msg).property('Label', 'entry');
-          expect(msg).property('SampleSource');
-          expect(msg).property('SampleRate');
-          expect(msg).not.property('Edge');
-          last = msg['X-Trace'].substr(42, 16);
+          expect(msg).property('Layer', main)
+          expect(msg).property('Label', 'entry')
+          expect(msg).property('SampleSource')
+          expect(msg).property('SampleRate')
+          expect(msg).not.property('Edge')
+          last = msg['X-Trace'].substr(42, 16)
         },
         function (msg) {
-          expect(msg).property('Layer', main);
-          expect(msg).property('Label', 'exit');
-          expect(msg).property('Edge', last);
+          expect(msg).property('Layer', main)
+          expect(msg).property('Label', 'exit')
+          expect(msg).property('Edge', last)
         }
-      ], resolve);
-    });
+      ], resolve)
+    })
 
-    let p;
+    let p
     // pStartOrContinueTrace. psoon's ...args are used to resolve the promise.
     const res = ao.pStartOrContinueTrace(
       null,
-      main,                           // span name
-      () => p = psoon(1, 2, 3, 5),    // promise-returning runner
-      Object.assign({forceNewTrace: true}, conf)                            // configuration
-    );
+      main, // span name
+      // promise-returning runner
+      () => p = psoon(1, 2, 3, 5), // eslint-disable-line no-return-assign
+      Object.assign({ forceNewTrace: true }, conf) // configuration
+    )
 
-    expect(res).instanceOf(Promise);
+    expect(res).instanceOf(Promise)
 
     // wait for the span and the checks to complete then verify the result.
     return Promise.all([pa, res, p]).then(r => {
-      expect(r[1]).equal(r[2]);
+      expect(r[1]).equal(r[2])
       return res.then(res => {
-        expect(res).deep.equal([1, 2, 3, 5], 'the function return value should be returned');
-        return res;
-      });
-    });
-  });
+        expect(res).deep.equal([1, 2, 3, 5], 'the function return value should be returned')
+        return res
+      })
+    })
+  })
 
   it('should start and descend using pStartOrContinueTrace', function () {
     // the promise-returning function for the span
-    let p;
-    let rdResult;
+    let p
+    let rdResult
     async function task () {
       const p1 = ao.pStartOrContinueTrace(null, 'psooner', psoon)
       const p2 = new Promise((resolve, reject) => {
         fs.readdir('.', (error, files) => {
           if (error) {
-            reject(error);
+            reject(error)
           } else {
-            rdResult = files;
-            resolve(files);
+            rdResult = files
+            resolve(files)
           }
-        });
-      });
-      return p = Promise.all([p1, p2]);
+        })
+      })
+      return p = Promise.all([p1, p2]) // eslint-disable-line no-return-assign
     }
 
     function psoon () {
       return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(), 1000);
-      });
+        setTimeout(() => resolve(), 1000)
+      })
     }
 
     // it's possible that reading the directory could take longer than the
     // psoon 1000ms timeout. if that's the case then 1) either make the timeout
     // longer or 2) capture the order of completion and have the following
     // checks take that into consideration.
-    let last;
-    let psoonEntry;
+    let last
+    let psoonEntry
     const pa = new Promise((resolve, reject) => {
       helper.doChecks(emitter, [
         function (msg) {
-          expect(msg).property('X-Trace');
-          expect(`${main}:${msg.Label}`).equal(`${main}:entry`);
-          expect(msg).property('SampleSource');
-          expect(msg).property('SampleRate');
-          expect(msg).not.property('Edge');
-          last = new Last(msg['X-Trace']);
+          expect(msg).property('X-Trace')
+          expect(`${main}:${msg.Label}`).equal(`${main}:entry`)
+          expect(msg).property('SampleSource')
+          expect(msg).property('SampleRate')
+          expect(msg).not.property('Edge')
+          last = new Last(msg['X-Trace'])
         },
         function (msg) {
-          expect(msg).property('X-Trace');
-          expect(`${msg.Layer}:${msg.Label}`).equal('psooner:entry');
-          psoonEntry = last = new Last(msg['X-Trace']);
+          expect(msg).property('X-Trace')
+          expect(`${msg.Layer}:${msg.Label}`).equal('psooner:entry')
+          psoonEntry = last = new Last(msg['X-Trace'])
         },
         function (msg) {
-          expect(msg).property('X-Trace');
-          expect(`${msg.Layer}:${msg.Label}`).equal('fs:entry');
-          expect(msg).property('Spec', 'filesystem');
-          expect(msg).property('Operation', 'readdir');
-          expect(msg).property('FilePath', '.');
-          expect(msg).property('Async', true);
-          const curr = new Last(msg['X-Trace']);
-          expect(curr.taskId()).equal(last.taskId(), 'task ID must match');
-          expect(msg).property('Edge', last.opId());
-          last = curr;
+          expect(msg).property('X-Trace')
+          expect(`${msg.Layer}:${msg.Label}`).equal('fs:entry')
+          expect(msg).property('Spec', 'filesystem')
+          expect(msg).property('Operation', 'readdir')
+          expect(msg).property('FilePath', '.')
+          expect(msg).property('Async', true)
+          const curr = new Last(msg['X-Trace'])
+          expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
+          expect(msg).property('Edge', last.opId())
+          last = curr
         },
         function (msg) {
-          expect(msg).property('X-Trace');
-          expect(`${msg.Layer}:${msg.Label}`).equal('fs:exit');
-          const curr = new Last(msg['X-Trace']);
-          expect(curr.taskId()).equal(last.taskId(), 'task ID must match');
-          expect(msg).property('Edge', last.opId());
-          last = curr;
+          expect(msg).property('X-Trace')
+          expect(`${msg.Layer}:${msg.Label}`).equal('fs:exit')
+          const curr = new Last(msg['X-Trace'])
+          expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
+          expect(msg).property('Edge', last.opId())
+          last = curr
         },
         function (msg) {
-          expect(`${msg.Layer}:${msg.Label}`).equal('psooner:exit');
-          expect(msg).property('Edge', psoonEntry.opId());
-          last = new Last(msg['X-Trace']);
+          expect(`${msg.Layer}:${msg.Label}`).equal('psooner:exit')
+          expect(msg).property('Edge', psoonEntry.opId())
+          last = new Last(msg['X-Trace'])
         },
         function (msg) {
-          expect(msg).property('X-Trace');
-          expect(msg).property('Layer', main);
-          expect(msg).property('Label', 'exit');
-          expect(msg).property('Edge', last.opId());
-          const curr = new Last(msg['X-Trace']);
-          expect(curr.taskId()).equal(last.taskId(), 'task ID must match');
-          last = curr;
+          expect(msg).property('X-Trace')
+          expect(msg).property('Layer', main)
+          expect(msg).property('Label', 'exit')
+          expect(msg).property('Edge', last.opId())
+          const curr = new Last(msg['X-Trace'])
+          expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
+          last = curr
         }
-      ], resolve);
-    });
+      ], resolve)
+    })
 
     // pStartOrContinueTrace.
     const res = ao.pStartOrContinueTrace(
       null,
-      main,                           // span name
-      task,                           // promise-returning runner
-      Object.assign({forceNewTrace: true}, conf)                            // configuration
-    );
+      main, // span name
+      task, // promise-returning runner
+      Object.assign({ forceNewTrace: true }, conf) // configuration
+    )
 
-    expect(res).instanceOf(Promise);
+    expect(res).instanceOf(Promise)
 
     // wait for the span and the checks to complete then verify the result.
     return Promise.all([pa, res, p]).then(r => {
-      expect(r[1]).equal(r[2]);
+      expect(r[1]).equal(r[2])
       return res.then(res => {
         // because res is the result of Promise.all() only compare the second element.
-        expect(res[1]).deep.equal(rdResult, 'the function return value should be returned');
-        return res;
-      });
-    });
-  });
+        expect(res[1]).deep.equal(rdResult, 'the function return value should be returned')
+        return res
+      })
+    })
+  })
 
   // Verify startOrContinueTrace continues from provided trace id.
   it('should continue from previous trace id', function (done) {
@@ -881,33 +881,33 @@ describe('custom', function () {
 
     helper.doChecks(emitter, [
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('x-previous:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('x-previous:entry')
         msg.should.not.have.property('Edge')
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal(`${main}:entry`);
+        expect(`${msg.Layer}:${msg.Label}`).equal(`${main}:entry`)
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.Edge.should.equal(entry.opId)
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal(`${main}:exit`);
+        expect(`${msg.Layer}:${msg.Label}`).equal(`${main}:exit`)
         msg.Edge.should.equal(last)
         last = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('x-previous:exit');
+        expect(`${msg.Layer}:${msg.Label}`).equal('x-previous:exit')
         msg.Edge.should.equal(entry.opId)
       }
     ], done)
 
     ao.startOrContinueTrace(
-      '',                           // no xtrace ID, start a trace
-      'x-previous',                 // span name
-      function (pcb) {              // runner function, creates a new span
+      '', // no xtrace ID, start a trace
+      'x-previous', // span name
+      function (pcb) { // runner function, creates a new span
         ao.startOrContinueTrace(
-          ao.lastSpan.events.entry.toString(),    // continue from the last span's id.
+          ao.lastSpan.events.entry.toString(), // continue from the last span's id.
           () => {
             return {
               name: main,
@@ -916,17 +916,17 @@ describe('custom', function () {
               }
             }
           },
-          function (cb) {           // runner function, pseudo async
+          function (cb) { // runner function, pseudo async
             cb()
           },
-          conf,                                 // config
-          function () {                         // done function
+          conf, // config
+          function () { // done function
           }
         )
         pcb()
       },
-      Object.assign({forceNewTrace: true}, conf),                         // config
-      function () {                 // done function
+      Object.assign({ forceNewTrace: true }, conf), // config
+      function () { // done function
       }
     )
   })
@@ -937,20 +937,20 @@ describe('custom', function () {
     // make the container span.
     const previous = Span.makeEntrySpan('previous', makeSettings())
     // don't let this act like a real entry span
-    previous.topSpan = undefined;
+    previous.topSpan = undefined
 
     const entry = previous.events.entry
-    const taskId = previous.events.entry.taskId;
+    const taskId = previous.events.entry.taskId
     let prevOpId, outerOpId, innerOpId
 
     helper.doChecks(emitter, [
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('previous:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('previous:entry')
         msg.should.not.have.property('Edge')
         prevOpId = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:entry')
         // SampleSource and SampleRate should NOT be here due to continuation
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
@@ -958,7 +958,7 @@ describe('custom', function () {
         outerOpId = msg['X-Trace'].substr(42, 16)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('inner:entry');
+        expect(`${msg.Layer}:${msg.Label}`).equal('inner:entry')
         // SampleSource and SampleRate should NOT be here due to continuation
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
@@ -967,26 +967,26 @@ describe('custom', function () {
       },
       // there should be a new trace here
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:entry');
-        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId);
-        expect(msg.Edge).not.exist;
+        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:entry')
+        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId)
+        expect(msg.Edge).not.exist
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:exit');
-        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId);
+        expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:exit')
+        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId)
       },
       // back to the previous trace
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('inner:exit');
-        expect(msg['X-Trace'].substr(2, 40)).equal(taskId);
+        expect(`${msg.Layer}:${msg.Label}`).equal('inner:exit')
+        expect(msg['X-Trace'].substr(2, 40)).equal(taskId)
         msg.should.have.property('Edge', innerOpId)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:exit');
+        expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:exit')
         msg.should.have.property('Edge', outerOpId)
       },
       function (msg) {
-        expect(`${msg.Layer}:${msg.Label}`).equal('previous:exit');
+        expect(`${msg.Layer}:${msg.Label}`).equal('previous:exit')
         msg.should.have.property('Edge', prevOpId)
       }
     ], done)
@@ -994,155 +994,153 @@ describe('custom', function () {
     previous.run(function (wrap) {
       // Verify ID-less calls continue
       ao.startOrContinueTrace(
-        null,                 // no xtrace-id
-        'continue-outer',     // span name
-        function (cb) {       // runner
+        null, // no xtrace-id
+        'continue-outer', // span name
+        function (cb) { // runner
           soon(function () {
           // Verify ID'd calls continue
             ao.startOrContinueTrace(
-              entry.toString(),     // xtrace-id
-              'inner',              // span name
-              function (cb) {       // runner pseudo-async
-                ao.requestStore.set('linger', true);
+              entry.toString(), // xtrace-id
+              'inner', // span name
+              function (cb) { // runner pseudo-async
+                ao.requestStore.set('linger', true)
                 soon(function () {
-                  expect(ao.requestStore.get('linger')).equal(true);
+                  expect(ao.requestStore.get('linger')).equal(true)
                   // Verify newContext calls DO NOT continue when no xtrace
                   ao.startOrContinueTrace(
-                    //entry.toString(),     // xtrace-id (supply this to continue)
+                    // entry.toString(),     // xtrace-id (supply this to continue)
                     '',
-                    'new-trace',          // span name
-                    function (cb) {       // runner pseudo-async
-                      expect(ao.requestStore.get('linger')).not.exist;
+                    'new-trace', // span name
+                    function (cb) { // runner pseudo-async
+                      expect(ao.requestStore.get('linger')).not.exist
                       cb()
                     },
-                    Object.assign({forceNewTrace: true}, conf),                 // config
-                    cb                    // done
+                    Object.assign({ forceNewTrace: true }, conf), // config
+                    cb // done
                   )
                 })
               },
-              conf,                 // config
-              cb                    // done
+              conf, // config
+              cb // done
             )
           })
         },
-        conf,                 // config
+        conf, // config
         wrap(function () {})) // done (wrapped due to span.run)
     })
   })
 
   // Verify startOrContinueTrace handles a false sample check correctly.
   it('should sample properly', function () {
-    const realGetTraceSettings = aob.Context.getTraceSettings;
+    const realGetTraceSettings = aob.Context.getTraceSettings
     let called = false
 
     aob.Context.getTraceSettings = function () {
       called = true
-      return makeSettings({source: 0, rate: 0})
+      return makeSettings({ source: 0, rate: 0 })
     }
 
     // because a span is created and entered then ao.lastSpan & ao.lastEvent
     // are cleared ao.startOrContinueTrace creates a new context, so the
     // next two errors should be generated.
     const logChecks = [
-      {level: 'error', message: 'task IDs don\'t match'},
-      {level: 'error', message: 'outer:exit 2b-'},
+      { level: 'error', message: 'task IDs don\'t match' },
+      { level: 'error', message: 'outer:exit 2b-' }
     ]
-    const [getCount, clearChecks] = helper.checkLogMessages(logChecks);
+    const [getCount, clearChecks] = helper.checkLogMessages(logChecks)
 
     return new Promise((resolve, reject) => {
       helper.test(
         emitter,
-        function (done) {             // test function
-          ao.lastSpan = ao.lastEvent = null;
-          ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done);
+        function (done) { // test function
+          ao.lastSpan = ao.lastEvent = null
+          ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done)
         },
-        [() => undefined, () => undefined],                           // checks
+        [() => undefined, () => undefined], // checks
         function (err) {
-          aob.Context.getTraceSettings = realGetTraceSettings;
-          expect(called).equal(true, 'the sample function should be called');
+          aob.Context.getTraceSettings = realGetTraceSettings
+          expect(called).equal(true, 'the sample function should be called')
           if (err) {
-            reject(err);
+            reject(err)
           } else {
-            expect(getCount()).equal(2, 'expected 2 log messages');
-            clearChecks();
-            resolve();
+            expect(getCount()).equal(2, 'expected 2 log messages')
+            clearChecks()
+            resolve()
           }
         }
-      );
-    });
-  });
+      )
+    })
+  })
 
   // Verify traceId getter works correctly
   it('should get traceId when tracing and null when not', function () {
     ao.requestStore.run(function () {
-      expect(ao.traceId).not.exist;
-      expect(ao.tracing).equal(false);
+      expect(ao.traceId).not.exist
+      expect(ao.tracing).equal(false)
       ao.startOrContinueTrace(
         null,
         main,
         function (cb) {
-          should.exist(ao.traceId);
-          cb();
+          should.exist(ao.traceId)
+          cb()
         },
         function () {
-          should.exist(ao.traceId);
+          should.exist(ao.traceId)
         }
       )
-      should.not.exist(ao.traceId);
-    }, {newContext: true});
-
+      should.not.exist(ao.traceId)
+    }, { newContext: true })
   })
 
   // it should handle bad bind arguments gracefully and issue warnings.
   it('should handle bad bind arguments correctly', function () {
-    const bind = ao.requestStore.bind;
-    let threw = false;
-    const sequence = [];
+    const bind = ao.requestStore.bind
+    let threw = false
+    const sequence = []
 
     ao.requestStore.run(function () {
-      let called = false;
+      let called = false
 
       ao.requestStore.bind = function () {
-        called = true;
+        called = true
       }
 
       function noop () {}
 
       const logChecks = [
-        {level: 'warn', message: 'ao.bind(%s) - no context', values: ['noop']},
-        {level: 'warn', message: 'ao.bind(%s) - not a function', values: [null]},
+        { level: 'warn', message: 'ao.bind(%s) - no context', values: ['noop'] },
+        { level: 'warn', message: 'ao.bind(%s) - not a function', values: [null] }
       ]
-      helper.checkLogMessages(logChecks);
-
+      helper.checkLogMessages(logChecks)
 
       try {
-        ao.bind(noop);
-        sequence.push(called);
-        called = false;
-        const span = Span.makeEntrySpan(main, makeSettings());
+        ao.bind(noop)
+        sequence.push(called)
+        called = false
+        const span = Span.makeEntrySpan(main, makeSettings())
         // don't let it try to send metrics
-        span.doMetrics = false;
+        span.doMetrics = false
         span.run(function () {
-          ao.bind(null);
-          sequence.push(called);
-          called = false;
-          ao.bind(noop);
-          sequence.push(called);
-        });
+          ao.bind(null)
+          sequence.push(called)
+          called = false
+          ao.bind(noop)
+          sequence.push(called)
+        })
       } catch (e) {
-        threw = true;
+        threw = true
       }
-    }, {newContext: true});
+    }, { newContext: true })
 
     ao.requestStore.bind = bind
 
-    expect(sequence).deep.equal([false, false, true]);
-    expect(threw).equal(false, 'there should not have been an exception');
+    expect(sequence).deep.equal([false, false, true])
+    expect(threw).equal(false, 'there should not have been an exception')
   })
 
   it('should bind emitters to requestStore', function () {
     const bindEmitter = ao.requestStore.bindEmitter
-    let threw;
+    let threw
     let called = false
 
     function captureCall () {
@@ -1153,32 +1151,32 @@ describe('custom', function () {
     // this is a little tricky - bind emitter errors are debounced so not every
     // error results in a log message. the count appears in brackets.
     const logChecks = [
-      {level: 'warn', message: '[1]ao.bindEmitter - no context'},
-      {level: 'error', message: '[1]ao.bindEmitter - non-emitter'},
+      { level: 'warn', message: '[1]ao.bindEmitter - no context' },
+      { level: 'error', message: '[1]ao.bindEmitter - non-emitter' }
     ]
     helper.checkLogMessages(logChecks)
 
     try {
-      ao.resetRequestStore();
+      ao.resetRequestStore()
       // reset requestStore resets bindEmitter, so don't replace it with captureCall
       // until after resetting the request store.
-      ao.requestStore.bindEmitter = captureCall;
+      ao.requestStore.bindEmitter = captureCall
       ao.bindEmitter(emitter)
-      called.should.equal(false, 'bindEmitter should not have been called when no context');
+      called.should.equal(false, 'bindEmitter should not have been called when no context')
       const span = Span.makeEntrySpan(main, makeSettings())
       span.run(function () {
         ao.bindEmitter(null)
-        called.should.equal(false, 'bindEmitter should not have been called for null');
+        called.should.equal(false, 'bindEmitter should not have been called for null')
         ao.bindEmitter(emitter)
-        called.should.equal(true, 'bindEmitter should be called for an emitter');
+        called.should.equal(true, 'bindEmitter should be called for an emitter')
       })
     } catch (e) {
-      threw = e.message;
+      threw = e.message
     }
 
     ao.requestStore.bindEmitter = bindEmitter
 
-    expect(threw).not.exist;
+    expect(threw).not.exist
   })
 
   it('should support instrumentHttp', function (done) {
@@ -1212,7 +1210,7 @@ describe('custom', function () {
         msg.Edge.should.equal(last)
       }
     ], done)
-  });
+  })
 
   // Verify startOrContinue trace doesn't sample or do metrics when sampling is false
   it('should not send events or metrics - unsampled x-trace, async', function (done) {
@@ -1235,12 +1233,12 @@ describe('custom', function () {
     const xtrace = aob.Event.makeRandom(0).toString()
     const res = ao.startOrContinueTrace(
       xtrace,
-      main,                          // span name
-      function (cb) {                // runner
-        setTimeout(function () {cb(1, 2, 3, 5)}, 100)
+      main, // span name
+      function (cb) { // runner
+        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line node/no-callback-literal
         return test
       },
-      conf,                          // configuration
+      conf, // configuration
       function () {
         arguments.should.have.property('0', 1)
         arguments.should.have.property('1', 2)
@@ -1262,25 +1260,25 @@ describe('custom', function () {
   it('should not have leftover context', function () {
 
   })
-
-});
+})
 
 class Last {
   constructor (xtrace) {
-    this.xtrace = xtrace.toUpperCase();
+    this.xtrace = xtrace.toUpperCase()
     if (!this.xtrace.startsWith('2B')) {
-      throw new Error(`doesn't start with '2B': ${xtrace}`);
+      throw new Error(`doesn't start with '2B': ${xtrace}`)
     }
   }
+
   taskId () {
-    return this.xtrace.substr(2, 40);
+    return this.xtrace.substr(2, 40)
   }
+
   opId () {
-    return this.xtrace.substr(42, 16);
+    return this.xtrace.substr(42, 16)
   }
+
   flags () {
-    return this.xtrace.slice(-2);
+    return this.xtrace.slice(-2)
   }
-
 }
-

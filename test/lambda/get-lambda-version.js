@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const fs = require('fs');
+const fs = require('fs')
 
 //
 // this is modified from the apm-node-lambda-layer/util/get-lambda-version.js
@@ -12,8 +12,8 @@ const fs = require('fs');
 // append '-version-suffix' to the version and return that.
 //
 function getLambdaVersion (file) {
-  const bytes = fs.readFileSync(file, 'utf8');
-  const pkg = JSON.parse(bytes);
+  const bytes = fs.readFileSync(file, 'utf8')
+  const pkg = JSON.parse(bytes)
 
   // lambda releases will be numbered by the existing version number with a
   // version suffix appended.
@@ -22,7 +22,7 @@ function getLambdaVersion (file) {
   }
 
   // combine and return
-  return `${pkg.version}-${pkg.appoptics['version-suffix']}`;
+  return `${pkg.version}-${pkg.appoptics['version-suffix']}`
 }
 
-module.exports = getLambdaVersion;
+module.exports = getLambdaVersion

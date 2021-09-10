@@ -11,12 +11,12 @@ const koaRouterVersion = require('koa-router/package.json').version
 const helper = require('../helper')
 const request = require('request')
 
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const views = require('co-views')
 
 const render = views('test/probes', {
-  map: {ejs: 'ejs'},
+  map: { ejs: 'ejs' },
   ext: 'ejs'
 })
 
@@ -58,7 +58,7 @@ function controllerValidations (...args) {
     },
     function (msg) {
       check['koa-entry'](msg)
-    },
+    }
   ]
   const exits = []
   let c
@@ -96,13 +96,12 @@ function controllerValidations (...args) {
   ])
 
   return checks
-
 }
 
 exports.basic = function (emitter, done) {
   const app = koa()
 
-  app.use(function* () {
+  app.use(function * () {
     this.body = 'done'
   })
 
@@ -125,7 +124,7 @@ exports.disabled = function (emitter, done) {
   ao.probes.koa.enabled = false
   const app = koa()
 
-  app.use(function* () {
+  app.use(function * () {
     this.body = 'done'
   })
 
@@ -153,7 +152,7 @@ exports.disabled = function (emitter, done) {
 exports.route = function (emitter, done) {
   const app = koa()
 
-  app.use(_.get('/hello/:name', function* hello () {
+  app.use(_.get('/hello/:name', function * hello () {
     this.body = 'done'
   }))
 
@@ -172,7 +171,7 @@ exports.route_disabled = function (emitter, done) {
   ao.probes['koa-route'].enabled = false
   const app = koa()
 
-  app.use(_.get('/hello/:name', function* hello () {
+  app.use(_.get('/hello/:name', function * hello () {
     this.body = 'done'
   }))
 
@@ -216,13 +215,13 @@ exports.router = function (emitter, done) {
     r.get('/hello/:name', hello)
   } else {
     spanName = 'koa-router-handler'
-    function* hello () {
+    function * hello () {
       this.body = 'done'
     }
     // koa-router v5 and below - app.use() requires a generator
     // and router(app).routes() returns one (unless it's a really)
     // old version in which case just app.use(r).
-    if (typeof r.routes === 'function' ) {
+    if (typeof r.routes === 'function') {
       app.use(r.routes())
       r.get('/hello/:name', hello)
     } else {
@@ -286,7 +285,7 @@ exports.router_disabled = function (emitter, done) {
   ao.probes['koa-router'].enabled = false
   const app = koa()
 
-  function* hello () {
+  function * hello () {
     this.body = 'done'
   }
 
@@ -328,7 +327,7 @@ exports.resourceRouter = function (emitter, done) {
   const app = koa()
 
   const res = new Resource('hello', {
-    index: function* index () {
+    index: function * index () {
       this.body = 'done'
     }
   })
@@ -351,7 +350,7 @@ exports.resourceRouter_disabled = function (emitter, done) {
   const app = koa()
 
   const res = new Resource('hello', {
-    index: function* index () {
+    index: function * index () {
       this.body = 'done'
     }
   })
@@ -377,7 +376,7 @@ exports.resourceRouter_disabled = function (emitter, done) {
 exports.render = function (emitter, done) {
   const app = koa()
 
-  app.use(function* () {
+  app.use(function * () {
     this.body = yield render('hello', {
       name: 'world'
     })
@@ -417,11 +416,11 @@ exports.render = function (emitter, done) {
 }
 
 exports.render_disabled = function (emitter, done) {
-  ao.probes['co-render'].enabled = false;
-  ao.probes['http-client'].enabled = false;
+  ao.probes['co-render'].enabled = false
+  ao.probes['http-client'].enabled = false
   const app = koa()
 
-  app.use(function* () {
+  app.use(function * () {
     this.body = yield render('hello', {
       name: 'world'
     })
@@ -443,8 +442,8 @@ exports.render_disabled = function (emitter, done) {
   ]
 
   helper.doChecks(emitter, validations, function () {
-    ao.probes['co-render'].enabled = true;
-    ao.probes['http-client'].enabled = true;
+    ao.probes['co-render'].enabled = true
+    ao.probes['http-client'].enabled = true
     server.close(done)
   })
 

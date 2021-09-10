@@ -1,8 +1,8 @@
+/* global it, describe, before, after */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
-
+const { ao } = require('../1.test-common')
 
 const noop = helper.noop
 const conf = ao.probes.pg
@@ -24,7 +24,7 @@ const auth = {
   password: password,
   host: addr.host,
   port: addr.port,
-  database: 'test',
+  database: 'test'
 }
 
 const stream = require('stream')
@@ -59,7 +59,7 @@ describe('probes.pg ' + pkg.version, function () {
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -72,7 +72,7 @@ describe('probes.pg ' + pkg.version, function () {
 
   before(function (done) {
     this.timeout(10000)
-    const tmpAuth = extend(extend({}, auth), {database: 'postgres'})
+    const tmpAuth = extend(extend({}, auth), { database: 'postgres' })
     const client = new postgres.Client(tmpAuth)
     client.connect(function (err) {
       if (err) return done(err)
@@ -111,7 +111,7 @@ describe('probes.pg ' + pkg.version, function () {
   // Test against both native and js postgres drivers
   //
   Object.keys(drivers).forEach(function (type) {
-    const ctx = {ao, tName}
+    const ctx = { ao, tName }
     let pg
     let db
 
@@ -166,7 +166,7 @@ describe('probes.pg ' + pkg.version, function () {
           done()
         }, [
           function (msg) {
-            msg.should.have.property('Label').oneOf('entry', 'exit'),
+            msg.should.have.property('Label').oneOf('entry', 'exit')
             msg.should.have.property('Layer', 'fake')
           }
         ], done)
@@ -274,5 +274,4 @@ describe('probes.pg ' + pkg.version, function () {
       })
     }
   })
-
 })

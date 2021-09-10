@@ -1,19 +1,19 @@
-'use strict';
+'use strict'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Lambda.html
 
-const fsp = require('fs').promises;
-const exec = require('child_process').exec;
+const fsp = require('fs').promises
+const exec = require('child_process').exec
 
 // aws does not read the config file unless this is true. it's easier
 // to let the config file supply the keys and region. if this isn't set
 // then the keys and region must be supplied when instantiating the AWS
 // classes.
-process.env.AWS_SDK_LOAD_CONFIG = 'true';
+process.env.AWS_SDK_LOAD_CONFIG = 'true'
 
-const AWS = require('aws-sdk');
-const lambda = new AWS.Lambda();
-const cwl = new AWS.CloudWatchLogs();
+const AWS = require('aws-sdk')
+const lambda = new AWS.Lambda()
+const cwl = new AWS.CloudWatchLogs()
 
 async function getFileStats (fn) {
   return fsp.stat(fn)
@@ -23,7 +23,7 @@ async function getFileStats (fn) {
 
 async function readFile (fn) {
   return fsp.readFile(fn)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 async function execCommandLine (cmdline, options = {}) {
@@ -31,27 +31,27 @@ async function execCommandLine (cmdline, options = {}) {
     // eslint-disable-next-line no-unused-vars
     const cp = exec(cmdline, options, function (error, stdout, stderr) {
       if (error) {
-        reject({error, stdout, stderr});
+        reject({ error, stdout, stderr }) // eslint-disable-line prefer-promise-reject-errors
       } else {
-        resolve(stdout, stderr);
+        resolve(stdout, stderr)
       }
-    });
-  });
+    })
+  })
 }
 
 async function getFunctionInfo (fn, q = undefined) {
   return new Promise((resolve, reject) => {
     const params = {
       FunctionName: fn,
-      Qualifier: q,
-    };
+      Qualifier: q
+    }
     lambda.getFunction(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
-    });
+    })
   })
 }
 /*
@@ -95,17 +95,17 @@ data = {
 
 async function getFunctionConfiguration (fn, options) {
   return new Promise((resolve, reject) => {
-    const params = Object.assign({}, options, {FunctionName: fn});
+    const params = Object.assign({}, options, { FunctionName: fn })
     lambda.getFunctionConfiguration(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
-    });
+    })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 /**
 node aws-api-survey.js -f 'nodejs-apig-function-9FHBV1SLUTCC'
@@ -152,35 +152,35 @@ FUNCTION CONFIGURATION {
 
 async function getFunctionVersions (fn, options) {
   return new Promise((resolve, reject) => {
-    const params = Object.assign({}, options, {FunctionName: fn});
+    const params = Object.assign({}, options, { FunctionName: fn })
     lambda.listVersionsByFunction(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 async function publishFunctionVersion (fn, options) {
   return new Promise((resolve, reject) => {
-    const params = Object.assign({}, options, {FunctionName: fn});
+    const params = Object.assign({}, options, { FunctionName: fn })
     lambda.publishVersion(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
-//result = {
+// result = {
 //  FunctionName: 'f2-node-bam',
 //  FunctionArn: 'arn:aws:lambda:us-east-1:858939916050:function:f2-node-bam:1',
 //  Runtime: 'nodejs12.x',
@@ -217,66 +217,66 @@ async function publishFunctionVersion (fn, options) {
 //  LastUpdateStatus: 'Successful',
 //  LastUpdateStatusReason: null,
 //  LastUpdateStatusReasonCode: null
-//}
+// }
 
 async function updateFunctionCode (fn, options) {
   return new Promise((resolve, reject) => {
-    const params = Object.assign({}, options, {FunctionName: fn});
+    const params = Object.assign({}, options, { FunctionName: fn })
     lambda.updateFunctionCode(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 async function listLayerVersions (layer, options) {
   return new Promise((resolve, reject) => {
-    const params = Object.assign({}, options, {LayerName: layer});
+    const params = Object.assign({}, options, { LayerName: layer })
     lambda.listLayerVersions(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 async function getLayerVersion (layer, version) {
   return new Promise((resolve, reject) => {
-    const params = {LayerName: layer, VersionNumber: version};
+    const params = { LayerName: layer, VersionNumber: version }
     lambda.getLayerVersion(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 async function getLayerVersionByArn (arn) {
   return new Promise((resolve, reject) => {
-    const params = {Arn: arn};
+    const params = { Arn: arn }
     lambda.getLayerVersionByArn(params, function (error, data) {
       if (error) {
-        reject(error);
+        reject(error)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 /**
@@ -298,7 +298,6 @@ GET-LAYER-VERSION {
 
  */
 
-
 //
 //
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#getLogEvents-property
@@ -309,39 +308,38 @@ GET-LAYER-VERSION {
 //
 async function getLogEvents (logGroupName, logStreamName, options) {
   return new Promise((resolve, reject) => {
-    const params = {logGroupName, logStreamName, startFromHead: true};
-    Object.assign(params, options);
+    const params = { logGroupName, logStreamName, startFromHead: true }
+    Object.assign(params, options)
     cwl.getLogEvents(params, function (err, data) {
       if (err) {
-        reject(err);
+        reject(err)
       } else {
-        resolve(data);
+        resolve(data)
       }
     })
   })
     .then(r => r)
-    .catch(e => e);
+    .catch(e => e)
 }
 
 //
 //
 //
 async function invoke (FunctionName, Payload) {
-  const params = {FunctionName, Payload};
+  const params = { FunctionName, Payload }
   return lambda.invoke(params).promise()
     .then(r => {
-      const payload = JSON.parse(r.Payload);
+      const payload = JSON.parse(r.Payload)
       if (typeof payload.body === 'string' && payload.body[0] === '{') {
-        payload.body = JSON.parse(payload.body);
+        payload.body = JSON.parse(payload.body)
       }
-      r.Payload = payload;
-      return r;
+      r.Payload = payload
+      return r
     })
     .catch(e => {
-      return e;
-    });
+      return e
+    })
 }
-
 
 module.exports = {
   AWS,
@@ -356,26 +354,25 @@ module.exports = {
   getLayerVersion,
   getLayerVersionByArn,
   getLogEvents,
-  invoke,
+  invoke
 }
 
-
-//======================================================================================
-//======================================================================================
+//= =====================================================================================
+//= =====================================================================================
 // main/test
-//======================================================================================
-//======================================================================================
+//= =====================================================================================
+//= =====================================================================================
 if (module.__parent__ === undefined) {
   /* eslint-disable no-console */
-  const minimist = require('minimist');
+  const minimist = require('minimist')
   const options = {
     default: {
-      description: 'no description',
+      description: 'no description'
     },
     alias: {
       function: 'f',
       verbose: 'v',
-      description: 'd',
+      description: 'd'
     },
     boolean: [
       'examine',
@@ -385,52 +382,49 @@ if (module.__parent__ === undefined) {
       'update-function-code',
       'dry-run',
       'force'
-    ],
+    ]
 
   }
-  const args = minimist(process.argv, options);
-  const verbose = args.verbose;
+  const args = minimist(process.argv, options)
+  const verbose = args.verbose
 
   if (args.examine) {
-    console.log(args);
-    process.exit();
+    console.log(args)
+    process.exit()
   }
-  const fn = args.function;
+  const fn = args.function
 
   async function main () {
-
     //
     // things requiring a function name
     //
     if (fn) {
       // does the function exist?
-      const fnInfo = await getFunctionInfo(fn);
+      const fnInfo = await getFunctionInfo(fn)
       if (fnInfo instanceof Error) {
         if (fnInfo.code === 'ResourceNotFoundException') {
-          console.log(fn, 'not found, specify --create to create it');
+          console.log(fn, 'not found, specify --create to create it')
         } else {
-          console.log(fnInfo);
-          process.exit(1);
+          console.log(fnInfo)
+          process.exit(1)
         }
       }
-      if (verbose) console.log('FUNCTION INFO', fnInfo);
-
+      if (verbose) console.log('FUNCTION INFO', fnInfo)
 
       // get the versions of the function
-      const vInfo = await getFunctionVersions(fn);
+      const vInfo = await getFunctionVersions(fn)
       if (vInfo instanceof Error) {
-        console.log(vInfo);
-        process.exit(1);
+        console.log(vInfo)
+        process.exit(1)
       }
-      if (verbose) console.log('FUNCTION VERSIONS', vInfo);
+      if (verbose) console.log('FUNCTION VERSIONS', vInfo)
 
-      const fConfig = await getFunctionConfiguration(fn);
+      const fConfig = await getFunctionConfiguration(fn)
       if (fConfig instanceof Error) {
-        console.log(fConfig);
-        process.exit(1);
+        console.log(fConfig)
+        process.exit(1)
       }
-      if (verbose) console.log('FUNCTION CONFIGURATION', fConfig);
-
+      if (verbose) console.log('FUNCTION CONFIGURATION', fConfig)
 
       if (args['publish-new-version']) {
         // use options to make sure we're updating the version we think we
@@ -446,38 +440,38 @@ if (module.__parent__ === undefined) {
           FunctionName: fn,
           RevisionId: vInfo.RevisionId,
           Description: args.description,
-          CodeSha256: vInfo.CodeSha256,
-        };
-        const publishStatus = await publishFunctionVersion(fn, options);
+          CodeSha256: vInfo.CodeSha256
+        }
+        const publishStatus = await publishFunctionVersion(fn, options)
 
-        console.log(publishStatus);
+        console.log(publishStatus)
       }
 
       //
       // this updates $LATEST
       //
       if (args['update-function-code']) {
-        const zipFile = 'function.zip';
-        const zStats = await getFileStats(zipFile);
-        const fStats = await getFileStats('index.js');
-        if (zStats instanceof Error) zStats.mTimeMs = 0;
+        const zipFile = 'function.zip'
+        const zStats = await getFileStats(zipFile)
+        const fStats = await getFileStats('index.js')
+        if (zStats instanceof Error) zStats.mTimeMs = 0
         if (fStats instanceof Error) {
-          console.log(fStats.message);
-          process.exit(1);
+          console.log(fStats.message)
+          process.exit(1)
         }
         if (fStats.mtimeMs > zStats.mtimeMs && !args.force) {
-          console.log(`${zipFile} is newer than index.js; use --force to force this`);
-          process.exit(1);
+          console.log(`${zipFile} is newer than index.js; use --force to force this`)
+          process.exit(1)
         } else if (fStats.mtimeMs > zStats.mtimeMs) {
-          const {error, stdout, stderr} = await execCommandLine('zip -q function.zip index.js');
+          const { error, stdout, stderr } = await execCommandLine('zip -q function.zip index.js')
           if (error) {
-            console.log(error);
-            process.exit(1);
+            console.log(error)
+            process.exit(1)
           }
-          console.log('stdout', stdout);
-          console.log('stderr', stderr);
+          console.log('stdout', stdout)
+          console.log('stderr', stderr)
         }
-        //var params = {
+        // var params = {
         //  FunctionName: 'STRING_VALUE', /* required */
         //  DryRun: true || false,
         //  Publish: true || false,
@@ -486,21 +480,20 @@ if (module.__parent__ === undefined) {
         //  S3Key: 'STRING_VALUE',
         //  S3ObjectVersion: 'STRING_VALUE',
         //  ZipFile: Buffer.from('...') || 'STRING_VALUE' /* Strings will be Base-64 encoded on your behalf */
-        //};
+        // };
         const params = {
-          FunctionName: fn,               // TODO BAM this is redundant, rethink.
+          FunctionName: fn, // TODO BAM this is redundant, rethink.
           RevisionId: vInfo.RevisionId,
           DryRun: args['dry-run'],
           Publish: false,
           //  S3Bucket: 'STRING_VALUE',
           //  S3Key: 'STRING_VALUE',
           //  S3ObjectVersion: 'STRING_VALUE',
-          ZipFile: await readFile(zipFile),
+          ZipFile: await readFile(zipFile)
         }
 
-        const r = await updateFunctionCode(fn, params);
-        console.log('UPDATE-FUNCTION-CODE', r);
-
+        const r = await updateFunctionCode(fn, params)
+        console.log('UPDATE-FUNCTION-CODE', r)
       }
     }
 
@@ -508,20 +501,20 @@ if (module.__parent__ === undefined) {
     // things fiddling with layers
     //
     if (args['list-layer-versions']) {
-      const params = {};
+      const params = {}
 
-      const versions = await listLayerVersions(args['list-layer-versions'], params);
-      console.log('LIST-LAYER-VERSIONS', versions);
+      const versions = await listLayerVersions(args['list-layer-versions'], params)
+      console.log('LIST-LAYER-VERSIONS', versions)
     }
 
     if (args['get-layer-version']) {
       if (!args['layer-version']) {
-        console.log('get-layer-version requires --layer-version N argument');
-        process.exit(1);
+        console.log('get-layer-version requires --layer-version N argument')
+        process.exit(1)
       }
 
-      const version = await getLayerVersion(args['get-layer-version'], args['layer-version']);
-      console.log('GET-LAYER-VERSION', version);
+      const version = await getLayerVersion(args['get-layer-version'], args['layer-version'])
+      console.log('GET-LAYER-VERSION', version)
     }
 
     // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-alias.html
@@ -541,28 +534,24 @@ if (module.__parent__ === undefined) {
     // listLayerVersions
     // publishLayerVersion
     // removeLayerVersionPermission
-
-
   }
 
-  main();
-
+  main()
 }
-
 
 //
 // create or update the function in function.zip
 //
-//if [ "$1" = "create" ]; then
+// if [ "$1" = "create" ]; then
 //  aws lambda create-function --function-name f2-node-bam \
 //      --zip-file fileb://function.zip \
 //      --handler index.handler \
 //      --runtime nodejs12.x \
 //      --role arn:aws:iam::858939916050:role/apm-node-lambda-initial
 //  exit $?
-//fi
+// fi
 
-//if [ "index.js" -nt "function.zip" ]; then
+// if [ "index.js" -nt "function.zip" ]; then
 //    if [ -z "$force" ]; then
 //        echo "index.js is newer than function.zip; touch function.zip and retry"
 //        echo "if that is what you really mean to do. or define non-empty force"
@@ -571,14 +560,14 @@ if (module.__parent__ === undefined) {
 //    else
 //        zip function.zip index.js
 //    fi
-//fi
+// fi
 
-//aws lambda update-function-code --function-name f2-node-bam \
+// aws lambda update-function-code --function-name f2-node-bam \
 //    --zip-file fileb://function.zip
-//exit $?
+// exit $?
 
-//# example output
-//x='
+// # example output
+// x='
 // {
 //    "FunctionName": "f2-node-bam",
 //    "FunctionArn": "arn:aws:lambda:us-east-1:858939916050:function:f2-node-bam",
@@ -598,5 +587,5 @@ if (module.__parent__ === undefined) {
 //    "RevisionId": "399251a6-3174-4e87-8c09-fdeeb0e91b28",
 //    "State": "Active",
 //    "LastUpdateStatus": "Successful"
-//}
-//'
+// }
+// '

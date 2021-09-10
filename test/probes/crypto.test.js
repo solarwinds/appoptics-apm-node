@@ -1,8 +1,8 @@
+/* global it, describe, before, beforeEach, after */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
-
+const { ao } = require('../1.test-common')
 
 const crypto = require('crypto')
 
@@ -50,7 +50,7 @@ describe('probes.crypto', function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -133,7 +133,7 @@ describe('probes.crypto', function () {
   if (crypto.createDiffieHellman) {
     it('should support computeSecret for DiffieHellman', function (done) {
       // increase timeout - intermittent failures when running matrix tests
-      this.timeout(5000);
+      this.timeout(5000)
       helper.test(emitter, function (done) {
         const a = crypto.createDiffieHellman(512)
         a.generateKeys()
@@ -171,5 +171,4 @@ describe('probes.crypto', function () {
       ], done)
     })
   }
-
 })

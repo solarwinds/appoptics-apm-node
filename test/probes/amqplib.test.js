@@ -1,7 +1,8 @@
+/* global it, describe, before, beforeEach, after */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 
 const pkg = require('amqplib/package')
 
@@ -63,7 +64,7 @@ describe('probes.amqplib ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -158,7 +159,6 @@ describe('probes.amqplib ' + pkg.version, function () {
         }
       ], done)
     })
-
   }
 
   describe('promises', function () {
@@ -219,5 +219,4 @@ describe('probes.amqplib ' + pkg.version, function () {
 
     makeTests(context)
   })
-
 })

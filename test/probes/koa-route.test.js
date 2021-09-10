@@ -1,10 +1,10 @@
+/* global it, describe, before, after */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const pkg = require('koa-route/package')
-
 
 let canGenerator = false
 try {
@@ -42,7 +42,7 @@ describe('probes/koa-route ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)

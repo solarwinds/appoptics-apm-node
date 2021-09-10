@@ -11,7 +11,7 @@ var db_host = process.env.AO_TEST_RABBITMQ_3_5 || 'rabbitmq:5672'
 
 
 if (helper.skipTest(module.filename)) {
-  return
+  process.exit()
 }
 
 describe('probes.amqp ' + pkg.version, function () {
@@ -104,7 +104,7 @@ describe('probes.amqp ' + pkg.version, function () {
       done()
     }, [
         function (msg) {
-          msg.should.have.property('Label').oneOf('entry', 'exit'),
+          msg.should.have.property('Label').oneOf('entry', 'exit')
             msg.should.have.property('Layer', 'fake')
         }
       ], done)

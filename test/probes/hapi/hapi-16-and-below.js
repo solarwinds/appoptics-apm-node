@@ -1,3 +1,4 @@
+/* global it, describe, before, after */
 'use strict'
 
 const base = process.cwd()
@@ -6,7 +7,7 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const {ao} = require('../../1.test-common')
+const { ao } = require('../../1.test-common')
 
 const semver = require('semver')
 
@@ -30,10 +31,9 @@ if (semver.satisfies(nodeVersion, '> 0.8')) {
   }
 }
 
-
 describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function () {
   let emitter
-  let port = 3500;
+  let port = 3500
 
   //
   // Intercept appoptics messages for analysis
@@ -80,7 +80,7 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     },
     zlibExit: function zlibExit (msg) {
 
-    },
+    }
   }
 
   // the promise in case it's not hapi v17
@@ -94,8 +94,8 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     let server
 
     if (semver.gte(pkg.version, '17.0.0')) {
-      server = new hapi.Server({port: ++port})
-      p = server.register({plugin: require('vision')})
+      server = new hapi.Server({ port: ++port })
+      p = server.register({ plugin: require('vision') })
       p.then(() => {
         if (config.views) {
           server.views(config.views)
@@ -175,19 +175,19 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       })
 
       // setup validations
-      const validations = [];
-      validations.push(checks.httpEntry);
+      const validations = []
+      validations.push(checks.httpEntry)
       validations.push(function (msg) {
-        checks.hapiEntry(msg);
-        msg.should.not.property('Async');
-      });
-      validations.push(checks.zlibEntry);
-      validations.push(checks.zlibExit);
-      validations.push(checks.hapiExit);
+        checks.hapiEntry(msg)
+        msg.should.not.property('Async')
+      })
+      validations.push(checks.zlibEntry)
+      validations.push(checks.zlibExit)
+      validations.push(checks.hapiExit)
       validations.push(function (msg) {
-        checks.httpExit(msg);
-        msg.should.have.property('Controller', 'hapi.hello');
-        msg.should.have.property('Action', method + '/hello/{name}');
+        checks.httpExit(msg)
+        msg.should.have.property('Controller', 'hapi.hello')
+        msg.should.have.property('Action', method + '/hello/{name}')
       })
 
       helper.doChecks(emitter, validations, function () {
@@ -201,9 +201,9 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
           request({
             method: method.toUpperCase(),
             url: `http://localhost:${port}/hello/world`,
-            headers: {'accept-encoding': 'gzip'},
+            headers: { 'accept-encoding': 'gzip' }
           }).on('response', function (r) {
-            //console.log('got response', r.headers);
+            // console.log('got response', r.headers);
           })
         })
       })
@@ -211,11 +211,11 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
   }
 
   function renderTestWith (done) {
-    renderTest(done, helloDotEjs);
+    renderTest(done, helloDotEjs)
   }
 
   function renderTestWithout (done) {
-    renderTest(done, 'hello');
+    renderTest(done, 'hello')
   }
 
   function renderTest (done, filename) {
@@ -232,20 +232,20 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     })
 
     // setup validations
-    const validations = [];
-    validations.push(checks.httpEntry);
-    validations.push(checks.hapiEntry);
+    const validations = []
+    validations.push(checks.httpEntry)
+    validations.push(checks.hapiEntry)
     validations.push(function (msg) {
-      checks.renderEntry(msg);
-      msg.should.have.property('TemplateLanguage', 'ejs');
-      msg.should.have.property('TemplateFile', filename);
-    });
-    validations.push(checks.renderExit);
-    validations.push(checks.hapiExit);
+      checks.renderEntry(msg)
+      msg.should.have.property('TemplateLanguage', 'ejs')
+      msg.should.have.property('TemplateFile', filename)
+    })
+    validations.push(checks.renderExit)
+    validations.push(checks.hapiExit)
     validations.push(function (msg) {
-      checks.httpExit(msg);
-      msg.should.have.property('Controller', 'hapi.hello');
-      msg.should.have.property('Action', 'get/hello/{name}');
+      checks.httpExit(msg)
+      msg.should.have.property('Controller', 'hapi.hello')
+      msg.should.have.property('Action', 'get/hello/{name}')
     })
 
     helper.doChecks(emitter, validations, function () {
@@ -274,7 +274,7 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     })
 
     // setup validations
-    const validations = [checks.httpEntry, checks.httpExit];
+    const validations = [checks.httpEntry, checks.httpExit]
 
     helper.doChecks(emitter, validations, function () {
       ao.probes.hapi.enabled = true
@@ -291,7 +291,6 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
     })
   }
 
-
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
   it('UDP might lose a message', function (done) {
@@ -300,7 +299,7 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -315,8 +314,8 @@ describe('probes.hapi ' + pkg.version + ' vision ' + visionPkg.version, function
       it('should forward controller/action data from ' + method + ' request', controllerTest(method))
     })
     it('should skip when disabled', disabledTest)
-    it('should trace render span with template extension', renderTestWith);
-    it('should trace render span without template extension', renderTestWithout);
+    it('should trace render span with template extension', renderTestWith)
+    it('should trace render span without template extension', renderTestWithout)
   } else {
     httpMethods.forEach(function (method) {
       it.skip('should forward controller/action data from ' + method + ' request', controllerTest(method))

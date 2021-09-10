@@ -9,6 +9,5 @@ exports.run = function (ctx, done) {
     })
     .on('end', function () {
       done()
-    });
-
+    })
 }

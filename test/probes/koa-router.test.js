@@ -1,7 +1,8 @@
+/* global it, describe, before, after */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 
 const semver = require('semver')
 const pkg = require('koa-router/package')
@@ -29,7 +30,7 @@ describe('probes/koa-router ' + pkg.version, function () {
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -49,7 +50,7 @@ describe('probes/koa-router ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -70,5 +71,4 @@ describe('probes/koa-router ' + pkg.version, function () {
   if6('should work with promises', function (done) {
     tests.router_promise(emitter, done)
   })
-
 })

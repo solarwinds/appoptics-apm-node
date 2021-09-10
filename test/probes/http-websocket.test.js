@@ -1,5 +1,5 @@
-'use strict';
+'use strict'
 
-process.env.AO_TEST_HTTP = 'http';
+process.env.AO_TEST_HTTP = 'http'
 
-require('./http-websocket-common.js');
+require('./http-websocket-common.js')

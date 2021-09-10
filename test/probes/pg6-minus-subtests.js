@@ -4,7 +4,6 @@ function basic (ctx, done) {
   ctx.pg.db.query('SELECT $1::int AS number', ['1'], done)
 }
 
-
 function evented (ctx, done) {
   ctx.pg.connect(ctx.pg.address, function (err, client, free) {
     if (err) {
@@ -23,7 +22,6 @@ function evented (ctx, done) {
   })
 }
 
-
 function pool (ctx, done) {
   ctx.pg.connect(ctx.pg.address, function (err, client, free) {
     if (err) {
@@ -38,7 +36,6 @@ function pool (ctx, done) {
     })
   })
 }
-
 
 function prepared (ctx, done) {
   ctx.pg.connect(ctx.pg.address, function (err, client, free) {
@@ -69,7 +66,6 @@ function prepared (ctx, done) {
     })
   })
 }
-
 
 function sanitize (ctx, done) {
   ctx.ao.probes.pg.sanitizeSql = true

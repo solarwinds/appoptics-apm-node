@@ -1,7 +1,8 @@
+/* global it, describe, before, after */
 'use strict'
 
-const {ao, startTest, endTest} = require('../1.test-common.js')
-const expect = require('chai').expect;
+const { ao, startTest, endTest } = require('../1.test-common.js')
+const expect = require('chai').expect
 
 const bcrypt = require('bcrypt')
 const pkg = require('bcrypt/package')
@@ -9,12 +10,12 @@ const pkg = require('bcrypt/package')
 describe('probes.bcrypt ' + pkg.version, function () {
   let prevll
   before(function () {
-    startTest(__filename, {enable: false, customFormatter: 'terse'})
+    startTest(__filename, { enable: false, customFormatter: 'terse' })
     prevll = ao.logLevel
-    //ao.logLevelAdd('span')
+    // ao.logLevelAdd('span')
   })
   after(function () {
-    //ao.requestStore.dumpCtx()
+    // ao.requestStore.dumpCtx()
 
     endTest()
     ao.logLevel = prevll
@@ -37,14 +38,14 @@ describe('probes.bcrypt ' + pkg.version, function () {
               // the passwords should match
               res.should.equal(true)
               const result = ao.requestStore.get(test)
-              expect(result).equal('bar', 'context.get(foo) should equal bar');
-              return cb();
+              expect(result).equal('bar', 'context.get(foo) should equal bar')
+              return cb()
             })
           })
         })
       },
-      {enabled: true},
-      function () {done()}
+      { enabled: true },
+      function () { done() }
     )
   })
 })

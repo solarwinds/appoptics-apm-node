@@ -1,7 +1,8 @@
+/* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const legacy = ao.probes.express.legacyTxname
 
@@ -97,18 +98,18 @@ describe('probes.express ' + pkg.version, function () {
 
   beforeEach(function () {
     if (this.currentTest) {
-      const title = this.currentTest.title;
+      const title = this.currentTest.title
 
       if (title.indexOf('should allow a custom TransactionName') === 0) {
-        //ao.logLevelAdd('test:messages')
+        // ao.logLevelAdd('test:messages')
       } else {
         ao.logLevelRemove('test:messages')
       }
 
       if (title === 'UDP might lose a message') {
-        //this.skip()
+        // this.skip()
       } else if (title.indexOf('should forward controller/action for') !== 0) {
-        //this.skip()
+        // this.skip()
       }
     }
   })
@@ -148,37 +149,37 @@ describe('probes.express ' + pkg.version, function () {
       msg.should.have.property('Label', 'exit')
     },
     'route:globalRoute-entry': function (msg) {
-      msg.should.have.property('Layer', 'express-route:globalRoute');
-      msg.should.have.property('Label', 'entry');
+      msg.should.have.property('Layer', 'express-route:globalRoute')
+      msg.should.have.property('Label', 'entry')
     },
     'route:globalRoute-exit': function (msg) {
-      msg.should.have.property('Layer', 'express-route:globalRoute');
-      msg.should.have.property('Label', 'exit');
+      msg.should.have.property('Layer', 'express-route:globalRoute')
+      msg.should.have.property('Label', 'exit')
     },
     'route:hello-entry': function (msg) {
-      msg.should.have.property('Layer', 'express-route:hello');
-      msg.should.have.property('Label', 'entry');
+      msg.should.have.property('Layer', 'express-route:hello')
+      msg.should.have.property('Label', 'entry')
     },
     'route:hello-exit': function (msg) {
-      msg.should.have.property('Layer', 'express-route:hello');
-      msg.should.have.property('Label', 'exit');
+      msg.should.have.property('Layer', 'express-route:hello')
+      msg.should.have.property('Label', 'exit')
     },
     'route:set-name-entry': function (msg) {
-      msg.should.have.property('Layer', 'express-route:setName');
+      msg.should.have.property('Layer', 'express-route:setName')
       msg.should.have.property('Label', 'entry')
     },
     'route:set-name-exit': function (msg) {
-      msg.should.have.property('Layer', 'express-route:setName');
+      msg.should.have.property('Layer', 'express-route:setName')
       msg.should.have.property('Label', 'exit')
     },
     'body-parser-entry': function (msg) {
-      msg.should.have.property('Layer', 'body-parser');
+      msg.should.have.property('Layer', 'body-parser')
       msg.should.have.property('Label', 'entry')
     },
     'body-parser-exit': function (msg) {
-      msg.should.have.property('Layer', 'body-parser');
+      msg.should.have.property('Layer', 'body-parser')
       msg.should.have.property('Label', 'exit')
-    },
+    }
   }
 
   //
@@ -195,21 +196,20 @@ describe('probes.express ' + pkg.version, function () {
         'route:globalRoute-entry', 'route:globalRoute-exit',
         'route:hello-entry',
         'route:hello-exit',
-        'express-exit', httpExit,
+        'express-exit', httpExit
       ],
       post: [
         'http-entry', 'express-entry',
         'body-parser-entry', 'body-parser-exit',
         'route:set-name-entry',
         'route:set-name-exit',
-        'express-exit', httpExit,
-      ],
+        'express-exit', httpExit
+      ]
     }
     const validations = allValidations[method].map(v => typeof v === 'string' ? check[v] : v)
 
     return validations
   }
-
 
   // this test exists only to fix a problem with oboe not reporting a UDP
   // send failure.
@@ -224,7 +224,6 @@ describe('probes.express ' + pkg.version, function () {
       }
     ], done)
   })
-
 
   //
   // Tests
@@ -260,7 +259,7 @@ describe('probes.express ' + pkg.version, function () {
     }
     function setName (req, res) {
       helper.clsCheck()
-      //const name = req.body.name
+      // const name = req.body.name
       expected = makeExpected(req, setName)
       res.send('done')
     }
@@ -268,10 +267,10 @@ describe('probes.express ' + pkg.version, function () {
     const app = express()
     // log every request to the console
     app.use(morgan('dev', {
-      skip: function (req, res) {return true}
+      skip: function (req, res) { return true }
     }))
     // parse application/x-www-form-urlencoded
-    app.use(bodyParser.urlencoded({extended: 'true'}))
+    app.use(bodyParser.urlencoded({ extended: 'true' }))
     // parse application/json
     app.use(bodyParser.json())
     // simulate DELETE and PUT
@@ -292,15 +291,15 @@ describe('probes.express ' + pkg.version, function () {
 
     const validations = getValidations(method, httpExitChecks)
 
-    //let validations = [
+    // let validations = [
     //  function (msg) {
     //    check['http-entry'](msg)
     //  },
     //  function (msg) {
     //    check['express-entry'](msg)
     //  },
-    //]
-    //if (method === 'get') {
+    // ]
+    // if (method === 'get') {
     //  validations = validations.concat([
     //    function (msg) {
     //      check['route:globalRoute-entry'](msg)
@@ -324,10 +323,10 @@ describe('probes.express ' + pkg.version, function () {
     //      check['route:hello-exit'](msg)
     //    },
     //  ])
-    //}
+    // }
 
-    //validations = validations.concat([
-    //])
+    // validations = validations.concat([
+    // ])
 
     helper.doChecks(emitter, validations, function () {
       server.close(done)
@@ -339,7 +338,7 @@ describe('probes.express ' + pkg.version, function () {
         url: 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
       }
       if (method === 'post') {
-        options.json = {name: 'bruce'}
+        options.json = { name: 'bruce' }
       }
       request[method](options)
     })
@@ -379,7 +378,7 @@ describe('probes.express ' + pkg.version, function () {
       throw error
     }
     const logChecks = [
-      {level: 'error', message: 'express customNameFunc() error:', values: [error]},
+      { level: 'error', message: 'express customNameFunc() error:', values: [error] }
     ];
     [, clear] = helper.checkLogMessages(logChecks)
     customTransactionName(custom, done)
@@ -512,7 +511,6 @@ describe('probes.express ' + pkg.version, function () {
       function (msg) {
         msg.should.have.property('Layer', expectedRes('l'))
         msg.should.have.property('Label', 'exit')
-
       },
       function (msg) {
         check['express-exit'](msg)
@@ -794,7 +792,7 @@ describe('probes.express ' + pkg.version, function () {
 
     function hello (req, res) {
       expected = makeExpected(req, hello)
-      //host = req.headers.host
+      // host = req.headers.host
       res.send('done')
     }
 
@@ -1039,7 +1037,6 @@ describe('probes.express ' + pkg.version, function () {
     const reqRoutePath = '/hello/:name'
     let expected
 
-
     function hello (req, res) {
       helper.clsCheck()
       expected = makeExpected(req, hello)
@@ -1079,10 +1076,9 @@ describe('probes.express ' + pkg.version, function () {
         if (err) {
           throw new Error('request failed')
         } else {
-          //log.debug('response: %s', body)
+          // log.debug('response: %s', body)
         }
       })
     })
   }
-
 })

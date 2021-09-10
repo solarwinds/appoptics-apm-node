@@ -1,3 +1,4 @@
+/* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
 
 // note to self
@@ -13,7 +14,7 @@
 
 const helper = require('../helper')
 const Address = helper.Address
-const {ao} = require('../1.test-common.js')
+const { ao } = require('../1.test-common.js')
 const noop = helper.noop
 
 const should = require('should') // eslint-disable-line no-unused-vars
@@ -193,12 +194,11 @@ describe('probes.mysql ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
   })
-
 
   it('should see if a database exists', function (done) {
     const db = makeDb({
@@ -210,7 +210,7 @@ describe('probes.mysql ' + pkg.version, function () {
       if (err) {
         return done(err)
       }
-      //db.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \'test\';', function (err, data) {
+      // db.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \'test\';', function (err, data) {
       db.query('show databases like \'test\';', function (err, data) {
         if (err) {
           ao.loggers.debug(err)
@@ -279,7 +279,6 @@ describe('probes.mysql ' + pkg.version, function () {
     // turn off for testing
     ao.probes.mysql.sanitizeSql = false
   })
-
 
   it('should trace a basic query', test_basic)
 
@@ -419,5 +418,4 @@ describe('probes.mysql ' + pkg.version, function () {
       done(err)
     })
   }
-
 })

@@ -1,7 +1,8 @@
+/* global it, describe, after, before */
 'use strict'
 
 const helper = require('../helper')
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const request = require('request')
 const http = require('http')
@@ -54,7 +55,7 @@ describe('probes.director ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -65,12 +66,12 @@ describe('probes.director ' + pkg.version, function () {
   //
   it('should create a director route span', function (done) {
     function hello (name) {
-      this.res.writeHead(200, {'Content-Type': 'text/plain'})
+      this.res.writeHead(200, { 'Content-Type': 'text/plain' })
       this.res.end('Hello, ' + name + '!')
     }
 
     const router = new director.http.Router({
-      '/hello/:name': {get: hello}
+      '/hello/:name': { get: hello }
     })
 
     const server = http.createServer(function (req, res) {
@@ -121,12 +122,12 @@ describe('probes.director ' + pkg.version, function () {
   it('should skip when disabled', function (done) {
     ao.probes.director.enabled = false
     function hello (name) {
-      this.res.writeHead(200, {'Content-Type': 'text/plain'})
+      this.res.writeHead(200, { 'Content-Type': 'text/plain' })
       this.res.end('Hello, ' + name + '!')
     }
 
     const router = new director.http.Router({
-      '/hello/:name': {get: hello}
+      '/hello/:name': { get: hello }
     })
 
     const server = http.createServer(function (req, res) {
@@ -158,5 +159,4 @@ describe('probes.director ' + pkg.version, function () {
       request('http://localhost:' + port + '/hello/world')
     })
   })
-
 })

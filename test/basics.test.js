@@ -1,4 +1,8 @@
+/* global it, describe */
 'use strict'
+
+// note: expect() triggers a lint no-unused-expressions. no apparent reason
+/* eslint-disable no-unused-expressions */
 
 const ao = require('..')
 const Span = ao.Span
@@ -7,8 +11,7 @@ const expect = require('chai').expect
 const helper = require('./helper')
 const makeSettings = helper.makeSettings
 
-
-let ifaob    // execute or skip test depending on whether bindings are loaded.
+let ifaob // execute or skip test depending on whether bindings are loaded.
 let MAX_SAMPLE_RATE
 
 if (ao.addon) {
@@ -18,7 +21,6 @@ if (ao.addon) {
   ifaob = it.skip
   MAX_SAMPLE_RATE = 1000000
 }
-
 
 describe('basics', function () {
   it('should set trace mode as string or integer and always get a string', function () {
@@ -52,11 +54,10 @@ describe('basics', function () {
 
   // TODO: check helper.checkLogMessages and why substitution happens at .github but not locally
   ifaob.skip('should handle invalid sample rates correctly', function () {
-
     const logChecks = [
-      {level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN]},
-      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000]},
-      {level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0]},
+      { level: 'warn', message: 'Invalid sample rate: %s, not changed', values: [NaN] },
+      { level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [2000000, 1000000] },
+      { level: 'warn', message: 'Sample rate (%s) out of range, using %s', values: [-10, 0] }
     ]
     helper.checkLogMessages(logChecks)
 
@@ -79,8 +80,8 @@ describe('basics', function () {
   })
 
   ifaob('should be able to check an Event\'s sample flag', function () {
-    const md0 = new ao.addon.Event.makeRandom()
-    const md1 = new ao.addon.Event.makeRandom(1)
+    const md0 = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
+    const md1 = new ao.addon.Event.makeRandom(1) // eslint-disable-line new-cap
 
     expect(ao.sampling(md0)).equal(false)
     expect(ao.sampling(md0.toString())).equal(false)
@@ -89,11 +90,11 @@ describe('basics', function () {
   })
 
   ifaob('should be able to detect if it is in a trace', function () {
-    ao.tracing.should.be.false
+    expect(ao.tracing).to.be.false
     const span = Span.makeEntrySpan('test', makeSettings())
 
     span.run(function () {
-      expect(ao.tracing).equal(true);
+      expect(ao.tracing).equal(true)
     })
   })
 
@@ -103,7 +104,7 @@ describe('basics', function () {
     ao.traceMode = 'always'
     ao.sampleRate = MAX_SAMPLE_RATE
     let s = ao.getTraceSettings()
-    s.should.not.be.false
+    expect(s).to.not.be.false
 
     ao.sampleRate = 1
     const samples = []
@@ -139,7 +140,7 @@ describe('basics', function () {
 
   it('should not re-execute appoptics even if deleted from the require.cache', function () {
     const logChecks = [
-      {level: 'warn', message: 'appoptics-apm is being executed more than once'},
+      { level: 'warn', message: 'appoptics-apm is being executed more than once' }
     ]
     helper.checkLogMessages(logChecks)
     const key = require.resolve('..')

@@ -1,39 +1,37 @@
+/* global it, describe, before, beforeEach, afterEach */
 'use strict'
 
-const ao = require('../..');
-const helper = require('../helper');
-const semver = require('semver');
-const expect = require('chai').expect;
+const ao = require('../..')
+const helper = require('../helper')
+const semver = require('semver')
+const expect = require('chai').expect
 
-const winston = require('winston');
-const version = require('winston/package.json').version;
-const major = semver.major(version);
+const winston = require('winston')
+const version = require('winston/package.json').version
+const major = semver.major(version)
 if (major < 1 || major > 3) {
-  throw new Error(`tests for winston version ${version} not implemented`);
+  throw new Error(`tests for winston version ${version} not implemented`)
 }
 
-let testTransport;
-let createLogger;
+let testTransport
+let createLogger
 
-const debugging = false;
+const debugging = false
 
-//===============================================================
+//= ==============================================================
 // version 3
-//===============================================================
+//= ==============================================================
 if (major >= 3) {
-  const WinstonTransport = require('winston-transport');
+  const WinstonTransport = require('winston-transport')
   // define a transport class for this
   class TransportV3 extends WinstonTransport {
-    constructor (opts) {
-      super(opts);
-    }
     log (info, cb) {
-      this.emit('test-log', info);
-      cb();
+      this.emit('test-log', info)
+      cb()
     }
   }
-  testTransport = new TransportV3();
-  const transports = [testTransport];
+  testTransport = new TransportV3()
+  const transports = [testTransport]
 
   //
   // add a console logger if debugging
@@ -44,8 +42,8 @@ if (major >= 3) {
         winston.format.colorize(),
         winston.format.simple()
       )
-    });
-    transports.push(consoleTransport);
+    })
+    transports.push(consoleTransport)
   }
   // now store the create logger function.
   createLogger = () => winston.createLogger({
@@ -58,76 +56,76 @@ if (major >= 3) {
       winston.format.json()
     ),
     defaultMeta,
-    transports,
-  });
-//===============================================================
+    transports
+  })
+//= ==============================================================
 // version 2
-//===============================================================
+//= ==============================================================
 } else if (major === 2) {
-  const TestEmitter = require('./winston/test-emitter').TestEmitter;
-  testTransport = new TestEmitter({version: 2});
-  const transports = [testTransport];
+  const TestEmitter = require('./winston/test-emitter').TestEmitter
+  testTransport = new TestEmitter({ version: 2 })
+  const transports = [testTransport]
   if (debugging) {
-    transports.push(new winston.transports.Console());
+    transports.push(new winston.transports.Console())
   }
-  createLogger = () => new winston.Logger({transports});
+  createLogger = () => new winston.Logger({ transports })
 
-//===============================================================
+//= ==============================================================
 // version 1
-//===============================================================
+//= ==============================================================
 } else if (major === 1) {
-  const TestEmitter = require('./winston/test-emitter').TestEmitter;
+  const TestEmitter = require('./winston/test-emitter').TestEmitter
   // adding it implicitly instantiate it. it doesn't just make it
   // available as an option.
-  //testTransport = winston.add(TestEmitter, {version: 1});
+  // testTransport = winston.add(TestEmitter, {version: 1});
 
-  testTransport = new TestEmitter({version: 1});
-  const transports = [testTransport];
+  testTransport = new TestEmitter({ version: 1 })
+  const transports = [testTransport]
   if (debugging) {
-    transports.push(new winston.transports.Console());
+    transports.push(new winston.transports.Console())
   }
   // create a new logger otherwise the console log is on by default.
-  createLogger = () => new winston.Logger({transports});
+  createLogger = () => new winston.Logger({ transports })
 }
 
-const defaultMeta = {service: 'ao-test-winston'};
+const defaultMeta = { service: 'ao-test-winston' }
 
-const logger = createLogger();
+const logger = createLogger()
 
 function stripSymbols (rest) {
-  const symbols = Object.getOwnPropertySymbols(rest);
+  const symbols = Object.getOwnPropertySymbols(rest)
   for (let i = 0; i < symbols.length; i++) {
-    delete rest[symbols[i]];
+    delete rest[symbols[i]]
   }
-  return rest;
+  return rest
 }
 
 function checkEventInfo3 (eventInfo, level, message, traceId) {
-  const expected = {level, message}
+  const expected = { level, message }
   // defaultMeta wasn't an option prior to v3.2.0
   if (semver.gte(version, '3.2.0')) {
-    expected.service = 'ao-test-winston';
+    expected.service = 'ao-test-winston'
   }
-  expect(eventInfo).deep.include(expected);
+  expect(eventInfo).deep.include(expected)
   if (traceId) {
-    expect(eventInfo.ao).deep.equal({traceId})
+    expect(eventInfo.ao).deep.equal({ traceId })
   }
-  expect(eventInfo.timestamp).match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
+  expect(eventInfo.timestamp).match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)
 }
 
 function checkEventInfo2 (eventInfo, level, message, traceId) {
-  expect(eventInfo[0]).equal(level, 'levels don\'t match');
-  expect(eventInfo[1]).equal(message, 'messages don\'t match');
+  expect(eventInfo[0]).equal(level, 'levels don\'t match')
+  expect(eventInfo[1]).equal(message, 'messages don\'t match')
   if (traceId) {
-    expect(eventInfo[2]).deep.equal({ao: {traceId}}, 'ao object doesn\'t match');
+    expect(eventInfo[2]).deep.equal({ ao: { traceId } }, 'ao object doesn\'t match')
   }
 }
 
 function checkEventInfo1 (eventInfo, level, message, traceId) {
-  expect(eventInfo[0]).equal(level, 'levels don\'t match');
-  expect(eventInfo[1]).equal(message, 'messages don\'t match');
+  expect(eventInfo[0]).equal(level, 'levels don\'t match')
+  expect(eventInfo[1]).equal(message, 'messages don\'t match')
   if (traceId) {
-    expect(eventInfo[2]).deep.equal({ao: {traceId}}, 'ao object doesn\'t match');
+    expect(eventInfo[2]).deep.equal({ ao: { traceId } }, 'ao object doesn\'t match')
   }
 }
 //
@@ -136,8 +134,8 @@ function checkEventInfo1 (eventInfo, level, message, traceId) {
 const checkEventInfo = {
   3: checkEventInfo3,
   2: checkEventInfo2,
-  1: checkEventInfo1,
-}[major];
+  1: checkEventInfo1
+}[major]
 
 //
 // argument constructors for different versions of winston. v1 requires
@@ -145,42 +143,41 @@ const checkEventInfo = {
 // be in a single object argument.
 //
 const makeLogArgs = {
-  3: function (level, message) {return [{level, message}]},
-  2: function (level, message) {return [level, message]},
-  1: function (level, message) {return [level, message]},
-}[major];
+  3: function (level, message) { return [{ level, message }] },
+  2: function (level, message) { return [level, message] },
+  1: function (level, message) { return [level, message] }
+}[major]
 const makeHelperArgs = {
-  3: function () {return [...arguments]},
-  2: function () {return [...arguments]},
-  1: function () {return [...arguments]}
-}[major];
-
+  3: function () { return [...arguments] },
+  2: function () { return [...arguments] },
+  1: function () { return [...arguments] }
+}[major]
 
 function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan').events.entry.event;
+  const topSpan = ao.requestStore.get('topSpan').events.entry.event
   // 2 task, 16 sample bit, 32 separators
-  return topSpan.toString(2 | 16 | 32);
+  return topSpan.toString(2 | 16 | 32)
 }
 
-const insertModes = [false, true, 'traced', 'sampledOnly', 'always'];
+const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
 
-//=================================
+//= ================================
 // winston tests
-//=================================
+//= ================================
 describe(`winston v${version}`, function () {
-  let emitter;
-  let counter = 0;
-  let pfx;
-  let spanName;
+  let emitter
+  let counter = 0
+  let pfx
+  let spanName
 
   // used by each test
-  let eventInfo;
+  let eventInfo
 
   before(function () {
-    ao.probes.fs.enabled = false;
+    ao.probes.fs.enabled = false
     if (ao.lastEvent) {
-      ao.loggers.debug(`resetting request store due to ${ao.lastEvent}`);
-      ao.resetRequestStore();
+      ao.loggers.debug(`resetting request store due to ${ao.lastEvent}`)
+      ao.resetRequestStore()
     }
   })
 
@@ -188,24 +185,24 @@ describe(`winston v${version}`, function () {
     // the test transport must be an emitter.
     testTransport.addListener('test-log', function (info, ...rest) {
       if (major === 3) {
-        eventInfo = stripSymbols(info);
+        eventInfo = stripSymbols(info)
       } else if (major === 2) {
-        eventInfo = [info, ...rest];
+        eventInfo = [info, ...rest]
       } else if (major === 1) {
-        eventInfo = [info, ...rest];
+        eventInfo = [info, ...rest]
       }
     })
   })
 
   beforeEach(function () {
     // provide unique spans for up to 100 tests
-    pfx = ('0' + counter++).slice(-2);
-    spanName = `${pfx}-test`;
+    pfx = ('0' + counter++).slice(-2)
+    spanName = `${pfx}-test`
 
     // the following are global to all tests so they can use a common
     // check function without having to declare their own transport to
     // capture the object being logged.
-    eventInfo = undefined;
+    eventInfo = undefined
   })
 
   //
@@ -214,7 +211,7 @@ describe(`winston v${version}`, function () {
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    ao.cfg.insertTraceIdsIntoLogs = true;
+    ao.cfg.insertTraceIdsIntoLogs = true
 
     emitter = helper.appoptics(done)
   })
@@ -230,31 +227,31 @@ describe(`winston v${version}`, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
   })
 
   insertModes.forEach(mode => {
-    const maybe = mode === false ? 'not ' : '';
+    const maybe = mode === false ? 'not ' : ''
 
     it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
-      const level = 'info';
-      const message = 'property and synchronous';
-      let traceId;
+      const level = 'info'
+      const message = 'property and synchronous'
+      let traceId
 
-      ao.cfg.insertTraceIdsIntoLogs = mode;
+      ao.cfg.insertTraceIdsIntoLogs = mode
 
       function localDone () {
-        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId);
-        setImmediate(done);
+        checkEventInfo(eventInfo, level, message, mode === false ? undefined : traceId)
+        setImmediate(done)
       }
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString();
-          logger.log(...makeLogArgs(level, message));
+          traceId = getTraceIdString()
+          logger.log(...makeLogArgs(level, message))
         })
         done()
       }, [
@@ -271,62 +268,62 @@ describe(`winston v${version}`, function () {
   })
 
   insertModes.forEach(mode => {
-    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : '';
-    eventInfo = undefined;
+    const maybe = (mode === 'sampledOnly' || mode === false) ? 'not ' : ''
+    eventInfo = undefined
 
     it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function () {
-      const level = 'error';
-      const message = `unsampled mode = ${mode}`;
-      let traceId;
+      const level = 'error'
+      const message = `unsampled mode = ${mode}`
+      let traceId
 
-      ao.cfg.insertTraceIdsIntoLogs = mode;
-      ao.traceMode = 0;
-      ao.sampleRate = 0;
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      ao.traceMode = 0
+      ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString();
-        expect(traceId[traceId.length - 1] === 0, 'traceId should be unsampled');
+        traceId = getTraceIdString()
+        expect(traceId[traceId.length - 1] === 0, 'traceId should be unsampled')
         // log
-        logger.log(...makeLogArgs(level, message));
+        logger.log(...makeLogArgs(level, message))
 
-        return 'test-done';
+        return 'test-done'
       }
 
       const xtrace = ao.addon.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test);
+      const result = ao.startOrContinueTrace(xtrace, spanName, test)
 
-      expect(result).equal('test-done');
-      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId);
+      expect(result).equal('test-done')
+      checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId)
     })
   })
 
   it('mode=\'always\' should always insert a trace ID even if not tracing', function () {
-    const level = 'info';
-    const message = 'always insert';
+    const level = 'info'
+    const message = 'always insert'
 
-    ao.cfg.insertTraceIdsIntoLogs = 'always';
+    ao.cfg.insertTraceIdsIntoLogs = 'always'
 
-    logger.log(...makeLogArgs(level, message));
+    logger.log(...makeLogArgs(level, message))
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`);
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
-    const level = 'error';
-    const message = 'helper and asynchronous';
-    let traceId;
+    const level = 'error'
+    const message = 'helper and asynchronous'
+    let traceId
 
     function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString();
-      logger.error(...makeHelperArgs(message));
+      traceId = getTraceIdString()
+      logger.error(...makeHelperArgs(message))
       setTimeout(function () {
-        cb();
-      }, 100);
+        cb()
+      }, 100)
     }
 
     helper.test(emitter, function (done) {
@@ -343,33 +340,32 @@ describe(`winston v${version}`, function () {
     ], localDone)
   })
 
-
   it('should insert trace IDs in promise-based instrumented code', function (done) {
-    const level = 'info';
-    const message = 'property and promise';
-    let traceId;
-    const result = 99;
+    const level = 'info'
+    const message = 'property and promise'
+    let traceId
+    const result = 99
 
     function localDone () {
-      checkEventInfo(eventInfo, level, message, traceId);
-      done();
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString();
-      logger.log(...makeLogArgs(level, message));
+      traceId = getTraceIdString()
+      logger.log(...makeLogArgs(level, message))
       return new Promise((resolve, reject) => {
         setTimeout(function () {
-          resolve(result);
-        }, 25);
-      });
+          resolve(result)
+        }, 25)
+      })
     }
 
     helper.test(
       emitter,
       function (done) {
         ao.pInstrument(spanName, promiseFunction).then(r => {
-          expect(r).equal(result);
+          expect(r).equal(result)
           done()
         })
       }, [
@@ -385,25 +381,25 @@ describe(`winston v${version}`, function () {
   })
 
   it('should insert trace IDs using the function directly', function (done) {
-    const level = 'info';
-    ao.cfg.insertTraceIdsIntoLogs = false;
-    const message = 'helper and synchronous %s';
-    let traceId;
+    const level = 'info'
+    ao.cfg.insertTraceIdsIntoLogs = false
+    const message = 'helper and synchronous %s'
+    let traceId
 
     function localDone () {
-      const m = message.replace('%s', traceId);
-      checkEventInfo(eventInfo, level, m);
-      done();
+      const m = message.replace('%s', traceId)
+      checkEventInfo(eventInfo, level, m)
+      done()
     }
 
     helper.test(
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString();
-          logger.log(level, message, getTraceIdString());
+          traceId = getTraceIdString()
+          logger.log(level, message, getTraceIdString())
         })
-        done();
+        done()
       },
       [
         function (msg) {
@@ -416,8 +412,6 @@ describe(`winston v${version}`, function () {
         }
       ],
       localDone
-    );
+    )
   })
-
 })
-

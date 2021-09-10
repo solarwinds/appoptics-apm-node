@@ -1,8 +1,9 @@
-'use strict';
+/* global it, describe, before, after, afterEach */
+'use strict'
 
 const helper = require('./helper')
 const ao = require('..')
-const spawnSync = require('child_process').spawnSync;
+const spawnSync = require('child_process').spawnSync
 const debug = ao.logger.debug
 
 const util = require('util')
@@ -23,7 +24,7 @@ describe('logging', function () {
   const logger = debug.log
 
   before(function () {
-    ao.sampleRate = 1000000;
+    ao.sampleRate = 1000000
     ao.logLevel = 'error,warn'
   })
 
@@ -33,7 +34,7 @@ describe('logging', function () {
 
   afterEach(function () {
     debug.log = logger
-    ao.logLevel = levels;
+    ao.logLevel = levels
   })
 
   it('should set logging', function () {
@@ -64,7 +65,7 @@ describe('logging', function () {
     expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon', 'appoptics:error'])
     ao.logLevel = ''
     expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon'])
-  });
+  })
 
   it('should log correctly', function () {
     const msg = 'test logging'
@@ -77,69 +78,68 @@ describe('logging', function () {
     }
     ao.loggers.error(msg)
     expect(called).equal(true, 'logger must be called')
-  });
+  })
 
   it('should allow all logging to be suppressed', function () {
-    ao.logLevel = '';
-    let called = false;
-    let level;
-    let text;
+    ao.logLevel = ''
+    let called = false
+    let level
+    let text
     debug.log = function (output) {
-      [level, text] = getLevelAndText(output);
-      called = true;
-    };
+      [level, text] = getLevelAndText(output)
+      called = true
+    }
 
-    ao.loggers.error('anything');
-    ao.loggers.warn('nothing');
-    ao.loggers.debug('something');
+    ao.loggers.error('anything')
+    ao.loggers.warn('nothing')
+    ao.loggers.debug('something')
 
     if (called) {
-      expect(called).equal(false, `log ${level}:${text} should not have been output`);
+      expect(called).equal(false, `log ${level}:${text} should not have been output`)
     }
-  });
+  })
 
   it('should throw when constructing a debounced logger that does not exist', function () {
     function badLogger () {
-      return new ao.loggers.Debounce('xyzzy');
+      return new ao.loggers.Debounce('xyzzy')
     }
-    expect(badLogger).throws('Debounce: level \'xyzzy\' doesn\'t exist');
-  });
-
+    expect(badLogger).throws('Debounce: level \'xyzzy\' doesn\'t exist')
+  })
 
   it('should debounce repetitive logging by count', function () {
     const msg = 'test logging'
     const aolevel = 'error'
-    let debounced = new ao.loggers.Debounce(aolevel);
+    let debounced = new ao.loggers.Debounce(aolevel)
     let count = 0
     let i
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
       expect(level).equal('appoptics:' + aolevel)
-      expect(text).equal(`[${i + 1}]${msg}`);
-      count += 1;
+      expect(text).equal(`[${i + 1}]${msg}`)
+      count += 1
     }
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    expect(count).equal(10);
+    expect(count).equal(10)
 
-    debounced = new ao.loggers.Debounce(aolevel, {deltaCount: 500});
+    debounced = new ao.loggers.Debounce(aolevel, { deltaCount: 500 })
     count = 0
     for (i = 0; i < 1000; i++) {
       debounced.log(msg)
     }
-    expect(count).equal(2);
+    expect(count).equal(2)
   })
 
   it('should debounce repetitive logging by time', function (done) {
-    this.timeout(5000);
+    this.timeout(5000)
     // don't have mocha highlight this (even yellow) as a slow test.
-    this.slow(10000);
+    this.slow(10000)
     const msg = 'test logging'
     const aolevel = 'error'
     const options = {
-      deltaCount: Infinity,        // don't ever log due to count
-      deltaTime: 1000              // log at most one time per second
+      deltaCount: Infinity, // don't ever log due to count
+      deltaTime: 1000 // log at most one time per second
     }
     const debounced = new ao.loggers.Debounce('error', options)
     let count = 0
@@ -169,13 +169,12 @@ describe('logging', function () {
       calls += 1
       debounced.log(msg)
     }, 10)
-
   })
 
   it('should handle standard formats correctly', function () {
     let [logger, getter] = makeLogHandler()
     debug.log = logger
-    ao.loggers.error('embed a string "%s" with a number %d', 'adventure', 98.6);
+    ao.loggers.error('embed a string "%s" with a number %d', 'adventure', 98.6)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true, 'logger must be called')
     expect(level).equal('appoptics:error')
@@ -184,7 +183,7 @@ describe('logging', function () {
     [logger, getter] = makeLogHandler()
     debug.log = logger
     ao.loggers.warn('embed integer %i floating %f object %o Object %O', 17.5, 17.5, [1, 2], [1, 2]);
-    [called, level, text, formatted] = getter();      // eslint-disable-line no-unused-vars
+    [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true, 'logger must be called')
     expect(level).equal('appoptics:warn')
     expect(formatted).equal('embed integer 17 floating 17.5 object [ 1, 2, [length]: 2 ] Object [ 1, 2 ]')
@@ -193,7 +192,7 @@ describe('logging', function () {
   it('should handle the appoptics extended xtrace (%x) format', function () {
     let [logger, getter] = makeLogHandler()
     debug.log = logger
-    const md = new ao.addon.Event.makeRandom()
+    const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     ao.loggers.error('xtrace %x', md)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
@@ -239,11 +238,11 @@ describe('logging', function () {
     // get uppercase, non-delimited string
     const s = md.toString()
     ao.loggers.error('string xtrace %x', s);
-    [called, level, text, formatted] = getter();    // eslint-disable-line no-unused-vars
+    [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`);
-  });
+    expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`)
+  })
 
   // check span formatting (%l). it was done when they were called layers and %s already
   // means string.
@@ -261,11 +260,11 @@ describe('logging', function () {
     const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
-    expect(formatted).equal(`${name} ${entry} ${entryEvent} ${exit} ${exitEvent}`);
+    expect(formatted).equal(`${name} ${entry} ${entryEvent} ${exit} ${exitEvent}`)
   })
 
   it('should handle the appoptics extended event (%e) format', function () {
-    const md = new ao.addon.Event.makeRandom()
+    const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     const edge = false
     const event = new ao.Event('log-event', 'entry', md, edge)
     const name = 'log-event:entry'
@@ -277,50 +276,50 @@ describe('logging', function () {
     expect(called).equal(true)
     expect(level).equal('appoptics:error')
     expect(formatted).equal(`${name} ${event.event.toString(1)}`)
-  });
+  })
 
   it('should suppress all startup logging when APPOPTICS_LOG_SETTINGS=""', function () {
-    this.slow(200);
-    const env = Object.assign({}, process.env, {APPOPTICS_SERVICE_KEY: 'bad key', APPOPTICS_LOG_SETTINGS: ''});
-    const cmd = 'node';
-    const args = ['-r ".."', '-e "process.exit()"'];
-
-    const r = spawnSync(cmd,  args, {
-      env,
-      shell: true,
-      encoding: 'utf-8',
-      cwd: __dirname
-    });
-    expect(r.stdout.length).equal(0, 'nothing should be written to stdout');
-    expect(r.stderr.length).equal(0, 'nothing should be written to stderr');
-  });
-
-  it('should not suppress startup logging by default', function () {
-    this.slow(200);
-    const env = Object.assign({}, process.env, {APPOPTICS_SERVICE_KEY: 'bad key'});
-    // delete underlying debug package's state; the logging package will detect
-    // and enable them too.
-    delete env.DEBUG;
-    delete env.APPOPTICS_LOG_SETTINGS;
-    const cmd = 'node';
-    const args = ['-r ".."', '-e "process.exit()"'];
+    this.slow(200)
+    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key', APPOPTICS_LOG_SETTINGS: '' })
+    const cmd = 'node'
+    const args = ['-r ".."', '-e "process.exit()"']
 
     const r = spawnSync(cmd, args, {
       env,
       shell: true,
       encoding: 'utf-8',
       cwd: __dirname
-    });
-    expect(r.stdout.length).equal(0, 'nothing should be written to stdout');
-    expect(r.stderr.length).not.equal(0, 'stderr should not be empty');
+    })
+    expect(r.stdout.length).equal(0, 'nothing should be written to stdout')
+    expect(r.stderr.length).equal(0, 'nothing should be written to stderr')
+  })
+
+  it('should not suppress startup logging by default', function () {
+    this.slow(200)
+    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key' })
+    // delete underlying debug package's state; the logging package will detect
+    // and enable them too.
+    delete env.DEBUG
+    delete env.APPOPTICS_LOG_SETTINGS
+    const cmd = 'node'
+    const args = ['-r ".."', '-e "process.exit()"']
+
+    const r = spawnSync(cmd, args, {
+      env,
+      shell: true,
+      encoding: 'utf-8',
+      cwd: __dirname
+    })
+    expect(r.stdout.length).equal(0, 'nothing should be written to stdout')
+    expect(r.stderr.length).not.equal(0, 'stderr should not be empty')
 
     // line format: 2020-08-07T21:48:36.268Z appoptics:error
-    const lines = r.stderr.split('\n');
+    const lines = r.stderr.split('\n')
     const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(error|warn)/
     lines.forEach(l => {
-      expect(l.match(pattern, 'each line should contain only default logging levels'));
-    });
-  });
+      expect(l.match(pattern, 'each line should contain only default logging levels'))
+    })
+  })
 
   it.skip('should handle the appoptics extended cls (%c) format', function () {})
 

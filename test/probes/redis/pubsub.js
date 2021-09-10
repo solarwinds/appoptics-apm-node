@@ -6,10 +6,10 @@ function hostAndPort (ctx) {
   const possibilities = [
     ctx.redis,
     ctx.redis.options,
-    ctx.redis.connectionOption,
+    ctx.redis.connectionOption
   ]
   let o
-  while (o = possibilities.shift()) {
+  while (o = possibilities.shift()) { // eslint-disable-line no-cond-assign
     if (o.host && o.port) {
       return {
         host: o.host,

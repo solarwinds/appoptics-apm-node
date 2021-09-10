@@ -1,8 +1,9 @@
+/* global it, describe, before, after */
 'use strict'
 
 const helper = require('../helper')
 const Address = helper.Address
-const {ao} = require('../1.test-common')
+const { ao } = require('../1.test-common')
 
 const noop = helper.noop
 const addon = ao.addon
@@ -17,7 +18,7 @@ const addr = new Address(host, port)
 const client = redis.createClient(addr.port, addr.host, {})
 
 describe('probes.redis ' + pkg.version, function () {
-  const ctx = {redis: client}
+  const ctx = { redis: client }
   let emitter
   let realSampleTrace
 
@@ -31,7 +32,7 @@ describe('probes.redis ' + pkg.version, function () {
 
     realSampleTrace = ao.addon.Context.sampleTrace
     ao.addon.Context.sampleTrace = function () {
-      return {sample: true, source: 6, rate: ao.sampleRate}
+      return { sample: true, source: 6, rate: ao.sampleRate }
     }
 
     ao.g.testing(__filename)
@@ -59,7 +60,7 @@ describe('probes.redis ' + pkg.version, function () {
       done()
     }, [
       function (msg) {
-        msg.should.have.property('Label').oneOf('entry', 'exit'),
+        msg.should.have.property('Label').oneOf('entry', 'exit')
         msg.should.have.property('Layer', 'fake')
       }
     ], done)
@@ -128,5 +129,4 @@ describe('probes.redis ' + pkg.version, function () {
   it('should not interfere with pub/sub', function (done) {
     helper.test(emitter, helper.run(ctx, 'redis/pubsub'), [], done)
   })
-
 })
