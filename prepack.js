@@ -2,7 +2,6 @@
 'use strict'
 
 const fs = require('fs')
-const files = fs.readdirSync('.', 'utf8')
 
 let errorCount = 0
 

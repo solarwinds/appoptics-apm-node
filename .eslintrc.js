@@ -16,7 +16,7 @@ module.exports = {
   rules: {
     'node/handle-callback-err': 'warn',
     'node/no-deprecated-api': 'warn',
-    'camelcase': 'warn',
+    camelcase: 'warn',
     'no-eval': 'warn'
   }
 }
