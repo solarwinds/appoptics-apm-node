@@ -1,6 +1,8 @@
 /* global it, describe, before, beforeEach, after */
 'use strict'
 
+const semver = require('semver')
+
 if (!process.env.AO_TEST_SQLSERVER_EX) {
   describe('probes.tedious', function () {
     function noop () {}
@@ -34,8 +36,8 @@ if (process.env.AO_TEST_SQLSERVER_EX) {
 } else {
   addr = 'mssql:1433'
 }
-const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME
-const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD
+const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME || 'sa'
+const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD || 'MeetSQL2017requirements!'
 
 describe('probes.tedious ' + pkg.version, function () {
   this.timeout(10000)
@@ -193,11 +195,17 @@ describe('probes.tedious ' + pkg.version, function () {
   // Query helper
   function query (fn) {
     const settings = {
-      userName: user,
-      password: pass,
+      authentication: {
+        type: 'default',
+        options: {
+          userName: user,
+          password: pass,
+        }
+      },
       server: addr.host,
       port: addr.port,
       options: {
+        "enableArithAbort": true,
         tdsVersion: '7_1',
         encrypt: false
       }
@@ -207,9 +215,16 @@ describe('probes.tedious ' + pkg.version, function () {
     }
     const connection = new Connection(settings)
 
-    connection.on('connect', function () {
+    connection.on('connect', function (err) {
+      if(err) {
+        throw err
+      }
       connection.execSql(fn())
+      connection.close()
     })
+
+    // api changed between versions
+    if (semver.gte(pkg.version, '10.0.0')) connection.connect()
   }
 
   function findParam (name, params) {

@@ -87,6 +87,9 @@ jobs:
         image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
         ports:
           - "1433:1433"
+        env:
+          ACCEPT_EULA: true
+          SA_PASSWORD: MeetSQL2017requirements!
       mysql:
         image: "mysql:5.7.13"
         options: >-

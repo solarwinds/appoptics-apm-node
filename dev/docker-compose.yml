@@ -86,6 +86,9 @@ services:
     image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
     ports:
       - "1433:1433"
+    environment:
+      - ACCEPT_EULA=true
+      - SA_PASSWORD=MeetSQL2017requirements!
 
   mysql:
     container_name: "mysql_5_7"
