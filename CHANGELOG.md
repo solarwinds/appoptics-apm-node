@@ -161,7 +161,6 @@ Bug fix
 
 Features
 - lambda support
-- enable all logging to be suppressed via APPOPTICS_LOG_SETTINGS=''
 - capture agent version in init message
 
 Breaking change
@@ -169,3 +168,26 @@ Breaking change
 
 Bug fix
 - change config file name `appoptics-apm.{js|json}` => `appoptics-apm-config.{js|json}`
+
+### v10.0.0
+
+Features
+- `@appoptics/apm-bindings` replaces `appoptics-bindings`. `@appoptics/apm-bindings` uses `node-pre-gyp` so that users of LTS versions of node do not need to have the c/c++ build chain installed.
+- if `APPOPTICS_LOG_SETTINGS` is empty suppress all logging
+- use shimmer instead of ximmer
+- add `span.runPromise()` - native async span runner
+- updated to Apache 2.0 license
+
+Breaking change
+- Removed `ao.serviceKey`
+- Configuration file name-change
+
+Bug fix
+- pass options to koa constructor
+- check if module needs patching before doing builtin lookup
+- set txname when not set by frameworks
+
+### v10.0.1
+
+Bug fix
+- avoid triggering non-existent property warning during module.exports on Node 14
