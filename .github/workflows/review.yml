@@ -88,6 +88,11 @@ jobs:
           - "27018:27017"
       mssql:
         image: "mcr.microsoft.com/mssql/server:2017-CU8-ubuntu"
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -U sa -P $SA_PASSWORD -Q 'select 1' -b -o /dev/null"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - "1433:1433"
         env:
