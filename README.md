@@ -12,14 +12,17 @@ is a great way to start.
 
 ## Dependencies
 
-- Linux
-- Node.js v8+ [Maintenance and Active LTS](https://github.com/nodejs/Release)
+This is a **Linux Only package** with no Mac or Windows support.
 
-The agent compiles a C++ addon during install, so you’ll need to have the following on the system prior to installing the agent:
+It is compatible with Node versions 10, 12, 14 and 16. See [node status](https://github.com/nodejs/Release) for more.
 
-- gcc version 4.7 and above
-- for node-gyp: make and python 2.x (version 2.7 is [recommended](https://github.com/nodejs/node-gyp#on-unix))
+It is dependent on [@appoptics/apm-bindings](https://www.npmjs.com/package/@appoptics/apm-bindings) binary add-on. The AppOptics APM Agent will first attempt to install a prebuilt binary add-on using [node-pre-gyp](https://github.com/mapbox/node-pre-gyp) and only if that fails, will it attempt to build the add-on from source using [node-gyp](https://github.com/nodejs/node-gyp#on-unix).
 
+Building with node-gyp (via node-pre-gyp) requires:
+
+- Python (2 or 3 depending on version of npm)
+- make
+- A proper C/C++ compiler toolchain, like GCC
 
 ## Installation
 
@@ -80,6 +83,6 @@ an issue. For all other support requests, please email technicalsupport@solarwin
 
 ## License
 
-Copyright (c) 2016, 2017, 2018 SolarWinds, LLC
+Copyright (c) 2016 - 2021 SolarWinds, LLC
 
 Released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)

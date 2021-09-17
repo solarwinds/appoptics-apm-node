@@ -102,23 +102,9 @@ TODO
 * Local image is defined in [docker-node](./docker-node).
 * [Target Group](./config/target-group.json) images include a wide variety of OS and Node version combinations. Group includes both images that can build from code as well as those which can not.
 
-### Adding an image to GitHub Container Registry
-
-1. Create a docker file with a unique name to be used as a tag. Common is to use: `{node-version}-{os-name-version}` (e.g `16-ubuntu20.04.2.Dockerfile`). If image is a build image suffix with `-build`.
-2. Place a Docker file in the `docker-node` directory.
-3. Due to [GitHub Action issues](https://github.com/actions/runner/issues/1202) Manual trigger of [docker-node.yml] is required.
-
-### Modifying group lists
-
-1. Find available tags at [Docker Hub](https://hub.docker.com/_/node) or use path of image published to GitHub Container Registry (e.g. `ghcr.io/$GITHUB_REPOSITORY/node:14-centos7`)
-2. Add to appropriate group json file in `config`.
-
 ### Adding a Node Version
 
-1. Create an `alpine` builder image and a `centos` builder image. Use previous node version Dockerfiles as guide.
-2. Create `alpine`, `centos` and `amazonlinux2` test images. Use previous node version Dockerfiles as guide.
-3. Follow "Adding an image to GitHub Container Registry" above.
-4. Follow "Modifying group lists" above.
+1. Modify the Accept workflow.
 
 ### Remove a node version
 
@@ -133,10 +119,10 @@ TODO
 
 1. All workflows `runs-on: ubuntu-latest`.
 2. For maintainability and security custom actions are avoided.
-5. Since the scripts used are not a "formal" actions they are placed in a `script` directory.
-3. The client/server duo used is not packaged as a "formal" action it and is thus placed in a `utils` directory.
-3. All job steps are named.
-5. Jobs are linked using `needs:`.
+3. Since the scripts used are not a "formal" actions they are placed in a `script` directory.
+4. The client/server duo used is not packaged as a "formal" action it and is thus placed in a `utils` directory.
+5. All job steps are named.
+6. Jobs are linked using `needs:`.
 
 ### Secrets
 

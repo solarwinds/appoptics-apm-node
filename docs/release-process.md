@@ -10,32 +10,33 @@ Hence, any release of the binding package requires a release of the agent packag
 
 Both packages use a similar GitHub Actions driven Development & Release process.
 
-
 ## Prerelease Promotion 
 
 Release of `prerelease` taged packages allows for robust end-to-end testing and offers end users simple access to next version features and fixes with minimal consequences. Packages maintainers may release as many prerelease versions as they deem appropriate.
 
 ### Bindings CheckList
-1. On a branch, bump and tag prerelease version
-  - ```npm version prerelease --preid alpha```
+1. On a branch, bump and tag prerelease version with the `prerelease` tag.
+  - ```npm version prerelease --preid prerelease```
 2. Push (watch result of triggered GitHub Actions workflow)
 3. Create PR (watch result of triggered GitHub Actions workflow)
 4. Merge (watch result of triggered GitHub Actions workflow)
 5. If all workflows complete succsfully - Release
+  - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
 
 ### Agent
 1. **ONLY IF needed** update bindings version to `prerelease`
   - ```npm install @appoptics/apm-bindings@prerelease```
   - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
-2. On a branch, bump and tag prerelease version
-  - ```npm version prerelease --preid alpha```
+2. On a branch, bump and tag prerelease version with the `prerelease` tag.
+  - ```npm version prerelease --preid prerelease```
 3. Push (watch result of triggered GitHub Actions workflow)
 4. Create PR (watch result of triggered GitHub Actions workflow)
-4. Merge (watch result of triggered GitHub Actions workflow)
-5. If all workflows complete succsfully - Release
+5. Merge (watch result of triggered GitHub Actions workflow)
+6. If all workflows complete succsfully - Release
+  - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
-6. Watch result of Verify GitHub Actions workflow.
+7. Watch result of Verify GitHub Actions workflow.
 
 ## Release Promotion
 
@@ -43,10 +44,24 @@ Release of `latest` tagged package versions is governed by SolarWinds and requir
 
 ### Preparation CheckList
 
-1. Request Final Review (FSR) from SolarWinds and recive approval.
-2. Define what **version of the agent** will be released via what promotion (Major, Monor or Patch).
-3. Ask admin to create a Jira Release named `agent-nodejs-X.Y.Z` and allocate relevant Jira issue tickets to it.
-4. Create a [documentation ticket](https://swicloud.atlassian.net/wiki/spaces/CSS/pages/386760723/Documentation+Change+Process#Option-B%3A-Create-a-JIRA).
+A release should **always** come after a prerelease. The head of the master branch should be the head of the released version.
+
+1. Define what **version of the agent** will be released via what promotion (Major, Monor or Patch).
+2. Ask admin to create a Jira Release named `agent-nodejs-X.Y.Z` and allocate relevant Jira issue tickets to it.
+4. Create a request for Final Review (FSR) from SolarWinds Including:
+  - Release Notes for Agent
+  - Release Notes for Bindings (ONLY IF needed)
+  - Link to Jira Release.
+  - Link to GitHub Action Agent Prerelease Run
+  - Link to Githb Action Bindings Prerelease Run (if needed).
+  - Link to commits since last Agent release.
+  - Link to commits since last Binding release (if needed).
+  - Link to Checkmarx scan for Agent and review of any findings.
+  - Link to Checkmarx scan for Bindings and review of any findings.
+  - Link to Dependabot alrets for Agent and review of any.
+  - Link for Dependabot alerts for Bindings and review of any.
+5. Create a [documentation ticket](https://swicloud.atlassian.net/wiki/spaces/CSS/pages/386760723/Documentation+Change+Process#Option-B%3A-Create-a-JIRA).
+6. Receive release approval. 
 
 ### Bindings
 
@@ -58,24 +73,30 @@ Release of `latest` tagged package versions is governed by SolarWinds and requir
 4. Create PR (watch result of triggered GitHub Actions workflow)
 4. Merge (watch result of triggered GitHub Actions workflow)
 5. Release
+  - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
 
 ### Agent
 1. Create the release branch
-  - ```git checkout Release```
-2. Update bindings version **ONLY IF needed**
+  - ```git checkout -b Release```
+2. Update [CHANGELOG.md](https://github.com/appoptics/appoptics-apm-node/blob/master/CHANGELOG.md)
+4. Update bindings version **ONLY IF needed**
   - ```npm install @appoptics/apm-bindings@latest```
   - ```git commit -am "Updated @appoptics/apm-bindings to latest."```
-2. Bump and tag prerelease version
+5. Bump and tag prerelease version
   - ```npm version [<newversion> | major | minor | patch ]```
-3. Push (watch result of triggered GitHub Action workflow)
-4. Create PR (watch result of triggered GitHub Actions workflow)
-4. Merge (watch result of triggered GitHub Actions workflow)
-5. Release
+6. Push (watch result of triggered GitHub Action workflow)
+7. Create PR (watch result of triggered GitHub Actions workflow)
+8. Merge (watch result of triggered GitHub Actions workflow)
+9. Release
+  - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
-6. Watch Verify workflow result
+10. Watch Verify workflow result
 
 ### Post Release
+1. Update [Release notes](https://github.com/appoptics/appoptics-apm-node/releases). "Click Draft new release" and choose tag of completed release.
+2. Run Document workflow.
+3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/appoptics/appoptics-apm-node/blob/master/docs/supported-components.human) list.
+4. Announce new version in #ao-releases in Slack.
 
-TODO
 
