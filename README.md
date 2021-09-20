@@ -12,7 +12,7 @@ is a great way to start.
 
 ## Dependencies
 
-This is a **Linux Only package** with no Mac or Windows support.
+This is a **Linux Only package** with no Mac or Windows support. When installed on Mac or Windows (for development) it will degrade gracefully.
 
 It is compatible with Node versions 10, 12, 14 and 16. See [node status](https://github.com/nodejs/Release) for more.
 
