@@ -58,7 +58,7 @@ A release should **always** come after a prerelease. The head of the master bran
   - Link to commits since last Binding release (if needed).
   - Link to Checkmarx scan for Agent and review of any findings.
   - Link to Checkmarx scan for Bindings and review of any findings.
-  - Link to Dependabot alrets for Agent and review of any.
+  - Link to Dependabot alerts for Agent and review of any.
   - Link for Dependabot alerts for Bindings and review of any.
 5. Create a [documentation ticket](https://swicloud.atlassian.net/wiki/spaces/CSS/pages/386760723/Documentation+Change+Process#Option-B%3A-Create-a-JIRA).
 6. Receive release approval. 
@@ -83,7 +83,7 @@ A release should **always** come after a prerelease. The head of the master bran
 4. Update bindings version **ONLY IF needed**
   - ```npm install @appoptics/apm-bindings@latest```
   - ```git commit -am "Updated @appoptics/apm-bindings to latest."```
-5. Bump and tag prerelease version
+5. Bump and tag release version
   - ```npm version [<newversion> | major | minor | patch ]```
 6. Push (watch result of triggered GitHub Action workflow)
 7. Create PR (watch result of triggered GitHub Actions workflow)
