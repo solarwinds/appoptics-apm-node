@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "${PWD}:/usr/src/work"
+      - "${PWD}/../appoptics-bindings-node:/usr/src/bindings"
+      - "${PWD}/../instrumented:/usr/src/instrumented"
       - ~/.gitconfig:/root/.gitconfig
       - ~/.ssh:/root/.ssh 
       - ~/.aws/credentials:/root/.aws/credentials
@@ -15,7 +17,7 @@ services:
     env_file:
       - ../.env # contains AO_TOKEN_STG, AO_TOKEN_PROD, APPOPTICS_SERVICE_KEY. TODO: remove last after modifying tests
     environment:
-      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
+      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug,info
       APPOPTICS_COLLECTOR: localhost:7832
       APPOPTICS_REPORTER: udp
 
@@ -32,6 +34,7 @@ services:
       AO_TEST_REDIS_3_0: redis:6379
     ports:
       - "9229:9229"
+      - "3000:3000"
     links:
       - cassandra
       - memcached
