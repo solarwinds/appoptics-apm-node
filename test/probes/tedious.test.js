@@ -199,13 +199,13 @@ describe('probes.tedious ' + pkg.version, function () {
         type: 'default',
         options: {
           userName: user,
-          password: pass,
+          password: pass
         }
       },
       server: addr.host,
       port: addr.port,
       options: {
-        "enableArithAbort": true,
+        enableArithAbort: true,
         tdsVersion: '7_1',
         encrypt: false
       }
@@ -216,7 +216,7 @@ describe('probes.tedious ' + pkg.version, function () {
     const connection = new Connection(settings)
 
     connection.on('connect', function (err) {
-      if(err) {
+      if (err) {
         throw err
       }
       connection.execSql(fn())
