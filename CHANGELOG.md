@@ -191,3 +191,17 @@ Bug fix
 
 Bug fix
 - avoid triggering non-existent property warning during module.exports on Node 14
+
+### v10.1.0 
+
+Maintenance
+- Published using GitHub Actions
+- Supports Node 16
+- Added node-pre-gyp distributable binaries for Node 16
+- Using oboe c-lib v10.1.1
+- Updated and trimmed dependencies
+- Updated and trimmed files in package
+- Code lint
+
+Breaking changes
+- None
