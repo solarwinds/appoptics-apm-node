@@ -220,7 +220,7 @@ jobs:
         # in testeachversion we may fail tests, and want to keep going.
         continue-on-error: true
         # some packages take a long time.
-        timeout-minutes: 45
+        timeout-minutes: 60
         run: npx testeachversion --verbose -l ./docs/tmp -p ${{ matrix.pkg }}
 
       - name: Rename Result Artifacts
