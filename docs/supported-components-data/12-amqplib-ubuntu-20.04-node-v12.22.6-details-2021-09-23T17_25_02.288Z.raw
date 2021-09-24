@@ -1,0 +1,817 @@
+npm WARN notsup Unsupported engine for amqplib@0.2.0: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.2.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.2.0
+added 1 package from 3 contributors, removed 6 packages, updated 3 packages and audited 1092 packages in 4.592s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:08.130Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:08.130Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:08.130Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:08.131Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:08.192Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:08.231Z appoptics:patching patched crypto 
+2021-09-23T17:25:08.250Z appoptics:patching patched https 
+2021-09-23T17:25:08.250Z appoptics:patching patched http 
+2021-09-23T17:25:08.304Z appoptics:patching patched amqplib 0.2.0
+2021-09-23T17:25:08.306Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:08.308Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.0
+    ✓ UDP might lose a message
+    promises
+      1) "before all" hook for "should report send and consume in existing trace"
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      3) "before all" hook for "should report send and consume in existing trace"
+      4) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  1 passing (4s)
+  4 failing
+
+  1) probes.amqplib 0.2.0
+       promises
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (internal/timers.js:554:17)
+      at processTimers (internal/timers.js:497:7)
+
+  2) probes.amqplib 0.2.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read property 'close' of undefined
+      at Context.<anonymous> (test/probes/amqplib.test.js:181:23)
+      at processImmediate (internal/timers.js:461:21)
+      at process.callbackTrampoline (internal/async_hooks.js:126:14)
+
+  3) probes.amqplib 0.2.0
+       callbacks
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (internal/timers.js:554:17)
+      at processTimers (internal/timers.js:497:7)
+
+  4) probes.amqplib 0.2.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read property 'close' of undefined
+      at Context.<anonymous> (test/probes/amqplib.test.js:211:23)
+      at processImmediate (internal/timers.js:461:21)
+      at process.callbackTrampoline (internal/async_hooks.js:126:14)
+
+
+
+npm WARN notsup Unsupported engine for amqplib@0.2.1: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.2.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.2.1
+updated 2 packages and audited 1092 packages in 4.419s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:17.858Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:17.858Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:17.858Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:17.859Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:17.917Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:17.954Z appoptics:patching patched crypto 
+2021-09-23T17:25:17.970Z appoptics:patching patched https 
+2021-09-23T17:25:17.970Z appoptics:patching patched http 
+2021-09-23T17:25:18.022Z appoptics:patching patched amqplib 0.2.1
+2021-09-23T17:25:18.023Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:18.025Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.1
+    ✓ UDP might lose a message
+    promises
+(node:513) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (44ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (162ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.3.0: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.0
+updated 1 package and audited 1092 packages in 4.57s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:23.818Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:23.819Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:23.819Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:23.819Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:23.906Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:23.952Z appoptics:patching patched crypto 
+2021-09-23T17:25:23.970Z appoptics:patching patched https 
+2021-09-23T17:25:23.982Z appoptics:patching patched http 
+2021-09-23T17:25:24.038Z appoptics:patching patched amqplib 0.3.0
+2021-09-23T17:25:24.039Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:24.041Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.0
+    ✓ UDP might lose a message
+    promises
+(node:536) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (56ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (52ms)
+
+
+  7 passing (196ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.3.1: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11 || 0.12 || 1.0 || 1.1"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.1
+updated 2 packages and audited 1092 packages in 4.247s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:29.575Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:29.576Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:29.576Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:29.576Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:29.635Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:29.667Z appoptics:patching patched crypto 
+2021-09-23T17:25:29.689Z appoptics:patching patched https 
+2021-09-23T17:25:29.689Z appoptics:patching patched http 
+2021-09-23T17:25:29.737Z appoptics:patching patched amqplib 0.3.1
+2021-09-23T17:25:29.740Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:29.742Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.1
+    ✓ UDP might lose a message
+    promises
+(node:559) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (50ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (172ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.3.2: wanted: {"node":">=0.8 <0.13 || ^1"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.2
+updated 1 package and audited 1092 packages in 4.844s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:35.895Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:35.896Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:35.896Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:35.897Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:36.005Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:36.048Z appoptics:patching patched crypto 
+2021-09-23T17:25:36.068Z appoptics:patching patched https 
+2021-09-23T17:25:36.069Z appoptics:patching patched http 
+2021-09-23T17:25:36.126Z appoptics:patching patched amqplib 0.3.2
+2021-09-23T17:25:36.128Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:36.130Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.2
+    ✓ UDP might lose a message
+    promises
+(node:582) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (53ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (130ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.4.0: wanted: {"node":">=0.8 <4 || ^4"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.0
+updated 1 package and audited 1092 packages in 4.115s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:41.399Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:41.400Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:41.400Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:41.400Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:41.460Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:41.492Z appoptics:patching patched crypto 
+2021-09-23T17:25:41.519Z appoptics:patching patched https 
+2021-09-23T17:25:41.519Z appoptics:patching patched http 
+2021-09-23T17:25:41.563Z appoptics:patching patched amqplib 0.4.0
+2021-09-23T17:25:41.565Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:41.567Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.0
+    ✓ UDP might lose a message
+    promises
+(node:605) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+      1) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  7 passing (131ms)
+  2 failing
+
+  1) probes.amqplib 0.4.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at emitReadable_ (_stream_readable.js:557:12)
+      at processTicksAndRejections (internal/process/task_queues.js:83:21)
+
+  2) probes.amqplib 0.4.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at emitReadable_ (_stream_readable.js:557:12)
+      at processTicksAndRejections (internal/process/task_queues.js:83:21)
+
+
+
+npm WARN notsup Unsupported engine for amqplib@0.4.1: wanted: {"node":">=0.8 <5 || ^5"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.1
+updated 1 package and audited 1092 packages in 5.031s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:47.978Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:47.979Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:47.979Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:47.979Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:48.041Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:48.071Z appoptics:patching patched crypto 
+2021-09-23T17:25:48.087Z appoptics:patching patched https 
+2021-09-23T17:25:48.087Z appoptics:patching patched http 
+2021-09-23T17:25:48.142Z appoptics:patching patched amqplib 0.4.1
+2021-09-23T17:25:48.145Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:48.147Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.1
+    ✓ UDP might lose a message
+    promises
+(node:628) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (51ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (128ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.4.2: wanted: {"node":">=0.8 <6 || ^6"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.2
+updated 1 package and audited 1092 packages in 4.026s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:53.303Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:53.303Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:53.303Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:53.304Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:53.372Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:53.418Z appoptics:patching patched crypto 
+2021-09-23T17:25:53.438Z appoptics:patching patched https 
+2021-09-23T17:25:53.438Z appoptics:patching patched http 
+2021-09-23T17:25:53.500Z appoptics:patching patched amqplib 0.4.2
+2021-09-23T17:25:53.502Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:53.504Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.2
+    ✓ UDP might lose a message
+    promises
+(node:651) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace (55ms)
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (223ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.5.1: wanted: {"node":">=0.8 <6 || ^6"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.1
+removed 1 package, updated 1 package and audited 1092 packages in 4.584s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:25:59.454Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:25:59.455Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:25:59.455Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:25:59.456Z appoptics:debug using context provider: ace-context
+2021-09-23T17:25:59.530Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:25:59.569Z appoptics:patching patched crypto 
+2021-09-23T17:25:59.587Z appoptics:patching patched https 
+2021-09-23T17:25:59.587Z appoptics:patching patched http 
+2021-09-23T17:25:59.715Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:25:59.717Z appoptics:patching patched amqplib 0.5.1
+2021-09-23T17:25:59.719Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:25:59.721Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.1
+    ✓ UDP might lose a message
+    promises
+(node:674) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace (62ms)
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (225ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.5.2: wanted: {"node":">=0.8 <=9"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.2
+updated 1 package and audited 1092 packages in 3.956s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:04.974Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:04.975Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:04.975Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:04.976Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:05.038Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:05.086Z appoptics:patching patched crypto 
+2021-09-23T17:26:05.113Z appoptics:patching patched https 
+2021-09-23T17:26:05.113Z appoptics:patching patched http 
+2021-09-23T17:26:05.173Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:05.175Z appoptics:patching patched amqplib 0.5.2
+2021-09-23T17:26:05.176Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:05.178Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.2
+    ✓ UDP might lose a message
+    promises
+(node:697) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (45ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (168ms)
+
+npm WARN notsup Unsupported engine for amqplib@0.5.3: wanted: {"node":">=0.8 <=9"} (current: {"node":"12.22.6","npm":"6.14.15"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.3
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.3
+added 5 packages from 4 contributors, updated 3 packages and audited 1097 packages in 4.796s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:11.376Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:11.377Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:11.377Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:11.378Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:11.446Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:11.479Z appoptics:patching patched crypto 
+2021-09-23T17:26:11.508Z appoptics:patching patched https 
+2021-09-23T17:26:11.511Z appoptics:patching patched http 
+2021-09-23T17:26:11.604Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:11.606Z appoptics:patching patched amqplib 0.5.3
+2021-09-23T17:26:11.608Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:11.610Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.3
+    ✓ UDP might lose a message
+    promises
+(node:720) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (49ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+
+
+  7 passing (233ms)
+
+npm WARN deprecated amqplib@0.5.4: See github.com/squaremo/amqp.node/issues/534
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.4
+updated 1 package and audited 1097 packages in 4.11s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:17.062Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:17.063Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:17.063Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:17.063Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:17.122Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:17.152Z appoptics:patching patched crypto 
+2021-09-23T17:26:17.173Z appoptics:patching patched https 
+2021-09-23T17:26:17.173Z appoptics:patching patched http 
+
+Error: Cannot find module './defs'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/mocha.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/one-and-dones.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/options.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/bin/mocha
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:815:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:667:27)
+    at Module.require (internal/modules/cjs/loader.js:887:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js:7:12)
+    at Module._compile (internal/modules/cjs/loader.js:999:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+    at Module.load (internal/modules/cjs/loader.js:863:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+    at Module.require (internal/modules/cjs/loader.js:887:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js:11:18)
+    at Module._compile (internal/modules/cjs/loader.js:999:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+    at Module.load (internal/modules/cjs/loader.js:863:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+    at Module.require (internal/modules/cjs/loader.js:887:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (internal/modules/cjs/helpers.js:74:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js:1:19)
+    at Module._compile (internal/modules/cjs/loader.js:999:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+    at Module.load (internal/modules/cjs/loader.js:863:32)
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.5
+updated 1 package and audited 1097 packages in 5.75s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:24.196Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:24.197Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:24.197Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:24.197Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:24.269Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:24.301Z appoptics:patching patched crypto 
+2021-09-23T17:26:24.321Z appoptics:patching patched https 
+2021-09-23T17:26:24.322Z appoptics:patching patched http 
+2021-09-23T17:26:24.380Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:24.383Z appoptics:patching patched amqplib 0.5.5
+2021-09-23T17:26:24.384Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:24.386Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.5
+    ✓ UDP might lose a message
+    promises
+(node:762) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (49ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (216ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.6
+updated 1 package and audited 1097 packages in 4.193s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:29.815Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:29.815Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:29.815Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:29.816Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:29.883Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:29.928Z appoptics:patching patched crypto 
+2021-09-23T17:26:29.945Z appoptics:patching patched https 
+2021-09-23T17:26:29.946Z appoptics:patching patched http 
+2021-09-23T17:26:30.018Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:30.020Z appoptics:patching patched amqplib 0.5.6
+2021-09-23T17:26:30.021Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:30.024Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.6
+    ✓ UDP might lose a message
+    promises
+(node:785) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (53ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (219ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.6.0
+updated 1 package and audited 1097 packages in 4.278s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:35.828Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:35.828Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:35.828Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:35.829Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:35.902Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:35.951Z appoptics:patching patched crypto 
+2021-09-23T17:26:35.972Z appoptics:patching patched https 
+2021-09-23T17:26:35.973Z appoptics:patching patched http 
+2021-09-23T17:26:36.068Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:36.070Z appoptics:patching patched amqplib 0.6.0
+2021-09-23T17:26:36.072Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:36.074Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.6.0
+    ✓ UDP might lose a message
+    promises
+(node:808) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (48ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (188ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.7.0
+updated 1 package and audited 1097 packages in 4.302s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 25 vulnerabilities (5 low, 5 moderate, 13 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:41.754Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:41.754Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:41.754Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:41.755Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:41.815Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:41.846Z appoptics:patching patched crypto 
+2021-09-23T17:26:41.867Z appoptics:patching patched https 
+2021-09-23T17:26:41.868Z appoptics:patching patched http 
+2021-09-23T17:26:41.925Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:41.927Z appoptics:patching patched amqplib 0.7.0
+2021-09-23T17:26:41.929Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:41.931Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.0
+    ✓ UDP might lose a message
+    promises
+(node:831) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (130ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.7.1
+added 1 package from 1 contributor, updated 2 packages and audited 1098 packages in 4.182s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:47.585Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:47.585Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:47.585Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:47.586Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:47.660Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:47.698Z appoptics:patching patched crypto 
+2021-09-23T17:26:47.730Z appoptics:patching patched https 
+2021-09-23T17:26:47.731Z appoptics:patching patched http 
+2021-09-23T17:26:47.793Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:47.795Z appoptics:patching patched amqplib 0.7.1
+2021-09-23T17:26:47.797Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:47.799Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.1
+    ✓ UDP might lose a message
+    promises
+(node:854) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (47ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+
+
+  7 passing (234ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.8.0
+updated 1 package and audited 1098 packages in 4.096s
+
+71 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2021-09-23T17:26:53.226Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2021-09-23T17:26:53.226Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2021-09-23T17:26:53.226Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2021-09-23T17:26:53.227Z appoptics:debug using context provider: ace-context
+2021-09-23T17:26:53.287Z appoptics:debug apm 10.1.0, bindings 11.1.0, oboe 10.1.1
+2021-09-23T17:26:53.318Z appoptics:patching patched crypto 
+2021-09-23T17:26:53.335Z appoptics:patching patched https 
+2021-09-23T17:26:53.336Z appoptics:patching patched http 
+2021-09-23T17:26:53.397Z appoptics:patching patched bluebird 3.7.2
+2021-09-23T17:26:53.399Z appoptics:patching patched amqplib 0.8.0
+2021-09-23T17:26:53.401Z appoptics:patching patched amqplib/callback_api 
+2021-09-23T17:26:53.403Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.8.0
+    ✓ UDP might lose a message
+    promises
+(node:877) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (47ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (47ms)
+
+
+  7 passing (211ms)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.8.0
+updated 1 package and audited 1098 packages in 4.069s
+
+71 packages are looking for funding
+  run `npm fund` for details
+
+found 23 vulnerabilities (5 low, 4 moderate, 12 high, 2 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
