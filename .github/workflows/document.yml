@@ -213,8 +213,7 @@ jobs:
         run: npm install  --unsafe-perm
 
       - name: Create tmp Directory
-        run: |
-          mkdir -p docs/tmp
+        run: mkdir -p docs/tmp
 
       - name: Test ${{ matrix.pkg }} versions
         # in testeachversion we may fail tests, and want to keep going.
