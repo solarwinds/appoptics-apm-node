@@ -50,13 +50,14 @@ describe('logging', function () {
   })
 
   it('should add and remove logging', function () {
-    const add = 'info,span'
-    const previous = ao.logLevel
-    const expected = previous ? previous + ',' + add : add
-    ao.logLevelAdd(add)
-    expect(ao.logLevel).equal(expected)
-    ao.logLevelRemove(add)
-    expect(ao.logLevel).equal(previous)
+    const levels = ao.logLevel.split(',')
+    ao.logLevelAdd('something')
+    levels.push('something')
+    expect(ao.logLevel).equal(levels.join(','))
+
+    ao.logLevelRemove('something')
+    levels.pop()
+    expect(ao.logLevel).equal(levels.join(','))
   })
 
   it('should interact with existing debug logging correctly', function () {
