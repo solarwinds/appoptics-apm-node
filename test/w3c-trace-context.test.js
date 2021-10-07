@@ -5,8 +5,13 @@ const w3cTraceContext = require('../lib/w3c-trace-context')
 
 const baseTraceparent = '00-0123456789abcdef0123456789abcdef-7a71b110e5e3588d-01'
 const baseXtrace = '2B0123456789ABCDEF0123456789ABCDEF999988887A71B110E5E3588D01'
-const baseTraceState = 'sw=7a71b110e5e3588d-01'
-const otherXtrace = '2B0123456789ABCDEF0123456789FFFFFF999988881B11B110E5E3588D01'
+
+const baseTracestateSpanId = '7a71b110e5e3588d'
+const baseTracestateFlags = '01'
+const baseTracestateOrgPart = 'sw=' + baseTracestateSpanId + '-' + baseTracestateFlags
+
+const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF99998888999988885566778801'
+const otherTracestateOrgPart = 'sw=9999888855667788-01'
 
 const expectEmptyObject = (w3c) => {
   expect(w3c).to.be.an('object')
@@ -91,7 +96,7 @@ describe('w3cTraceContext', function () {
     it('should create an object from traceparent and sw tracestate', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: baseTraceState
+        tracestate: baseTracestateOrgPart
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
@@ -99,21 +104,21 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
     })
 
     it('should create an object from traceparent and tracestate that do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal('2B0123456789ABCDEF0123456789ABCDEF99998888999988885566778801')
+      expect(w3c.xtrace).to.be.equal(otherXtrace)
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('sw=9999888855667788-01')
+      expect(w3c.tracestate).to.be.equal(otherTracestateOrgPart)
     })
 
     it('should create an object from traceparent with other vendor tracestate', function () {
@@ -133,15 +138,15 @@ describe('w3cTraceContext', function () {
     it('should create an object from traceparent and tracestate with other vendor tracestate', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before'
+        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before'
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal('2B0123456789ABCDEF0123456789ABCDEF99998888999988885566778801')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before')
+      expect(w3c.tracestate).to.be.equal('a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before')
     })
 
     it('should create an empty object from invalid traceparent only (bad version)', function () {
@@ -182,7 +187,7 @@ describe('w3cTraceContext', function () {
 
     it('should create an empty object from tracestate only (bad data)', function () {
       const myHeaders = {
-        tracestate: baseTraceState + ',a1=bad,a2=game'
+        tracestate: baseTracestateOrgPart + ',a1=bad,a2=game'
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
@@ -192,7 +197,7 @@ describe('w3cTraceContext', function () {
     it('should create an empty object from tracestate and invalid traceparent (bad data)', function () {
       const myHeaders = {
         traceparent: baseTraceparent.replace('a', 'A'),
-        tracestate: baseTraceState
+        tracestate: baseTracestateOrgPart
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
@@ -213,7 +218,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -228,14 +233,14 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState + ',oh=other')
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
     it('should create an object from xtrace and tracestate when there is an existing sw value', function () {
       const data = {
         xtrace: baseXtrace,
-        tracestate: 'oh=other,sw=7a71b110e5e30000-01'
+        tracestate: 'oh=other,' + baseTracestateOrgPart
       }
       const w3c = w3cTraceContext.fromData(data)
 
@@ -243,14 +248,14 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState + ',oh=other')
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
     it('should create an object from xtrace and tracestate when there is an existing sw value on left', function () {
       const data = {
         xtrace: baseXtrace,
-        tracestate: 'sw=7a71b110e5e30000-01,oh=other'
+        tracestate: baseTracestateOrgPart + ',oh=other'
       }
       const w3c = w3cTraceContext.fromData(data)
 
@@ -258,7 +263,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState + ',oh=other')
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -303,7 +308,7 @@ describe('w3cTraceContext', function () {
     it('should be Continuation when traceparent and tracestate do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const type = w3cTraceContext.fromHeaders(myHeaders).info.type
 
@@ -313,7 +318,7 @@ describe('w3cTraceContext', function () {
     it('should be Flow when traceparent and tracestate match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: baseTraceState
+        tracestate: baseTracestateOrgPart
       }
       const type = w3cTraceContext.fromHeaders(myHeaders).info.type
 
@@ -331,7 +336,7 @@ describe('w3cTraceContext', function () {
 
     it('should be Source when there is no traceparent just tracestate (malformed)', function () {
       const myHeaders = {
-        tracestate: '7a71b110e5e3588d-01'
+        tracestate: baseTracestateOrgPart
       }
       const type = w3cTraceContext.fromHeaders(myHeaders).info.type
 
@@ -351,21 +356,21 @@ describe('w3cTraceContext', function () {
     it('should be valid when traceparent and tracestate do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
 
-      expect(id).to.be.equal('7a71b110e5e3588d')
+      expect(id).to.be.equal(baseTracestateSpanId)
     })
 
     it('should be valid when traceparent and tracestate match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: baseTraceState
+        tracestate: baseTracestateOrgPart
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
 
-      expect(id).to.be.equal('7a71b110e5e3588d')
+      expect(id).to.be.equal(baseTracestateSpanId)
     })
 
     it('should be empty when traceparent is malformed (too long)', function () {
@@ -377,7 +382,7 @@ describe('w3cTraceContext', function () {
       expect(id).to.be.equal('')
     })
 
-    it('should be empty when traceparentis malformed (too short)', function () {
+    it('should be empty when traceparent is malformed (too short)', function () {
       const myHeaders = {
         traceparent: baseTraceparent.slice(0, 10) + baseTraceparent.slice(11)
       }
@@ -426,7 +431,7 @@ describe('w3cTraceContext', function () {
     it('should be valid when traceparent and tracestate do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
@@ -436,7 +441,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (too long)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=999988885566778899-01'
+        tracestate: baseTracestateOrgPart.slice(0, 2) + '1' + baseTracestateOrgPart.slice(2)
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
@@ -446,7 +451,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (too short)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=799998888556677-01'
+        tracestate: baseTracestateOrgPart.slice(0, 6) + baseTracestateOrgPart.slice(7)
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
@@ -456,7 +461,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (no dash)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788_01'
+        tracestate: baseTracestateOrgPart.replace('-', '_')
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
@@ -466,7 +471,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (not hex)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=99998888556677zz-01'
+        tracestate: baseTracestateOrgPart.replace('a', 'z')
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
@@ -476,31 +481,31 @@ describe('w3cTraceContext', function () {
     it('should be valid when tracestate is with other vendor and own data', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before'
+        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
-      expect(id).to.be.equal('9999888855667788')
+      expect(id).to.be.equal(baseTracestateSpanId)
     })
 
     it('should be first valid when tracestate is malformed and contains own twice', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01,sw=77771111aaaa0011-01'
+        tracestate: baseTracestateOrgPart + ',sw=77771111aaaa0011-01'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
-      expect(id).to.be.equal('9999888855667788')
+      expect(id).to.be.equal(baseTracestateSpanId)
     })
 
     it('should be first when tracestate is with other vendor and own data twice', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before,sw=77771111aaaa0011-01'
+        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before,sw=77771111aaaa0011-01'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
 
-      expect(id).to.be.equal('9999888855667788')
+      expect(id).to.be.equal(baseTracestateSpanId)
     })
 
     it('should be empty when tracestate is with other vendor data only', function () {
@@ -528,7 +533,7 @@ describe('w3cTraceContext', function () {
     it('should be valid when traceparent and tracestate do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -538,7 +543,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (too long)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=999988885566778899-01'
+        tracestate: baseTracestateOrgPart.slice(0, 2) + '1' + baseTracestateOrgPart.slice(2)
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -548,7 +553,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (too short)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=77771111aaaa00-01'
+        tracestate: baseTracestateOrgPart.slice(0, 6) + baseTracestateOrgPart.slice(7)
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -558,7 +563,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (no dash)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788_01'
+        tracestate: baseTracestateOrgPart.replace('-', '_')
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -568,7 +573,7 @@ describe('w3cTraceContext', function () {
     it('should be empty when tracestate is malformed (not hex)', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=77771111aaaa000z-01'
+        tracestate: baseTracestateOrgPart.replace('a', 'z')
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -578,7 +583,7 @@ describe('w3cTraceContext', function () {
     it('should be valid when tracestate is with other vendor and own data', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before'
+        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -588,7 +593,7 @@ describe('w3cTraceContext', function () {
     it('should be valid when tracestate is malformed and contains own twice', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01,sw=77771111aaaa0011-01'
+        tracestate: baseTracestateOrgPart + ',sw=77771111aaaa0011-01'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -598,7 +603,7 @@ describe('w3cTraceContext', function () {
     it('should be valid when tracestate is with other vendor and own data twice', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,sw=9999888855667788-01,a2=i_was_before,sw=77771111aaaa0011-01'
+        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before,sw=77771111aaaa0011-01'
       }
       const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
 
@@ -662,7 +667,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -677,7 +682,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTraceState)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -714,7 +719,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         'x-trace': baseXtrace,
         traceparent: baseTraceparent,
-        tracestate: 'sw=9999888855667788-01'
+        tracestate: otherTracestateOrgPart
       }
       const type = w3cTraceContext.fromHeaders(myHeaders).info.type
 
