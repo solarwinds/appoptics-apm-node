@@ -4,13 +4,13 @@ const expect = require('chai').expect
 const w3cTraceContext = require('../lib/w3c-trace-context')
 
 const baseTraceparent = '00-0123456789abcdef0123456789abcdef-7a71b110e5e3588d-01'
-const baseXtrace = '2B0123456789ABCDEF0123456789ABCDEF999988887A71B110E5E3588D01'
+const baseXtrace = '2B0123456789ABCDEF0123456789ABCDEF000000007A71B110E5E3588D01'
 
 const baseTracestateSpanId = '7a71b110e5e3588d'
 const baseTracestateFlags = '01'
 const baseTracestateOrgPart = 'sw=' + baseTracestateSpanId + '-' + baseTracestateFlags
 
-const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF99998888999988885566778801'
+const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF00000000999988885566778801'
 const otherTracestateOrgPart = 'sw=9999888855667788-01'
 
 const expectEmptyObject = (w3c) => {
@@ -149,6 +149,81 @@ describe('w3cTraceContext', function () {
       expect(w3c.tracestate).to.be.equal('a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before')
     })
 
+    it('should create an object from traceparent and tracestate with other vendor tracestate truncated to 32 entries (bad data validated)', function () {
+      const longTracestate = new Array(34).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        return `${c}${c}=${new Array(12).fill(c).join('')}`
+      }).join(',') // 543 chars ok, 34 entries not ok
+
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').slice(0, 31).join(','))
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key has leading delimiter , (bad data validated)', function () {
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: ',woo=hoo'
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal('woo=hoo')
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key has trailing delimiter , (bad data validated)', function () {
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: 'woo=hoo,'
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal('woo=hoo')
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key with empty value (bad data validated)', function () {
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: 'oh=other,woo=,some=things'
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal('oh=other,some=things')
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key without value (bad data validated)', function () {
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: 'oh=other,woo,some=things'
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal('oh=other,some=things')
+    })
+
     it('should create an empty object from invalid traceparent only (bad version)', function () {
       const myHeaders = {
         traceparent: '01' + baseTraceparent.slice(2)
@@ -203,8 +278,6 @@ describe('w3cTraceContext', function () {
 
       expectEmptyObject(w3c)
     })
-
-    // TODO: do we want to validate the traceparent?
   })
 
   describe('w3cTraceContext.fromData object creation from xtrace, stored tracestate input', function () {
@@ -264,6 +337,91 @@ describe('w3cTraceContext', function () {
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+    })
+
+    it('should create an object from xtrace and tracestate when tracestate is truncated', function () {
+      const longTracestate = new Array(32).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        return `${c}${c}=${new Array(12).fill(c).join('')}`
+      }).join(',') // 511 chars
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.fromData(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').slice(0, -2).join(','))
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+    })
+
+    it('should create an object from xtrace and tracestate when tracestate is truncated extracting item over 128', function () {
+      const longItem = `xx=${'x'.repeat(130)}`
+      const longTracestate = new Array(25).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        if (index === 10) return longItem
+        return `${c}${c}=${new Array(12).fill(c).join('')}`
+      }).join(',') // 517 chars with middle entry at 130
+
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.fromData(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).join(','))
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+    })
+
+    it('should create an object from xtrace and tracestate when tracestate is truncated extracting multiple items over 128', function () {
+      const longItem = `xx=${'x'.repeat(130)}`
+      const longTracestate = new Array(26).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        if (index === 10 || index === 12) return longItem
+        return `${c}${c}=${new Array(12).fill(c).join('')}`
+      }).join(',') // 651 chars. two middle two entries at 130
+
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.fromData(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).join(','))
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+    })
+
+    it('should create an object from xtrace and tracestate when tracestate is truncated extracting multiple items over 128 and removing other items', function () {
+      const longItem = `xx=${'x'.repeat(130)}`
+      const longTracestate = new Array(16).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        if (index === 10 || index === 12) return longItem
+        return `${c}${c}=${new Array(36).fill(c).join('')}`
+      }).join(',') // 827 chars. 16 long entries, two middle two entries at 130.
+
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.fromData(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).slice(0, -2).join(','))
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -631,8 +789,8 @@ describe('w3cTraceContext', function () {
   })
 
   describe('w3cTraceContext.padding', function () {
-    it('should have a default value of 99998888', function () {
-      expect(w3cTraceContext.padding).to.be.equal('99998888')
+    it('should have a default value of 00000000', function () {
+      expect(w3cTraceContext.padding).to.be.equal('00000000')
     })
 
     it('should be setable', function () {
