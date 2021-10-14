@@ -4,13 +4,13 @@ const expect = require('chai').expect
 const w3cTraceContext = require('../lib/w3c-trace-context')
 
 const baseTraceparent = '00-0123456789abcdef0123456789abcdef-7a71b110e5e3588d-01'
-const baseXtrace = '2B0123456789ABCDEF0123456789ABCDEF999988887A71B110E5E3588D01'
+const baseXtrace = '2B0123456789ABCDEF0123456789ABCDEF000000007A71B110E5E3588D01'
 
 const baseTracestateSpanId = '7a71b110e5e3588d'
 const baseTracestateFlags = '01'
 const baseTracestateOrgPart = 'sw=' + baseTracestateSpanId + '-' + baseTracestateFlags
 
-const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF99998888999988885566778801'
+const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF00000000999988885566778801'
 const otherTracestateOrgPart = 'sw=9999888855667788-01'
 
 const expectEmptyObject = (w3c) => {
@@ -789,8 +789,8 @@ describe('w3cTraceContext', function () {
   })
 
   describe('w3cTraceContext.padding', function () {
-    it('should have a default value of 99998888', function () {
-      expect(w3cTraceContext.padding).to.be.equal('99998888')
+    it('should have a default value of 00000000', function () {
+      expect(w3cTraceContext.padding).to.be.equal('00000000')
     })
 
     it('should be setable', function () {
