@@ -185,7 +185,6 @@ describe(`probes.${p}`, function () {
           expect(msg).property('Port', port)
           expect(msg).property('URL', '/foo?bar=baz')
           expect(msg).property('ClientIP')
-          expect(msg).property('W3C_type')
         },
         function (msg) {
           check.server.exit(msg)
@@ -222,7 +221,6 @@ describe(`probes.${p}`, function () {
         function (msg) {
           check.server.entry(msg)
           expect(msg).not.have.property('Edge')
-          expect(msg).property('W3C_type').equal('Source')
 
           xtrace = msg['X-Trace']
         },
@@ -258,7 +256,6 @@ describe(`probes.${p}`, function () {
         function (msg) {
           check.server.entry(msg)
           expect(msg).not.have.property('Edge')
-          expect(msg).property('W3C_type').equal('Downstream')
 
           xtrace = msg['X-Trace']
         },
@@ -295,7 +292,6 @@ describe(`probes.${p}`, function () {
       helper.doChecks(emitter, [
         function (msg) {
           expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
-          expect(msg).property('W3C_type').equal('Flow')
 
           xtrace = msg['X-Trace']
         },
@@ -334,11 +330,8 @@ describe(`probes.${p}`, function () {
         function (msg) {
           // the edge in "Continuation" is from trace parent.
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
-          expect(msg).property('W3C_type').equal('Continuation')
-          expect(msg).property('W3C_savedSpanId')
-          expect(msg).property('W3C_savedFlags')
-          expect(msg).property('W3C_spanId')
-          expect(msg).property('W3C_tracestate')
+          expect(msg).property('sw.parent_id')
+          expect(msg).property('sw.w3c.tracestate')
 
           xtrace = msg['X-Trace']
         },
@@ -381,7 +374,6 @@ describe(`probes.${p}`, function () {
         function (msg) {
           check.server.entry(msg)
           expect(msg).property('Edge', origin.opId)
-          expect(msg).property('W3C_type').equal('Flow')
         },
         function (msg) {
           check.server.exit(msg)
@@ -893,8 +885,6 @@ describe(`probes.${p}`, function () {
             expect(msg).property('Spec', 'rsc')
             expect(msg).property('IsService', 'yes')
             expect(msg).property('RemoteURL', ctx.data.url)
-            expect(msg).property('W3C_traceparent').exists
-            expect(msg).property('W3C_tracestate').exists
           },
           function (msg) {
             check.server.entry(msg)
