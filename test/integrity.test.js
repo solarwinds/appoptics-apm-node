@@ -4,12 +4,13 @@
 const fs = require('fs')
 
 // Note: the following script was in the root of the project as "prepack.js"
-// As such it was interring with git installs
-// Since it functions as an "integrity test" it was passed to the test directory and left as-is (for now)
+// As such it was interfering with git installs.
+// Since it functions as an "integrity test" it was passed to the test directory
+// converted into two tests and left as much possible as-is (for now).
+
 const expect = require('chai').expect
 
 describe('integrity', function () {
-  // disabled because requiring the api loads the lib and causes and error
   it('should make sure api-sim supplies all the functions in api', function () {
     let errorCount = 0
     //
@@ -32,6 +33,9 @@ describe('integrity', function () {
       execEnv: { type: 'linux', id: undefined, nodeEnv: 'production' }
     }
 
+    // can't require ../lib/api due to cyclic dependencies.
+    // load all and filter out keys that are not api.
+    // TODO: when cyclic is solved can revert to pattern as used for api-sim
     const aoApi = require('../lib/')
     const notApi = '_stats, version, g, root, omitTraceId, logger, loggers, logLevel, logLevelAdd, logLevelRemove, probes, specialUrls, execEnv, cfg, getDomainPrefix, makeLogMissing, modeMap, modeToStringMap, contextProvider, cls, addon, reporter, control, startup, debugLogging, traceMode, sampleRate, tracing, traceId, lastEvent, lastSpan, maps, requestStore, resetRequestStore, clsCheck, stack, backtrace, bind, bindEmitter, setCustomTxNameFunction, wrappedFlag, notifications, fs'
     const apiKeys = new Set([...new Set([...Object.getOwnPropertyNames(aoApi)])].filter(item => notApi.indexOf(item) === -1))
