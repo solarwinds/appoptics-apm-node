@@ -185,6 +185,7 @@ describe(`probes.${p}`, function () {
           expect(msg).property('Port', port)
           expect(msg).property('URL', '/foo?bar=baz')
           expect(msg).property('ClientIP')
+          expect(msg).property('sw.trace_context')
         },
         function (msg) {
           check.server.exit(msg)
