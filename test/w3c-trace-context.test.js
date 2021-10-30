@@ -224,6 +224,20 @@ describe('w3cTraceContext', function () {
       expect(w3c.tracestate).to.be.equal('oh=other,some=things')
     })
 
+    it('should create an object from traceparent and tracestate when tracestate key includes malicious/malformed org part (bad data validated)', function () {
+      const myHeaders = {
+        traceparent: baseTraceparent,
+        tracestate: 'sw=no!'
+      }
+      const w3c = w3cTraceContext.fromHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal('sw=no!')
+    })
+
     it('should create an empty object from invalid traceparent only (bad version)', function () {
       const myHeaders = {
         traceparent: '01' + baseTraceparent.slice(2)
@@ -422,6 +436,21 @@ describe('w3cTraceContext', function () {
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).slice(0, -2).join(','))
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+    })
+
+    it('should create an object from xtrace and tracestate when there is an existing sw value that is malformed/melicious', function () {
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: 'oh=other,sw=no!'
+      }
+      const w3c = w3cTraceContext.fromData(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
