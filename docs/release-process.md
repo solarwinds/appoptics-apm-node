@@ -27,19 +27,18 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 
 ### Agent
 1. Create a prerelease branch (e.g Prerelease-2021-09-22)
-2. Update [CHANGELOG.md](https://github.com/appoptics/appoptics-apm-node/blob/master/CHANGELOG.md)
-3. **ONLY IF needed** update bindings version to `prerelease`
+2. **ONLY IF needed** update bindings version to `prerelease`
   - ```npm install @appoptics/apm-bindings@prerelease```
   - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
-4. On the branch, bump and tag prerelease version with the `prerelease` tag.
+3. On the branch, bump and tag prerelease version with the `prerelease` tag.
   - ```npm version prerelease --preid prerelease```
-5. Push (watch result of triggered GitHub Actions workflow)
-6. Create PR (watch result of triggered GitHub Actions workflow)
-7. Merge (watch result of triggered GitHub Actions workflow)
-8. If all workflows complete succsfully - Release
+4. Push (watch result of triggered GitHub Actions workflow)
+5. Create PR (watch result of triggered GitHub Actions workflow)
+6. Merge (watch result of triggered GitHub Actions workflow)
+7. If all workflows complete succsfully - Release
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
-9. Watch result of Verify GitHub Actions workflow.
+8. Watch result of Verify GitHub Actions workflow.
 
 ## Release Promotion
 
