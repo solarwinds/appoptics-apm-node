@@ -107,7 +107,7 @@ in the `.bin` directory). It reads the summary file and outputs a more readable 
 ## Docs
 
 The repo includes code comment based API docs, which can be generated with
-`npm run gen-docs`.
+`npm run docs:api`.
 
 ## Project layout
 

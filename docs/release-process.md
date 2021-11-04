@@ -15,20 +15,8 @@ Both packages use a similar GitHub Actions driven Development & Release process.
 Release of `prerelease` taged packages allows for robust end-to-end testing and offers end users simple access to next version features and fixes with minimal consequences. Packages maintainers may release as many prerelease versions as they deem appropriate.
 
 ### Bindings CheckList
-1. On a branch, bump and tag prerelease version with the `prerelease` tag.
-  - ```npm version prerelease --preid prerelease```
-2. Push (watch result of triggered GitHub Actions workflow)
-3. Create PR (watch result of triggered GitHub Actions workflow)
-4. Merge (watch result of triggered GitHub Actions workflow)
-5. If all workflows complete succsfully - Release
-  - ```git push --tags --dry-run``` to see what local tag is being pushed
-  - ```git push --tags```
-
-### Agent
-1. **ONLY IF needed** update bindings version to `prerelease`
-  - ```npm install @appoptics/apm-bindings@prerelease```
-  - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
-2. On a branch, bump and tag prerelease version with the `prerelease` tag.
+1. Create a prerelease branch (e.g Prerelease-2021-09-22)
+2. On the branch, bump and tag prerelease version with the `prerelease` tag.
   - ```npm version prerelease --preid prerelease```
 3. Push (watch result of triggered GitHub Actions workflow)
 4. Create PR (watch result of triggered GitHub Actions workflow)
@@ -36,7 +24,21 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 6. If all workflows complete succsfully - Release
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
-7. Watch result of Verify GitHub Actions workflow.
+
+### Agent
+1. Create a prerelease branch (e.g Prerelease-2021-09-22)
+2. **ONLY IF needed** update bindings version to `prerelease`
+  - ```npm install @appoptics/apm-bindings@prerelease```
+  - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
+3. On the branch, bump and tag prerelease version with the `prerelease` tag.
+  - ```npm version prerelease --preid prerelease```
+4. Push (watch result of triggered GitHub Actions workflow)
+5. Create PR (watch result of triggered GitHub Actions workflow)
+6. Merge (watch result of triggered GitHub Actions workflow)
+7. If all workflows complete succsfully - Release
+  - ```git push --tags --dry-run``` to see what local tag is being pushed
+  - ```git push --tags```
+8. Watch result of Verify GitHub Actions workflow.
 
 ## Release Promotion
 
@@ -65,38 +67,36 @@ A release should **always** come after a prerelease. The head of the master bran
 
 ### Bindings
 
-1. Create the release branch
+1. Create the release branch (e.g Release-2021-09-22)
   - ```git checkout -b Release```
 2. Bump  and tag release version
   - ```npm version [<newversion> | major | minor | patch ]```
 3. Push (watch result of triggered GitHub Actions workflow)
 4. Create PR (watch result of triggered GitHub Actions workflow)
-4. Merge (watch result of triggered GitHub Actions workflow)
-5. Release
+5. Merge (watch result of triggered GitHub Actions workflow)
+6. Release
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
 
 ### Agent
-1. Create the release branch
+1. Create the release branch (e.g Release-2021-09-22)
   - ```git checkout -b Release```
 2. Update [CHANGELOG.md](https://github.com/appoptics/appoptics-apm-node/blob/master/CHANGELOG.md)
-4. Update bindings version **ONLY IF needed**
+3. Update bindings version **ONLY IF needed**
   - ```npm install @appoptics/apm-bindings@latest```
   - ```git commit -am "Updated @appoptics/apm-bindings to latest."```
-5. Bump and tag release version
+4. Bump and tag release version
   - ```npm version [<newversion> | major | minor | patch ]```
-6. Push (watch result of triggered GitHub Action workflow)
-7. Create PR (watch result of triggered GitHub Actions workflow)
-8. Merge (watch result of triggered GitHub Actions workflow)
-9. Release
+5. Push (watch result of triggered GitHub Action workflow)
+6. Create PR (watch result of triggered GitHub Actions workflow)
+7. Merge (watch result of triggered GitHub Actions workflow)
+8. Release
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
-10. Watch Verify workflow result
+9. Watch Verify workflow result
 
 ### Post Release
 1. Update [Release notes](https://github.com/appoptics/appoptics-apm-node/releases). "Click Draft new release" and choose tag of completed release.
 2. Run Document workflow.
 3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/appoptics/appoptics-apm-node/blob/master/docs/supported-components.human) list.
 4. Announce new version in #ao-releases in Slack.
-
-
