@@ -475,7 +475,7 @@ describe(`probes.${p}`, function () {
 
       const originMetadata = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', originMetadata)
-      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(15) + '01'
 
       const logChecks = [
         { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
