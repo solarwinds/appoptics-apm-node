@@ -13,14 +13,6 @@ const baseTracestateOrgPart = 'sw=' + baseTracestateSpanId + '-' + baseTracestat
 const otherXtrace = '2B0123456789ABCDEF0123456789ABCDEF00000000999988885566778801'
 const otherTracestateOrgPart = 'sw=9999888855667788-01'
 
-const expectEmptyObject = (w3c) => {
-  expect(w3c).to.be.an('object')
-  expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-  expect(w3c.xtrace).to.be.equal('')
-  expect(w3c.traceparent).to.be.equal('')
-  expect(w3c.tracestate).to.be.equal('')
-}
-
 describe('w3cTraceContext', function () {
   describe('w3cTraceContext.fromHeaders object creation from w3c request headers', function () {
     it('should create an object from empty headers', function () {
@@ -28,10 +20,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
-      expect(w3c.traceparent).to.be.equal('')
-      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an object omitting unseeded header keys', function () {
@@ -49,35 +39,35 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(1)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
 
     it('should create an object from wrong input (string)', function () {
       const w3c = w3cTraceContext.fromHeaders('wow')
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
 
     it('should create an object from wrong input (boolean)', function () {
       const w3c = w3cTraceContext.fromHeaders(true)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
 
     it('should create an object from wrong input (empty)', function () {
       const w3c = w3cTraceContext.fromHeaders()
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
 
     it('should create an object from wrong input (undefined)', function () {
       const w3c = w3cTraceContext.fromHeaders(undefined)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
 
     it('should create an object from traceparent only', function () {
@@ -87,10 +77,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an object from traceparent and sw tracestate', function () {
@@ -101,10 +89,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
     })
 
     it('should create an object from traceparent and tracestate that do not match', function () {
@@ -115,10 +101,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(otherXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(otherTracestateOrgPart)
     })
 
     it('should create an object from traceparent with other vendor tracestate', function () {
@@ -129,10 +113,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('oh=different')
     })
 
     it('should create an object from traceparent and tracestate with other vendor tracestate', function () {
@@ -143,99 +125,8 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before')
-    })
-
-    it('should create an object from traceparent and tracestate with other vendor tracestate truncated to 32 entries (bad data validated)', function () {
-      const longTracestate = new Array(34).fill(null).map((_, index) => {
-        const c = String.fromCharCode(65 + index).toLowerCase()
-        return `${c}${c}=${new Array(12).fill(c).join('')}`
-      }).join(',') // 543 chars ok, 34 entries not ok
-
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart + ',' + longTracestate
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').slice(0, 31).join(','))
-    })
-
-    it('should create an object from traceparent and tracestate when tracestate key has leading delimiter , (bad data validated)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: ',woo=hoo'
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('woo=hoo')
-    })
-
-    it('should create an object from traceparent and tracestate when tracestate key has trailing delimiter , (bad data validated)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'woo=hoo,'
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('woo=hoo')
-    })
-
-    it('should create an object from traceparent and tracestate when tracestate key with empty value (bad data validated)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'oh=other,woo=,some=things'
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('oh=other,some=things')
-    })
-
-    it('should create an object from traceparent and tracestate when tracestate key without value (bad data validated)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'oh=other,woo,some=things'
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('oh=other,some=things')
-    })
-
-    it('should create an object from traceparent and tracestate when tracestate key includes malicious/malformed org part (bad data validated)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'sw=no!'
-      }
-      const w3c = w3cTraceContext.fromHeaders(myHeaders)
-
-      expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-      expect(w3c.xtrace).to.be.equal(baseXtrace)
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal('sw=no!')
     })
 
     it('should create an empty object from invalid traceparent only (bad version)', function () {
@@ -244,7 +135,9 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad traceId part)', function () {
@@ -253,7 +146,9 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad spanId part)', function () {
@@ -262,7 +157,9 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad flags part)', function () {
@@ -271,7 +168,9 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
 
     it('should create an empty object from tracestate only (bad data)', function () {
@@ -280,7 +179,9 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
 
     it('should create an empty object from tracestate and invalid traceparent (bad data)', function () {
@@ -290,19 +191,21 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
+      expect(w3c.xtrace).to.be.equal('')
     })
   })
 
-  describe('w3cTraceContext.fromData object creation from xtrace, stored tracestate input', function () {
+  describe('w3cTraceContext.prepHeaders object creation from xtrace, stored tracestate input', function () {
     it('should create an object from xtrace', function () {
       const data = {
         xtrace: baseXtrace
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
@@ -314,10 +217,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: 'oh=other'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
@@ -329,10 +232,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: 'oh=other,' + baseTracestateOrgPart
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
@@ -344,10 +247,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: baseTracestateOrgPart + ',oh=other'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
@@ -363,10 +266,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: baseTracestateOrgPart + ',' + longTracestate
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').slice(0, -2).join(','))
@@ -385,10 +288,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: baseTracestateOrgPart + ',' + longTracestate
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).join(','))
@@ -407,10 +310,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: baseTracestateOrgPart + ',' + longTracestate
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).join(','))
@@ -429,10 +332,10 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: baseTracestateOrgPart + ',' + longTracestate
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').filter(item => item !== longItem).slice(0, -2).join(','))
@@ -444,50 +347,103 @@ describe('w3cTraceContext', function () {
         xtrace: baseXtrace,
         tracestate: 'oh=other,sw=no!'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
+      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate')
 
       expect(w3c.traceparent).to.be.equal(baseTraceparent)
       expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',oh=other')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
-    it('should create an empty from invalid xtrace (bad prefix)', function () {
-      const data = {
-        xtrace: 'AA' + baseXtrace.slice(2)
-      }
-      const w3c = w3cTraceContext.fromData(data)
+    it('should create an object from traceparent and tracestate with other vendor tracestate truncated to 32 entries', function () {
+      const longTracestate = new Array(34).fill(null).map((_, index) => {
+        const c = String.fromCharCode(65 + index).toLowerCase()
+        return `${c}${c}=${new Array(10).fill(c).join('')}`
+      }).join(',') // 33 entries not ok
 
-      expectEmptyObject(w3c)
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: baseTracestateOrgPart + ',' + longTracestate
+      }
+      const w3c = w3cTraceContext.prepHeaders(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + longTracestate.split(',').slice(0, 31).join(','))
     })
 
-    it('should create an empty from invalid xtrace (bad traceId)', function () {
+    it('should create an object from traceparent and tracestate when tracestate key has leading delimiter , (bad data validated)', function () {
       const data = {
-        xtrace: baseXtrace.slice(0, -16) + baseTraceparent.slice(-16)
+        xtrace: baseXtrace,
+        tracestate: ',woo=hoo'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + 'woo=hoo')
     })
 
-    it('should create an empty from invalid xtrace (bad opId)', function () {
+    it('should create an object from traceparent and tracestate when tracestate key has trailing delimiter , (bad data)', function () {
       const data = {
-        xtrace: baseXtrace.slice(0, -6) + baseTraceparent.slice(-5)
+        xtrace: baseXtrace,
+        tracestate: 'woo=hoo,'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + 'woo=hoo')
     })
 
-    it('should create an empty from invalid xtrace (bad flags)', function () {
+    it('should create an object from traceparent and tracestate when tracestate key with empty value (bad data)', function () {
       const data = {
-        xtrace: baseXtrace.slice(-1) + 'a'
+        xtrace: baseXtrace,
+        tracestate: 'oh=other,woo=,some=things'
       }
-      const w3c = w3cTraceContext.fromData(data)
+      const w3c = w3cTraceContext.prepHeaders(data)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + 'oh=other,some=things')
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key without value (bad data)', function () {
+      const data = {
+        xtrace: baseXtrace,
+        tracestate: 'oh=other,woo,some=things'
+      }
+      const w3c = w3cTraceContext.prepHeaders(data)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart + ',' + 'oh=other,some=things')
+    })
+
+    it('should create an object from traceparent and tracestate when tracestate key includes malicious/malformed org part (bad data)', function () {
+      const myHeaders = {
+        xtrace: baseXtrace,
+        tracestate: 'sw=no!'
+      }
+      const w3c = w3cTraceContext.prepHeaders(myHeaders)
+
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('traceparent', 'tracestate', 'xtrace')
+      expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.traceparent).to.be.equal(baseTraceparent)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
     })
   })
 
@@ -497,7 +453,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: otherTracestateOrgPart
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Continuation')
     })
@@ -507,7 +463,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Flow')
     })
@@ -516,7 +472,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         traceparent: baseTraceparent
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Downstream')
     })
@@ -525,7 +481,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         tracestate: baseTracestateOrgPart
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Source')
     })
@@ -533,84 +489,9 @@ describe('w3cTraceContext', function () {
     it('should be Source when there are no headers', function () {
       const myHeaders = {
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Source')
-    })
-  })
-
-  describe('w3cTraceContext.fromHeaders info spanId', function () {
-    it('should be valid when traceparent and tracestate do not match', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: otherTracestateOrgPart
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal(baseTracestateSpanId)
-    })
-
-    it('should be valid when traceparent and tracestate match', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal(baseTracestateSpanId)
-    })
-
-    it('should be empty when traceparent is malformed (too long)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent + '1'
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when traceparent is malformed (too short)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent.slice(0, 10) + baseTraceparent.slice(11)
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (no dash)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent.replace('-', '_')
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (not hex)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent.replace('a', 'z')
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (not lowercase hex)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent.replace('a', 'A')
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when there is no traceparent', function () {
-      const myHeaders = {
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.spanId
-
-      expect(id).to.be.equal('')
     })
   })
 
@@ -620,7 +501,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: otherTracestateOrgPart
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('9999888855667788')
     })
@@ -630,7 +511,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart.slice(0, 2) + '1' + baseTracestateOrgPart.slice(2)
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -640,7 +521,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart.slice(0, 6) + baseTracestateOrgPart.slice(7)
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -650,7 +531,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart.replace('-', '_')
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -660,7 +541,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart.replace('a', 'z')
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -670,7 +551,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before'
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal(baseTracestateSpanId)
     })
@@ -680,7 +561,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: baseTracestateOrgPart + ',sw=77771111aaaa0011-01'
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal(baseTracestateSpanId)
     })
@@ -690,7 +571,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before,sw=77771111aaaa0011-01'
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal(baseTracestateSpanId)
     })
@@ -700,7 +581,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: 'a1=continue_from_me,a2=i_was_before'
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -710,108 +591,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: 'a1=continue_from_me,a2=i_was_before'
       }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedSpanId
-
-      expect(id).to.be.equal('')
-    })
-  })
-
-  describe('w3cTraceContext.fromHeaders info savedFlags', function () {
-    it('should be valid when traceparent and tracestate do not match', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: otherTracestateOrgPart
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('01')
-    })
-
-    it('should be empty when tracestate is malformed (too long)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart.slice(0, 2) + '1' + baseTracestateOrgPart.slice(2)
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (too short)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart.slice(0, 6) + baseTracestateOrgPart.slice(7)
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (no dash)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart.replace('-', '_')
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when tracestate is malformed (not hex)', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart.replace('a', 'z')
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be valid when tracestate is with other vendor and own data', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before'
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('01')
-    })
-
-    it('should be valid when tracestate is malformed and contains own twice', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: baseTracestateOrgPart + ',sw=77771111aaaa0011-01'
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('01')
-    })
-
-    it('should be valid when tracestate is with other vendor and own data twice', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before,sw=77771111aaaa0011-01'
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('01')
-    })
-
-    it('should be empty when tracestate is with other vendor data only', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent,
-        tracestate: 'a1=continue_from_me,a2=i_was_before'
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
-
-      expect(id).to.be.equal('')
-    })
-
-    it('should be empty when there is no tracestate', function () {
-      const myHeaders = {
-        traceparent: baseTraceparent
-      }
-      const id = w3cTraceContext.fromHeaders(myHeaders).info.savedFlags
+      const id = w3cTraceContext.fromHeaders(myHeaders).savedSpanId
 
       expect(id).to.be.equal('')
     })
@@ -851,10 +631,7 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -866,10 +643,7 @@ describe('w3cTraceContext', function () {
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
       expect(w3c).to.be.an('object')
-      expect(w3c).to.have.all.keys('xtrace', 'traceparent', 'tracestate', 'info')
-
-      expect(w3c.traceparent).to.be.equal(baseTraceparent)
-      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
     })
 
@@ -879,7 +653,8 @@ describe('w3cTraceContext', function () {
       }
       const w3c = w3cTraceContext.fromHeaders(myHeaders)
 
-      expectEmptyObject(w3c)
+      expect(w3c).to.be.an('object')
+      expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
     })
   })
 
@@ -888,7 +663,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         'x-trace': baseXtrace
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Flow')
     })
@@ -897,7 +672,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         xtrace: baseXtrace
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Source')
     })
@@ -908,7 +683,7 @@ describe('w3cTraceContext', function () {
         traceparent: baseTraceparent,
         tracestate: otherTracestateOrgPart
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Continuation')
     })
@@ -917,7 +692,7 @@ describe('w3cTraceContext', function () {
       const myHeaders = {
         'x-trace': baseXtrace + 'A'
       }
-      const type = w3cTraceContext.fromHeaders(myHeaders).info.type
+      const type = w3cTraceContext.reqType(myHeaders)
 
       expect(type).to.be.equal('Source')
     })
