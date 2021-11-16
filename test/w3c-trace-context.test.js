@@ -79,6 +79,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an object from traceparent and sw tracestate', function () {
@@ -91,6 +92,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.tracestate).to.be.equal(baseTracestateOrgPart)
     })
 
     it('should create an object from traceparent and tracestate that do not match', function () {
@@ -103,6 +105,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(otherXtrace)
+      expect(w3c.tracestate).to.be.equal(otherTracestateOrgPart)
     })
 
     it('should create an object from traceparent with other vendor tracestate', function () {
@@ -115,6 +118,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.tracestate).to.be.equal('oh=different')
     })
 
     it('should create an object from traceparent and tracestate with other vendor tracestate', function () {
@@ -127,6 +131,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal(baseXtrace)
+      expect(w3c.tracestate).to.be.equal('a1=continue_from_me,' + baseTracestateOrgPart + ',a2=i_was_before')
     })
 
     it('should create an empty object from invalid traceparent only (bad version)', function () {
@@ -138,6 +143,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad traceId part)', function () {
@@ -149,6 +155,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad spanId part)', function () {
@@ -160,6 +167,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an empty object from invalid traceparent only (bad flags part)', function () {
@@ -171,6 +179,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an empty object from tracestate only (bad data)', function () {
@@ -182,6 +191,7 @@ describe('w3cTraceContext', function () {
       expect(w3c).to.be.an('object')
       expect(w3c).to.have.all.keys('xtrace', 'tracestate', 'savedSpanId')
       expect(w3c.xtrace).to.be.equal('')
+      expect(w3c.tracestate).to.be.equal('')
     })
 
     it('should create an empty object from tracestate and invalid traceparent (bad data)', function () {
@@ -447,7 +457,7 @@ describe('w3cTraceContext', function () {
     })
   })
 
-  describe('w3cTraceContext.fromHeaders info type', function () {
+  describe('w3cTraceContext.reqType', function () {
     it('should be Continuation when traceparent and tracestate do not match', function () {
       const myHeaders = {
         traceparent: baseTraceparent,
