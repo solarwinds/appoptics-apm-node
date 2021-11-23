@@ -88,7 +88,7 @@ push alpha tag     │NPM Publish│
 
 ### Verify - after Release
 
-* Runs after the Release workflow has completed to provides confidence that a released package can successfully install and auto instrument apps on a wide variety of node and operating system combinations.
+* Runs after the Release workflow has completed.
 * Workflow will:
   - Load the Target Group from the bindings repo and for each image in group:
   - Install Appoptics agent (either the released version or the one specified manually).
@@ -96,6 +96,7 @@ push alpha tag     │NPM Publish│
   - Start an instrumented http server to confirm auto instrumentation against staging is working.
   - Run a simulation http client to generate data on staging backend.
   - Start an instrumented http server to confirm auto instrumentation against production is working.
+* Workflow provides confidence that a released package can successfully install and auto instrument apps on a wide variety of node and operating system combinations.
 * Manual trigger supported.
 
 
