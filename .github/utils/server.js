@@ -8,7 +8,7 @@ const args = arg({ '--preflight': Boolean, '--port': Number })
 
 const preflight = async () => {
   // server must be instrumented and will exit with error if not
-  const isReady = await ao.readyToSample(1000)
+  const isReady = await ao.readyToSample(5000)
   if (!isReady) throw new Error('AppOptics not ready to sample.')
 }
 
