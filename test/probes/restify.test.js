@@ -8,7 +8,7 @@ const { ao } = require('../1.test-common')
 const expect = require('chai').expect
 const semver = require('semver')
 
-const request = require('request')
+const axios = require('axios')
 
 const pkg = require('restify/package.json')
 const opts = {
@@ -137,7 +137,7 @@ describe(`probes.restify ${pkg.version}`, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   }
 
@@ -188,7 +188,7 @@ describe(`probes.restify ${pkg.version}`, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   }
 

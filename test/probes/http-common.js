@@ -17,7 +17,7 @@ const util = require('util')
 const addon = ao.addon
 
 const semver = require('semver')
-const request = require('request')
+const axios = require('axios')
 
 if (process.env.AO_TEST_HTTP !== 'http' && process.env.AO_TEST_HTTP !== 'https') {
   throw new Error(`invalid value for AO_TEST_HTTP: ${process.env.AO_TEST_HTTP}`)
@@ -190,7 +190,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         port = server.address().port
-        request(
+        axios(
           `${p}://localhost:${port}/foo?bar=baz`,
           function (error, response, body) {
             expect(response.headers).exist
@@ -225,7 +225,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: {
             'X-Trace': origin.toString()
@@ -262,7 +262,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({ url: `${p}://localhost:${port}` })
+        axios({ url: `${p}://localhost:${port}` })
       })
     })
 
@@ -298,7 +298,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: { 'X-Trace': xtrace }
         },
@@ -333,7 +333,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({ url: `${p}://localhost:${port}` })
+        axios({ url: `${p}://localhost:${port}` })
       })
     })
 
@@ -372,8 +372,8 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({ url: `${p}://localhost:${port}/filtered` })
-        request({ url: `${p}://localhost:${port}/files/binary.data` })
+        axios({ url: `${p}://localhost:${port}/filtered` })
+        axios({ url: `${p}://localhost:${port}/files/binary.data` })
       })
 
       // 1/10 second should be enough to get all messages. there's no clean way to
@@ -416,7 +416,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request(`${p}://localhost:${port}`)
+        axios(`${p}://localhost:${port}`)
       })
     })
 
@@ -448,7 +448,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request(`${p}://localhost:${port}/foo?bar=baz`)
+        axios(`${p}://localhost:${port}/foo?bar=baz`)
       })
     })
 
@@ -495,7 +495,7 @@ describe(`probes.${p}`, function () {
             url: `${p}://localhost:${port}`,
             headers: headers
           }
-          request(options)
+          axios(options)
         })
       })
     })
@@ -526,7 +526,7 @@ describe(`probes.${p}`, function () {
           url: `${p}://localhost:${port}`,
           headers: { 'x-real-ip': ClientIPExpected }
         }
-        request(options)
+        axios(options)
       })
     })
 
@@ -552,7 +552,7 @@ describe(`probes.${p}`, function () {
         const options = {
           url: `${p}://localhost:${port}`
         }
-        request(options)
+        axios(options)
       })
     })
 
@@ -587,7 +587,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         port = server.address().port
-        request(`${p}://localhost:${port}/foo?bar=baz`)
+        axios(`${p}://localhost:${port}/foo?bar=baz`)
       })
     })
 
@@ -622,7 +622,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         port = server.address().port
-        request(`${p}://localhost:${port}/food?bar=baz`)
+        axios(`${p}://localhost:${port}/food?bar=baz`)
       })
     })
 
@@ -659,7 +659,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request(`${p}://localhost:${port}`)
+        axios(`${p}://localhost:${port}`)
       })
     })
   })

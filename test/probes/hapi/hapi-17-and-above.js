@@ -11,7 +11,6 @@ const ao = global[Symbol.for('AppOptics.Apm.Once')]
 
 const semver = require('semver')
 
-const request = require('request')
 const axios = require('axios')
 
 // This test can't even be compiled if JavaScript doesn't recognize async/await.
@@ -256,7 +255,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
 
     await server.start()
 
-    request(`http://localhost:${port}/hello/world`)
+    axios(`http://localhost:${port}/hello/world`)
 
     return p
   }
@@ -290,7 +289,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
 
     await server.start()
 
-    request({ method: 'GET', url: `http://localhost:${port}/hello/world` })
+    axios(`http://localhost:${port}/hello/world`)
 
     return p
   }
@@ -452,10 +451,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
 
       await server.start()
 
-      request({
-        method: 'GET',
-        url: `http://localhost:${port}/hello/world`
-      })
+      axios(`http://localhost:${port}/hello/world`)
 
       return p
     }

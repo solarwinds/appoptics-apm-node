@@ -11,7 +11,7 @@ const { ao } = require('../../1.test-common')
 
 const semver = require('semver')
 
-const request = require('request')
+const axios = require('axios')
 
 // Don't even load hapi in 0.8. Bad stuff will happen.
 const nodeVersion = process.version.slice(1)
@@ -189,10 +189,7 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
 
       p.then(() => {
         server.start(function () {
-          request({
-            method: method.toUpperCase(),
-            url: 'http://localhost:' + port + '/hello/world'
-          })
+          axios[method]('http://localhost:' + port + '/hello/world')
         })
       })
     }
@@ -243,7 +240,7 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
 
     p.then(() => {
       server.start(function () {
-        request('http://localhost:' + port + '/hello/world')
+        axios('http://localhost:' + port + '/hello/world')
       })
     })
   }
@@ -277,10 +274,7 @@ describe('probes.vision ' + pkg.version + ' hapi ' + hapiPkg.version, function (
 
     p.then(() => {
       server.start(function () {
-        request({
-          method: 'GET',
-          url: 'http://localhost:' + port + '/hello/world'
-        })
+        axios('http://localhost:' + port + '/hello/world')
       })
     })
   }
