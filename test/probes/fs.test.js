@@ -45,7 +45,6 @@ describe('probes.fs once', function () {
 describe('probes.fs', function () {
   let emitter
   let mode
-  let realSampleTrace
 
   beforeEach(function (done) {
     // wait a tenth of a second between tests.
@@ -104,14 +103,9 @@ describe('probes.fs', function () {
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
-    realSampleTrace = ao.addon.Context.sampleTrace
-    ao.addon.Context.sampleTrace = function () {
-      return { sample: true, source: 6, rate: ao.sampleRate }
-    }
   })
   after(function (done) {
     emitter.close(done)
-    ao.addon.Context.sampleTrace = realSampleTrace
   })
 
   const resolved = path.resolve('fs-output/foo.bar.link')
