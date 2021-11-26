@@ -233,7 +233,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: {}
         },
@@ -268,7 +268,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: {
             traceparent: baseTraceparent
@@ -304,7 +304,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: {
             traceparent: baseTraceparent,
@@ -344,7 +344,7 @@ describe(`probes.${p}`, function () {
 
       server.listen(function () {
         const port = server.address().port
-        request({
+        axios({
           url: `${p}://localhost:${port}`,
           headers: {
             traceparent: baseTraceparent,
