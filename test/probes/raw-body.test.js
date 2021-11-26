@@ -6,7 +6,7 @@ const { ao } = require('../1.test-common')
 
 const semver = require('semver')
 
-const request = require('request')
+const axios = require('axios')
 const express = require('express')
 const body = require('body-parser')
 const rawBody = require('raw-body')
@@ -107,7 +107,7 @@ describe('probes.raw-body ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request.post('http://localhost:' + port, {
+      axios.post('http://localhost:' + port, {
         form: {
           key: 'value'
         }

@@ -7,8 +7,7 @@ const { ao } = require('../1.test-common')
 const legacy = ao.probes.express.legacyTxname
 
 const semver = require('semver')
-
-const request = require('request')
+const axios = require('axios')
 const express = require('express')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
@@ -334,13 +333,10 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      const options = {
-        url: 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
-      }
-      if (method === 'post') {
-        options.json = { name: 'bruce' }
-      }
-      request[method](options)
+      const url = 'http://localhost:' + port + (method === 'get' ? '/hello/world' : '/api/set-name')
+
+      const options = method === 'post' ? { name: 'bruce' } : {}
+      axios[method](url, options)
     })
   }
 
@@ -455,7 +451,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   }
 
@@ -525,7 +521,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -591,7 +587,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -657,7 +653,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -704,7 +700,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -776,7 +772,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   }
 
@@ -796,7 +792,7 @@ describe('probes.express ' + pkg.version, function () {
       res.send('done')
     }
 
-    const request = require('supertest')
+    const supertest = require('supertest')
     const app = express()
 
     app.get(reqRoutePath, hello)
@@ -821,7 +817,7 @@ describe('probes.express ' + pkg.version, function () {
     ]
     helper.doChecks(emitter, validations, done)
 
-    request(app)
+    supertest(app)
       .get('/hello/world')
       .expect(200)
       .end(function (err, res) {
@@ -857,7 +853,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -923,7 +919,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port)
+      axios('http://localhost:' + port)
     })
   })
 
@@ -973,7 +969,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -1029,7 +1025,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   }
 
@@ -1072,7 +1068,7 @@ describe('probes.express ' + pkg.version, function () {
 
     const server = app.listen(function () {
       const port = server.address().port
-      request.get('http://localhost:' + port + '/hello/world', function (err, res, body) {
+      axios.get('http://localhost:' + port + '/hello/world', function (err, res, body) {
         if (err) {
           throw new Error('request failed')
         } else {

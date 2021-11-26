@@ -9,7 +9,7 @@ const semver = require('semver')
 const koaRouterVersion = require('koa-router/package.json').version
 
 const helper = require('../helper')
-const request = require('request')
+const axios = require('axios')
 
 const { ao } = require('../1.test-common')
 
@@ -116,7 +116,7 @@ exports.basic = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    axios('http://localhost:' + port + '/hello/world')
   })
 }
 
@@ -138,7 +138,7 @@ exports.disabled = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port)
+    axios('http://localhost:' + port)
   })
 }
 
@@ -163,7 +163,7 @@ exports.route = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    axios('http://localhost:' + port + '/hello/world')
   })
 }
 
@@ -187,7 +187,7 @@ exports.route_disabled = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    axios('http://localhost:' + port + '/hello/world')
   })
 }
 
@@ -237,7 +237,7 @@ exports.router = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    axios('http://localhost:' + port + '/hello/world')
   })
 }
 
@@ -277,7 +277,7 @@ exports.router_promise = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request.post('http://localhost:' + port + '/api/visit')
+    axios.post('http://localhost:' + port + '/api/visit')
   })
 }
 
@@ -311,7 +311,7 @@ exports.router_disabled = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello/world')
+    axios('http://localhost:' + port + '/hello/world')
   })
 }
 
@@ -341,7 +341,7 @@ exports.resourceRouter = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello')
+    axios('http://localhost:' + port + '/hello')
   })
 }
 
@@ -369,7 +369,7 @@ exports.resourceRouter_disabled = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port + '/hello')
+    axios('http://localhost:' + port + '/hello')
   })
 }
 
@@ -411,7 +411,7 @@ exports.render = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port)
+    axios('http://localhost:' + port)
   })
 }
 
@@ -449,6 +449,6 @@ exports.render_disabled = function (emitter, done) {
 
   const server = app.listen(function () {
     const port = server.address().port
-    request('http://localhost:' + port)
+    axios('http://localhost:' + port)
   })
 }
