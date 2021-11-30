@@ -28,7 +28,7 @@ const erStack = [] // a stack to enable and restore config state.
 //
 // desc [string] - description of test for `it('should ${test.desc}, ...)`.
 // options [string] - the x-trace-options header
-// xtrace [optional boolean] - if present add an xtrace header with sample bit as specified
+// xoutHeaders [optional boolean] - if present add an traceparent header with sample bit as specified
 // ts [optional string] - at test execution, replaces '${ts}' in the options header with a unix timestamp
 // sample [boolean] - the request should be sampled, so check for correct UDP messages
 // sig [optional string] - 'bad' => bad key, 'good' => good key, else no signature
@@ -184,33 +184,33 @@ const tests = [
   // unexpected usage
   //
 
-  // if x-trace and unsigned x-trace-options trigger-trace request are valid, obey x-trace
+  // if traceparnet/tracestate and unsigned x-trace-options trigger-trace request are valid, obey traceparnet/tracestate
   {
-    desc: 'prioritize an x-trace header over unsigned trigger-trace request',
+    desc: 'prioritize an traceparnet/tracestate header over unsigned trigger-trace request',
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
-    xtrace: 1,
+    outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=ignored',
     expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
-  // if x-trace and unsigned x-trace-options without trigger-trace request are valid, obey x-trace
+  // if traceparnet/tracestateand unsigned x-trace-options without trigger-trace request are valid, obey traceparnet/tracestate
   {
     desc: 'add x-trace-options KV pairs to an existing x-trace',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover`,
-    xtrace: 1,
+    outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
-  // if x-trace and signed x-trace-options with trigger-trace, obey x-trace
+  // if traceparnet/tracestate and signed x-trace-options with trigger-trace, obey traceparnet/tracestate
   {
     desc: 'add x-trace-options KV pairs to an existing x-trace',
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
-    xtrace: 1,
+    outHeaders: 1,
     sample: true,
     expected: 'auth=ok;trigger-trace=ignored',
     expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
@@ -221,29 +221,29 @@ const tests = [
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
-    xtrace: 0,
+    outHeaders: 0,
     sample: false,
     expected: 'auth=ok;trigger-trace=ignored',
     expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
-  // if x-trace and bad sig x-trace-options without trigger-trace request, do neither
+  // if traceparnet/tracestate and bad sig x-trace-options without trigger-trace request, do neither
   {
     desc: 'invalidate both x-trace and x-trace-options on bad signature',
     options: `pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'bad',
-    xtrace: 1,
+    outHeaders: 1,
     sample: false,
     expected: 'auth=bad-signature'
   },
-  // if x-trace and bad sig on x-trace-options with trigger-trace request, do neither
+  // if traceparnet/tracestate and bad sig on x-trace-options with trigger-trace request, do neither
   {
     desc: 'invalidate both x-trace and x-trace-options with trigger-trace on bad signature',
     options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'bad',
-    xtrace: 1,
+    outHeaders: 1,
     sample: false,
     expected: 'auth=bad-signature'
   }
@@ -273,9 +273,11 @@ function makeSignedHeaders (test) {
     headers['x-trace-options-signature'] = hexString
   }
 
-  // add an xtrace with appropriate sample bit if requested
-  if ('xtrace' in test) {
-    headers['x-trace'] = ao.addon.Event.makeRandom(test.xtrace).toString()
+  // add an headers with appropriate sample bit if requested
+  if ('outHeaders' in test) {
+    const traceparent = ao.addon.Event.makeRandom(test.outHeaders).toString()
+    headers.traceparent = traceparent
+    headers.tracestate = `sw=${traceparent.split('-')[2]}-${traceparent.split('-')[3]}`
   }
 
   return headers
@@ -499,14 +501,15 @@ describe('probes.http trigger-trace', function () {
     const opts = Object.assign({}, options, { headers: makeSignedHeaders(t) })
     axios.request(opts)
       .then(r => {
-        const xtrace = r.headers['x-trace']
-        expect(typeof xtrace).equal('string')
-        expect(xtrace.length).equal(60)
+        // response header is named x-trace
+        const xtraceHeader = r.headers['x-trace']
+        expect(typeof xtraceHeader).equal('string')
+        expect(xtraceHeader.length).equal(55)
         // if expecting
-        if ('xtrace' in t) {
-          const mdSampleBit = ao.sampling(xtrace) ? 1 : 0
+        if ('outHeaders' in t) {
+          const mdSampleBit = xtraceHeader.slice(-1) === '1' ? 1 : 0
           // if the signature is bad then the expected bit should be 0.
-          const expectedBit = (t.sig === 'bad' || (t.ts && t.ts !== 'ts')) ? 0 : t.xtrace
+          const expectedBit = (t.sig === 'bad' || (t.ts && t.ts !== 'ts')) ? 0 : t.outHeaders
           expect(mdSampleBit).equal(expectedBit, 'returned x-trace header must have correct sample bit')
         }
         response = r.headers['x-trace-options-response']
