@@ -43,12 +43,12 @@
     * [.setCustomTxNameFunction(probe, fn)](#ao.setCustomTxNameFunction) ⇒ <code>boolean</code>
     * [.readyToSample(ms, [obj])](#ao.readyToSample) ⇒ <code>boolean</code>
     * [.sampling(item)](#ao.sampling) ⇒ <code>boolean</code>
-    * [.xtraceToEvent(xtrace)](#ao.xtraceToEvent) ⇒ <code>addon.Event</code> \| <code>undefined</code>
+    * [.traceToEvent(traceparent)](#ao.traceToEvent) ⇒ <code>addon.Event</code> \| <code>undefined</code>
     * [.instrumentHttp(span, run, [options], res)](#ao.instrumentHttp) ⇒
     * [.instrument(span, run, [options], [callback])](#ao.instrument) ⇒ <code>value</code>
     * [.pInstrument(span, run, [options])](#ao.pInstrument) ⇒ <code>Promise</code>
-    * [.startOrContinueTrace(xtrace, span, runner, [opts], [callback])](#ao.startOrContinueTrace) ⇒ <code>value</code>
-    * [.pStartOrContinueTrace(xtrace, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
+    * [.startOrContinueTrace(traceparent, tracestat, span, runner, [opts], [callback])](#ao.startOrContinueTrace) ⇒ <code>value</code>
+    * [.pStartOrContinueTrace(traceparent, tracestat, span, run, [opts])](#ao.pStartOrContinueTrace) ⇒ <code>Promise</code>
     * [.reportError(error)](#ao.reportError)
     * [.reportInfo(data)](#ao.reportInfo)
     * ~~[.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>~~
@@ -231,7 +231,7 @@ the specified number of milliseconds before returning.
 
 ### ao.sampling(item) ⇒ <code>boolean</code>
 Determine if the sample flag is set for the various forms of
-xtrace data.
+ data.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>boolean</code> - - true if the sample flag is set else false.  
@@ -240,21 +240,21 @@ xtrace data.
 | --- | --- | --- |
 | item | <code>string</code> \| [<code>Event</code>](#Event) \| <code>addon.Event</code> | the item to get the sampling flag of |
 
-<a name="ao.xtraceToEvent"></a>
+<a name="ao.traceToEvent"></a>
 
-### ao.xtraceToEvent(xtrace) ⇒ <code>addon.Event</code> \| <code>undefined</code>
-Convert an xtrace ID to an event containing the task ID and op ID.
+### ao.traceToEvent(traceparent) ⇒ <code>addon.Event</code> \| <code>undefined</code>
+Convert an traceparent ID to an event containing the task ID and op ID.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>addon.Event</code> \| <code>undefined</code> - - addon.Event object
                                      containing an internal
-                                     format of the xtrace ID
+                                     format of the traceparent
                                      if valid or undefined
                                      if not.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| xtrace | <code>string</code> | X-Trace ID |
+| traceparent | <code>string</code> | traceparent ID |
 
 <a name="ao.instrumentHttp"></a>
 
@@ -377,7 +377,7 @@ ao.pInstrument(spanInfo, run).then(...)
 ```
 <a name="ao.startOrContinueTrace"></a>
 
-### ao.startOrContinueTrace(xtrace, span, runner, [opts], [callback]) ⇒ <code>value</code>
+### ao.startOrContinueTrace(traceparent, tracestat, span, runner, [opts], [callback]) ⇒ <code>value</code>
 Start or continue a trace. Continue is in the sense of continuing a
 trace based on an X-Trace ID received from an external source, e.g.,
 HTTP headers or message queue headers.
@@ -387,13 +387,14 @@ HTTP headers or message queue headers.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
+| traceparent | <code>string</code> |  | traceparent ID to continue from or null |
+| tracestat | <code>string</code> |  | tracestate ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
 | runner | <code>function</code> |  | run this function. sync if no arguments, async if one. |
 | [opts] | <code>object</code> |  | options |
 | [opts.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [opts.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect backtraces |
-| [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | force a new trace, ignoring any existing context (but not xtrace) |
+| [opts.forceNewTrace] | <code>boolean</code> | <code>false</code> | force a new trace, ignoring any existing context (but not traceparent) |
 | [opts.customTxName] | <code>string</code> \| <code>function</code> |  | name or function |
 | [callback] | <code>function</code> |  | this is supplied as the callback if runner is async. |
 
@@ -438,7 +439,7 @@ ao.startOrContinueTrace(
 ```
 <a name="ao.pStartOrContinueTrace"></a>
 
-### ao.pStartOrContinueTrace(xtrace, span, run, [opts]) ⇒ <code>Promise</code>
+### ao.pStartOrContinueTrace(traceparent, tracestat, span, run, [opts]) ⇒ <code>Promise</code>
 Start or continue a trace running a function that returns a promise. Continue is in
 the sense of continuing a trace based on an X-Trace ID received from an external
 source, e.g., HTTP headers or message queue headers.
@@ -448,7 +449,8 @@ source, e.g., HTTP headers or message queue headers.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| xtrace | <code>string</code> |  | X-Trace ID to continue from or null |
+| traceparent | <code>string</code> |  | traceparent ID to continue from or null |
+| tracestat | <code>string</code> |  | tracestate ID to continue from or null |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | name or function returning spanInfo |
 | run | <code>function</code> |  | the promise-returning function to instrument |
 | [opts] | <code>object</code> |  | options |
