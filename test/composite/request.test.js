@@ -28,12 +28,12 @@ describe('probes.request', function () {
   })
 
   const check = {
-    xtrace: function (msg) {
-      const xtrace = msg['X-Trace']
-      msg.should.have.property('X-Trace')
-      const taskId = xtrace.slice(2, 42)
-      const opId = xtrace.slice(42, 58)
-      const flags = xtrace.slice(-2)
+    traceContext: function (msg) {
+      const traceContext = msg['sw.trace_context']
+      msg.should.have.property('sw.trace_context')
+      const taskId = traceContext.split('-')[1]
+      const opId = traceContext.split('-')[2]
+      const flags = traceContext.split('-')[3]
       return [taskId, opId, flags]
     },
     server: {
@@ -120,9 +120,9 @@ describe('probes.request', function () {
     })
 
     //
-    // Verify X-Trace header results in a continued trace
+    // Verify traceparent/tracestate header results in a continued trace
     //
-    it('should continue tracing when receiving an xtrace id header', function (done) {
+    it('should continue tracing when receiving an traceparent/tracestate in header', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
       })
@@ -132,6 +132,7 @@ describe('probes.request', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
+
           msg.should.have.property('Edge', origin.opId)
         },
         function (msg) {
@@ -146,25 +147,26 @@ describe('probes.request', function () {
         request({
           url: 'http://localhost:' + port,
           headers: {
-            'X-Trace': origin.toString()
+            traceparent: origin.toString(),
+            tracestate: `sw=${origin.toString().split('-')[2]}-${origin.toString().split('-')[3]}`
           }
         })
       })
     })
 
     //
-    // Verify that a bad X-Trace header does not result in a continued trace
+    // Verify that a bad traceparnet header does not result in a continued trace
     //
-    it('should not continue tracing when receiving a bad xtrace id header', function (done) {
+    it('should not continue tracing when receiving a bad traceparnet header', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
       })
 
       const origin = new ao.Event('span-name', 'label-name', addon.Event.makeRandom(1))
-      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+      const traceparent = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
+        { level: 'warn', message: `invalid X-Trace string "${traceparent}"` }
       ]
       helper.checkLogMessages(logChecks)
 
@@ -185,7 +187,8 @@ describe('probes.request', function () {
         request({
           url: 'http://localhost:' + port,
           headers: {
-            'X-Trace': xtrace
+            traceparent,
+            tracestate: `sw=${origin.toString().split('-')[2]}-${origin.toString().split('-')[3]}`
           }
         })
       })
@@ -494,7 +497,8 @@ describe('probes.request', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg); // sometimes a semicolon is needed
-            [ptaskId, popId, pflags] = check.xtrace(msg)
+            [ptaskId, popId, pflags] = check.traceContext(msg)
+
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
@@ -516,7 +520,7 @@ describe('probes.request', function () {
           function (msg) {
             check.client.exit(msg)
             msg.should.have.property('HTTPStatus', 200)
-            const [taskId, opId, flags] = check.xtrace(msg)
+            const [taskId, opId, flags] = check.traceContext(msg)
             taskId.should.equal(ptaskId)
             opId.should.not.equal(popId)
             flags.should.equal(pflags)
@@ -556,7 +560,7 @@ describe('probes.request', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg); // sometimes a semicolon is needed
-            [ptaskId, popId, pflags] = check.xtrace(msg)
+            [ptaskId, popId, pflags] = check.traceContext(msg)
             msg.should.have.property('RemoteURL', ctx.data.url)
             msg.should.have.property('IsService', 'yes')
           },
@@ -578,7 +582,7 @@ describe('probes.request', function () {
           function (msg) {
             check.client.exit(msg)
             msg.should.have.property('HTTPStatus', 200)
-            const [taskId, opId, flags] = check.xtrace(msg)
+            const [taskId, opId, flags] = check.traceContext(msg)
             taskId.should.equal(ptaskId)
             opId.should.not.equal(popId)
             flags.should.equal(pflags)
