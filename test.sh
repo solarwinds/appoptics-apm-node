@@ -134,6 +134,10 @@ if [ "$group_to_run" = "NO-SERVICE-KEY" ] || [ ! "$group_to_run" ]; then execute
 # initialization time. now they don't really need to be separate.
 #
 if [ "$group_to_run" = "SOLO" ]  || [ ! "$group_to_run" ]; then executeTestGroup "SOLO" "test/solo/*.test.js" "$timeout"; fi
+#
+# verify that both types of tokens work
+#
+if [ "$group_to_run" = "SWOKEN" ] || [ ! "$group_to_run" ]; then executeTestGroup "SWOKEN" "test/swoken/*.test.js" "$timeout"; fi
 
 #
 # this tests the http client through using the request package with promises. it's

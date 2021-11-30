@@ -582,3 +582,20 @@ exports.makeSettings = function (settings) {
   s.traceTaskId = s.metadata = ao.addon.Event.makeRandom(s.doSample)
   return s
 }
+
+exports.PtoX = (traceparent) => {
+  const padding = '00000000'
+
+  if (!traceparent) return ''
+
+  // traceparent delimited parts
+  const parts = traceparent.split('-')
+
+  // transform to xtrace
+  // https://github.com/librato/trace/tree/master/docs/specs
+  const taskId = `${parts[1]}${padding}`.toUpperCase()
+  const opId = parts[2].toUpperCase()
+  const flags = parts[3]
+
+  return `2B${taskId}${opId}${flags}`
+}
