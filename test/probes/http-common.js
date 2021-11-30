@@ -46,7 +46,7 @@ const httpsOptions = {
 
 const baseTracestateSpanId = '7a71b110e5e3588d'
 const baseTracestateFlags = '01'
-const baseTracestateTraceId = '0123456789abcdef0123456789abcdef'
+const baseTracestateTraceId = '1'.repeat(32)
 
 const baseTraceparent = ['00', baseTracestateTraceId, baseTracestateSpanId, baseTracestateFlags].join('-')
 const baseTracestateOrgPart = 'sw=' + [baseTracestateSpanId, baseTracestateFlags].join('-')
@@ -215,14 +215,14 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let xtrace = ''
+      let trasportXtrace = ''
 
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
           expect(msg).not.have.property('Edge')
 
-          xtrace = msg['X-Trace']
+          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
@@ -240,7 +240,7 @@ describe(`probes.${p}`, function () {
         function (error, response, body) {
           expect(response.headers).exist
           expect(response.headers).property('x-trace')
-          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
       })
     })
@@ -250,7 +250,7 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let xtrace = ''
+      let trasportXtrace = ''
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -258,7 +258,7 @@ describe(`probes.${p}`, function () {
           expect(msg).not.have.property('Edge')
           expect(msg).not.have.property('sw.w3c.tracestate')
 
-          xtrace = msg['X-Trace']
+          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
@@ -278,7 +278,7 @@ describe(`probes.${p}`, function () {
         function (error, response, body) {
           expect(response.headers).exist
           expect(response.headers).property('x-trace')
-          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
       })
     })
@@ -327,14 +327,14 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let xtrace = ''
+      let trasportXtrace = ''
 
       helper.doChecks(emitter, [
         function (msg) {
           expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
           expect(msg).property('sw.tracestate_parent_id')
 
-          xtrace = msg['X-Trace']
+          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
@@ -355,7 +355,7 @@ describe(`probes.${p}`, function () {
         function (error, response, body) {
           expect(response.headers).exist
           expect(response.headers).property('x-trace')
-          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
       })
     })
@@ -365,7 +365,7 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let xtrace = ''
+      let trasportXtrace = ''
 
       helper.doChecks(emitter, [
         function (msg) {
@@ -373,7 +373,7 @@ describe(`probes.${p}`, function () {
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
           expect(msg).property('sw.tracestate_parent_id')
 
-          xtrace = msg['X-Trace']
+          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
@@ -394,46 +394,7 @@ describe(`probes.${p}`, function () {
         function (error, response, body) {
           expect(response.headers).exist
           expect(response.headers).property('x-trace')
-          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
-        })
-      })
-    })
-
-    //
-    // Verify X-Trace header results in a continued trace
-    //
-    it('should continue tracing when receiving a legacy x-trace in header', function (done) {
-      const server = createServer(options, function (req, res) {
-        res.end('done')
-      })
-
-      const ev = addon.Event.makeRandom(1)
-      const origin = new ao.Event('span-name', 'label-name', ev)
-
-      helper.doChecks(emitter, [
-        function (msg) {
-          check.server.entry(msg)
-          expect(msg).property('Edge', origin.opId)
-        },
-        function (msg) {
-          check.server.exit(msg)
-        }
-      ], function () {
-        server.close(done)
-      })
-
-      server.listen(function () {
-        const port = server.address().port
-        axios({
-          url: `${p}://localhost:${port}`,
-          headers: {
-            'X-Trace': origin.toString()
-          }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist
-          expect(response.headers).property('x-trace')
-          expect(origin.taskId).equal(response.headers['x-trace'].slice(2, 42))
+          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
       })
     })
@@ -466,19 +427,19 @@ describe(`probes.${p}`, function () {
     })
 
     //
-    // Verify that a bad X-Trace header does not result in a continued trace
+    // Verify that a bad traceparent header does not result in a continued trace
     //
-    it('should not continue tracing when receiving a bad xtrace id header', function (done) {
+    it('should not continue tracing when receiving a bad traceparent id header', function (done) {
       const server = createServer(options, function (req, res) {
         res.end('done')
       })
 
       const originMetadata = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', originMetadata)
-      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(15) + '01'
+      const traceparent = origin.toString().split('-').map((part, index) => index === 2 ? '0'.repeat(15) : part).join('-')
 
       const logChecks = [
-        { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
+        { level: 'warn', message: `invalid traceparent string "${traceparent}"` }
       ];
 
       [, clear] = helper.checkLogMessages(logChecks)
@@ -499,7 +460,44 @@ describe(`probes.${p}`, function () {
         const port = server.address().port
         axios({
           url: `${p}://localhost:${port}`,
-          headers: { 'X-Trace': xtrace }
+          headers: {
+            traceparent,
+            tracestate: baseTracestateOrgPart
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
+        })
+      })
+    })
+
+    it('should not continue tracing when receiving only tracestate id header', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      const originMetadata = addon.Event.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.property('Edge', origin.opId)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: { tracestate: baseTracestateOrgPart }
         },
         function (error, response, body) {
           expect(response.headers).exist
