@@ -269,8 +269,8 @@ describe(`pino v${version}`, function () {
         return 'test-done'
       }
 
-      const xtrace = ao.addon.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test)
+      const traceparent = ao.addon.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(traceparent, '', spanName, test)
 
       expect(result).equal('test-done')
       checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId)
@@ -285,7 +285,7 @@ describe(`pino v${version}`, function () {
 
     logger.info(message)
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`)
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(32)}-0`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {

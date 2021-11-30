@@ -29,6 +29,7 @@ describe('probes.bcrypt ' + pkg.version, function () {
 
     ao.startOrContinueTrace(
       '',
+      '',
       'test-bcrypt',
       function (cb) {
         ao.requestStore.set(test, 'bar')
