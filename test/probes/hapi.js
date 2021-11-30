@@ -9,29 +9,10 @@ const helloDotEjs = 'hello.ejs'
 const helper = require(path.join(base, 'test/helper'))
 const ao = global[Symbol.for('AppOptics.Apm.Once')]
 
-const semver = require('semver')
-
 const axios = require('axios')
 
-// This test can't even be compiled if JavaScript doesn't recognize async/await.
-const nodeVersion = process.version.slice(1)
-const hasAsyncAwait = semver.gte(nodeVersion, '8.0.0')
-
-if (!hasAsyncAwait) {
-  throw new Error('hapi@17 testing requires async/await')
-}
-
-// above node 14, hapi version must be over 18, which means must be at @hapi/hapi.
-// below node 11 hapi version must be below 18, which means must be at hapi.
-// process.env.hapiVersion is set when running the @hapi/hapi test
-
-// don't run what is not supported
-if (semver.gte(nodeVersion, '16.0.0') && !process.env.hapiVersion) process.exit()
-if (semver.lt(nodeVersion, '11.0.0') && process.env.hapiVersion) process.exit()
-
-// if testing the @hapi scoped package then hapiVersion is set to @hapi
-const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi'
-const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision'
+const hapiName = '@hapi/hapi'
+const visionName = '@hapi/vision'
 
 const hapi = require(hapiName)
 const vision = require(visionName)
@@ -39,18 +20,8 @@ const vision = require(visionName)
 const pkg = require(`${hapiName}/package.json`)
 const visionPkg = require(`${visionName}/package.json`)
 
-if (semver.lt(pkg.version, '17.0.0')) {
-  throw new Error('hapi-17-and-above requires hapi version 17+')
-}
-
-let plugins
-let visionText
-if (semver.gte(visionPkg.version, '5.0.0')) {
-  plugins = { plugin: require(visionName) }
-  visionText = `${visionName} ${visionPkg.version}`
-} else {
-  visionText = `${visionName} ${visionPkg.version} not compatible (untested)`
-}
+const plugins = { plugin: require(visionName) }
+const visionText = `${visionName} ${visionPkg.version}`
 
 describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   let emitter
@@ -261,7 +232,11 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   }
 
   async function disabledTest () {
+<<<<<<< HEAD
     ao.probes.vision.enabled = false
+=======
+    ao.probes['@hapi/vision'].enabled = false
+>>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
     const server = await makeViewServer()
 
     server.route({
@@ -283,7 +258,11 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const validations = [checks.httpEntry, checks.hapiEntry, checks.hapiExit, checks.httpExit]
 
     helper.doChecks(emitter, validations, function () {
+<<<<<<< HEAD
       ao.probes.vision.enabled = true
+=======
+      ao.probes['@hapi/vision'].enabled = true
+>>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
       server.listener.close(_resolve)
     })
 
@@ -401,7 +380,11 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         }
       })
 
+<<<<<<< HEAD
       ao.setCustomTxNameFunction('hapi', custom)
+=======
+      ao.setCustomTxNameFunction('@hapi/hapi', custom)
+>>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
 
       let _resolve
       const p = new Promise(function (resolve, reject) {
@@ -430,6 +413,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
               // nothing to do if custom name function blows up.
             }
           }
+<<<<<<< HEAD
           /*
           if (custom && custom(customReq)) {
             expectedCustom = custom(customReq)
@@ -437,6 +421,9 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
             expectedCustom = expected('tx')
           }
           // */
+=======
+          //
+>>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
           if (ao.cfg.domainPrefix) {
             expectedCustom = customReq.headers.host + '/' + expectedCustom
           }
@@ -469,6 +456,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const pathToUse = request.route.path
 
     return function (what) {
+<<<<<<< HEAD
       let controller
       let action
       let result
@@ -486,6 +474,14 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         controller = 'hapi.' + (func.name || '(anonymous)')
         action = request.method + pathToUse
       }
+=======
+      let result
+
+      // Controller = 'hapi.' + (func.name || '(anonymous)')
+      // Action = request.method + request.route.path
+      const controller = 'hapi.' + (func.name || '(anonymous)')
+      const action = request.method + pathToUse
+>>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
 
       if (what === 'tx') {
         result = controller + '.' + action
