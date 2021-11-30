@@ -53,13 +53,13 @@ if (aob.version === 'not loaded') {
 
     it('should passthrough sync startOrContinueTrace', function () {
       let counter = 0
-      ao.startOrContinueTrace(null, 'test', function () {
+      ao.startOrContinueTrace(null, null, 'test', function () {
         counter++
       })
       counter.should.equal(1)
     })
     it('should passthrough async startOrContinueTrace', function (done) {
-      ao.startOrContinueTrace(null, 'test', soon, done)
+      ao.startOrContinueTrace(null, null, 'test', soon, done)
     })
 
     it('should support callback shifting', function (done) {
@@ -306,14 +306,14 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
         msg.should.have.property('Foo', 'bar')
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -330,20 +330,23 @@ describe('custom', function () {
     const checks = [
       // Outer entry
       function (msg) {
-        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('sw.trace_context', outer.events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.entry.toString()))
         msg.should.have.property('Layer', 'link-test')
         msg.should.have.property('Label', 'entry')
       },
       // Inner entry #1 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[0].events.entry.toString())
+        msg.should.have.property('sw.trace_context', inner[0].events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[0].events.entry.toString()))
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.have.property('Layer', 'inner-0')
         msg.should.have.property('Label', 'entry')
       },
       // Inner info #1 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[0].events.internal[0].toString())
+        msg.should.have.property('sw.trace_context', inner[0].events.internal[0].toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[0].events.internal[0].toString()))
         msg.should.have.property('Edge', inner[0].events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -351,7 +354,8 @@ describe('custom', function () {
       },
       // Outer info
       function (msg) {
-        msg.should.have.property('X-Trace', outer.events.internal[0].toString())
+        msg.should.have.property('sw.trace_context', outer.events.internal[0].toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.internal[0].toString()))
         msg.should.have.property('Edge', outer.events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -359,14 +363,16 @@ describe('custom', function () {
       },
       // Inner entry #2 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[1].events.entry.toString())
+        msg.should.have.property('sw.trace_context', inner[1].events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[1].events.entry.toString()))
         msg.should.have.property('Edge', outer.events.internal[0].opId)
         msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'entry')
       },
       // Inner info #2 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[1].events.internal[0].toString())
+        msg.should.have.property('sw.trace_context', inner[1].events.internal[0].toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[1].events.internal[0].toString()))
         msg.should.have.property('Edge', inner[1].events.entry.opId)
         msg.should.not.have.property('Layer')
         msg.should.have.property('Label', 'info')
@@ -374,21 +380,24 @@ describe('custom', function () {
       },
       // Outer exit
       function (msg) {
-        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('sw.trace_context', outer.events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.exit.toString()))
         msg.should.have.property('Edge', outer.events.internal[0].opId)
         msg.should.have.property('Layer', 'link-test')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #1 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[0].events.exit.toString())
+        msg.should.have.property('sw.trace_context', inner[0].events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[0].events.exit.toString()))
         msg.should.have.property('Edge', inner[0].events.internal[0].opId)
         msg.should.have.property('Layer', 'inner-0')
         msg.should.have.property('Label', 'exit')
       },
       // Inner exit #2 (async)
       function (msg) {
-        msg.should.have.property('X-Trace', inner[1].events.exit.toString())
+        msg.should.have.property('sw.trace_context', inner[1].events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner[1].events.exit.toString()))
         msg.should.have.property('Edge', inner[1].events.internal[0].opId)
         msg.should.have.property('Layer', 'inner-2')
         msg.should.have.property('Label', 'exit')
@@ -448,7 +457,7 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.not.have.property('Layer')
@@ -456,7 +465,7 @@ describe('custom', function () {
         msg.should.have.property('Foo', 'bar')
         msg.should.have.property('Partition', 'bar')
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -493,15 +502,15 @@ describe('custom', function () {
 
       // Verify nothing bad happens when run function is missing
       ao.instrument(build)
-      ao.startOrContinueTrace(null, build)
+      ao.startOrContinueTrace(null, null, build)
 
       // Verify nothing bad happens when build function is missing
       ao.instrument(null, run)
-      ao.startOrContinueTrace(null, null, run)
+      ao.startOrContinueTrace(null, null, null, run)
 
       // Verify the runner is still run when spaninfo fails to return an object
       ao.instrument(getInc(), getInc())
-      ao.startOrContinueTrace(null, getInc(), getInc())
+      ao.startOrContinueTrace(null, null, getInc(), getInc())
       found.should.deepEqual(expected)
       count.should.equal(4)
 
@@ -556,15 +565,15 @@ describe('custom', function () {
 
       // Verify nothing bad happens when run function is missing
       ao.pInstrument(build, missing)
-      ao.pStartOrContinueTrace(null, build, missing)
+      ao.pStartOrContinueTrace(null, null, build, missing)
 
       // Verify nothing bad happens when spanInfo is missing
       ao.pInstrument(missing, run)
-      ao.pStartOrContinueTrace(null, missing, run)
+      ao.pStartOrContinueTrace(null, null, missing, run)
 
       // Verify the runner is still run when spanInfo() fails to return an object
       ao.pInstrument(getInc(), getInc())
-      ao.pStartOrContinueTrace(null, getInc(), getInc())
+      ao.pStartOrContinueTrace(null, null, getInc(), getInc())
 
       expect(found).deep.equal(expected)
       expect(count).equal(4)
@@ -574,7 +583,7 @@ describe('custom', function () {
       expected.push('nnrun')
       // Verify the runner is still run when spanInfo() fails to return a name
       ao.pInstrument(function () { return {} }, getInc())
-      ao.pStartOrContinueTrace(null, () => { return {} }, getInc())
+      ao.pStartOrContinueTrace(null, null, () => { return {} }, getInc())
 
       expect(found).deep.equal(expected)
       expect(count).equal(6)
@@ -602,7 +611,7 @@ describe('custom', function () {
 
       // Verify errors thrown in builder do not propagate
       ao.instrument(nope, inc)
-      ao.startOrContinueTrace(null, nope, inc)
+      ao.startOrContinueTrace(null, null, nope, inc)
       count.should.equal(4)
 
       // Verify that errors thrown in the runner function *do* propagate
@@ -612,7 +621,7 @@ describe('custom', function () {
         ao.instrument(build, nope)
       }, validateError)
       should.throws(function () {
-        ao.startOrContinueTrace(null, build, nope)
+        ao.startOrContinueTrace(null, null, build, nope)
       }, validateError)
       count.should.equal(2)
 
@@ -638,7 +647,7 @@ describe('custom', function () {
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
         msg.should.not.have.property('Edge')
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -652,7 +661,7 @@ describe('custom', function () {
     })
 
     const test = 'foo'
-    const res = ao.startOrContinueTrace(null, main, function () {
+    const res = ao.startOrContinueTrace(null, null, main, function () {
       return test
     }, conf)
 
@@ -674,8 +683,8 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = aob.Event.makeRandom(0).toString()
-    const res = ao.startOrContinueTrace(xtrace, main, function () { return test }, conf)
+    const traceparent = aob.Event.makeRandom(0).toString()
+    const res = ao.startOrContinueTrace(traceparent, traceparent.split('-')[2] + '-' + traceparent.split('-')[3], main, function () { return test }, conf)
 
     res.should.equal(test)
     metricsSent.should.equal(0)
@@ -692,7 +701,7 @@ describe('custom', function () {
         msg.should.have.property('SampleSource')
         msg.should.have.property('SampleRate')
         msg.should.not.have.property('Edge')
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -703,6 +712,7 @@ describe('custom', function () {
 
     const test = 'foo'
     const res = ao.startOrContinueTrace(
+      null,
       null,
       main, // span name
       function (cb) { // runner
@@ -738,7 +748,7 @@ describe('custom', function () {
           expect(msg).property('SampleSource')
           expect(msg).property('SampleRate')
           expect(msg).not.property('Edge')
-          last = msg['X-Trace'].substr(42, 16)
+          last = msg['sw.trace_context'].split('-')[2].toUpperCase()
         },
         function (msg) {
           expect(msg).property('Layer', main)
@@ -751,6 +761,7 @@ describe('custom', function () {
     let p
     // pStartOrContinueTrace. psoon's ...args are used to resolve the promise.
     const res = ao.pStartOrContinueTrace(
+      null,
       null,
       main, // span name
       // promise-returning runner
@@ -775,7 +786,7 @@ describe('custom', function () {
     let p
     let rdResult
     async function task () {
-      const p1 = ao.pStartOrContinueTrace(null, 'psooner', psoon)
+      const p1 = ao.pStartOrContinueTrace(null, null, 'psooner', psoon)
       const p2 = new Promise((resolve, reject) => {
         fs.readdir('.', (error, files) => {
           if (error) {
@@ -809,12 +820,12 @@ describe('custom', function () {
           expect(msg).property('SampleSource')
           expect(msg).property('SampleRate')
           expect(msg).not.property('Edge')
-          last = new Last(msg['X-Trace'])
+          last = new Last(msg['sw.trace_context'])
         },
         function (msg) {
           expect(msg).property('X-Trace')
           expect(`${msg.Layer}:${msg.Label}`).equal('psooner:entry')
-          psoonEntry = last = new Last(msg['X-Trace'])
+          psoonEntry = last = new Last(msg['sw.trace_context'])
         },
         function (msg) {
           expect(msg).property('X-Trace')
@@ -823,30 +834,30 @@ describe('custom', function () {
           expect(msg).property('Operation', 'readdir')
           expect(msg).property('FilePath', '.')
           expect(msg).property('Async', true)
-          const curr = new Last(msg['X-Trace'])
+          const curr = new Last(msg['sw.trace_context'])
           expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
-          expect(msg).property('Edge', last.opId())
+          expect(msg).property('Edge', last.opId().toUpperCase())
           last = curr
         },
         function (msg) {
           expect(msg).property('X-Trace')
           expect(`${msg.Layer}:${msg.Label}`).equal('fs:exit')
-          const curr = new Last(msg['X-Trace'])
+          const curr = new Last(msg['sw.trace_context'])
           expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
-          expect(msg).property('Edge', last.opId())
+          expect(msg).property('Edge', last.opId().toUpperCase())
           last = curr
         },
         function (msg) {
           expect(`${msg.Layer}:${msg.Label}`).equal('psooner:exit')
-          expect(msg).property('Edge', psoonEntry.opId())
-          last = new Last(msg['X-Trace'])
+          expect(msg).property('Edge', psoonEntry.opId().toUpperCase())
+          last = new Last(msg['sw.trace_context'])
         },
         function (msg) {
           expect(msg).property('X-Trace')
           expect(msg).property('Layer', main)
           expect(msg).property('Label', 'exit')
-          expect(msg).property('Edge', last.opId())
-          const curr = new Last(msg['X-Trace'])
+          expect(msg).property('Edge', last.opId().toUpperCase())
+          const curr = new Last(msg['sw.trace_context'])
           expect(curr.taskId()).equal(last.taskId(), 'task ID must match')
           last = curr
         }
@@ -855,6 +866,7 @@ describe('custom', function () {
 
     // pStartOrContinueTrace.
     const res = ao.pStartOrContinueTrace(
+      null,
       null,
       main, // span name
       task, // promise-returning runner
@@ -889,12 +901,12 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.Edge.should.equal(entry.opId)
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal(`${main}:exit`)
         msg.Edge.should.equal(last)
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('x-previous:exit')
@@ -903,11 +915,13 @@ describe('custom', function () {
     ], done)
 
     ao.startOrContinueTrace(
-      '', // no xtrace ID, start a trace
+      '', // no traceparent/tracestate, start a trace
+      '',
       'x-previous', // span name
       function (pcb) { // runner function, creates a new span
         ao.startOrContinueTrace(
           ao.lastSpan.events.entry.toString(), // continue from the last span's id.
+          '', // TODO?
           () => {
             return {
               name: main,
@@ -932,7 +946,7 @@ describe('custom', function () {
   })
 
   // Verify startOrContinueTrace continues from existing traces,
-  // when already tracing, whether or not an xtrace is provided.
+  // when already tracing, whether or not an traceparent/tracestate is provided.
   it('should create new traces and contexts when forceNewTrace is true', function (done) {
     // make the container span.
     const previous = Span.makeEntrySpan('previous', makeSettings())
@@ -947,7 +961,7 @@ describe('custom', function () {
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('previous:entry')
         msg.should.not.have.property('Edge')
-        prevOpId = msg['X-Trace'].substr(42, 16)
+        prevOpId = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('continue-outer:entry')
@@ -955,7 +969,7 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.should.have.property('Edge', prevOpId)
-        outerOpId = msg['X-Trace'].substr(42, 16)
+        outerOpId = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('inner:entry')
@@ -963,22 +977,25 @@ describe('custom', function () {
         msg.should.not.have.property('SampleSource')
         msg.should.not.have.property('SampleRate')
         msg.should.have.property('Edge', outerOpId)
-        innerOpId = msg['X-Trace'].substr(42, 16)
+        innerOpId = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       // there should be a new trace here
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:entry')
-        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId)
+        expect(msg['sw.trace_context'].split('-')[1].toUpperCase()).not.equal(taskId)
+        expect(msg['X-Trace'].substr(2, 32)).not.equal(taskId)
         expect(msg.Edge).not.exist
       },
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('new-trace:exit')
-        expect(msg['X-Trace'].substr(2, 40)).not.equal(taskId)
+        expect(msg['sw.trace_context'].split('-')[1].toUpperCase()).not.equal(taskId)
+        expect(msg['X-Trace'].substr(2, 32)).not.equal(taskId)
       },
       // back to the previous trace
       function (msg) {
         expect(`${msg.Layer}:${msg.Label}`).equal('inner:exit')
-        expect(msg['X-Trace'].substr(2, 40)).equal(taskId)
+        expect(msg['sw.trace_context'].split('-')[1].toUpperCase()).equal(taskId)
+        expect(msg['X-Trace'].substr(2, 32)).equal(taskId)
         msg.should.have.property('Edge', innerOpId)
       },
       function (msg) {
@@ -994,21 +1011,23 @@ describe('custom', function () {
     previous.run(function (wrap) {
       // Verify ID-less calls continue
       ao.startOrContinueTrace(
-        null, // no xtrace-id
+        null, // traceparent/tracestate
+        null,
         'continue-outer', // span name
         function (cb) { // runner
           soon(function () {
           // Verify ID'd calls continue
             ao.startOrContinueTrace(
-              entry.toString(), // xtrace-id
+              entry.toString(), // traceparent
+              '', // TODO?
               'inner', // span name
               function (cb) { // runner pseudo-async
                 ao.requestStore.set('linger', true)
                 soon(function () {
                   expect(ao.requestStore.get('linger')).equal(true)
-                  // Verify newContext calls DO NOT continue when no xtrace
+                  // Verify newContext calls DO NOT continue when no traceparent
                   ao.startOrContinueTrace(
-                    // entry.toString(),     // xtrace-id (supply this to continue)
+                    '',
                     '',
                     'new-trace', // span name
                     function (cb) { // runner pseudo-async
@@ -1045,7 +1064,7 @@ describe('custom', function () {
     // next two errors should be generated.
     const logChecks = [
       { level: 'error', message: 'task IDs don\'t match' },
-      { level: 'error', message: 'outer:exit 2b-' }
+      { level: 'error', message: 'outer:exit 0b-' }
     ]
     const [getCount, clearChecks] = helper.checkLogMessages(logChecks)
 
@@ -1054,7 +1073,7 @@ describe('custom', function () {
         emitter,
         function (done) { // test function
           ao.lastSpan = ao.lastEvent = null
-          ao.startOrContinueTrace(null, 'sample-properly', setImmediate, conf, done)
+          ao.startOrContinueTrace(null, null, 'sample-properly', setImmediate, conf, done)
         },
         [() => undefined, () => undefined], // checks
         function (err) {
@@ -1078,6 +1097,7 @@ describe('custom', function () {
       expect(ao.traceId).not.exist
       expect(ao.tracing).equal(false)
       ao.startOrContinueTrace(
+        null,
         null,
         main,
         function (cb) {
@@ -1202,7 +1222,7 @@ describe('custom', function () {
       function (msg) {
         msg.should.have.property('Layer', main)
         msg.should.have.property('Label', 'entry')
-        last = msg['X-Trace'].substr(42, 16)
+        last = msg['sw.trace_context'].split('-')[2].toUpperCase()
       },
       function (msg) {
         msg.should.have.property('Layer', main)
@@ -1230,9 +1250,11 @@ describe('custom', function () {
     }
 
     const test = 'foo'
-    const xtrace = aob.Event.makeRandom(0).toString()
+    const traceparent = aob.Event.makeRandom(0).toString()
+
     const res = ao.startOrContinueTrace(
-      xtrace,
+      traceparent,
+      traceparent.split('-')[2] + '-' + traceparent.split('-')[3],
       main, // span name
       function (cb) { // runner
         setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line node/no-callback-literal
@@ -1263,22 +1285,22 @@ describe('custom', function () {
 })
 
 class Last {
-  constructor (xtrace) {
-    this.xtrace = xtrace.toUpperCase()
-    if (!this.xtrace.startsWith('2B')) {
-      throw new Error(`doesn't start with '2B': ${xtrace}`)
+  constructor (traceContext) {
+    this.traceContext = traceContext
+    if (!this.traceContext.startsWith('00')) {
+      throw new Error(`doesn't start with '00': ${traceContext}`)
     }
   }
 
   taskId () {
-    return this.xtrace.substr(2, 40)
+    return this.traceContext.split('-')[1]
   }
 
   opId () {
-    return this.xtrace.substr(42, 16)
+    return this.traceContext.split('-')[2]
   }
 
   flags () {
-    return this.xtrace.slice(-2)
+    return this.traceContext.split('-')[3]
   }
 }

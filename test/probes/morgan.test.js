@@ -29,8 +29,9 @@ function checkEventInfo (eventInfo, req, res, traceId) {
     // eslint-disable-next-line no-console
     console.log('checkEventInfo()', eventInfo)
   }
+
   // eslint-disable-next-line max-len
-  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[A-F0-9]{40}-(0|1)))?`
+  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[A-F0-9]{32}-(0|1)))?`
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
   // output some debugging help if these don't match
@@ -41,6 +42,7 @@ function checkEventInfo (eventInfo, req, res, traceId) {
 
   expect(m).ok
   expect(m.length).equal(4)
+
   if (traceId) {
     expect(m[2]).equal(`ao.traceId=${traceId}`)
     expect(m[3]).ok
@@ -79,7 +81,7 @@ class TestStream extends EventEmitter {
 function getTraceIdString () {
   const topSpan = ao.requestStore.get('topSpan')
   if (!topSpan) {
-    return `${'0'.repeat(40)}-0`
+    return `${'0'.repeat(32)}-0`
   }
   const firstEvent = topSpan.events.entry.event
   // 2 task, 16 sample bit, 32 separators
@@ -285,8 +287,8 @@ describe(`probes.morgan ${version}`, function () {
         return 'test-done'
       }
 
-      const xtrace = ao.addon.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test)
+      const traceparent = ao.addon.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(traceparent, '', spanName, test)
       expect(result).equal('test-done')
     })
   })
