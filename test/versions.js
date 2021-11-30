@@ -48,30 +48,6 @@ test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
 
-if (node('lt', '16.0.0')) {
-  test('hapi', {
-    ranges: [
-      {
-        range: '>= 13.0.0 < 17.0.0',
-        dependencies: ['vision@4']
-      }, {
-        range: '>= 17.0.0 <= 18.1.0',
-        dependencies: ['vision@5']
-      }
-    ]
-  })
-  test('vision', {
-    ranges: [
-      {
-        range: '>= 4.0.0 < 5.0.0',
-        dependencies: ['hapi@16']
-      }, {
-        range: '>= 5.0.0',
-        dependencies: ['hapi@17']
-      }
-    ]
-  })
-}
 
 if (node('gte', '11.0.0')) {
   test('@hapi/hapi', {
