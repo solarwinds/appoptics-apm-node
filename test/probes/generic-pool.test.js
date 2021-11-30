@@ -149,8 +149,8 @@ describe(`probes.generic-pool ${pkg.version}`, function () {
       gpDebug(`bothDone count: ${count}`)
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) { gpDebug('gp-1'); bothDone(e) })
-    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) { gpDebug('gp-2'); bothDone(e) })
+    ao.startOrContinueTrace('', '', 'generic-pool-1', spanRunner, function (e) { gpDebug('gp-1'); bothDone(e) })
+    ao.startOrContinueTrace('', '', 'generic-pool-2', spanRunner, function (e) { gpDebug('gp-2'); bothDone(e) })
 
     // wait until both traces are done.
     const t = setInterval(function () {
@@ -179,7 +179,7 @@ describe(`probes.generic-pool ${pkg.version}`, function () {
       })
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-x', spanRunner, function (e) { gpDebug('gp-x'); done(e) })
+    ao.startOrContinueTrace('', '', 'generic-pool-x', spanRunner, function (e) { gpDebug('gp-x'); done(e) })
   })
 
   ifv3('should trace through generic-pool acquire for versions > 3', function (done) {
@@ -260,8 +260,8 @@ describe(`probes.generic-pool ${pkg.version}`, function () {
       }
     }
 
-    ao.startOrContinueTrace('', 'generic-pool-1', spanRunner, function (e) { gpDebug('gp-1'); bothDone(e) })
-    ao.startOrContinueTrace('', 'generic-pool-2', spanRunner, function (e) { gpDebug('gp-2'); bothDone(e) })
+    ao.startOrContinueTrace('', '', 'generic-pool-1', spanRunner, function (e) { gpDebug('gp-1'); bothDone(e) })
+    ao.startOrContinueTrace('', '', 'generic-pool-2', spanRunner, function (e) { gpDebug('gp-2'); bothDone(e) })
 
     okToRelease = true
   })
