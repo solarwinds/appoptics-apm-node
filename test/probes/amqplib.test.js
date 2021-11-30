@@ -41,7 +41,7 @@ describe('probes.amqplib ' + pkg.version, function () {
     }
   }
 
-  const xpat = /2B[A-F0-9]{56}0(0|1)/
+  const xpat = /\b00-[0-9a-f]{32}-[0-9a-f]{16}-0[0-1]{1}\b/
 
   //
   // Intercept appoptics messages for analysis
