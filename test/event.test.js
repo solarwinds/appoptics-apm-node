@@ -30,9 +30,9 @@ describe('event', function () {
 
   beforeEach(function () {
     ev0 = aob.Event.makeRandom(1)
-    const mds = ev0.toString(1).split('-')
-    mdTaskId = mds[1].toUpperCase()
-    mdOpId = mds[2].toUpperCase()
+    const mds = ev0.toString().split('-')
+    mdTaskId = mds[1]
+    mdOpId = mds[2]
   })
 
   afterEach(function () {
@@ -56,9 +56,10 @@ describe('event', function () {
   // net 1
   it('should construct valid event inheriting from the parent', function () {
     event = new Event('test', 'entry', ev0)
+
     expect(event).property('Layer', 'test')
     expect(event).property('Label', 'entry')
-    expect(event).property('taskId', mdTaskId)
+    expect(event).property('taskId', mdTaskId.toUpperCase())
     expect(event).property('opId').not.equal(mdOpId)
     expect(event).property('opId').match(/^[0-9A-F]{16}$/)
   })
@@ -66,9 +67,9 @@ describe('event', function () {
   // net 2
   it('should convert an event to a string', function () {
     event = new Event('test', 'entry', ev0)
-    expect(event.toString()).match(/^2B[0-9A-F]{56}01$/)
-    expect(event.toString().substr(2, 40)).equal(mdTaskId, 'task id must match')
-    expect(event.toString().substr(42, 16)).not.equal(mdOpId, 'op id must not match')
+    expect(event.toString()).match(/\b00-[0-9a-f]{32}-[0-9a-f]{16}-0[0-1]{1}\b/)
+    expect(event.toString().substr(3, 32)).equal(mdTaskId, 'task id must match')
+    expect(event.toString().substr(36, 16)).not.equal(mdOpId, 'op id must not match')
   })
 
   // net 4
@@ -84,6 +85,7 @@ describe('event', function () {
     ao.traceMode = 'always'
     ev0 = aob.Event.makeRandom(1)
     event = new Event('test', 'entry', ev0)
+
     expect(ao.sampling(event)).equal(true)
     expect(ao.sampling(event.toString())).equal(true)
   })
@@ -94,7 +96,8 @@ describe('event', function () {
     const event2 = new Event('test', 'exit', event.event, edge)
 
     emitter.once('message', function (msg) {
-      expect(msg).property('X-Trace', event2.toString())
+      expect(msg).property('sw.trace_context', event2.toString())
+      expect(msg).property('X-Trace', helper.PtoX(event2.toString()))
       expect(msg).property('Edge', event.opId)
       expect(msg).property('Layer', 'test')
       expect(msg).property('Label', 'exit')

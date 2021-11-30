@@ -70,7 +70,7 @@ describe('span', function () {
     const taskId = span.events.entry.taskId
     expect(taskId).not.equal('0'.repeat(40))
     expect(span.events.entry.opId).not.equal('0'.repeat(16))
-    expect(span.events.entry.event.toString()).match(/2B[0-9A-F]{56}01/)
+    expect(span.events.entry.event.toString()).match(/\b00-[0-9a-f]{32}-[0-9a-f]{16}-0[0-1]{1}\b/)
 
     expect(span.events.exit).property('event')
     expect(span.events.exit.taskId).equal(taskId)
@@ -90,10 +90,13 @@ describe('span', function () {
 
     const checks = [
       helper.checkEntry(name, helper.checkData(data, function (msg) {
-        msg.should.have.property('X-Trace', e.entry.toString())
+        msg.should.have.property('sw.trace_context', e.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(e.entry.toString()))
       })),
       helper.checkExit(name, function (msg) {
-        msg.should.have.property('X-Trace', e.exit.toString())
+        msg.should.have.property('sw.trace_context', e.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(e.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', e.entry.opId.toLowerCase())
         msg.should.have.property('Edge', e.entry.opId)
       })
     ]
@@ -113,11 +116,14 @@ describe('span', function () {
     const checks = [
       // Verify structure of entry event
       helper.checkEntry(name, helper.checkData(data, function (msg) {
-        msg.should.have.property('X-Trace', e.entry.toString())
+        msg.should.have.property('sw.trace_context', e.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(e.entry.toString()))
       })),
       // Verify structure of exit event
       helper.checkExit(name, function (msg) {
-        msg.should.have.property('X-Trace', e.exit.toString())
+        msg.should.have.property('sw.trace_context', e.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(e.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', e.entry.opId.toLowerCase())
         msg.should.have.property('Edge', e.entry.opId)
       })
     ]
@@ -146,18 +152,25 @@ describe('span', function () {
 
     const checks = [
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
-        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('sw.trace_context', outer.events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.entry.toString()))
       })),
       helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
-        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('sw.trace_context', inner.events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner.events.entry.toString()))
+        msg.should.have.property('sw.parent_span_id', outer.events.entry.opId.toLowerCase())
         msg.should.have.property('Edge', outer.events.entry.opId.toString())
       })),
       helper.checkExit('inner', function (msg) {
-        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('sw.trace_context', inner.events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner.events.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', inner.events.entry.opId.toLowerCase())
         msg.should.have.property('Edge', inner.events.entry.opId.toString())
       }),
       helper.checkExit('outer', function (msg) {
-        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('sw.trace_context', outer.events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', inner.events.exit.opId.toLowerCase())
         msg.should.have.property('Edge', inner.events.exit.opId.toString())
       })
     ]
@@ -180,21 +193,28 @@ describe('span', function () {
     const checks = [
       // Outer entry
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
-        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('sw.trace_context', outer.events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.entry.toString()))
       })),
       // Inner entry (async)
       helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
-        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('sw.trace_context', inner.events.entry.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner.events.entry.toString()))
+        msg.should.have.property('sw.parent_span_id', outer.events.entry.opId.toLowerCase())
         msg.should.have.property('Edge', outer.events.entry.opId)
       })),
       // Outer exit
       helper.checkExit('outer', function (msg) {
-        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('sw.trace_context', outer.events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(outer.events.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', outer.events.entry.opId.toLowerCase())
         msg.should.have.property('Edge', outer.events.entry.opId)
       }),
       // Inner exit (async)
       helper.checkExit('inner', function (msg) {
-        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('sw.trace_context', inner.events.exit.toString())
+        msg.should.have.property('X-Trace', helper.PtoX(inner.events.exit.toString()))
+        msg.should.have.property('sw.parent_span_id', inner.events.entry.opId.toLowerCase())
         msg.should.have.property('Edge', inner.events.entry.opId)
       })
     ]
@@ -228,21 +248,21 @@ describe('span', function () {
     const checks = [
       // Outer entry (async)
       helper.checkEntry('outer', helper.checkData(outerData, function (msg) {
-        msg.should.have.property('X-Trace', outer.events.entry.toString())
+        msg.should.have.property('sw.trace_context', outer.events.entry.toString())
       })),
       // Outer exit (async)
       helper.checkExit('outer', function (msg) {
-        msg.should.have.property('X-Trace', outer.events.exit.toString())
+        msg.should.have.property('sw.trace_context', outer.events.exit.toString())
         msg.should.have.property('Edge', outer.events.entry.opId)
       }),
       // Inner entry
       helper.checkEntry('inner', helper.checkData(innerData, function (msg) {
-        msg.should.have.property('X-Trace', inner.events.entry.toString())
+        msg.should.have.property('sw.trace_context', inner.events.entry.toString())
         msg.should.have.property('Edge', outer.events.exit.opId)
       })),
       // Inner exit
       helper.checkExit('inner', function (msg) {
-        msg.should.have.property('X-Trace', inner.events.exit.toString())
+        msg.should.have.property('sw.trace_context', inner.events.exit.toString())
         msg.should.have.property('Edge', inner.events.entry.opId)
       })
     ]
