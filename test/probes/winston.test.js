@@ -300,7 +300,7 @@ describe(`winston v${version}`, function () {
 
     logger.log(...makeLogArgs(level, message))
 
-    checkEventInfo(eventInfo, level, message, `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`)
+    checkEventInfo(eventInfo, level, message, `${'0'.repeat(32)}-0`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
