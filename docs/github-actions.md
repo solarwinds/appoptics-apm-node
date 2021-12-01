@@ -88,11 +88,40 @@ push alpha tag     │NPM Publish│
 
 ### Verify - after Release
 
-TODO
+* Runs after the Release workflow has completed.
+* Workflow will:
+  - Load the Target Group from the bindings repo and for each image in group:
+  - Install Appoptics agent (either the released version or the one specified manually).
+  - Check that installation of binary completed successfully (either from prebuilt tarball or from source).
+  - Start an instrumented http server to confirm auto instrumentation against staging is working.
+  - Run a simulation http client to generate data on staging backend.
+  - Start an instrumented http server to confirm auto instrumentation against production is working.
+* Workflow provides confidence that a released package can successfully install and auto instrument apps on a wide variety of node and operating system combinations.
+* Manual trigger supported.
+
+
+```
+workflow_run    ─► ┌───────────┐
+completed          │   Verify  │
+                   └───────────┘
+```
 
 ### Document - Manual
 
-TODO
+* Runs only manually 
+* Workflow will:
+  - Run a [`testeachversion`](https://www.npmjs.com/package/testeachversion) per package in a matrix.
+  - Generate a summary file
+  - Creates an automated commit into branch.
+  - Opens a pull request. 
+* Workflow results are in the `docs` directory:
+  - `supported-components.human` file including a list of supported components per node version.
+  - `supported-components-data` directory with summary and raw data for each package.
+
+* Notes: 
+- The workflow is WIP.
+- `testeachversion` is used as-is. Since it was not built for parallel run on @github @actions, some “rough patching” is required.
+- It uses `continue-on-error: true` so that if a set of tests fails for a specific version of a package, the whole workflow will still complete. Thus in the run results the jobs are all ✅ while there is annotations below suggesting failures ❌. 
 
 ## Maintenance
 
@@ -105,6 +134,7 @@ TODO
 ### Adding a Node Version
 
 1. Modify the Accept workflow.
+2. Modify the Document workflow.
 
 ### Remove a node version
 
