@@ -74,20 +74,19 @@ describe('integrity', function () {
       errorCount += 1
     }
 
-    // this only reads probes and one level below probes for directories starting
-    // with '@'. it may have to change at some point but right now only the only
-    // subdirectory with probes in it is @hapi and it serves double purpose - both
-    // scoped and unscoped versions of hapi and vision.
+    // this reads probes and one level below probes for directories starting
+    // with '@'.
     const probesInDir = []
     const probes = fs.readdirSync('lib/probes', { withFileTypes: true })
+
     probes.forEach(f => {
       if (f.isFile() && f.name.endsWith('.js')) {
         probesInDir.push(f.name.slice(0, -3))
       } else if (f.isDirectory() && f.name[0] === '@') {
         const files1 = fs.readdirSync(`lib/probes/${f.name}`, { withFileTypes: true })
-        files1.forEach(f => {
-          if (f.isFile() && f.name.endsWith('.js')) {
-            probesInDir.push(f.name.slice(0, -3))
+        files1.forEach(ff => {
+          if (ff.isFile() && ff.name.endsWith('.js')) {
+            probesInDir.push(f.name + '/' + ff.name.slice(0, -3))
           }
         })
       }
