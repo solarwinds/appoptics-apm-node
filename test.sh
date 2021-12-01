@@ -37,8 +37,7 @@ SUITES_SKIPPED=0
 
 # if one of the strings in SKIP is found in a test file name that file will be skipped so
 # it's best to start with "test/" and provide as much of the path as possible.
-# notification are disabled for now, so skip testing.
-SKIP="test/solo/notifications $SKIP" # see lib/index.js for reason
+SKIP="test/a-test-you-might-want-to-skip $SKIP"
 SKIP="test/lambda/remote $SKIP" # timeout too long to run with group
 
 skipThis() {
@@ -123,12 +122,6 @@ if [ "$group_to_run" = "CORE" ] || [ ! "$group_to_run" ]; then executeTestGroup 
 #
 if [ "$group_to_run" = "NO-ADDON" ] || [ ! "$group_to_run" ]; then executeTestGroup "NO-ADDON" "test/no-addon/*.test.js" "$timeout"; fi
 
-#
-# originally these tests were the only ones to run one-at-a-time
-# because it's not possible to change the oboe logging level after
-# initialization time. now they don't really need to be separate.
-#
-if [ "$group_to_run" = "SOLO" ]  || [ ! "$group_to_run" ]; then executeTestGroup "SOLO" "test/solo/*.test.js" "$timeout"; fi
 #
 # verify that both types of tokens work
 #
