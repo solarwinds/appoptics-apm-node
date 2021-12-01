@@ -300,7 +300,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName', function () {
     // supply a simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
@@ -311,7 +311,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName with domain prefix', function () {
     // simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
