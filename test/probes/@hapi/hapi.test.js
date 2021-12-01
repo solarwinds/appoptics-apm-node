@@ -232,11 +232,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   }
 
   async function disabledTest () {
-<<<<<<< HEAD
-    ao.probes.vision.enabled = false
-=======
     ao.probes['@hapi/vision'].enabled = false
->>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
     const server = await makeViewServer()
 
     server.route({
@@ -258,11 +254,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const validations = [checks.httpEntry, checks.hapiEntry, checks.hapiExit, checks.httpExit]
 
     helper.doChecks(emitter, validations, function () {
-<<<<<<< HEAD
-      ao.probes.vision.enabled = true
-=======
       ao.probes['@hapi/vision'].enabled = true
->>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
       server.listener.close(_resolve)
     })
 
@@ -308,7 +300,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName', function () {
     // supply a simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
@@ -319,7 +311,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName with domain prefix', function () {
     // simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
@@ -380,11 +372,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         }
       })
 
-<<<<<<< HEAD
-      ao.setCustomTxNameFunction('hapi', custom)
-=======
       ao.setCustomTxNameFunction('@hapi/hapi', custom)
->>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
 
       let _resolve
       const p = new Promise(function (resolve, reject) {
@@ -413,17 +401,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
               // nothing to do if custom name function blows up.
             }
           }
-<<<<<<< HEAD
-          /*
-          if (custom && custom(customReq)) {
-            expectedCustom = custom(customReq)
-          } else {
-            expectedCustom = expected('tx')
-          }
-          // */
-=======
-          //
->>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
+
           if (ao.cfg.domainPrefix) {
             expectedCustom = customReq.headers.host + '/' + expectedCustom
           }
@@ -456,32 +434,12 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const pathToUse = request.route.path
 
     return function (what) {
-<<<<<<< HEAD
-      let controller
-      let action
-      let result
-
-      if (ao.probes.hapi.legacyTxname) {
-        // old way of setting these
-        // Controller = request.route.path
-        // Action = func.name || '(anonymous)'
-        controller = pathToUse
-        action = func.name || '(anonymous)'
-      } else {
-        // new way
-        // Controller = 'hapi.' + (func.name || '(anonymous)')
-        // Action = request.method + request.route.path
-        controller = 'hapi.' + (func.name || '(anonymous)')
-        action = request.method + pathToUse
-      }
-=======
       let result
 
       // Controller = 'hapi.' + (func.name || '(anonymous)')
       // Action = request.method + request.route.path
       const controller = 'hapi.' + (func.name || '(anonymous)')
       const action = request.method + pathToUse
->>>>>>> 2653881f (Refactored hapi and vision tests to only use and test @hapi and @hapi plugins.)
 
       if (what === 'tx') {
         result = controller + '.' + action
