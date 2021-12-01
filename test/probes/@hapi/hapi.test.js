@@ -232,7 +232,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   }
 
   async function disabledTest () {
-    ao.probes.vision.enabled = false
+    ao.probes['@hapi/vision'].enabled = false
     const server = await makeViewServer()
 
     server.route({
@@ -254,7 +254,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const validations = [checks.httpEntry, checks.hapiEntry, checks.hapiExit, checks.httpExit]
 
     helper.doChecks(emitter, validations, function () {
-      ao.probes.vision.enabled = true
+      ao.probes['@hapi/vision'].enabled = true
       server.listener.close(_resolve)
     })
 
@@ -300,7 +300,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName', function () {
     // supply a simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
@@ -311,7 +311,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName with domain prefix', function () {
     // simple custom function
     function custom (request) {
-      const result = 'new-name.' + request.method + request.route.path
+      const result = 'hapi.hello.' + request.method + request.route.path
       return result
     }
 
@@ -401,13 +401,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
               // nothing to do if custom name function blows up.
             }
           }
-          /*
-          if (custom && custom(customReq)) {
-            expectedCustom = custom(customReq)
-          } else {
-            expectedCustom = expected('tx')
-          }
-          // */
+          //
           if (ao.cfg.domainPrefix) {
             expectedCustom = customReq.headers.host + '/' + expectedCustom
           }
@@ -440,23 +434,12 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
     const pathToUse = request.route.path
 
     return function (what) {
-      let controller
-      let action
       let result
 
-      if (ao.probes.hapi.legacyTxname) {
-        // old way of setting these
-        // Controller = request.route.path
-        // Action = func.name || '(anonymous)'
-        controller = pathToUse
-        action = func.name || '(anonymous)'
-      } else {
-        // new way
-        // Controller = 'hapi.' + (func.name || '(anonymous)')
-        // Action = request.method + request.route.path
-        controller = 'hapi.' + (func.name || '(anonymous)')
-        action = request.method + pathToUse
-      }
+      // Controller = 'hapi.' + (func.name || '(anonymous)')
+      // Action = request.method + request.route.path
+      const controller = 'hapi.' + (func.name || '(anonymous)')
+      const action = request.method + pathToUse
 
       if (what === 'tx') {
         result = controller + '.' + action
