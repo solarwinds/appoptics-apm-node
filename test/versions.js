@@ -46,7 +46,6 @@ test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
 
-
 if (node('gte', '11.0.0')) {
   test('@hapi/hapi', {
     ranges: [
