@@ -211,7 +211,6 @@ most commonly used when setting custom names for all or most routes.
 ```js
 // custom transaction function signatures for supported probes:
 express: customFunction (req, res)
-hapi: customFunction (request)
 ```
 <a name="ao.readyToSample"></a>
 
