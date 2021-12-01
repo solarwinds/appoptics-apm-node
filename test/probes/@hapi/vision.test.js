@@ -213,7 +213,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   }
 
   async function disabledTest () {
-    ao.probes.vision.enabled = false
+    ao.probes['@hapi/vision'].enabled = false
     const server = await makeViewServer()
 
     server.route({
@@ -244,7 +244,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      ao.probes.vision.enabled = true
+      ao.probes['@hapi/vision'].enabled = true
       server.listener.close(_resolve)
     })
 
