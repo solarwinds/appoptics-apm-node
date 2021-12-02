@@ -30,7 +30,6 @@ The configuration file can supply the following properties, showing their defaul
   enabled: true,
   hostnameAlias: undefined,
   domainPrefix: false,
-  ignoreConflicts: false,
   traceMode: 'enabled',
   runtimeMetrics: true,
   transactionSettings: undefined,
@@ -53,7 +52,6 @@ The configuration file can supply the following properties, showing their defaul
 |proxy||Proxy that does not require authentication: `http://proxy-server:3306`. Proxy that does require Basic Authentication: `http://user:password@proxy-server:3306`.|
 |hostnameAlias||A logical hostname that can be used to easily identify the host.|
 |domainPrefix|`false`|Prefix transaction names with the domain name.|
-|ignoreConflicts|`false`|Appoptics will disable itself when conflicting APM products are loaded unless this is set to `true`.|
 |traceMode|`'enabled'`|Mode `'enabled'` will cause Appoptics to sample as many requests as possible. Mode 'disabled' will disable sampling and metrics.|
 |runtimeMetrics|`true`|Collect runtime metrics characterizing the performance of node and v8|
 |transactionSettings|`undefined`|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only `'url'` is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B. if inserting a regex into a JSON configuration file you must enter the string that is expected by the `RegExp` constructor because JSON has no representation of a `RegExp` object. `trace-setting` is either `'enabled'` or `'disabled'`.|
