@@ -227,7 +227,6 @@ describe('get-unified-config', function () {
         enabled: false,
         hostnameAlias: 'bruce',
         serviceKey: 'f'.repeat(64),
-        ignoreConflicts: true,
         domainPrefix: false
       }
       writeConfigJSON(config)
@@ -407,7 +406,6 @@ describe('get-unified-config', function () {
         enabled: false,
         hostnameAlias: 'bruce',
         serviceKey: 'f'.repeat(64),
-        ignoreConflicts: true,
         domainPrefix: false,
         unifiedLogging: 'never'
       }
