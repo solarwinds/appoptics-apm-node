@@ -1,8 +1,4 @@
 /* global it, describe, before, beforeEach, after, afterEach */
-
-// note: expect() triggers a lint no-unused-expressions. no apparent reason
-/* eslint-disable no-unused-expressions */
-
 'use strict'
 
 //
@@ -16,7 +12,6 @@ const util = require('util')
 
 const addon = ao.addon
 
-const semver = require('semver')
 const axios = require('axios')
 
 if (process.env.AO_TEST_HTTP !== 'http' && process.env.AO_TEST_HTTP !== 'https') {
@@ -28,15 +23,8 @@ const p = process.env.AO_TEST_HTTP
 
 const driver = require(p)
 
-let createServer = function (options, requestListener) {
+const createServer = function (options, requestListener) {
   return driver.createServer(options, requestListener)
-}
-
-if (p === 'http' && semver.lte(process.version, '9.6.0')) {
-  // the options argument was added to the http module in v9.6.0
-  createServer = function (options, requestListener) {
-    return driver.createServer(requestListener)
-  }
 }
 
 const httpsOptions = {
@@ -199,7 +187,7 @@ describe(`probes.${p}`, function () {
         axios(
           `${p}://localhost:${port}/foo?bar=baz`,
           function (error, response, body) {
-            expect(response.headers).exist
+            expect(response.headers).exist()()
             expect(response.headers).property('x-trace')
           }
         )
@@ -238,7 +226,7 @@ describe(`probes.${p}`, function () {
           headers: {}
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
@@ -275,7 +263,7 @@ describe(`probes.${p}`, function () {
           }
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
@@ -312,7 +300,7 @@ describe(`probes.${p}`, function () {
           }
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
@@ -352,7 +340,7 @@ describe(`probes.${p}`, function () {
           }
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
         })
@@ -426,7 +414,7 @@ describe(`probes.${p}`, function () {
           }
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
         })
@@ -460,7 +448,7 @@ describe(`probes.${p}`, function () {
           headers: { tracestate: baseTracestateOrgPart }
         },
         function (error, response, body) {
-          expect(response.headers).exist
+          expect(response.headers).exist()
           expect(response.headers).property('x-trace')
           expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
         })
@@ -1194,23 +1182,7 @@ describe(`probes.${p}`, function () {
       })
     })
 
-    // this fails with the following error on node v10.9.0 to v10.14.1
-    // it might fail before 10.9.0 but it succeeds with node 8. there
-    // are fixes related to errors on streams in 10.14.2, so it seems
-    // reasonable to consider the failures as related to a node bug.
-    /**
-     * Error: Parse Error
-     *  at Socket.socketOnData (_http_client.js:441:20)
-     *  at addChunk (_stream_readable.js:283:12)
-     *  at readableAddChunk (_stream_readable.js:264:11)
-     *  at Socket.Readable.push (_stream_readable.js:219:10)
-     *  at TCP.onread (net.js:639:20)
-     */
     it('should report an error when the server has a socket error', function (testDone) {
-      if (semver.satisfies(process.version, '>= 10.9.0 <= 10.14.1')) {
-        return this.skip()
-      }
-
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false
