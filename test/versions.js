@@ -32,8 +32,6 @@ test('zlib')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', selectone(process.version, [
-  { selector: '>= 8.0.0 < 10.0.0', targetSelector: '>= 1.0.3 < 3.0.0 || > 3.0.0' },
-  { selector: '>= 10.0.0 < 12.0.0', targetSelector: '>= 3.0.0' },
   // version 4.0.0 doesn't work on alpine
   { selector: '>= 12.0.0', targetSelector: loi.id !== 'alpine' ? '>= 3.0.6' : '>= 3.0.6 < 4.0.0 || >= 4.0.1' }
 ]))
