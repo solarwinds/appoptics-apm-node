@@ -20,9 +20,6 @@ const pkg = require('generic-pool/package')
 const v3 = semver.satisfies(pkg.version, '>= 3')
 const ifv3 = v3 ? it : it.skip
 const ifv2 = v3 ? it.skip : it
-const nodeVersion = semver.major(process.version)
-
-const hasAsync = nodeVersion >= 8
 
 let n = 0
 const max = 2
@@ -224,14 +221,7 @@ describe(`probes.generic-pool ${pkg.version}`, function () {
         done(e)
       })
 
-      let acquire
-      if (hasAsync) {
-        // kind of ugly, but how else to get around JavaScript  < 8 issuing a
-        // syntax error?
-        eval('acquire = (async function () {return await pool.acquire()}).bind(pool)')
-      } else {
-        acquire = pool.acquire.bind(pool)
-      }
+      const acquire = async function () { return await pool.acquire() }
 
       //
       // now get the second resource when it's available. it should be available
