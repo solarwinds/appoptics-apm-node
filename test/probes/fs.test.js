@@ -7,7 +7,6 @@ const expect = require('chai').expect
 
 const noop = helper.noop
 
-const semver = require('semver')
 const path = require('path')
 const fs = require('fs')
 ao.probes.fs.collectBacktraces = false
@@ -133,13 +132,7 @@ describe('probes.fs', function () {
       name: 'exists',
       args: ['fs-output/foo.bar'],
       subs: function () {
-        // node changed exists so it calls fs.access. It might have changed
-        // before 10 but we're only supporting LTS versions.
-        if (semver.lt(process.version, '10.0.0')) {
-          return undefined
-        }
-        // and now it doesn't call fs.access again.
-        if (semver.gt(process.version, '10.15.0') && mode === 'sync') {
+        if (mode === 'sync') {
           return undefined
         }
 
@@ -170,17 +163,10 @@ describe('probes.fs', function () {
       name: 'readFile',
       args: ['fs-output/foo.bar'],
       subs: function () {
-        // 6.0.0-rc.* does not satisfy >1.0.0? WAT?
-        const v = process.versions.node.split('-').shift()
-        if (semver.satisfies(v, '>1.0.0', true) && mode !== 'sync') {
+        if (mode !== 'sync') {
           return []
         }
-        // node changed readFile so there is no call to fstat
-        // between versions 6 and 8.
         const expected = [span('open')]
-        if (semver.satisfies(v, '<8.0.0')) {
-          expected.push(span('fstat'))
-        }
         return expected.concat([span('read'), span('close')])
       }
     },
@@ -272,18 +258,11 @@ describe('probes.fs', function () {
       name: 'realpath',
       args: ['fs-output/foo.bar.link'],
       log: false,
-      // realpath does an lstat at each for every element of the path prior to
-      // version 6 and after 6.3, except between 6.3.x and 8 the sync version does
-      // not call lstat at all (https://github.com/nodejs/node/commit/71097744b2)
       subs: function () {
-        const v = process.versions.node.split('-').shift()
-        if (semver.satisfies(v, '>=8') && mode === 'sync') {
+        if (mode === 'sync') {
           return []
         }
-        if (semver.satisfies(v, '<6') || semver.satisfies(v, '>6.3')) {
-          return resolved.split('/').slice(1).map(function () { return span('lstat') })
-        }
-        return []
+        return resolved.split('/').slice(1).map(function () { return span('lstat') })
       }
     },
     // fs.lstat
