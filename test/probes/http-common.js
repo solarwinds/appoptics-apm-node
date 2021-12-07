@@ -187,7 +187,7 @@ describe(`probes.${p}`, function () {
         axios(
           `${p}://localhost:${port}/foo?bar=baz`,
           function (error, response, body) {
-            expect(response.headers).exist()()
+            expect(response.headers).exist()
             expect(response.headers).property('x-trace')
           }
         )
