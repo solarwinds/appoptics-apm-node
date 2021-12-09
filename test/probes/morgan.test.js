@@ -30,7 +30,7 @@ function checkEventInfo (eventInfo, req, res, traceId) {
   }
 
   // eslint-disable-next-line max-len
-  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[A-F0-9]{32}-(0|1)))?`
+  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[a-f0-9]{32}-(0|1)))?`
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
 
