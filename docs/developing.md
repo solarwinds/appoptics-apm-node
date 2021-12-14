@@ -132,7 +132,7 @@ The script will:
 
 To start fresh on the dev repo run `npm run dev:repo:reset` again.
 
-When running a [Release](#release---push-version-tag) process on the dev repo, the package will be published to https://www.npmjs.com/package/appoptics-apm-node-dev. It should be [unpublished](https://docs.npmjs.com/unpublishing-packages-from-the-registry) as soon as possible.
+When running a Release process on the dev repo, the package will be published to https://www.npmjs.com/package/appoptics-apm-node-dev. It should be [unpublished](https://docs.npmjs.com/unpublishing-packages-from-the-registry) as soon as possible.
 
 
 # Additional Info
