@@ -300,7 +300,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName', function () {
     // supply a simple custom function
     function custom (request) {
-      const result = 'hapi.hello.' + request.method + request.route.path
+      const result = 'new-name.' + request.method + request.route.path
       return result
     }
 
@@ -311,7 +311,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   it('should allow a custom TransactionName with domain prefix', function () {
     // simple custom function
     function custom (request) {
-      const result = 'hapi.hello.' + request.method + request.route.path
+      const result = 'new-name.' + request.method + request.route.path
       return result
     }
 
@@ -372,7 +372,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
         }
       })
 
-      ao.setCustomTxNameFunction('hapi', custom)
+      ao.setCustomTxNameFunction('@hapi/hapi', custom)
 
       let _resolve
       const p = new Promise(function (resolve, reject) {
