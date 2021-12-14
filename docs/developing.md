@@ -137,5 +137,5 @@ When running a [Release](#release---push-version-tag) process on the dev repo, t
 
 # Additional Info
 
-[Development & Release with GitHub Actions ](./github-actions)
-[Release Process](./release-process.md)
+* [Development & Release with GitHub Actions ](./github-actions.md)
+* [Release Process](./release-process.md)
