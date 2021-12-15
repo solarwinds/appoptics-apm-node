@@ -47,14 +47,14 @@ const tests = [
     options: 'trigger-trace;custom-something=value;custom-OtherThing=other val;sw-keys=029734wr70:9wqj21,0d9j1',
     sample: true,
     expected: 'trigger-trace=ok',
-    expectedKeys: oa({ PDKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }, ttKey)
+    expectedKeys: oa({ SWKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }, ttKey)
   },
   {
     desc: 'remove leading/trailing spaces',
     options: 'custom-something=value; custom-OtherThing = other val ;sw-keys=029734wr70:9wqj21,0d9j1',
     sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: { PDKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }
+    expectedKeys: { SWKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }
   },
   {
     desc: 'report and log ignored keys',
@@ -75,7 +75,7 @@ const tests = [
     options: 'custom-something=keep_this_0;sw-keys=keep_this;sw-keys=029734wrqj21,0d9;custom-something=otherval',
     sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: { 'custom-something': 'keep_this_0', PDKeys: 'keep_this' },
+    expectedKeys: { 'custom-something': 'keep_this_0', SWKeys: 'keep_this' },
     invalidKeys: ttKey
   },
   {
@@ -97,14 +97,14 @@ const tests = [
     options: ';trigger-trace;custom-something=value_thing;sw-keys=02973r70:9wqj21,0d9j1;1;2;3;4;5;=custom-key=val?;=',
     sample: true,
     expected: 'trigger-trace=ok;ignored=1,2,3,4,5,',
-    expectedKeys: oa({ 'custom-something': 'value_thing', PDKeys: '02973r70:9wqj21,0d9j1' }, ttKey)
+    expectedKeys: oa({ 'custom-something': 'value_thing', SWKeys: '02973r70:9wqj21,0d9j1' }, ttKey)
   },
   {
     desc: 'handle multiple sequential ;;;',
     options: 'custom-something=value_thing;sw-keys=02973r70;;;;custom-key=val',
     sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: { 'custom-something': 'value_thing', PDKeys: '02973r70', 'custom-key': 'val' }
+    expectedKeys: { 'custom-something': 'value_thing', SWKeys: '02973r70', 'custom-key': 'val' }
   },
   //
   // from results-matrix, variations on responses for different scenarios
@@ -116,7 +116,7 @@ const tests = [
     sig: 'good',
     sample: true,
     expected: 'auth=ok;trigger-trace=ok',
-    expectedKeys: oa({ PDKeys: pdKeysValue }, ttKey)
+    expectedKeys: oa({ SWKeys: pdKeysValue }, ttKey)
   },
   {
     desc: 'respond that a signature is not valid',
@@ -191,7 +191,7 @@ const tests = [
     outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=ignored',
-    expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
+    expectedKeys: { SWKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
   // if traceparnet/tracestateand unsigned x-trace-options without trigger-trace request are valid, obey traceparnet/tracestate
@@ -201,7 +201,7 @@ const tests = [
     outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=not-requested',
-    expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
+    expectedKeys: { SWKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
   // if traceparnet/tracestate and signed x-trace-options with trigger-trace, obey traceparnet/tracestate
@@ -213,7 +213,7 @@ const tests = [
     outHeaders: 1,
     sample: true,
     expected: 'auth=ok;trigger-trace=ignored',
-    expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
+    expectedKeys: { SWKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
   {
@@ -224,7 +224,7 @@ const tests = [
     outHeaders: 0,
     sample: false,
     expected: 'auth=ok;trigger-trace=ignored',
-    expectedKeys: { PDKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
+    expectedKeys: { SWKeys: pdKeysValue, 'custom-xyzzy': 'plover' },
     invalidKeys: ttKey
   },
   // if traceparnet/tracestate and bad sig x-trace-options without trigger-trace request, do neither
