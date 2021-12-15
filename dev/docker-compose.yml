@@ -15,9 +15,9 @@ services:
       - ~/.aws/config:/root/.aws/config
     working_dir: /usr/src/work
     env_file:
-      - ../.env # contains AO_TOKEN_STG, AO_TOKEN_PROD, APPOPTICS_SERVICE_KEY. TODO: remove last after modifying tests
+      - ../.env # contains AO_TOKEN_STG, AO_TOKEN_PROD, APPOPTICS_SERVICE_KEY.
     environment:
-      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug,info
+      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
       APPOPTICS_COLLECTOR: localhost:7832
       APPOPTICS_REPORTER: udp
 
