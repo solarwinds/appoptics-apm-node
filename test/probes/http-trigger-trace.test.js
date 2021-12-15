@@ -44,14 +44,14 @@ const tests = [
   //
   {
     desc: 'handle a valid x-trace-options header',
-    options: 'trigger-trace;custom-something=value;custom-OtherThing=other val;pd-keys=029734wr70:9wqj21,0d9j1',
+    options: 'trigger-trace;custom-something=value;custom-OtherThing=other val;sw-keys=029734wr70:9wqj21,0d9j1',
     sample: true,
     expected: 'trigger-trace=ok',
     expectedKeys: oa({ PDKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }, ttKey)
   },
   {
     desc: 'remove leading/trailing spaces',
-    options: 'custom-something=value; custom-OtherThing = other val ;pd-keys=029734wr70:9wqj21,0d9j1',
+    options: 'custom-something=value; custom-OtherThing = other val ;sw-keys=029734wr70:9wqj21,0d9j1',
     sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: { PDKeys: '029734wr70:9wqj21,0d9j1', 'custom-something': 'value', 'custom-OtherThing': 'other val' }
@@ -72,7 +72,7 @@ const tests = [
   },
   {
     desc: 'keep the value of the first repeated key',
-    options: 'custom-something=keep_this_0;pd-keys=keep_this;pd-keys=029734wrqj21,0d9;custom-something=otherval',
+    options: 'custom-something=keep_this_0;sw-keys=keep_this;sw-keys=029734wrqj21,0d9;custom-something=otherval',
     sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: { 'custom-something': 'keep_this_0', PDKeys: 'keep_this' },
@@ -94,14 +94,14 @@ const tests = [
   },
   {
     desc: 'handle missing keys',
-    options: ';trigger-trace;custom-something=value_thing;pd-keys=02973r70:9wqj21,0d9j1;1;2;3;4;5;=custom-key=val?;=',
+    options: ';trigger-trace;custom-something=value_thing;sw-keys=02973r70:9wqj21,0d9j1;1;2;3;4;5;=custom-key=val?;=',
     sample: true,
     expected: 'trigger-trace=ok;ignored=1,2,3,4,5,',
     expectedKeys: oa({ 'custom-something': 'value_thing', PDKeys: '02973r70:9wqj21,0d9j1' }, ttKey)
   },
   {
     desc: 'handle multiple sequential ;;;',
-    options: 'custom-something=value_thing;pd-keys=02973r70;;;;custom-key=val',
+    options: 'custom-something=value_thing;sw-keys=02973r70;;;;custom-key=val',
     sample: true,
     expected: 'trigger-trace=not-requested',
     expectedKeys: { 'custom-something': 'value_thing', PDKeys: '02973r70', 'custom-key': 'val' }
@@ -111,7 +111,7 @@ const tests = [
   //
   {
     desc: 'handle a valid signature',
-    options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     sample: true,
@@ -120,7 +120,7 @@ const tests = [
   },
   {
     desc: 'respond that a signature is not valid',
-    options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};ts=\${ts}`,
     ts: 'ts',
     sig: 'bad',
     sample: false,
@@ -128,7 +128,7 @@ const tests = [
   },
   {
     desc: 'respond that an expired timestamp is not valid',
-    options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};ts=\${ts}`,
     ts: 'expired',
     sig: 'good',
     sample: false,
@@ -136,14 +136,14 @@ const tests = [
   },
   {
     desc: 'respond that a missing timestamp is not valid',
-    options: `trigger-trace;pd-keys=${pdKeysValue}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue}`,
     sig: 'good',
     sample: false,
     expected: 'auth=bad-timestamp'
   },
   {
     desc: 'respond that trigger trace is disabled when it is',
-    options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     sample: false,
@@ -153,7 +153,7 @@ const tests = [
   },
   {
     desc: 'respond that tracing is disabled when it is',
-    options: `trigger-trace;pd-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};${signedCustomKey}=${signedCustomValue};ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     sample: false,
@@ -163,7 +163,7 @@ const tests = [
   },
   {
     desc: 'verify mocked rate-limiting returns the right message',
-    options: `trigger-trace;pd-keys=${pdKeysValue}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue}`,
     sample: false,
     setup: wrapGTS,
     teardown: unwrapGTS,
@@ -171,7 +171,7 @@ const tests = [
   },
   {
     desc: 'verify that signed-mocked rate-limiting returns the right message',
-    options: `trigger-trace;pd-keys=${pdKeysValue};ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     sample: false,
@@ -187,7 +187,7 @@ const tests = [
   // if traceparnet/tracestate and unsigned x-trace-options trigger-trace request are valid, obey traceparnet/tracestate
   {
     desc: 'prioritize an traceparnet/tracestate header over unsigned trigger-trace request',
-    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};custom-xyzzy=plover`,
     outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=ignored',
@@ -197,7 +197,7 @@ const tests = [
   // if traceparnet/tracestateand unsigned x-trace-options without trigger-trace request are valid, obey traceparnet/tracestate
   {
     desc: 'add x-trace-options KV pairs to an existing x-trace',
-    options: `pd-keys=${pdKeysValue};custom-xyzzy=plover`,
+    options: `sw-keys=${pdKeysValue};custom-xyzzy=plover`,
     outHeaders: 1,
     sample: true,
     expected: 'trigger-trace=not-requested',
@@ -207,7 +207,7 @@ const tests = [
   // if traceparnet/tracestate and signed x-trace-options with trigger-trace, obey traceparnet/tracestate
   {
     desc: 'add x-trace-options KV pairs to an existing x-trace',
-    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     outHeaders: 1,
@@ -218,7 +218,7 @@ const tests = [
   },
   {
     desc: 'add x-trace-options KV pairs to an existing x-trace',
-    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'good',
     outHeaders: 0,
@@ -230,7 +230,7 @@ const tests = [
   // if traceparnet/tracestate and bad sig x-trace-options without trigger-trace request, do neither
   {
     desc: 'invalidate both x-trace and x-trace-options on bad signature',
-    options: `pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    options: `sw-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'bad',
     outHeaders: 1,
@@ -240,7 +240,7 @@ const tests = [
   // if traceparnet/tracestate and bad sig on x-trace-options with trigger-trace request, do neither
   {
     desc: 'invalidate both x-trace and x-trace-options with trigger-trace on bad signature',
-    options: `trigger-trace;pd-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
+    options: `trigger-trace;sw-keys=${pdKeysValue};custom-xyzzy=plover;ts=\${ts}`,
     ts: 'ts',
     sig: 'bad',
     outHeaders: 1,
