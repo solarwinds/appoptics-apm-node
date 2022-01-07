@@ -58,7 +58,7 @@ The configuration file can supply the following properties, showing their defaul
 |ec2MetadataTimeout|`1000`|Milliseconds to wait for the ec2/openstack metadata service to respond|
 |insertTraceIdsIntoLogs|`false`|Insert trace IDs into supported logging packages' output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
 |insertTraceIdsIntoMorgan|`false`|Append trace IDs to morgan log lines. Because morgan does not output JSON the morgan formats must be modified to enable the trace IDs to be appended. This is a more invasive approach than inserting a property in a JSON object so it requires this explicit setting. The options are the same as for `insertTraceIdsIntoLogs`.|
-|createTraceIdsToken|`undefined`|Create a token that can be used in a logging package's format string. If set to `'morgan'` the token `ao-auto-trace-id` will be created and `:ao-auto-trace-id` can be used in morgan format strings.|
+|createTraceIdsToken|`undefined`|Create a token that can be used in a logging package's format string. If set to `'morgan'` the token `sw-auto-trace-id` will be created and `:sw-auto-trace-id` can be used in morgan format strings.|
 |triggerTraceEnabled|`true`|Enable or disable the trigger-trace feature. Option values are `true` and `false`|
 
 
