@@ -29,8 +29,7 @@ function checkEventInfo (eventInfo, req, res, traceId) {
     console.log('checkEventInfo()', eventInfo)
   }
 
-  // eslint-disable-next-line max-len
-  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[a-f0-9]{32}-(0|1)))?`
+  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)))?`
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
 
@@ -72,19 +71,6 @@ class TestStream extends EventEmitter {
       setImmediate(cb)
     }
   }
-}
-
-//
-// get a trace string via a different function than the logging insertion uses.
-//
-function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan')
-  if (!topSpan) {
-    return `${'0'.repeat(32)}-0`
-  }
-  const firstEvent = topSpan.events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32)
 }
 
 const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
