@@ -108,7 +108,8 @@ function checkEventInfo3 (eventInfo, level, message, traceId) {
   }
   expect(eventInfo).deep.include(expected)
   if (traceId) {
-    expect(eventInfo.ao).deep.equal({ traceId })
+    const parts = traceId.toString().split('-')
+    expect(eventInfo.sw).deep.equal({ trace_id: parts[1], span_id: parts[2], trace_flags: parts[3] })
   }
   expect(eventInfo.timestamp).match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)
 }
@@ -152,12 +153,6 @@ const makeHelperArgs = {
   2: function () { return [...arguments] },
   1: function () { return [...arguments] }
 }[major]
-
-function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan').events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return topSpan.toString(2 | 16 | 32)
-}
 
 const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
 
@@ -250,7 +245,7 @@ describe(`winston v${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.lastEvent.toString()
           logger.log(...makeLogArgs(level, message))
         })
         done()
@@ -281,7 +276,7 @@ describe(`winston v${version}`, function () {
       ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString()
+        traceId = ao.lastEvent.toString()
         expect(traceId[traceId.length - 1] === 0, 'traceId should be unsampled')
         // log
         logger.log(...makeLogArgs(level, message))
@@ -305,7 +300,7 @@ describe(`winston v${version}`, function () {
 
     logger.log(...makeLogArgs(level, message))
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(32)}-0`)
+    checkEventInfo(eventInfo, level, message, `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
@@ -319,7 +314,7 @@ describe(`winston v${version}`, function () {
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger.error(...makeHelperArgs(message))
       setTimeout(function () {
         cb()
@@ -352,7 +347,7 @@ describe(`winston v${version}`, function () {
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger.log(...makeLogArgs(level, message))
       return new Promise((resolve, reject) => {
         setTimeout(function () {
@@ -396,8 +391,8 @@ describe(`winston v${version}`, function () {
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
-          logger.log(level, message, getTraceIdString())
+          traceId = ao.lastEvent.toString()
+          logger.log(level, message, traceId)
         })
         done()
       },
