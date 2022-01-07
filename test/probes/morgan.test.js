@@ -18,25 +18,23 @@ const major = semver.major(version)
 
 const { EventEmitter } = require('events')
 
-let debugging = true
+let debugging = false
 
-// if no traceId is passed then don't expect {ao: {traceId}}
 function checkEventInfo (eventInfo, req, res, traceId) {
   const method = req.method
   const url = req.url
   const status = res.statusCode
+
   if (debugging) {
-    // eslint-disable-next-line no-console
     console.log('checkEventInfo()', eventInfo)
   }
 
-  // eslint-disable-next-line max-len
-  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[a-f0-9]{32}-(0|1)))?`
+  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)))?`
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
+
   // output some debugging help if these don't match
   if (!m) {
-    // eslint-disable-next-line no-console
     console.log('eventInfo', eventInfo, 'match', m)
   }
 
@@ -44,7 +42,8 @@ function checkEventInfo (eventInfo, req, res, traceId) {
   expect(m.length).equal(4)
 
   if (traceId) {
-    expect(m[2]).equal(`ao.traceId=${traceId}`)
+    const parts = traceId.split('-')
+    expect(m[2]).equal(`trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`)
     expect(m[3]).ok
   } else {
     expect(m[2]).not.ok
@@ -66,26 +65,12 @@ class TestStream extends EventEmitter {
   write (object, enc, cb) {
     this.emit('test-log', object)
     if (this.debugging) {
-      // eslint-disable-next-line no-console
-      // console.log(object);
+      console.log(object)
     }
     if (cb) {
       setImmediate(cb)
     }
   }
-}
-
-//
-// get a trace string via a different function than the logging insertion uses.
-//
-function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan')
-  if (!topSpan) {
-    return `${'0'.repeat(32)}-0`
-  }
-  const firstEvent = topSpan.events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32)
 }
 
 const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
@@ -191,6 +176,7 @@ describe(`probes.morgan ${version}`, function () {
 
     emitter = helper.appoptics(done)
   })
+
   afterEach(function (done) {
     emitter.close(done)
   })
@@ -218,7 +204,6 @@ describe(`probes.morgan ${version}`, function () {
 
     it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
       let traceId
-      debugging = false
 
       // this gets reset in beforeEach() so set it in the test.
       ao.cfg.insertTraceIdsIntoMorgan = mode
@@ -231,7 +216,7 @@ describe(`probes.morgan ${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           // log
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
@@ -261,7 +246,6 @@ describe(`probes.morgan ${version}`, function () {
 
     it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function (done) {
       let traceId
-      debugging = false
 
       // reset in beforeEach() so set in each test.
       ao.cfg.insertTraceIdsIntoMorgan = mode
@@ -270,17 +254,18 @@ describe(`probes.morgan ${version}`, function () {
       ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString()
-        expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
         // log
         logger(fakeReq, fakeRes, function (err) {
           expect(err).not.ok
           // let the listener run
           setImmediate(function () {
+            traceId = ao.lastEvent.toString()
+            expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
             checkEventInfo(eventInfo, fakeReq, fakeRes, maybe ? undefined : traceId)
             done()
           })
         })
+
         fakeRes.writeHead(200)
         fakeRes.finished = true
 
@@ -302,21 +287,21 @@ describe(`probes.morgan ${version}`, function () {
 
     it(`should ${maybe}insert in when mode=${mode} using a format function`, function (done) {
       let traceId
-      debugging = false
 
       // this gets reset in beforeEach() so set it in the test.
       ao.cfg.insertTraceIdsIntoMorgan = mode
       logger = makeLogger(function () { return 'xyzzy' })
 
       function localDone () {
-        const expected = mode === false ? '' : ` ao.traceId=${traceId}`
+        const parts = traceId.split('-')
+        const expected = mode === false ? '' : ` trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`
         expect(eventInfo).equal(`xyzzy${expected}\n`)
         done()
       }
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           // log
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
@@ -343,7 +328,7 @@ describe(`probes.morgan ${version}`, function () {
   //
   it('mode=\'always\' should always insert a trace ID even if not tracing', function (done) {
     ao.requestStore.run(function () {
-      const traceId = getTraceIdString()
+      const traceId = `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`
       ao.lastEvent = undefined
 
       ao.cfg.insertTraceIdsIntoMorgan = 'always'
@@ -367,7 +352,6 @@ describe(`probes.morgan ${version}`, function () {
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
     let traceId
-    debugging = false
 
     logger = makeLogger()
 
@@ -377,11 +361,11 @@ describe(`probes.morgan ${version}`, function () {
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString()
       logger(fakeReq, fakeRes, function (err) {
         expect(err).not.ok
       })
       setImmediate(function () {
+        traceId = ao.lastEvent.toString()
         cb()
       })
       fakeRes.writeHead(200)
@@ -413,7 +397,7 @@ describe(`probes.morgan ${version}`, function () {
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       return new Promise((resolve, reject) => {
         logger(fakeReq, fakeRes, function (err) {
           expect(err).not.ok
@@ -448,10 +432,17 @@ describe(`probes.morgan ${version}`, function () {
     let traceId
 
     logger = makeLogger('traceThis::my-trace-id')
-    morgan.token('my-trace-id', ao.getFormattedTraceId)
+
+    const myTraceId = () => {
+      const parts = ao.lastEvent ? ao.lastEvent.toString().split('-') : ['00', '0'.repeat(32), '0'.repeat(16), '0'.repeat(2)]
+      return `trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`
+    }
+    morgan.token('my-trace-id', myTraceId)
 
     function localDone () {
-      expect(eventInfo).equal(`traceThis:${traceId}\n`)
+      const parts = traceId.split('-')
+      const expected = `trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`
+      expect(eventInfo).equal(`traceThis:${expected}\n`)
       done()
     }
 
@@ -459,7 +450,7 @@ describe(`probes.morgan ${version}`, function () {
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
           })
