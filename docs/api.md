@@ -53,7 +53,6 @@
     * [.reportInfo(data)](#ao.reportInfo)
     * ~~[.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>~~
     * [.sendMetrics(metrics, [gopts])](#ao.sendMetrics) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
-    * [.getFormattedTraceId()](#ao.getFormattedTraceId) ⇒ <code>string</code>
     * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
     * [.wrapLambdaHandler([handler])](#ao.wrapLambdaHandler) ⇒ <code>function</code>
 
@@ -603,31 +602,6 @@ ao.sendMetrics(
   {tags: {class: 'status'}}
 );
 ```
-<a name="ao.getFormattedTraceId"></a>
-
-### ao.getFormattedTraceId() ⇒ <code>string</code>
-Get the abbreviated trace ID format used for logs.
-
-**Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>string</code> - - 40 character trace identifier - sample flag  
-**Example**  
-```js
-//
-// using morgan in express
-//
-const ao = require('appoptics');
-const Express = require('express');
-const app = new Express();
-const morgan = require('morgan');
-
-// define a format with a new token in it, 'trace-id' or a name of your choosing.
-const logFormat = ':method :url :status :res[content-length] :trace-id - :response-time ms';
-// define a token for the name used in the format. return
-morgan.token('trace-id', function (req, res) {return ao.getFormattedTraceId();});
-const logger = morgan(logFormat, {...});
-app.use(logger);
-// now the 42-character trace-id will be added to log entries.
-```
 <a name="ao.insertLogObject"></a>
 
 ### ao.insertLogObject([object]) ⇒ <code>object</code>
@@ -636,11 +610,12 @@ to auto-insert traceIds into JSON-like logs; it's documented so it can be used f
 packages or by those wishing a higher level of control.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>object</code> - - the object with the an additional property, ao, e.g., object.ao === {traceId: ...}.  
+**Returns**: <code>object</code> - - the object with the an additional properties, ao, e.g.
+object.sw === {trace_id:..., span_id: ..., trace_flages: ...}.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [object] | <code>object</code> | inserts an ao log object containing a traceId property when conditions are met. |
+| [object] | <code>object</code> | ito which an sw log object containing trace_id, span_id, trace_flages  properties is inserted when conditions are met. |
 
 **Example**  
 ```js
@@ -666,7 +641,7 @@ const logger = winston.createLogger({
 
 logger.info(ao.insertLogObject({
     message: 'this object is being modified by insertLogObject',
-    more: 'there will be an added ao property'
+    more: 'there will be an added sw property'
 }))
 ```
 <a name="ao.wrapLambdaHandler"></a>
