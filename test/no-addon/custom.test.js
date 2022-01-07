@@ -123,7 +123,6 @@ describe('custom (without native bindings present)', function () {
     assert(ao.reportError(new Error('xyzzy')) === undefined)
     assert(ao.reportInfo('this is info') === undefined)
     assert(ao.sendMetric() === -1)
-    assert(ao.getFormattedTraceId() === `${'0'.repeat(40)}-0`)
 
     let o = ao.insertLogObject()
     assert(typeof o === 'object')
