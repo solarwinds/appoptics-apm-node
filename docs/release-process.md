@@ -98,7 +98,7 @@ A release should **always** come after a prerelease. The head of the master bran
 9. Watch Verify workflow result
 
 ### Post Release
-1. Update [Release notes](https://github.com/appoptics/appoptics-apm-node/releases). "Click Draft new release" and choose tag of completed release.
+1. Update [Agent Release notes](https://github.com/appoptics/appoptics-apm-node/releases) and [Bindings Release Notes](https://github.com/appoptics/appoptics-bindings-node/releases). "Click Draft new release" and choose tag of completed release.
 2. Run Document workflow.
 3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/appoptics/appoptics-apm-node/blob/master/docs/supported-components.human) list.
 4. Announce new version in #ao-releases in Slack.
