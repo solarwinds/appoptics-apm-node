@@ -192,7 +192,7 @@ Bug fix
 Bug fix
 - avoid triggering non-existent property warning during module.exports on Node 14
 
-### v10.1.0 
+### v10.1.0
 
 Maintenance
 - Published using GitHub Actions
@@ -202,6 +202,19 @@ Maintenance
 - Updated and trimmed dependencies
 - Updated and trimmed files in package
 - Code lint
+
+Breaking changes
+- None
+
+### v10.2.0
+
+Features:
+- Added a config option to deregister the `fs` probe
+
+Maintenance
+- Modified agent initialization to minimize usage of patched `fs` at startup
+- Changed prepack script to fully support install from branch
+- Supports Node 17 (preview for 18)
 
 Breaking changes
 - None
