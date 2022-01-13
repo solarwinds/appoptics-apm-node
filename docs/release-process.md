@@ -29,6 +29,7 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 1. Create a prerelease branch (e.g Prerelease-2021-09-22)
 2. **ONLY IF needed** update bindings version to `prerelease`
   - ```npm install @appoptics/apm-bindings@prerelease```
+  - ```npm install --package-lock-only```
   - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
 3. On the branch, bump and tag prerelease version with the `prerelease` tag.
   - ```npm version prerelease --preid prerelease```
@@ -84,6 +85,7 @@ A release should **always** come after a prerelease. The head of the master bran
 2. Update [CHANGELOG.md](https://github.com/appoptics/appoptics-apm-node/blob/master/CHANGELOG.md)
 3. Update bindings version **ONLY IF needed**
   - ```npm install @appoptics/apm-bindings@latest```
+  - ```npm install --package-lock-only```
   - ```git commit -am "Updated @appoptics/apm-bindings to latest."```
 4. Bump and tag release version
   - ```npm version [<newversion> | major | minor | patch ]```
@@ -96,7 +98,7 @@ A release should **always** come after a prerelease. The head of the master bran
 9. Watch Verify workflow result
 
 ### Post Release
-1. Update [Release notes](https://github.com/appoptics/appoptics-apm-node/releases). "Click Draft new release" and choose tag of completed release.
+1. Update [Agent Release notes](https://github.com/appoptics/appoptics-apm-node/releases) and [Bindings Release Notes](https://github.com/appoptics/appoptics-bindings-node/releases). "Click Draft new release" and choose tag of completed release.
 2. Run Document workflow.
 3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/appoptics/appoptics-apm-node/blob/master/docs/supported-components.human) list.
 4. Announce new version in #ao-releases in Slack.
