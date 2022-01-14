@@ -14,7 +14,7 @@ is a great way to start.
 
 This is a **Linux Only package** with no Mac or Windows support. When installed on Mac or Windows (for development) it will degrade gracefully.
 
-It is compatible with Node versions 10, 12, 14 and 16. See [node status](https://github.com/nodejs/Release) for more.
+It is compatible with Node versions 14, 16 and 17. See [node status](https://github.com/nodejs/Release) for more.
 
 It is dependent on [@appoptics/apm-bindings](https://www.npmjs.com/package/@appoptics/apm-bindings) binary add-on. The AppOptics APM Agent will first attempt to install a prebuilt binary add-on using [node-pre-gyp](https://github.com/mapbox/node-pre-gyp) and only if that fails, will it attempt to build the add-on from source using [node-gyp](https://github.com/nodejs/node-gyp#on-unix).
 
