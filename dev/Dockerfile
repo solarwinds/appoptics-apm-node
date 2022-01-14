@@ -32,22 +32,18 @@ ENV NVM_DIR /root/.nvm
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
-# these are the stable versions as of November 2021
+# these are the stable versions as of January 2022
 # can't use lts alias due to all sorts of Dockerfile limitations.
 RUN source $NVM_DIR/nvm.sh \
-    && nvm install v14.18.1 \
-    && nvm install v17.0.1 \
+    && nvm install v17.2.0 \
     && nvm install v16.13.0 \
-    && nvm install v12.22.7 \
-    && nvm install v10.24.1 \
+    && nvm install v14.18.1 \
     && nvm install stable
 
-# currently package-lock lockfileVersion is 1
-# stay with 14.
 
 # add node and npm to path so the commands are available
-ENV NODE_PATH $NVM_DIR/v14.18.1/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v14.18.1/bin:$PATH
+ENV NODE_PATH $NVM_DIR/v16.13.0/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v16.13.0/bin:$PATH
 
 # Install tools needed for specific service tests (pg, oracle)
 RUN apt -y install \
