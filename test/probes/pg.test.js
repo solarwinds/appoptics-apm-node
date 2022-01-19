@@ -35,11 +35,11 @@ try {
   nativeVer = require('pg-native/package').version
   hasNative = true
 } catch (e) {
-  ao.loggers.test.info('test/probes/pg 6+ failed to load pg native')
+  ao.loggers.test.info('test/probes/pg failed to load pg native')
   hasNative = false
 }
 
-describe(`probes.pg6+ ${pkg.version} pg-native ${nativeVer}`, function () {
+describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
   let emitter
   const ctx = { ao, tName, addr }
 
