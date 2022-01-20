@@ -4,7 +4,7 @@
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
 
-const request = require('request')
+const axios = require('axios')
 const http = require('http')
 
 const director = require('director')
@@ -115,7 +115,7 @@ describe('probes.director ' + pkg.version, function () {
 
     server.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 
@@ -156,7 +156,7 @@ describe('probes.director ' + pkg.version, function () {
 
     server.listen(function () {
       const port = server.address().port
-      request('http://localhost:' + port + '/hello/world')
+      axios('http://localhost:' + port + '/hello/world')
     })
   })
 })
