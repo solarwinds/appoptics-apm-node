@@ -104,7 +104,7 @@ describe('composite.axios', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).property('Method', 'GET')
+          expect(msg).property('HTTPMethod', 'GET')
           expect(msg).property('Proto', 'http')
           expect(msg).property('HTTP-Host', 'localhost')
           expect(msg).property('Port', port)
