@@ -153,7 +153,8 @@ describe('probes.tedious ' + pkg.version, function () {
         msg.should.have.property('QueryArgs')
 
         const QueryArgs = JSON.parse(msg.QueryArgs)
-        const params = request.originalParameters
+        // api changed at that specific version...
+        const params = semver.gte(pkg.version, '11.0.10') ? request.parameters : request.originalParameters
 
         QueryArgs.should.have.property('num', findParam('num', params))
         QueryArgs.should.have.property('msg', findParam('msg', params))
@@ -207,7 +208,9 @@ describe('probes.tedious ' + pkg.version, function () {
       options: {
         enableArithAbort: true,
         tdsVersion: '7_1',
-        encrypt: false
+        encrypt: false,
+        validateBulkLoadParameters: true,
+        trustServerCertificate: true
       }
     }
     if (dbname) {
@@ -223,13 +226,15 @@ describe('probes.tedious ' + pkg.version, function () {
       connection.close()
     })
 
-    // api changed between versions
-    if (semver.gte(pkg.version, '10.0.0')) connection.connect()
+    connection.connect()
   }
 
   function findParam (name, params) {
-    return params.filter(function (v) {
+    const val = params.filter(function (v) {
       return v.name === name
     }).shift().value
+    // newer versions of package keep params as a buffer.
+    // which is reported as string for kv pair
+    return Buffer.isBuffer(val) ? val.toString() : val
   }
 })
