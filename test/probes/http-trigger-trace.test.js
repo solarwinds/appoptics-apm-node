@@ -376,7 +376,7 @@ describe('probes.http trigger-trace', function () {
       res.end('done')
     })
     server.listen(function () {
-      options = { url: `http://localhost:${server.address().port}` }
+      options = { url: `http://localhost:${server.address().port}/some.html?this=that` }
       p()
       done()
     })
@@ -464,12 +464,12 @@ describe('probes.http trigger-trace', function () {
               expect(msg).not.property(key)
             }
           }
-          // expect(msg).property('Method', 'GET')
-          // expect(msg).property('Proto', 'http')
-          // expect(msg).property('HTTP-Host', 'localhost')
-          // expect(msg).property('Port', port)
-          // expect(msg).property('URL', '/foo?bar=baz')
-          // expect(msg).property('ClientIP')
+          expect(msg).property('HTTPMethod', 'GET')
+          expect(msg).property('Proto', 'http')
+          expect(msg).property('HTTP-Host', 'localhost')
+          expect(msg).property('Port', server.address().port)
+          expect(msg).property('URL', '/some.html?this=that')
+          expect(msg).property('ClientIP')
         },
         function (msg) {
           testdebug('checking exit')
