@@ -167,7 +167,7 @@ describe(`probes.${p}`, function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).property('Method', 'GET')
+          expect(msg).property('HTTPMethod', 'GET')
           expect(msg).property('Proto', p)
           expect(msg).property('HTTP-Host', 'localhost')
           expect(msg).property('Port', port)
