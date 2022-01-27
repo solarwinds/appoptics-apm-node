@@ -176,9 +176,9 @@ module.exports = function (ao, ctx) {
   }
 
   //
-  // Trim long queries
+  // truncate long queries
   //
-  const trimChecks = [
+  const truncateChecks = [
     function (msg) {
       checks.entry(msg)
       msg.should.have.property('Query')
@@ -194,15 +194,15 @@ module.exports = function (ao, ctx) {
   }
   longQuery = 'SELECT ' + longQuery.join(', ')
 
-  const cTrimText = 'should trim long queries using a callback'
-  function cTrim (done) {
+  const ctruncateText = 'should truncate long queries using a callback'
+  function ctruncate (done) {
     ctx.client.get().query(longQuery, function (err) {
       done(err)
     })
   }
 
-  const pTrimText = 'should trim long queries using promises'
-  function pTrim (done) {
+  const ptruncateText = 'should truncate long queries using promises'
+  function ptruncate (done) {
     ctx.client.get().query(longQuery)
       .then(results => {
         done()
@@ -212,10 +212,10 @@ module.exports = function (ao, ctx) {
       })
   }
 
-  const trim = {
-    cb: { test: cTrim, text: cTrimText },
-    p: { test: pTrim, text: pTrimText },
-    checks: trimChecks
+  const truncate = {
+    cb: { test: ctruncate, text: ctruncateText },
+    p: { test: ptruncate, text: ptruncateText },
+    checks: truncateChecks
   }
 
   //
@@ -256,7 +256,7 @@ module.exports = function (ao, ctx) {
     basic,
     prepared,
     sanitize,
-    trim,
+    truncate,
     disabled
   }
 }

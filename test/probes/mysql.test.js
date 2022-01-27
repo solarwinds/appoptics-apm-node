@@ -1,44 +1,23 @@
 /* global it, describe, before, beforeEach, after, afterEach */
 'use strict'
 
-// note to self
-// there was leftover context when running via gulp test (i.e., previous tests were run) so instrument
-// would find a span and proceed to runInstrument. that causes the probe to try to work with the CREATE
-// query that has no DB entry.
-//
-// when run via gulp test:probe:mysql there was no context so instrument would not find a span, and would
-// just call the runner function without instrumenting it. in this case the probe causes a CLS NOT ACTIVE
-// log entry when it attempts to bind the callback.
-//
-// SEE WHAT THE PRE-EXISTING CONTEXT IS!!!!
-
 const helper = require('../helper')
-const Address = helper.Address
 const { ao } = require('../1.test-common.js')
-const noop = helper.noop
 
-const should = require('should') // eslint-disable-line no-unused-vars
+const mysql = require('mysql')
+const pkg = require('mysql/package.json')
+
 const semver = require('semver')
 
-const pkg = require('mysql/package.json')
-const mysql = require('mysql')
-
-let addr = Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
-let user = process.env.AO_TEST_MYSQL_USERNAME || process.env.DATABASE_MYSQL_USERNAME || 'root'
-let pass = process.env.AO_TEST_MYSQL_PASSWORD || process.env.DATABASE_MYSQL_PASSWORD || 'admin'
-
-// hardcode travis settings.
-if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
-  addr = '127.0.0.1:3306'
-  user = 'root'
-  pass = ''
-}
+const addr = helper.Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
+const user = process.env.AO_TEST_MYSQL_USERNAME || 'root'
+const pass = process.env.AO_TEST_MYSQL_PASSWORD || 'admin'
 
 const soon = global.setImmediate || process.nextTick
 
 let dbExists = false
 
-describe('probes.mysql ' + pkg.version, function () {
+describe(`probes.mysql ${pkg.version}`, function () {
   this.timeout(10000)
   const ctx = {
     // set AO_IX in matrix containers to avoid multi-access conflicts. Use it
@@ -190,7 +169,7 @@ describe('probes.mysql ' + pkg.version, function () {
 
   it('UDP might lose a message', function (done) {
     helper.test(emitter, function (done) {
-      ao.instrument('fake', noop)
+      ao.instrument('fake', helper.noop)
       done()
     }, [
       function (msg) {
@@ -274,7 +253,7 @@ describe('probes.mysql ' + pkg.version, function () {
     })
   }
 
-  it('should sanitize SQL by default', function () {
+  it('should be configured to sanitize SQL by default', function () {
     ao.probes.mysql.should.have.property('sanitizeSql', true)
     // turn off for testing
     ao.probes.mysql.sanitizeSql = false
@@ -298,7 +277,7 @@ describe('probes.mysql ' + pkg.version, function () {
     it.skip('should trace a cluster pooled query', test_clustered_pool)
   }
   it('should sanitize a query', test_sanitize)
-  it('should trim long queries', test_long_query)
+  it('should truncate long queries', test_long_query)
   it('should skip when disabled', test_disabled)
 
   //

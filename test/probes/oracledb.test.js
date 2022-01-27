@@ -4,32 +4,20 @@
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
 
-const log = ao.loggers
+const oracledb = require('oracledb')
+const pkg = require('oracledb/package.json')
 
-let oracledb
-let pkg = { version: '0.0.0' }
-try {
-  oracledb = require('oracledb')
-  pkg = require('oracledb/package')
-} catch (e) {
-  log.debug('cannot load oracledb', e)
-}
+const addr = process.env.AO_TEST_ORACLE || 'oracle:1521'
 
-const host = process.env.AO_TEST_ORACLE || 'oracle'
-// those are "hard set" for the test image
+// IMPORTANT: those are "hard set" for the test image
 const database = 'xe'
 const config = {
   user: 'system',
   password: 'topsecret',
-  connectString: host + '/' + database
-}
-let descValid = describe.skip
-
-if (oracledb && host && database && config.user && config.password) {
-  descValid = describe
+  connectString: addr + '/' + database
 }
 
-descValid(`probes.oracledb ${pkg.version}`, function () {
+describe(`probes.oracledb ${pkg.version}`, function () {
   let emitter
   let lastConnection
 
@@ -66,13 +54,18 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
     ], done)
   })
 
+  it('should be configured to sanitize SQL by default', function () {
+    ao.probes.oracledb.should.have.property('sanitizeSql', true)
+    ao.probes.oracledb.sanitizeSql = false
+  })
+
   const checks = {
     'oracle-entry': function (msg) {
       msg.should.have.property('Layer', 'oracle')
       msg.should.have.property('Label', 'entry')
-      // msg.should.have.property('Database', database) // TODO: fix see AO-9870, AO-15183
-      // msg.should.have.property('Flavor', 'oracle') // TODO: fix see AO-9870, AO-15183
-      // msg.should.have.property('RemoteHost', host) // TODO: fix see AO-9870, AO-15183
+      msg.should.have.property('Database', database)
+      msg.should.have.property('Flavor', 'oracle')
+      msg.should.have.property('RemoteHost', addr)
     },
     'oracle-exit': function (msg) {
       msg.should.have.property('Layer', 'oracle')
@@ -80,45 +73,84 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
     }
   }
 
-  if (oracledb && host && database && config.user && config.password) {
-    it('should trace execute calls', test_basic)
-    it('should trace execute calls in pool', test_pool)
-    it('should include correct isAutoCommit value', test_commit)
-  } else {
-    let missing = {
-      oracledb, host, database, user: config.user, password: config.password
-    }
-    for (const k in missing) {
-      if (missing[k]) delete missing[k]
-    }
-    missing = Object.keys(missing)
-    describe('skipping probes due to missing: ' + missing.join(', '), function () {
-      it.skip('should trace execute calls', test_basic)
-      it.skip('should trace execute calls in pool', test_pool)
-      it.skip('should include correct isAutoCommit value', test_commit)
-    })
-  }
+  it('should trace execute calls', test_basic)
+  it('should sanitize query', test_sanitization)
+  it('should truncate long queries', test_truncate)
+  it('should trace execute calls in pool', test_pool)
+  it('should include correct isAutoCommit value', test_commit)
+  it('should do nothing when disabled', test_disabled)
 
   function test_basic (done) {
-    log.debug('asking helper to execute test_basic')
     helper.test(emitter, function (done) {
       oracledb.isAutoCommit = false
       function query (err, connection) {
-        log.debug('test_basic query callback invoked')
         if (err) {
-          log.debug('error in query callback', err)
           return done(err)
         }
         lastConnection = connection
         connection.execute('SELECT 1 FROM DUAL', done)
       }
-      log.debug('test_basic being executed')
       oracledb.getConnection(config, query)
-      log.debug('done with test_basic oracledb.getConnection')
     }, [
       function (msg) {
         checks['oracle-entry'](msg)
-        // msg.should.have.property('Query', 'SELECT 1 FROM DUAL') // TODO: fix see AO-9870, AO-15183
+        msg.should.have.property('Query', 'SELECT 1 FROM DUAL')
+      },
+      function (msg) {
+        checks['oracle-exit'](msg)
+      }
+    ], done)
+  }
+
+  function test_sanitization (done) {
+    helper.test(emitter, function (done) {
+      oracledb.isAutoCommit = false
+      ao.probes.oracledb.sanitizeSql = true
+
+      function query (err, connection) {
+        if (err) {
+          return done(err)
+        }
+        lastConnection = connection
+        connection.execute('SELECT 42 FROM DUAL', done)
+      }
+      oracledb.getConnection(config, query)
+    }, [
+      function (msg) {
+        checks['oracle-entry'](msg)
+        msg.should.have.property('Query', 'SELECT 0 FROM DUAL')
+        msg.should.not.have.property('QueryArgs')
+      },
+      function (msg) {
+        checks['oracle-exit'](msg)
+      }
+    ], () => {
+      ao.probes.oracledb.sanitizeSql = false
+      done()
+    })
+  }
+
+  function test_truncate (done) {
+    let longQuery = []
+    for (let i = 0; i < 3000; i++) {
+      longQuery.push(`${i}`)
+    }
+    longQuery = 'SELECT ' + longQuery.join(', ') + ' FROM DUAL'
+
+    helper.test(emitter, function (done) {
+      oracledb.isAutoCommit = false
+      function query (err, connection) {
+        if (err) {
+          return done(err)
+        }
+        lastConnection = connection
+        connection.execute(longQuery, done)
+      }
+      oracledb.getConnection(config, query)
+    }, [
+      function (msg) {
+        checks['oracle-entry'](msg)
+        msg.Query.length.should.not.be.above(2048)
       },
       function (msg) {
         checks['oracle-exit'](msg)
@@ -142,7 +174,7 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['oracle-entry'](msg)
-        // msg.should.have.property('Query', 'SELECT 1 FROM DUAL') // TODO: fix see AO-9870, AO-15183
+        msg.should.have.property('Query', 'SELECT 1 FROM DUAL')
       },
       function (msg) {
         checks['oracle-exit'](msg)
@@ -181,24 +213,47 @@ descValid(`probes.oracledb ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['oracle-entry'](msg)
-        // msg.should.have.property('isAutoCommit', false) // TODO: fix see AO-9870, AO-15183
+        msg.should.have.property('isAutoCommit', false)
       },
       function (msg) {
         checks['oracle-exit'](msg)
       },
       function (msg) {
         checks['oracle-entry'](msg)
-        // msg.should.have.property('isAutoCommit', true) // TODO: fix see AO-9870, AO-15183
+        msg.should.have.property('isAutoCommit', true)
       },
       function (msg) {
         checks['oracle-exit'](msg)
       },
       function (msg) {
         checks['oracle-entry'](msg)
-        // msg.should.have.property('isAutoCommit', false) // TODO: fix see AO-9870, AO-15183
+        msg.should.have.property('isAutoCommit', false)
       },
       function (msg) {
         checks['oracle-exit'](msg)
+      }
+    ], done)
+  }
+
+  function test_disabled (done) {
+    ao.probes.oracledb.enabled = false
+
+    helper.test(emitter, function (done) {
+      oracledb.isAutoCommit = false
+      function query (err, connection) {
+        if (err) {
+          return done(err)
+        }
+        lastConnection = connection
+        connection.execute('SELECT 1 FROM DUAL', done)
+      }
+      oracledb.getConnection(config, query)
+    }, [
+      function (msg) {
+        // the msg is from the exit of the last span not from the the probe which is disabled.
+        msg.should.not.have.property('Query')
+        msg.should.have.property('Layer', 'outer')
+        done()
       }
     ], done)
   }
