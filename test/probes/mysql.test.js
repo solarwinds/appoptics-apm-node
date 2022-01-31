@@ -13,8 +13,6 @@ const addr = helper.Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
 const user = process.env.AO_TEST_MYSQL_USERNAME || 'root'
 const pass = process.env.AO_TEST_MYSQL_PASSWORD || 'admin'
 
-const soon = global.setImmediate || process.nextTick
-
 let dbExists = false
 
 describe(`probes.mysql ${pkg.version}`, function () {
@@ -83,74 +81,11 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function makeDb (conf, done) {
-    let db
-    if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-      db = mysql.createConnection(conf)
-      db.connect(done)
-    } else if (semver.satisfies(pkg.version, '>= 0.9.2')) {
-      db = mysql.createClient(conf)
-      soon(done)
-    } else {
-      db = new mysql.Client(conf)
-      db.connect(done)
-    }
+    const db = mysql.createConnection(conf)
+    db.connect(done)
 
     return db
   }
-
-  /*
-  function xbefore () {
-
-  }
-
-  // Ensure database/table existence
-  xbefore(function (done) {
-    const db = makeDb({
-      host: addr.host,
-      port: addr.port,
-      user: user,
-      password: pass
-    }, function (err) {
-      if (err) return done(err)
-      db.query('CREATE DATABASE IF NOT EXISTS test;', function (err) {
-        if (err) return done(err)
-        db.end(done)
-      })
-    })
-  })
-
-  // Make connection
-  xbefore(function (done) {
-    db = ctx.mysql = makeDb({
-      host: addr.host,
-      port: addr.port,
-      database: 'test',
-      user: user,
-      password: pass
-    }, function (err) {
-      if (err) {
-        return done(err)
-      }
-      db.query('CREATE TABLE IF NOT EXISTS test (foo varchar(255));', done)
-    })
-
-    if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-      // Set pool and pool cluster
-      const poolConfig = {
-        connectionLimit: 10,
-        host: addr.host,
-        port: addr.port,
-        database: 'test',
-        user: user,
-        password: pass
-      }
-
-      pool = db.pool = mysql.createPool(poolConfig)
-      cluster = db.cluster = mysql.createPoolCluster()
-      cluster.add(poolConfig)
-    }
-  })
-  // */
 
   if (semver.satisfies(pkg.version, '>= 2.6.0')) {
     after(function (done) {
@@ -236,22 +171,20 @@ describe(`probes.mysql ${pkg.version}`, function () {
     })
   })
 
-  if (semver.gte(pkg.version, '2.0.0')) {
-    it('should create a pool and pool cluster', function () {
-      const poolConfig = {
-        connectionLimit: 10,
-        host: addr.host,
-        port: addr.port,
-        database: 'test',
-        user: user,
-        password: pass
-      }
+  it('should create a pool and pool cluster', function () {
+    const poolConfig = {
+      connectionLimit: 10,
+      host: addr.host,
+      port: addr.port,
+      database: 'test',
+      user: user,
+      password: pass
+    }
 
-      pool = db.pool = mysql.createPool(poolConfig)
-      cluster = db.cluster = mysql.createPoolCluster()
-      cluster.add(poolConfig)
-    })
-  }
+    pool = db.pool = mysql.createPool(poolConfig)
+    cluster = db.cluster = mysql.createPoolCluster()
+    cluster.add(poolConfig)
+  })
 
   it('should be configured to sanitize SQL by default', function () {
     ao.probes.mysql.should.have.property('sanitizeSql', true)
@@ -260,22 +193,11 @@ describe(`probes.mysql ${pkg.version}`, function () {
   })
 
   it('should trace a basic query', test_basic)
-
   it('should trace a query with a value list', test_values)
-  if (semver.satisfies(pkg.version, '>= 1.0.0')) {
-    it('should trace a query with a value object', test_object)
-  } else {
-    it.skip('should trace a query with a value object', test_object)
-  }
+  it('should trace a query with a value object', test_object)
   it('should trace a streaming query', test_stream)
-
-  if (semver.satisfies(pkg.version, '>= 2.0.0')) {
-    it('should trace a pooled query', test_pool)
-    it('should trace a cluster pooled query', test_clustered_pool)
-  } else {
-    it.skip('should trace a pooled query', test_pool)
-    it.skip('should trace a cluster pooled query', test_clustered_pool)
-  }
+  it('should trace a pooled query', test_pool)
+  it('should trace a cluster pooled query', test_clustered_pool)
   it('should sanitize a query', test_sanitize)
   it('should truncate long queries', test_long_query)
   it('should skip when disabled', test_disabled)
@@ -284,7 +206,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
   // tests
   //
   function test_basic (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/basic'), [
+    helper.test(emitter, function (done) {
+      const query = 'SELECT 1'
+      ctx.mysql.query(query, done)
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -296,7 +221,11 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_values (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/values'), [
+    helper.test(emitter, function (done) {
+      const query = 'SELECT ?'
+      const values = ['1']
+      ctx.mysql.query(query, values, done)
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT ?')
@@ -309,7 +238,11 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_object (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/object'), [
+    helper.test(emitter, function (done) {
+      const query = `INSERT INTO ${ctx.t} SET ?`
+      const obj = { foo: 'bar' }
+      ctx.mysql.query(query, obj, done)
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', `INSERT INTO ${ctx.t} SET ?`)
@@ -322,7 +255,18 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_stream (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/stream'), [
+    helper.test(emitter, function (done) {
+      const query = 'SELECT 1'
+      const q = ctx.mysql.query(query)
+      q
+        .on('error', done)
+        .on('result', function (row) {
+          // Do nothing
+        })
+        .on('end', function () {
+          done()
+        })
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -334,7 +278,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_pool (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/pool'), [
+    helper.test(emitter, function () {
+      const query = 'SELECT 1'
+      ctx.mysql.pool.query(query, done)
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -346,7 +293,24 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_clustered_pool (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/pool-cluster'), [
+    helper.test(emitter, function () {
+      const query = 'SELECT 1'
+      ctx.mysql.cluster.getConnection(function (err, connection) {
+        function complete (err, res) {
+          if (typeof connection !== 'undefined') {
+            connection.release()
+          }
+          done(err, res)
+        }
+
+        if (err) {
+          complete(err)
+          return
+        }
+
+        connection.query(query, complete)
+      })
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
@@ -358,7 +322,11 @@ describe(`probes.mysql ${pkg.version}`, function () {
   }
 
   function test_sanitize (done) {
-    helper.test(emitter, helper.run(ctx, 'mysql/sanitize'), [
+    helper.test(emitter, function (done) {
+      ao.probes.mysql.sanitizeSql = true
+      const query = `SELECT * FROM ${ctx.t} WHERE "foo" = ` + mysql.escape('bar')
+      ctx.mysql.query(query, done)
+    }, [
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = '?'`)
@@ -366,7 +334,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
       function (msg) {
         checks.exit(msg)
       }
-    ], done)
+    ], () => {
+      ao.probes.mysql.sanitizeSql = false
+      done()
+    })
   }
 
   function test_long_query (done) {
@@ -392,7 +363,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
 
   function test_disabled (done) {
     ao.probes.mysql.enabled = false
-    helper.test(emitter, helper.run(ctx, 'mysql/basic'), [], function (err) {
+    helper.test(emitter, function (done) {
+      const query = 'SELECT 1'
+      ctx.mysql.query(query, done)
+    }, [], function (err) {
       ao.probes.mysql.enabled = true
       done(err)
     })
