@@ -1,56 +1,34 @@
 /* global it, describe, before, beforeEach, after */
 'use strict'
 
-const semver = require('semver')
-
-if (!process.env.AO_TEST_SQLSERVER_EX) {
-  describe('probes.tedious', function () {
-    function noop () {}
-    it.skip('should support basic queries', noop)
-    it.skip('should support parameters', noop)
-    it.skip('should support sanitization', noop)
-  })
-  process.exit()
-}
-
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
-const expect = require('chai').expect
 
-const conf = ao.probes.tedious
-
-const pkg = require('tedious/package.json')
 const tedious = require('tedious')
-const Connection = tedious.Connection
-const Request = tedious.Request
-const TYPES = tedious.TYPES
+const pkg = require('tedious/package.json')
+
+const semver = require('semver')
+
+const addr = helper.Address.from(process.env.AO_TEST_SQLSERVER_EX || 'mssql:1433')[0]
+const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME || 'sa'
+const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD || 'MeetSQL2017requirements!'
 
 // test with and without a database name
 let dbname
 
-let addr
-if (process.env.AO_TEST_SQLSERVER_EX) {
-  addr = helper.Address.from(
-    process.env.AO_TEST_SQLSERVER_EX
-  )[0]
-} else {
-  addr = 'mssql:1433'
-}
-const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME || 'sa'
-const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD || 'MeetSQL2017requirements!'
-
-describe('probes.tedious ' + pkg.version, function () {
+describe(`probes.tedious ${pkg.version}`, function () {
   this.timeout(10000)
   let emitter
 
   beforeEach(function (done) {
+    ao.probes.tedious.enabled = true
     setTimeout(function () {
       done()
     }, 250)
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.fs.enabled = false
@@ -76,9 +54,9 @@ describe('probes.tedious ' + pkg.version, function () {
     ], done)
   })
 
-  it('should sanitize SQL by default', function () {
-    conf.should.have.property('sanitizeSql', true)
-    conf.sanitizeSql = false
+  it('should be configured to sanitize SQL by default', function () {
+    ao.probes.tedious.should.have.property('sanitizeSql', true)
+    ao.probes.tedious.sanitizeSql = false
   })
 
   const checks = {
@@ -86,7 +64,7 @@ describe('probes.tedious ' + pkg.version, function () {
       msg.should.have.property('Layer', 'mssql')
       msg.should.have.property('Label', 'entry')
       if (dbname) {
-        expect(msg).property('Database', dbname)
+        msg.should.have.property('Database', dbname)
       }
       msg.should.have.property('Flavor', 'mssql')
       msg.should.have.property('RemoteHost', addr.toString())
@@ -97,25 +75,23 @@ describe('probes.tedious ' + pkg.version, function () {
     }
   }
 
-  if (addr) {
-    dbname = 'test'
-    it('should support basic queries with a database name', test_basic)
-    it('should support parameters with a database name', test_parameters)
-    it('should support sanitization with a database name', test_sanitization)
-    dbname = undefined
-    it('should support basic queries with no database name', test_basic)
-    it('should support parameters with no database name', test_parameters)
-    it('should support sanitization with no database name', test_sanitization)
-  } else {
-    it.skip('should support basic queries', test_basic)
-    it.skip('should support parameters', test_parameters)
-    it.skip('should support sanitization', test_sanitization)
-  }
+  dbname = 'test'
+  it('should support basic queries with a database name', test_basic)
+  it('should support parameters with a database name', test_parameters)
+  it('should sanitize query with a database name', test_sanitization)
+  it('should truncate long queries with a database name', test_truncate)
+  it('should do nothing when disabled with a database name', test_disabled)
+  dbname = undefined
+  it('should support basic queries with no database name', test_basic)
+  it('should support parameters with no database name', test_parameters)
+  it('should sanitize query with no database name', test_sanitization)
+  it('should truncate long queries with no database name', test_truncate)
+  it('should do nothing when disabled with no database name', test_disabled)
 
   function test_basic (done) {
     helper.test(emitter, function (done) {
       query(function () {
-        return new Request("select 42, 'hello world'", onComplete)
+        return new tedious.Request("select 42, 'hello world'", onComplete)
         function onComplete (err) {
           done()
         }
@@ -136,9 +112,9 @@ describe('probes.tedious ' + pkg.version, function () {
 
     helper.test(emitter, function (done) {
       query(function () {
-        request = new Request('select @num, @msg', onComplete)
-        request.addParameter('num', TYPES.Int, '42')
-        request.addParameter('msg', TYPES.VarChar, 'hello world')
+        request = new tedious.Request('select @num, @msg', onComplete)
+        request.addParameter('num', tedious.TYPES.Int, '42')
+        request.addParameter('msg', tedious.TYPES.VarChar, 'hello world')
 
         function onComplete (err) {
           done()
@@ -168,8 +144,8 @@ describe('probes.tedious ' + pkg.version, function () {
     helper.test(emitter, function (done) {
       ao.probes.tedious.sanitizeSql = true
       query(function () {
-        const request = new Request('select 42, @msg', onComplete)
-        request.addParameter('msg', TYPES.VarChar, 'hello world')
+        const request = new tedious.Request('select 42, @msg', onComplete)
+        request.addParameter('msg', tedious.TYPES.VarChar, 'hello world')
 
         function onComplete (err) {
           done()
@@ -190,6 +166,58 @@ describe('probes.tedious ' + pkg.version, function () {
       ao.probes.tedious.sanitizeSql = false
       done(err)
     })
+  }
+
+  function test_truncate (done) {
+    let longQuery = []
+    for (let i = 0; i < 1000; i++) {
+      longQuery.push('1::int AS number')
+    }
+    longQuery = 'SELECT ' + longQuery.join(', ')
+
+    helper.test(emitter, function (done) {
+      query(function () {
+        const request = new tedious.Request(longQuery, onComplete)
+
+        function onComplete (err) {
+          done()
+        }
+
+        return request
+      })
+    }, [
+      function (msg) {
+        checks['mssql-entry'](msg)
+        msg.should.have.property('Query')
+        msg.Query.length.should.not.be.above(2048)
+      },
+      function (msg) {
+        checks['mssql-exit'](msg)
+      }
+    ], function (err) {
+      ao.probes.tedious.sanitizeSql = false
+      done(err)
+    })
+  }
+
+  function test_disabled (done) {
+    ao.probes.tedious.enabled = false
+
+    helper.test(emitter, function (done) {
+      query(function () {
+        return new tedious.Request("select 42, 'hello world'", onComplete)
+        function onComplete (err) {
+          done()
+        }
+      })
+    }, [
+      function (msg) {
+        // the msg is from the exit of the last span not from the the probe which is disabled.
+        msg.should.not.have.property('Query')
+        msg.should.have.property('Layer', 'outer')
+        done()
+      }
+    ], done)
   }
 
   // Query helper
@@ -213,7 +241,7 @@ describe('probes.tedious ' + pkg.version, function () {
     if (dbname) {
       settings.options.database = dbname
     }
-    const connection = new Connection(settings)
+    const connection = new tedious.Connection(settings)
 
     connection.on('connect', function (err) {
       if (err) {

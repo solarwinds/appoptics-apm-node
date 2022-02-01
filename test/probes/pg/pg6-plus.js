@@ -1,8 +1,8 @@
 /* global it, describe, before, after */
 'use strict'
 
-const helper = require('../helper')
-const { ao } = require('../1.test-common')
+const helper = require('../../helper')
+const { ao } = require('../../1.test-common')
 
 const conf = ao.probes.pg
 

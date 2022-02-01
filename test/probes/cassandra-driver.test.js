@@ -156,7 +156,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
       ], done)
     })
 
-    it('should sanitize SQL by default', function () {
+    it('should be configured to sanitize SQL by default', function () {
       conf.should.have.property('sanitizeSql', true)
       conf.sanitizeSql = false
     })
