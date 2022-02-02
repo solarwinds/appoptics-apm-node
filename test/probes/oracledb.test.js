@@ -190,6 +190,7 @@ describe(`probes.oracledb ${pkg.version}`, function () {
           const options = {
             isAutoCommit: isAutoCommit
           }
+          if (isAutoCommit === null) delete options.isAutoCommit
 
           return function (err) {
             if (err) return done(err)
@@ -199,18 +200,28 @@ describe(`probes.oracledb ${pkg.version}`, function () {
         }
 
         const fn = query(
-          undefined,
+          null,
           query(
-            true,
+            undefined,
             query(
-              false,
-              done
+              true,
+              query(
+                false,
+                done
+              )
             )
           )
         )
         fn()
       })
     }, [
+      function (msg) {
+        checks['oracle-entry'](msg)
+        msg.should.have.property('isAutoCommit', false)
+      },
+      function (msg) {
+        checks['oracle-exit'](msg)
+      },
       function (msg) {
         checks['oracle-entry'](msg)
         msg.should.have.property('isAutoCommit', false)
