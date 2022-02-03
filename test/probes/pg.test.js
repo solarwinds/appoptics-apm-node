@@ -4,25 +4,20 @@
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
 
-const conf = ao.probes.pg
-
-const pkg = require('pg/package')
 const postgres = require('pg')
+const pkg = require('pg/package.json')
 
-const env = process.env
-const addr = helper.Address.from(env.AO_TEST_POSTGRES || 'postgres:5432')[0]
+const addr = helper.Address.from(process.env.AO_TEST_POSTGRES || 'postgres:5432')[0]
+
 // using a null password is valid.
-const password = 'AO_TEST_POSTGRES_PASSWORD' in env ? env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
-
+const password = 'AO_TEST_POSTGRES_PASSWORD' in process.env ? process.env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
 // make a unique table name so multiple tests can run concurrently without colliding.
-const tName = 'tbl' + (env.AO_IX ? env.AO_IX : '')
-
-const extend = Object.assign
+const tName = 'tbl' + (process.env.AO_IX ? process.env.AO_IX : '')
 
 const auth = {
   host: addr.host,
   port: addr.port,
-  user: env.AO_TEST_POSTGRES_USERNAME || 'postgres',
+  user: process.env.AO_TEST_POSTGRES_USERNAME || 'postgres',
   password: password,
   database: 'test'
 }
@@ -43,9 +38,10 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
   let emitter
   const ctx = { ao, tName, addr }
 
-  it('should sanitize SQL by default', function () {
-    conf.should.have.property('sanitizeSql', true)
-    conf.sanitizeSql = false
+  // note: perform this test before setting test context since we flip the setting from default to false.
+  it('should be configured to sanitize SQL by default', function () {
+    ao.probes.pg.should.have.property('sanitizeSql', true)
+    ao.probes.pg.sanitizeSql = false
   })
 
   //
@@ -168,7 +164,7 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
       //
       it('should create the pg testing context', function (done) {
         this.timeout(10000)
-        const tmpAuth = extend(extend({}, auth), { database: 'postgres' })
+        const tmpAuth = Object.assign(Object.assign({}, auth), { database: 'postgres' })
         let client = new postgres.Client(tmpAuth)
         let pool
 
