@@ -11,7 +11,7 @@ const pkg = require('pg/package.json')
 // the results.
 //
 if (semver.lt(pkg.version, '7.0.0')) {
-  require('./pg6-minus')
+  require('./pg/pg6-minus')
 } else {
-  require('./pg6-plus')
+  require('./pg/pg6-plus')
 }
