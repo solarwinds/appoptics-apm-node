@@ -44,6 +44,10 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
     ao.probes.pg.sanitizeSql = false
   })
 
+  it('should be configured to not tag SQL by default', function () {
+    ao.probes.pg.should.have.property('tagSql', false)
+  })
+
   //
   // Intercept appoptics messages for analysis
   //
