@@ -59,6 +59,10 @@ describe(`probes.tedious ${pkg.version}`, function () {
     ao.probes.tedious.sanitizeSql = false
   })
 
+  it('should be configured to not tag SQL by default', function () {
+    ao.probes.tedious.should.have.property('tagSql', false)
+  })
+
   const checks = {
     'mssql-entry': function (msg) {
       msg.should.have.property('Layer', 'mssql')
@@ -80,12 +84,14 @@ describe(`probes.tedious ${pkg.version}`, function () {
   it('should support parameters with a database name', test_parameters)
   it('should sanitize query with a database name', test_sanitization)
   it('should truncate long queries with a database name', test_truncate)
+  it('should tag queries when feature is enabled', test_tag)
   it('should do nothing when disabled with a database name', test_disabled)
   dbname = undefined
   it('should support basic queries with no database name', test_basic)
   it('should support parameters with no database name', test_parameters)
   it('should sanitize query with no database name', test_sanitization)
   it('should truncate long queries with no database name', test_truncate)
+  it('should tag queries when feature is enabled', test_tag)
   it('should do nothing when disabled with no database name', test_disabled)
 
   function test_basic (done) {
@@ -100,6 +106,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
       function (msg) {
         checks['mssql-entry'](msg)
         msg.should.have.property('Query', "select 42, 'hello world'")
+        msg.should.not.have.property('QueryTag')
       },
       function (msg) {
         checks['mssql-exit'](msg)
@@ -197,6 +204,30 @@ describe(`probes.tedious ${pkg.version}`, function () {
       }
     ], function (err) {
       ao.probes.tedious.sanitizeSql = false
+      done(err)
+    })
+  }
+
+  function test_tag (done) {
+    ao.probes.tedious.tagSql = true
+    helper.test(emitter, function (done) {
+      query(function () {
+        return new tedious.Request("select 42, 'hello world'", onComplete)
+        function onComplete (err) {
+          done()
+        }
+      })
+    }, [
+      function (msg) {
+        checks['mssql-entry'](msg)
+        msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+        msg.should.have.property('Query', "select 42, 'hello world'")
+      },
+      function (msg) {
+        checks['mssql-exit'](msg)
+      }
+    ], function (err) {
+      ao.probes.tedious.tagSql = false
       done(err)
     })
   }

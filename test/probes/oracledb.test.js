@@ -59,6 +59,10 @@ describe(`probes.oracledb ${pkg.version}`, function () {
     ao.probes.oracledb.sanitizeSql = false
   })
 
+  it('should be configured to not tag SQL by default', function () {
+    ao.probes.oracledb.should.have.property('tagSql', false)
+  })
+
   const checks = {
     'oracle-entry': function (msg) {
       msg.should.have.property('Layer', 'oracle')
@@ -76,6 +80,7 @@ describe(`probes.oracledb ${pkg.version}`, function () {
   it('should trace execute calls', test_basic)
   it('should sanitize query', test_sanitization)
   it('should truncate long queries', test_truncate)
+  it('should tag queries when feature is enabled', test_tag)
   it('should trace execute calls in pool', test_pool)
   it('should include correct isAutoCommit value', test_commit)
   it('should do nothing when disabled', test_disabled)
@@ -95,6 +100,7 @@ describe(`probes.oracledb ${pkg.version}`, function () {
       function (msg) {
         checks['oracle-entry'](msg)
         msg.should.have.property('Query', 'SELECT 1 FROM DUAL')
+        msg.should.not.have.property('QueryTag')
       },
       function (msg) {
         checks['oracle-exit'](msg)
@@ -156,6 +162,33 @@ describe(`probes.oracledb ${pkg.version}`, function () {
         checks['oracle-exit'](msg)
       }
     ], done)
+  }
+
+  function test_tag (done) {
+    ao.probes.oracledb.tagSql = true
+    helper.test(emitter, function (done) {
+      oracledb.isAutoCommit = false
+      function query (err, connection) {
+        if (err) {
+          return done(err)
+        }
+        lastConnection = connection
+        connection.execute('SELECT 1 FROM DUAL', done)
+      }
+      oracledb.getConnection(config, query)
+    }, [
+      function (msg) {
+        checks['oracle-entry'](msg)
+        msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+        msg.should.have.property('Query', 'SELECT 1 FROM DUAL')
+      },
+      function (msg) {
+        checks['oracle-exit'](msg)
+      }
+    ], () => {
+      ao.probes.oracledb.tagSql = false
+      done()
+    })
   }
 
   function test_pool (done) {
