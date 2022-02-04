@@ -24,6 +24,7 @@ module.exports = function (ao, ctx) {
       checks.entry(msg)
       msg.should.have.property('Query', 'SELECT $1::int AS number')
       msg.should.have.property('QueryArgs', '["1"]')
+      msg.should.not.have.property('QueryTag')
     },
     function (msg) {
       checks.exit(msg)
@@ -219,6 +220,50 @@ module.exports = function (ao, ctx) {
   }
 
   //
+  // test tag queries
+  //
+  const tagChecks = [
+    function (msg) {
+      checks.entry(msg)
+      msg.should.have.property('Query', 'SELECT $1::int AS number')
+      msg.should.have.property('QueryArgs', '["1"]')
+      msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+    },
+    function (msg) {
+      checks.exit(msg)
+    }
+  ]
+
+  const cTagText = 'should tag queries when feature is enabledusing callback'
+  function cTag (done) {
+    ctx.ao.probes.pg.tagSql = true
+    ctx.client.get().query('SELECT $1::int AS number', ['1'], function () {
+      ctx.ao.probes.pg.tagSql = false
+      done()
+    })
+  }
+
+  const pTagText = 'should tag queries when feature is enabled using promises'
+  function pTag (done) {
+    ctx.ao.probes.pg.tagSql = true
+    ctx.client.get().query('SELECT $1::int AS number', ['1'])
+      .then(results => {
+        ctx.ao.probes.pg.tagSql = false
+        done()
+      })
+      .catch(e => {
+        ctx.ao.probes.pg.tagSql = false
+        done(e)
+      })
+  }
+
+  const tag = {
+    cb: { test: cTag, text: cTagText },
+    p: { test: pTag, text: pTagText },
+    checks: tagChecks
+  }
+
+  //
   // verify no trace when disabled.
   //
   const disabledChecks = []
@@ -257,6 +302,7 @@ module.exports = function (ao, ctx) {
     prepared,
     sanitize,
     truncate,
+    tag,
     disabled
   }
 }
