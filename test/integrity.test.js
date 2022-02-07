@@ -2,11 +2,14 @@
 'use strict'
 
 const fs = require('fs')
+const pkg = require('../package.json')
 
 // Note: the following script was in the root of the project as "prepack.js"
 // As such it was interfering with git installs.
 // Since it functions as an "integrity test" it was passed to the test directory
 // converted into two tests and left as much possible as-is (for now).
+// third integrity test was added 2/2022
+// the goal of the test is to guard against release errors.
 
 const expect = require('chai').expect
 
@@ -129,5 +132,22 @@ describe('integrity', function () {
     }
 
     expect(errorCount).equal(0)
+  })
+
+  it('should make sure that package dependencies are all from an approved list', function () {
+    const approvedDependencies = [
+      'ace-context',
+      'array-flatten',
+      'cls-hooked',
+      'debug-custom',
+      'methods',
+      'glob',
+      'minimist',
+      'semver',
+      'shimmer'
+    ]
+
+    const allApproved = Object.keys(pkg.dependencies).every(dependency => approvedDependencies.find(approved => approved === dependency))
+    expect(allApproved).equal(true)
   })
 })
