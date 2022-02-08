@@ -220,7 +220,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['mssql-entry'](msg)
-        msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+        msg.should.have.property('QueryTag', `/*traceparent='${msg['sw.trace_context']}'*/`)
         msg.should.have.property('Query', "select 42, 'hello world'")
       },
       function (msg) {
