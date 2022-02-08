@@ -227,7 +227,7 @@ module.exports = function (ao, ctx) {
       checks.entry(msg)
       msg.should.have.property('Query', 'SELECT $1::int AS number')
       msg.should.have.property('QueryArgs', '["1"]')
-      msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+      msg.should.have.property('QueryTag', `/*traceparent='${msg['sw.trace_context']}'*/`)
     },
     function (msg) {
       checks.exit(msg)

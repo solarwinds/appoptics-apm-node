@@ -375,7 +375,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('QueryTag', `/* traceparent='${msg['sw.trace_context']}' */`)
+        msg.should.have.property('QueryTag', `/*traceparent='${msg['sw.trace_context']}'*/`)
         msg.should.have.property('Query', 'SELECT 1')
       },
       function (msg) {
