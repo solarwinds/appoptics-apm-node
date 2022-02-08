@@ -11,7 +11,7 @@ describe('sqlTraceContext', function () {
       const traceparent = baseTraceparent
       const tag = sqlTraceContext.tag(traceparent)
 
-      expect(tag).to.be.equal(`/* traceparent='${traceparent}' */`)
+      expect(tag).to.be.equal(`/*traceparent='${traceparent}'*/`)
     })
   })
 
