@@ -31,14 +31,14 @@ describe(`probes.tedious ${pkg.version}`, function () {
   // Intercept messages for analysis
   //
   before(function (done) {
-    ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)
+    ao.probes.fs.enabled = false
+    ao.probes.dns.enabled = false
   })
   after(function (done) {
-    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
