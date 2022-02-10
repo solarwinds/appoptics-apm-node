@@ -60,6 +60,7 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
     // and don't let file IO complicate the results
     fsenabled = ao.probes.fs.enabled
     ao.probes.fs.enabled = false
+    ao.probes.dns.enabled = false
   })
   after(function (done) {
     ao.probes.fs.enabled = fsenabled

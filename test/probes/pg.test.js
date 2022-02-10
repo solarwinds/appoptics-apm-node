@@ -61,6 +61,7 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.probes.fs.enabled = false
+    ao.probes.dns.enabled = false
   })
   after(function (done) {
     emitter.close(done)
