@@ -218,3 +218,13 @@ Maintenance
 
 Breaking changes
 - None
+
+### v10.2.1
+
+Maintenance
+
+- Fixed package dependencies.
+- Fixed longstanding bugs in tedious and oracledb probes.
+
+Breaking changes
+- None
