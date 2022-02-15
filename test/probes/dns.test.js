@@ -5,6 +5,7 @@ const helper = require('../helper')
 const { ao } = require('../1.test-common')
 
 const dns = require('dns')
+const dnsPromises = require('dns').promises
 
 describe('probes.dns', function () {
   let emitter
@@ -60,95 +61,6 @@ describe('probes.dns', function () {
   // Define tests
   //
   const tld = 'example.com'
-
-  it('should support getServers', function (done) {
-    helper.test(emitter, function (done) {
-      try {
-        dns.getServers()
-        done()
-      } catch (e) {}
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Operation', 'getServers')
-      },
-      function (msg) {
-        checks.exit(msg)
-      }
-    ], done)
-  })
-
-  it('should support setDefaultResultOrder', function (done) {
-    helper.test(emitter, function (done) {
-      try {
-        dns.setDefaultResultOrder('verbatim')
-        done()
-      } catch (e) {}
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Operation', 'setDefaultResultOrder')
-      },
-      function (msg) {
-        checks.exit(msg)
-      }
-    ], done)
-  })
-
-  it('should support lookup', function (done) {
-    helper.test(emitter, function (done) {
-      try {
-        dns.lookup(tld, (err, address, family) => {
-          done()
-        })
-      } catch (e) {}
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Operation', 'lookup')
-      },
-      function (msg) {
-        checks.exit(msg)
-      }
-    ], done)
-  })
-
-  it('should support lookupService', function (done) {
-    helper.test(emitter, function (done) {
-      try {
-        dns.lookupService('127.0.0.1', 22, (err, hostname, service) => {
-          done()
-        })
-      } catch (e) {}
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Operation', 'lookupService')
-      },
-      function (msg) {
-        checks.exit(msg)
-      }
-    ], done)
-  })
-
-  it('should support reverse', function (done) {
-    helper.test(emitter, function (done) {
-      try {
-        dns.reverse('8.8.8.8', (err, hostnames) => {
-          done()
-        })
-      } catch (e) {}
-    }, [
-      function (msg) {
-        checks.entry(msg)
-        msg.should.have.property('Operation', 'reverse')
-      },
-      function (msg) {
-        checks.exit(msg)
-      }
-    ], done)
-  })
-
   const resolveMethods = [
     'resolve',
     'resolve6',
@@ -165,50 +77,229 @@ describe('probes.dns', function () {
     'resolveTxt'
   ]
 
-  resolveMethods.forEach(function (method) {
-    if (!dns[method]) return
-
-    it('should support ' + method, function (done) {
+  describe('async callback methods', function () {
+    it('should support callback lookup', function (done) {
       helper.test(emitter, function (done) {
         try {
-          dns[method](tld, (err, addresses) => {
+          dns.lookup(tld, (err, address, family) => {
             done()
           })
         } catch (e) {}
       }, [
         function (msg) {
           checks.entry(msg)
-          msg.should.have.property('Operation', method)
+          msg.should.have.property('Operation', 'lookup')
+          msg.should.have.property('Flavor', 'callback')
         },
         function (msg) {
           checks.exit(msg)
         }
       ], done)
     })
-  })
 
-  it('should support setServers', function (done) {
-    // The dns.setServers() method must not be called while a DNS query is in progress.
-    // The dns.setServers() method affects only dns.resolve(), dns.resolve*() and dns.reverse() (and specifically not dns.lookup()).
-    // hence the test helper is encapsulated inside the dns call.
-    dns.resolve(tld, (err, addresses) => {
+    it('should support callback lookupService', function (done) {
       helper.test(emitter, function (done) {
         try {
-          dns.setServers([
-            '8.8.8.8'
-          ])
-
-          done()
+          dns.lookupService('127.0.0.1', 22, (err, hostname, service) => {
+            done()
+          })
         } catch (e) {}
       }, [
         function (msg) {
           checks.entry(msg)
-          msg.should.have.property('Operation', 'setServers')
+          msg.should.have.property('Operation', 'lookupService')
+          msg.should.have.property('Flavor', 'callback')
         },
         function (msg) {
           checks.exit(msg)
         }
       ], done)
+    })
+
+    it('should support callback reverse', function (done) {
+      helper.test(emitter, function (done) {
+        try {
+          dns.reverse('8.8.8.8', (err, hostnames) => {
+            done()
+          })
+        } catch (e) {}
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'reverse')
+          msg.should.have.property('Flavor', 'callback')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    resolveMethods.forEach(function (method) {
+      if (!dns[method]) return
+
+      it('should support callback ' + method, function (done) {
+        helper.test(emitter, function (done) {
+          try {
+            dns[method](tld, (err, addresses) => {
+              done()
+            })
+          } catch (e) {}
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Operation', method)
+            msg.should.have.property('Flavor', 'callback')
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
+    })
+  })
+
+  describe('async promise methods', function () {
+    it('should support promise lookup', function (done) {
+      helper.test(emitter, function (done) {
+        dnsPromises.lookup(tld).then((result) => {
+          done()
+        }).catch(e => {
+          done()
+        })
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'lookup')
+          msg.should.have.property('Flavor', 'promise')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    it('should support promise lookupService', function (done) {
+      helper.test(emitter, function (done) {
+        dnsPromises.lookupService('127.0.0.1', 22).then((result) => {
+          done()
+        }).catch(e => {
+          done()
+        })
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'lookupService')
+          msg.should.have.property('Flavor', 'promise')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    it('should support promise reverse', function (done) {
+      helper.test(emitter, function (done) {
+        dnsPromises.reverse('8.8.8.8').then((hostnames) => {
+          done()
+        }).catch(e => {
+          done()
+        })
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'reverse')
+          msg.should.have.property('Flavor', 'promise')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    resolveMethods.forEach(function (method) {
+      if (!dnsPromises[method]) return
+
+      it('should support promise ' + method, function (done) {
+        helper.test(emitter, function (done) {
+          dnsPromises[method](tld).then((addresses) => {
+            done()
+          }).catch(e => {
+            done()
+          })
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Operation', method)
+            msg.should.have.property('Flavor', 'promise')
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
+    })
+  })
+
+  describe('sync methods', function () {
+    it('should support getServers', function (done) {
+      helper.test(emitter, function (done) {
+        try {
+          dns.getServers()
+          done()
+        } catch (e) {}
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'getServers')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    it('should support setDefaultResultOrder', function (done) {
+      helper.test(emitter, function (done) {
+        try {
+          dns.setDefaultResultOrder('verbatim')
+          done()
+        } catch (e) {}
+      }, [
+        function (msg) {
+          checks.entry(msg)
+          msg.should.have.property('Operation', 'setDefaultResultOrder')
+        },
+        function (msg) {
+          checks.exit(msg)
+        }
+      ], done)
+    })
+
+    // this should be last test
+    it('should support setServers', function (done) {
+    // The dns.setServers() method must not be called while a DNS query is in progress.
+    // The dns.setServers() method affects only dns.resolve(), dns.resolve*() and dns.reverse() (and specifically not dns.lookup()).
+    // hence the test helper is encapsulated inside the dns call.
+      dns.resolve(tld, (err, addresses) => {
+        helper.test(emitter, function (done) {
+          try {
+            dns.setServers([
+              '8.8.8.8'
+            ])
+
+            done()
+          } catch (e) {}
+        }, [
+          function (msg) {
+            checks.entry(msg)
+            msg.should.have.property('Operation', 'setServers')
+          },
+          function (msg) {
+            checks.exit(msg)
+          }
+        ], done)
+      })
     })
   })
 })
