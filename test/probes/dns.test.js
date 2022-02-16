@@ -90,6 +90,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'lookup')
           msg.should.have.property('Flavor', 'callback')
+          msg.should.have.property('Args', `${tld}`)
         },
         function (msg) {
           checks.exit(msg)
@@ -109,6 +110,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'lookupService')
           msg.should.have.property('Flavor', 'callback')
+          msg.should.have.property('Args', '127.0.0.1, 22')
         },
         function (msg) {
           checks.exit(msg)
@@ -128,6 +130,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'reverse')
           msg.should.have.property('Flavor', 'callback')
+          msg.should.have.property('Args', '8.8.8.8')
         },
         function (msg) {
           checks.exit(msg)
@@ -172,6 +175,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'lookup')
           msg.should.have.property('Flavor', 'promise')
+          msg.should.have.property('Args', `${tld}`)
         },
         function (msg) {
           checks.exit(msg)
@@ -191,6 +195,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'lookupService')
           msg.should.have.property('Flavor', 'promise')
+          msg.should.have.property('Args', '127.0.0.1, 22')
         },
         function (msg) {
           checks.exit(msg)
@@ -210,6 +215,7 @@ describe('probes.dns', function () {
           checks.entry(msg)
           msg.should.have.property('Operation', 'reverse')
           msg.should.have.property('Flavor', 'promise')
+          msg.should.have.property('Args', '8.8.8.8')
         },
         function (msg) {
           checks.exit(msg)
@@ -252,6 +258,7 @@ describe('probes.dns', function () {
         function (msg) {
           checks.entry(msg)
           msg.should.have.property('Operation', 'getServers')
+          msg.should.have.property('Args', '')
         },
         function (msg) {
           checks.exit(msg)
@@ -269,6 +276,7 @@ describe('probes.dns', function () {
         function (msg) {
           checks.entry(msg)
           msg.should.have.property('Operation', 'setDefaultResultOrder')
+          msg.should.have.property('Args', 'verbatim')
         },
         function (msg) {
           checks.exit(msg)
@@ -285,15 +293,18 @@ describe('probes.dns', function () {
         helper.test(emitter, function (done) {
           try {
             dns.setServers([
-              '8.8.8.8'
+              '4.4.4.4',
+              '2001:4860:4860::8888',
+              '4.4.4.4:1053',
+              '[2001:4860:4860::8888]:1053'
             ])
-
             done()
           } catch (e) {}
         }, [
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Operation', 'setServers')
+            msg.should.have.property('Args', '4.4.4.4,2001:4860:4860::8888,4.4.4.4:1053,[2001:4860:4860::8888]:1053')
           },
           function (msg) {
             checks.exit(msg)
