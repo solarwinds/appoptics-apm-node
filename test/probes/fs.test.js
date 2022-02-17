@@ -1,56 +1,31 @@
-/* global it, describe, before, beforeEach, after */
+/* global it, describe, before, after */
 'use strict'
 
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
 const expect = require('chai').expect
 
-const noop = helper.noop
-
 const path = require('path')
 const fs = require('fs')
+
 ao.probes.fs.collectBacktraces = false
-
-describe('probes.fs once', function () {
-  let emitter
-
-  //
-  // Intercept appoptics messages for analysis
-  //
-  before(function (done) {
-    ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
-    ao.traceMode = 'always'
-    emitter = helper.appoptics(done)
-    ao.g.testing(__filename)
-  })
-  after(function (done) {
-    emitter.close(done)
-  })
-
-  // fake test to work around UDP dropped message issue
-  it('UDP might lose a message', function (done) {
-    helper.test(emitter, function (done) {
-      ao.instrument('fake', noop)
-      done()
-    }, [
-      function (msg) {
-        expect(msg).property('Label').oneOf(['entry', 'exit'])
-        expect(msg).property('Layer', 'fake')
-      }
-    ], done)
-  })
-})
 
 describe('probes.fs', function () {
   let emitter
   let mode
 
-  beforeEach(function (done) {
-    // wait a tenth of a second between tests.
-    // setTimeout(function () {
-    //  done()
-    // }, 100)
-    done()
+  // this test exists only to fix a problem with oboe not reporting a UDP
+  // send failure.
+  it('UDP might lose a message', function (done) {
+    helper.test(emitter, function (done) {
+      ao.instrument('fake', function () { })
+      done()
+    }, [
+      function (msg) {
+        msg.should.have.property('Label').oneOf('entry', 'exit')
+        msg.should.have.property('Layer', 'fake')
+      }
+    ], done)
   })
 
   //
@@ -143,10 +118,7 @@ describe('probes.fs', function () {
     {
       type: 'path',
       name: 'access',
-      args: ['fs-output/foo.bar'],
-      exclude: function () {
-        return typeof fs['access' + (mode === 'sync' ? 'Sync' : '')] !== 'function'
-      }
+      args: ['fs-output/foo.bar']
     },
     // fs.writeFile
     {
@@ -154,6 +126,9 @@ describe('probes.fs', function () {
       name: 'writeFile',
       args: ['fs-output/foo.bar', 'some data'],
       subs: function () {
+        if (mode === 'promises') {
+          return []
+        }
         return [span('open'), span('write'), span('close')]
       }
     },
@@ -176,10 +151,14 @@ describe('probes.fs', function () {
       name: 'truncate',
       args: ['fs-output/foo.bar', 0],
       subs: function () {
+        if (mode === 'promises') {
+          return []
+        }
         if (mode === 'sync') {
           return [span('open'), span('ftruncate'), span('close')]
         } else {
           const expected = [span('open')]
+          // TODO: revisit
           // when using continuation-local-storage the 'close' span
           // doesn't appear.
           if (ao.contextProvider !== 'continuation-local-storage') {
@@ -195,6 +174,9 @@ describe('probes.fs', function () {
       name: 'appendFile',
       args: ['fs-output/foo.bar', 'some data'],
       subs: function () {
+        if (mode === 'promises') {
+          return []
+        }
         return [entry('writeFile'), span('open'), span('write'), span('close'), exit('writeFile')]
       }
     },
@@ -257,8 +239,10 @@ describe('probes.fs', function () {
       type: 'path',
       name: 'realpath',
       args: ['fs-output/foo.bar.link'],
-      log: false,
       subs: function () {
+        if (mode === 'promises') {
+          return []
+        }
         if (mode === 'sync') {
           return []
         }
@@ -368,11 +352,70 @@ describe('probes.fs', function () {
     }
   ]
 
-  describe('async', function () {
+  describe('async promises', function () {
+    before(function () {
+      mode = 'promises'
+    })
+
     calls.forEach(function (call) {
-      if (result(call.exclude)) {
-        return
-      }
+      if (typeof fs.promises[call.name] !== 'function') return
+
+      it('should support ' + call.name, function (done) {
+        const args = result(call.args)
+        emitter.log = call.log
+
+        // First step is to expect the message for the operation we are making
+        const steps = [
+          function (msg) {
+            checks.entry(msg)
+            expect(msg).property('Operation', call.name)
+            if (call.type === 'path') {
+              expect(msg).property('FilePath', args[0])
+            } else if (call.type === 'fd') {
+              expect(msg).property('FileDescriptor', args[0])
+            }
+          }
+        ]
+
+        // Include checks for all expected sub-spans
+        function add (step) {
+          steps.push(step)
+        }
+
+        const subs = result(call.subs)
+        if (Array.isArray(subs)) {
+          subs.forEach(function (sub) {
+            if (Array.isArray(sub)) {
+              sub.forEach(add)
+            } else {
+              add(sub)
+            }
+          })
+        }
+
+        // Before starting test, run any required tasks
+        if (call.before) call.before()
+
+        helper.test(emitter, function (done) {
+          // Make call and pass callback args to after handler, if present
+          fs.promises[call.name].apply(fs.promises, args).finally(_ => {
+            if (call.after) call.after.apply(this, arguments)
+            done()
+          })
+        }, steps, function (e) {
+          done(e)
+        })
+      })
+    })
+  })
+
+  describe('async callbacks', function () {
+    before(function () {
+      mode = 'callbacks'
+    })
+
+    calls.forEach(function (call) {
+      if (typeof fs[call.name] !== 'function') return
 
       it('should support ' + call.name, function (done) {
         const args = result(call.args)
@@ -425,7 +468,6 @@ describe('probes.fs', function () {
             done()
           }))
         }, steps, function (e) {
-          emitter.log = false
           done(e)
         })
       })
@@ -433,15 +475,13 @@ describe('probes.fs', function () {
   })
 
   describe('sync', function () {
-    // Turn on sync mode to adjust the call list values
     before(function () {
       mode = 'sync'
     })
 
     calls.forEach(function (call) {
-      if (result(call.exclude)) return
-
       const name = call.name + 'Sync'
+      if (typeof fs[name] !== 'function') return
 
       it('should support ' + name, function (done) {
         const args = result(call.args)
@@ -485,11 +525,6 @@ describe('probes.fs', function () {
         if (call.before) call.before()
 
         helper.test(emitter, function (done) {
-          /*
-          if (name === 'realpathSync') {
-            emitter.log = true
-          }
-          // */
           // Make call and pass result or error to after handler, if present
           try {
             const res = fs[name].apply(fs, args)
@@ -499,7 +534,6 @@ describe('probes.fs', function () {
           }
           process.nextTick(done)
         }, steps, function (e) {
-          emitter.log = false
           done(e)
         })
       })
