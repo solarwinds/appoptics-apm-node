@@ -5,7 +5,6 @@ const helper = require('../helper')
 const { ao } = require('../1.test-common')
 
 const dns = require('dns')
-const dnsPromises = require('dns').promises
 
 describe('probes.dns', function () {
   let emitter
@@ -165,7 +164,7 @@ describe('probes.dns', function () {
   describe('async promise methods', function () {
     it('should support promise lookup', function (done) {
       helper.test(emitter, function (done) {
-        dnsPromises.lookup(tld).then((result) => {
+        dns.promises.lookup(tld).then((result) => {
           done()
         }).catch(e => {
           done()
@@ -185,7 +184,7 @@ describe('probes.dns', function () {
 
     it('should support promise lookupService', function (done) {
       helper.test(emitter, function (done) {
-        dnsPromises.lookupService('127.0.0.1', 22).then((result) => {
+        dns.promises.lookupService('127.0.0.1', 22).then((result) => {
           done()
         }).catch(e => {
           done()
@@ -205,7 +204,7 @@ describe('probes.dns', function () {
 
     it('should support promise reverse', function (done) {
       helper.test(emitter, function (done) {
-        dnsPromises.reverse('8.8.8.8').then((hostnames) => {
+        dns.promises.reverse('8.8.8.8').then((hostnames) => {
           done()
         }).catch(e => {
           done()
@@ -224,11 +223,11 @@ describe('probes.dns', function () {
     })
 
     resolveMethods.forEach(function (method) {
-      if (!dnsPromises[method]) return
+      if (!dns.promises[method]) return
 
       it('should support promise ' + method, function (done) {
         helper.test(emitter, function (done) {
-          dnsPromises[method](tld).then((addresses) => {
+          dns.promises[method](tld).then((addresses) => {
             done()
           }).catch(e => {
             done()
