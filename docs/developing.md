@@ -57,8 +57,8 @@ The setup script ensures a "clean" work place with each run by removing artifact
 
 ## Instrumenting Using Local Code
 
-The Agent dev environment mounts the code into `usr/src/work` and anlos mounts two siblings directories if exist: `bindings` and `instrumented`.
-The former should hold a clone of the bindings repo, the latter is meant to act as a "playground" to build and instrument real node apps (e.g. an app that uses `express` as the web server and `morgan` for logging). This setup allows linking local versions of bindings and agent for end-to-end development.
+The Agent dev environment mounts the code into `usr/src/work` and also mounts two siblings directories if they exist: `bindings` and `instrumented`.
+The former should hold a clone of the bindings repo, the latter is for the `node-instrumneted` repo clone. It is meant to act as a "playground" to build and instrument real node apps (e.g. an app that uses `express` as the web server and `morgan` for logging). This setup allows linking local versions of bindings and agent for end-to-end development.
 
 ### Linking to Bindings
 
@@ -85,7 +85,7 @@ Note:
 4. Reinstall dependencies `npm install`.
 3. Link the agent: `npm link {../relative_path}` (e.g. `npm link ../../../work --save`)
 
-Tip: if `npm link` output `Error: Argument #2: Expected array but got string` it is because the path is not pointing at a valid package.
+Tip: if `npm link` output `Error: Argument #2: Expected array but got string` it is because the path is not pointing at a valid package. Try to add or remove dots...
 
 ## Testing
 
