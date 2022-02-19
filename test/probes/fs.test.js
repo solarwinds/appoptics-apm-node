@@ -369,6 +369,7 @@ describe('probes.fs', function () {
           function (msg) {
             checks.entry(msg)
             expect(msg).property('Operation', call.name)
+            expect(msg).property('Flavor', 'promise')
             if (call.type === 'path') {
               expect(msg).property('FilePath', args[0])
             } else if (call.type === 'fd') {
@@ -426,6 +427,7 @@ describe('probes.fs', function () {
           function (msg) {
             checks.entry(msg)
             expect(msg).property('Operation', call.name)
+            expect(msg).property('Flavor', 'callback')
             if (call.type === 'path') {
               expect(msg).property('FilePath', args[0])
             } else if (call.type === 'fd') {
@@ -492,6 +494,7 @@ describe('probes.fs', function () {
           function (msg) {
             checks.entry(msg)
             expect(msg).property('Operation', name)
+            expect(msg).to.not.have.property('Flavor')
             switch (call.type) {
               case 'path':
                 expect(msg).property('FilePath', args[0])
