@@ -330,7 +330,7 @@ describe(`probes.${p}`, function () {
         function (msg) {
           // the edge in "Continuation" is from trace parent.
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
-          expect(msg).property('sw.parent_id')
+          expect(msg).property('sw.tracestate_parent_id')
           expect(msg).property('sw.w3c.tracestate')
 
           xtrace = msg['X-Trace']
