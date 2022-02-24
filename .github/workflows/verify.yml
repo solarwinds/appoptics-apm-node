@@ -99,7 +99,7 @@ jobs:
         working-directory: .github/utils
 
       # results of step should be visually examined in https://my-stg.appoptics.com/
-      - name: Start Server & use Client againt Staging
+      - name: Start Server & use Client against Staging
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
@@ -119,7 +119,7 @@ jobs:
         working-directory: .github/utils
 
       # results of step should be visually examined in https://my.appoptics.com/
-      - name: Start Server & use Client againt Staging
+      - name: Start Server & use Client against Production
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
