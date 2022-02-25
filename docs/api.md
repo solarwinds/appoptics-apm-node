@@ -615,7 +615,7 @@ object.sw === {trace_id:..., span_id: ..., trace_flages: ...}.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [object] | <code>object</code> | ito which an sw log object containing trace_id, span_id, trace_flages  properties is inserted when conditions are met. |
+| [object] | <code>object</code> | into which an sw log object containing trace_id, span_id, trace_flags properties is inserted when conditions are met. |
 
 **Example**  
 ```js
