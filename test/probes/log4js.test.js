@@ -37,34 +37,34 @@ describe(`log4js v${version}`, function () {
   let pfx
   let spanName
   let eventInfo
+  const logEmitter = new EventEmitter()
+
+  // define log4js appender.
+  // see: Custom Appenders at https://log4js-node.github.io/log4js-node/appenders.html
+  function emitAppender (layout, timezoneOffset) {
+    return (loggingEvent) => {
+      logEmitter.emit('test-log', `${layout(loggingEvent, timezoneOffset)}\n`)
+    }
+  }
+
+  // define an "inline" appender module
+  // see: Advanced configuration at https://log4js-node.github.io/log4js-node/appenders.html
+  const myAppenderModule = {
+    configure: (config, layouts) => {
+      let layout = layouts.colouredLayout
+      if (config.layout) {
+        layout = layouts.layout(config.layout.type, config.layout)
+      }
+      return emitAppender(layout, config.timezoneOffset)
+    }
+  }
+
+  // listen to our fake stream.
+  logEmitter.addListener('test-log', function (s) {
+    eventInfo = s
+  })
 
   before(function () {
-    // define log4js appender.
-    // see: Custom Appenders at https://log4js-node.github.io/log4js-node/appenders.html
-    function emitAppender (layout, timezoneOffset) {
-      return (loggingEvent) => {
-        logEmitter.emit('test-log', `${layout(loggingEvent, timezoneOffset)}\n`)
-      }
-    }
-
-    // define an "inline" appender module
-    // see: Advanced configuration at https://log4js-node.github.io/log4js-node/appenders.html
-    const myAppenderModule = {
-      configure: (config, layouts) => {
-        let layout = layouts.colouredLayout
-        if (config.layout) {
-          layout = layouts.layout(config.layout.type, config.layout)
-        }
-        return emitAppender(layout, config.timezoneOffset)
-      }
-    }
-
-    // listen to our fake stream.
-    const logEmitter = new EventEmitter()
-    logEmitter.addListener('test-log', function (s) {
-      eventInfo = s
-    })
-
     // make the logger
     log4js.configure({
       appenders: { custom: { type: myAppenderModule } },
@@ -164,7 +164,7 @@ describe(`log4js v${version}`, function () {
 
       function test () {
         traceId = ao.lastEvent.toString()
-        expect(traceId[traceId.length - 1] === '0', 'traceId shoud be unsampled')
+        expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
         logger.info(message)
         return 'test-done'
       }
@@ -293,5 +293,196 @@ describe(`log4js v${version}`, function () {
       ],
       localDone
     )
+  })
+
+  // layout tests
+
+  // see https://log4js-node.github.io/log4js-node/layouts.html for examples
+  const confiugurations = [
+    // basic
+    {
+      appenders: { out: { type: myAppenderModule, layout: { type: 'basic' } } },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // colored
+    {
+      appenders: { out: { type: myAppenderModule, layout: { type: 'colored' } } },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // messagePassThrough
+    {
+      appenders: { out: { type: myAppenderModule, layout: { type: 'messagePassThrough' } } },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // dummy
+    {
+      appenders: { out: { type: myAppenderModule, layout: { type: 'dummy' } } },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // pattern
+    {
+      appenders: { out: { type: myAppenderModule, layout: { type: 'pattern', pattern: '%d %d %d %m' } } },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // tokens
+    {
+      appenders: {
+        out: {
+          type: myAppenderModule,
+          layout: {
+            type: 'pattern',
+            pattern: '%d %p %c %x{user} %x{age} says: %m%n',
+            tokens: {
+              user: function (logEvent) {
+                return 'Jake'
+              },
+              age: 45
+            }
+          }
+        }
+      },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    },
+    // custom level
+    {
+      levels: { custom: { value: 13370, levelStr: 'CUSTOM', colour: 'cyan' } },
+      appenders: { out: { type: myAppenderModule } },
+      categories: { default: { appenders: ['out'], level: 'debug' } }
+    }
+  ]
+
+  confiugurations.forEach(config => {
+    eventInfo = undefined
+
+    it(`should work with ${config.appenders.out.layout && config.appenders.out.layout.type} layout`, function (done) {
+      const message = 'layout testing'
+      let level
+      let traceId
+
+      ao.cfg.insertTraceIdsIntoLogs = true
+
+      log4js.configure(config)
+      const logger = log4js.getLogger()
+
+      function localDone () {
+        checkEventInfo(eventInfo, level, message, traceId)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = ao.lastEvent.toString()
+          // log
+          level = typeof logger.custom === 'function' ? 'custom' : 'error'
+          if (config.appenders.out.layout && config.appenders.out.layout.type === 'messagePassThrough') {
+            const pass = 'pass through'
+            logger.error(message, pass)
+          } else {
+            logger[level]('Cheese is too ripe!')
+          }
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  it('should work with addContext method', function (done) {
+    const message = 'addLayout testing'
+    let level
+    let traceId
+
+    ao.cfg.insertTraceIdsIntoLogs = true
+
+    log4js.configure({
+      appenders: {
+        out: {
+          type: myAppenderModule,
+          layout: {
+            type: 'pattern',
+            pattern: '%d %p %c %X{user} %m%n'
+          }
+        }
+      },
+      categories: { default: { appenders: ['out'], level: 'info' } }
+    })
+    const logger = log4js.getLogger()
+    logger.addContext('user', 'charlie')
+
+    function localDone () {
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
+    }
+
+    helper.test(emitter, function (done) {
+      ao.instrument(spanName, function () {
+        traceId = ao.lastEvent.toString()
+        // log
+        logger.info(message)
+      })
+      done()
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', spanName)
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', spanName)
+        msg.should.have.property('Label', 'exit')
+      }
+    ], localDone)
+  })
+
+  it('should work with addLayout method', function (done) {
+    const message = 'addLayout testing'
+    let level
+    let traceId
+
+    ao.cfg.insertTraceIdsIntoLogs = true
+
+    log4js.addLayout('json', function (config) {
+      return function (logEvent) { return JSON.stringify(logEvent) + config.separator }
+    })
+
+    log4js.configure({
+      appenders: {
+        out: { type: myAppenderModule, layout: { type: 'json', separator: ',' } }
+      },
+      categories: {
+        default: { appenders: ['out'], level: 'info' }
+      }
+    })
+    const logger = log4js.getLogger()
+
+    function localDone () {
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
+    }
+
+    helper.test(emitter, function (done) {
+      ao.instrument(spanName, function () {
+        traceId = ao.lastEvent.toString()
+        // log
+        logger.info(message)
+      })
+      done()
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', spanName)
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', spanName)
+        msg.should.have.property('Label', 'exit')
+      }
+    ], localDone)
   })
 })
