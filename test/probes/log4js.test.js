@@ -15,7 +15,6 @@ function checkEventInfo (eventInfo, level, message, traceId) {
   const reString = 'trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)'
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
-
   if (traceId) {
     const parts = traceId.split('-')
     expect(m[0]).equal(`trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`)
@@ -481,6 +480,67 @@ describe(`log4js v${version}`, function () {
       },
       function (msg) {
         msg.should.have.property('Layer', spanName)
+        msg.should.have.property('Label', 'exit')
+      }
+    ], localDone)
+  })
+
+  console.log('route')
+  it('should work as express middleware', function (done) {
+    const message = 'express middleware testing'
+    const level = 'info'
+    let traceId
+
+    ao.cfg.insertTraceIdsIntoLogs = true
+    ao.probes.express.enabled = false
+    const express = require('express')
+    const axios = require('axios')
+
+    const app = express()
+    app.use(log4js.connectLogger(logger))
+
+    app.set('views', __dirname)
+    app.set('view engine', 'ejs')
+
+    app.get('/hello/:name', function (req, res) {
+      // the trace id used by the middle ware is the one from the last event
+      // which in this case comes from the express router
+      traceId = ao.lastEvent.toString()
+      res.render('hello', Object.create({
+        name: req.params.name
+      }))
+    })
+
+    function localDone () {
+      checkEventInfo(eventInfo, level, message, traceId)
+      done()
+    }
+
+    function asyncFunction () {
+      const server = app.listen(async function () {
+        const port = server.address().port
+        await axios('http://localhost:' + port + '/hello/world')
+        server.close(localDone)
+      })
+    }
+
+    helper.test(emitter, function (done) {
+      asyncFunction()
+    }, [
+      function (msg) {
+        msg.should.have.property('Layer', 'http-client')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'entry')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'nodejs')
+        msg.should.have.property('Label', 'exit')
+      },
+      function (msg) {
+        msg.should.have.property('Layer', 'http-client')
         msg.should.have.property('Label', 'exit')
       }
     ], localDone)
