@@ -118,7 +118,8 @@ function checkEventInfo2 (eventInfo, level, message, traceId) {
   expect(eventInfo[0]).equal(level, 'levels don\'t match')
   expect(eventInfo[1]).equal(message, 'messages don\'t match')
   if (traceId) {
-    expect(eventInfo[2]).deep.equal({ ao: { traceId } }, 'ao object doesn\'t match')
+    const parts = traceId.toString().split('-')
+    expect(eventInfo[2]).deep.equal({ sw: { trace_id: parts[1], span_id: parts[2], trace_flags: parts[3] } })
   }
 }
 
@@ -126,7 +127,8 @@ function checkEventInfo1 (eventInfo, level, message, traceId) {
   expect(eventInfo[0]).equal(level, 'levels don\'t match')
   expect(eventInfo[1]).equal(message, 'messages don\'t match')
   if (traceId) {
-    expect(eventInfo[2]).deep.equal({ ao: { traceId } }, 'ao object doesn\'t match')
+    const parts = traceId.toString().split('-')
+    expect(eventInfo[2]).deep.equal({ sw: { trace_id: parts[1], span_id: parts[2], trace_flags: parts[3] } })
   }
 }
 //
