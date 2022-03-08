@@ -132,13 +132,10 @@ describe('custom (without native bindings present)', function () {
     assert(ao.reportInfo('this is info') === undefined)
     assert(ao.sendMetric() === -1)
 
-    let o = ao.insertLogObject()
+    const o = ao.getTraceObjecForLog()
     assert(typeof o === 'object')
     assert(Object.keys(o).length === 0)
 
-    o = ao.insertLogObject({ existing: 'bruce' })
-    assert(typeof o === 'object')
-    assert(Object.keys(o).length === 1)
-    assert(o.existing === 'bruce')
+    assert(ao.getTraceStringForLog() === '')
   })
 })
