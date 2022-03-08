@@ -54,6 +54,7 @@
     * ~~[.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>~~
     * [.sendMetrics(metrics, [gopts])](#ao.sendMetrics) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
     * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
+    * [.getLogString([delimiter])](#ao.getLogString) ⇒ <code>string</code>
     * [.wrapLambdaHandler([handler])](#ao.wrapLambdaHandler) ⇒ <code>function</code>
 
 <a name="ao.logLevel"></a>
@@ -643,6 +644,44 @@ logger.info(ao.insertLogObject({
     message: 'this object is being modified by insertLogObject',
     more: 'there will be an added sw property'
 }))
+```
+<a name="ao.getLogString"></a>
+
+### ao.getLogString([delimiter]) ⇒ <code>string</code>
+Return text delimited representation of the trace containing trace_id, span_id, trace_flags. The primary intended use for this is
+to custom tokens in log packages.
+
+**Kind**: static method of [<code>ao</code>](#ao)  
+**Returns**: <code>string</code> - - the trace log string (e.g. trace_id:... span_id: ..., trace_flages: ...)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [delimiter] | <code>string</code> | the delimiter to use |
+
+**Example**  
+```js
+log4js.configure({
+  appenders: {
+    out: {
+      type: 'stdout',
+      layout: {
+        type: 'pattern',
+        pattern: '%d %p %c %x{user} says: %m is: %x{trace} %n',
+        tokens: {
+          user: function (logEvent) {
+            return 'Jake'
+          },
+          trace: function () {
+            return typeof ao !=='undefined' ? ao.getLogString() : ''
+          }
+        }
+      }
+    }
+  },
+  categories: { default: { appenders: ['out'], level: 'info' } }
+})
+const logger = log4js.getLogger()
+loggerLayout.info('token from api')
 ```
 <a name="ao.wrapLambdaHandler"></a>
 
