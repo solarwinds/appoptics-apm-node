@@ -170,7 +170,7 @@ describe(`probes.morgan ${version}`, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // default to the simple 'true'
-    ao.cfg.insertTraceIdsIntoMorgan = true
+    ao.cfg.insertTraceIdsIntoLogs = true
 
     debugging = false
 
@@ -206,7 +206,7 @@ describe(`probes.morgan ${version}`, function () {
       let traceId
 
       // this gets reset in beforeEach() so set it in the test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
+      ao.cfg.insertTraceIdsIntoLogs = mode
       logger = makeLogger()
 
       function localDone () {
@@ -248,7 +248,7 @@ describe(`probes.morgan ${version}`, function () {
       let traceId
 
       // reset in beforeEach() so set in each test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
+      ao.cfg.insertTraceIdsIntoLogs = mode
       logger = makeLogger()
       ao.traceMode = 0
       ao.sampleRate = 0
@@ -289,7 +289,7 @@ describe(`probes.morgan ${version}`, function () {
       let traceId
 
       // this gets reset in beforeEach() so set it in the test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
+      ao.cfg.insertTraceIdsIntoLogs = mode
       logger = makeLogger(function () { return 'xyzzy' })
 
       function localDone () {
@@ -331,7 +331,7 @@ describe(`probes.morgan ${version}`, function () {
       const traceId = `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`
       ao.lastEvent = undefined
 
-      ao.cfg.insertTraceIdsIntoMorgan = 'always'
+      ao.cfg.insertTraceIdsIntoLogs = 'always'
       logger = makeLogger()
       ao.traceMode = 0
       ao.sampleRate = 0
@@ -428,7 +428,7 @@ describe(`probes.morgan ${version}`, function () {
   })
 
   it('should insert trace IDs using the function directly', function (done) {
-    ao.cfg.insertTraceIdsIntoMorgan = false
+    ao.cfg.insertTraceIdsIntoLogs = false
     let traceId
 
     logger = makeLogger('traceThis::my-trace-id')
