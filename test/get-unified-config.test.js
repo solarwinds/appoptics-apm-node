@@ -288,7 +288,6 @@ describe('get-unified-config', function () {
         '  domainPrefix: false,',
         '  serviceKey,',
         '  insertTraceIdsIntoLogs: undefined,',
-        '  insertTraceIdsIntoMorgan: undefined,',
         '  createTraceIdsToken: false,',
         '  probes: {',
         '    fs: {',
@@ -303,8 +302,7 @@ describe('get-unified-config', function () {
         hostnameAlias: '',
         domainPrefix: false,
         serviceKey: '',
-        insertTraceIdsIntoLogs: false,
-        insertTraceIdsIntoMorgan: false
+        insertTraceIdsIntoLogs: false
       }
 
       writeConfigJs(literal.join('\n'))
