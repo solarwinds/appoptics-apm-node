@@ -681,7 +681,7 @@ log4js.configure({
   categories: { default: { appenders: ['out'], level: 'info' } }
 })
 const logger = log4js.getLogger()
-loggerLayout.info('token from api')
+logger.info('token from api')
 ```
 <a name="ao.wrapLambdaHandler"></a>
 
