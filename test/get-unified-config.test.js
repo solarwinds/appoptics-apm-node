@@ -265,13 +265,12 @@ describe('get-unified-config', function () {
     })
 
     it('should not set keys with invalid values', function () {
-      const config = { ec2MetadataTimeout: 'hello', createTraceIdsToken: 'bruce' }
+      const config = { ec2MetadataTimeout: 'hello' }
       writeConfigJSON(config)
 
       const cfg = guc()
 
       const warnings = [
-        'invalid configuration file value createTraceIdsToken: bruce',
         'invalid configuration file value ec2MetadataTimeout: hello'
       ]
       doChecks(cfg, { warnings })
@@ -288,7 +287,6 @@ describe('get-unified-config', function () {
         '  domainPrefix: false,',
         '  serviceKey,',
         '  insertTraceIdsIntoLogs: undefined,',
-        '  createTraceIdsToken: false,',
         '  probes: {',
         '    fs: {',
         '      enabled: true',
@@ -313,7 +311,6 @@ describe('get-unified-config', function () {
       const cfg = guc()
 
       const warnings = [
-        'invalid configuration file value createTraceIdsToken: false',
         'traceMode is deprecated; it will be invalid in the future'
       ]
       const overrides = {
