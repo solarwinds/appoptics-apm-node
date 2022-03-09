@@ -34,7 +34,6 @@ The configuration file can supply the following properties, showing their defaul
   runtimeMetrics: true,
   transactionSettings: undefined,
   insertTraceIdsIntoLogs: false,
-  createTraceIdsToken: undefined,
   proxy: undefined,
   probes: {
     // probe-specific defaults. see lib/probe-defaults.js for details
@@ -56,7 +55,6 @@ The configuration file can supply the following properties, showing their defaul
 |transactionSettings|`undefined`|An array of transactions to exclude. Each array element is an object of the form `{type: 'url', string: 'pattern', tracing: trace-setting}` or `{type: 'url', regex: /regex/, tracing: trace-setting}`. When the specified type (currently only `'url'` is implemented) matches the string or regex then tracing for that url is set to trace-setting, overriding the global traceMode. N.B. if inserting a regex into a JSON configuration file you must enter the string that is expected by the `RegExp` constructor because JSON has no representation of a `RegExp` object. `trace-setting` is either `'enabled'` or `'disabled'`.|
 |ec2MetadataTimeout|`1000`|Milliseconds to wait for the ec2/openstack metadata service to respond|
 |insertTraceIdsIntoLogs|`false`|Insert trace IDs into supported logging packages' output. Options are `true`, `'traced'`, `'sampledOnly'`, and `'always'`. The default, `false`, does not insert trace ids. `true` and `'traced'` insert the ID when AppOptics is tracing. `'sampledOnly'` inserts the ID when the trace is sampled. `'always'` inserts an empty trace ID value (all-zeroes) even when not tracing.|
-|createTraceIdsToken|`undefined`|Create a token that can be used in a logging package's format string. If set to `'morgan'` the token `sw-auto-trace-id` will be created and `:sw-auto-trace-id` can be used in morgan format strings.|
 |triggerTraceEnabled|`true`|Enable or disable the trigger-trace feature. Option values are `true` and `false`|
 
 
