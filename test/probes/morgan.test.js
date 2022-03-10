@@ -361,7 +361,7 @@ describe(`probes.morgan ${version}`, function () {
 
       // this gets reset in beforeEach() so set it in the test.
       ao.cfg.insertTraceIdsIntoLogs = mode
-      logger = makeLogger(':method :sw-auto-trace-id :url :status :res[content-length]')
+      logger = makeLogger(':method :trace :url :status :res[content-length]')
 
       function localDone () {
         checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
