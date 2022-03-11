@@ -12,7 +12,6 @@ const { version } = require('log4js/package.json')
 const { EventEmitter } = require('events')
 
 function checkEventInfo (eventInfo, level, message, traceId) {
-  // console.log(eventInfo)
   const reString = 'trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)'
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
@@ -568,7 +567,7 @@ describe(`log4js v${version}`, function () {
     })
     const logger = log4js.getLogger()
     logger.addContext('user', 'charlie')
-    logger.addContext('trace', function () { return ao.getLogString() })
+    logger.addContext('trace', function () { return ao.getTraceStringForLog() })
 
     function localDone () {
       checkEventInfo(eventInfo, level, message, traceId)
@@ -602,7 +601,7 @@ describe(`log4js v${version}`, function () {
 
     log4js.addLayout('json', function (config) {
       return function (logEvent) {
-        logEvent.context = { ...logEvent.context, ...ao.insertLogObject() }
+        logEvent.context = { ...logEvent.context, sw: ao.getTraceObjecForLog() }
         return JSON.stringify(logEvent)
       }
     })
@@ -665,7 +664,7 @@ describe(`log4js v${version}`, function () {
                 return 'Jake'
               },
               age: 45,
-              trace: function () { return ao.getLogString() }
+              trace: function () { return ao.getTraceStringForLog() }
             }
           }
         }

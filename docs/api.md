@@ -53,8 +53,8 @@
     * [.reportInfo(data)](#ao.reportInfo)
     * ~~[.sendMetric(name, [options])](#ao.sendMetric) ⇒ <code>number</code>~~
     * [.sendMetrics(metrics, [gopts])](#ao.sendMetrics) ⇒ [<code>SendMetricsReturn</code>](#SendMetricsReturn)
-    * [.insertLogObject([object])](#ao.insertLogObject) ⇒ <code>object</code>
-    * [.getLogString([delimiter])](#ao.getLogString) ⇒ <code>string</code>
+    * [.getTraceObjecForLog()](#ao.getTraceObjecForLog) ⇒ <code>object</code>
+    * [.getTraceStringForLog([delimiter])](#ao.getTraceStringForLog) ⇒ <code>string</code>
     * [.wrapLambdaHandler([handler])](#ao.wrapLambdaHandler) ⇒ <code>function</code>
 
 <a name="ao.logLevel"></a>
@@ -603,53 +603,38 @@ ao.sendMetrics(
   {tags: {class: 'status'}}
 );
 ```
-<a name="ao.insertLogObject"></a>
+<a name="ao.getTraceObjecForLog"></a>
 
-### ao.insertLogObject([object]) ⇒ <code>object</code>
-Insert the appoptics object containing a trace ID into an object. The primary intended use for this is
-to auto-insert traceIds into JSON-like logs; it's documented so it can be used for unsupported logging
-packages or by those wishing a higher level of control.
+### ao.getTraceObjecForLog() ⇒ <code>object</code>
+Return an object representation of the trace containing trace_id, span_id, trace_flags. The primary intended use for this is
+to insert custom tokens in log packages.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
-**Returns**: <code>object</code> - - the object with the an additional properties, ao, e.g.
-object.sw === {trace_id:..., span_id: ..., trace_flages: ...}.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [object] | <code>object</code> | into which an sw log object containing trace_id, span_id, trace_flags properties is inserted when conditions are met. |
-
+**Returns**: <code>object</code> - - the trace log  object (e.g. { trace_id:..., span_id: ..., trace_flages: ...})  
 **Example**  
 ```js
-const ao = require('appoptics-apm');
-const logger = require('pino')();
-
-// with no object as an argument ao.insertLogObject returns {ao: {traceId: ...}}
-logger.info(ao.insertLogObject(), 'not-so-important message');
-```
-**Example**  
-```js
-const ao = require('appoptics-apm');
-const winston = require('winston');
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-      winston.format.splat(),
-      winston.format.json()
-    ),
-    defaultMeta: {service: 'ao-log-example'},
-    transports: [...]
+log4js.addLayout('json', function (config) {
+  return function (logEvent) {
+    logEvent.context = { ...logEvent.context, ...ao.getTraceObjecForLog() }
+    return JSON.stringify(logEvent)
+  }
 })
-
-logger.info(ao.insertLogObject({
-    message: 'this object is being modified by insertLogObject',
-    more: 'there will be an added sw property'
-}))
+log4js.configure({
+  appenders: {
+    out: { type: 'stdout', layout: { type: 'json' } }
+  },
+  categories: {
+    default: { appenders: ['out'], level: 'info' }
+  }
+})
+const logger = log4js.getLogger()
+logger.info('doing something.')
 ```
-<a name="ao.getLogString"></a>
+<a name="ao.getTraceStringForLog"></a>
 
-### ao.getLogString([delimiter]) ⇒ <code>string</code>
+### ao.getTraceStringForLog([delimiter]) ⇒ <code>string</code>
 Return text delimited representation of the trace containing trace_id, span_id, trace_flags. The primary intended use for this is
-to custom tokens in log packages.
+to insert custom tokens in log packages.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
 **Returns**: <code>string</code> - - the trace log string (e.g. trace_id:... span_id: ..., trace_flages: ...)  
@@ -672,7 +657,7 @@ log4js.configure({
             return 'Jake'
           },
           trace: function () {
-            return typeof ao !=='undefined' ? ao.getLogString() : ''
+            return typeof ao !=='undefined' ? ao.getTraceStringForLog() : ''
           }
         }
       }
