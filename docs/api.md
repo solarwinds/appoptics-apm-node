@@ -606,7 +606,7 @@ ao.sendMetrics(
 <a name="ao.getTraceObjecForLog"></a>
 
 ### ao.getTraceObjecForLog() ⇒ <code>object</code>
-Return and object representation of the trace containing trace_id, span_id, trace_flags. The primary intended use for this is
+Return an object representation of the trace containing trace_id, span_id, trace_flags. The primary intended use for this is
 to insert custom tokens in log packages.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
