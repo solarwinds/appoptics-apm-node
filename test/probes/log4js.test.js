@@ -12,7 +12,6 @@ const { version } = require('log4js/package.json')
 const { EventEmitter } = require('events')
 
 function checkEventInfo (eventInfo, level, message, traceId) {
-  // console.log(eventInfo)
   const reString = 'trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)'
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
