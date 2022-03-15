@@ -432,7 +432,7 @@ describe(`probes.morgan ${version}`, function () {
   })
 
   //
-  // for each mode verify that insert works with format function
+  // for each mode verify that insert works with format string when no insertion is requested
   //
   insertModes.forEach(mode => {
     eventInfo = undefined
@@ -449,6 +449,59 @@ describe(`probes.morgan ${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok
+          })
+          fakeRes.writeHead(200)
+          fakeRes.finished = true
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
+  // for each mode verify that insert works with format string when no insertion is requested
+  //
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : ''
+    eventInfo = undefined
+
+    it(`should ${maybe}insert in sync when mode=${mode} using a format string`, function (done) {
+      let traceId
+
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      const custom = function (tokens, req, res) {
+        return [
+          tokens.trace(), // the token can be used as a method in custom function
+          tokens.method(req, res),
+          tokens.url(req, res),
+          tokens.status(req, res),
+          tokens.res(req, res, 'content-length'), '-',
+          tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+      }
+      logger = makeLogger(custom)
+
+      function localDone () {
+        checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           // log
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
