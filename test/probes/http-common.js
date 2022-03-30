@@ -12,6 +12,7 @@ const util = require('util')
 
 const addon = ao.addon
 
+const semver = require('semver')
 const axios = require('axios')
 
 if (process.env.AO_TEST_HTTP !== 'http' && process.env.AO_TEST_HTTP !== 'https') {
