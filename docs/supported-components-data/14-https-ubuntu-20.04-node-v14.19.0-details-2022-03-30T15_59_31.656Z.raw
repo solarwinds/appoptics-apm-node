@@ -1,0 +1,59 @@
+2022-03-30T15:59:31.932Z appoptics:warn environment variables not recognized: APPOPTICS_COLLECTOR_NH=apm-collector.dc-01.st-ssp.solarwinds.com
+2022-03-30T15:59:31.933Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-03-30T15:59:31.933Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-03-30T15:59:31.933Z appoptics:debug serviceKey dIOz...wWK0:ao-node-test
+2022-03-30T15:59:31.933Z appoptics:debug using context provider: ace-context
+2022-03-30T15:59:32.008Z appoptics:debug apm 10.2.2-internal.0, bindings 11.2.1-internal.0, oboe 10.3.1
+2022-03-30T15:59:32.162Z appoptics:patching patched crypto 
+2022-03-30T15:59:32.181Z appoptics:patching patched https 
+2022-03-30T15:59:32.181Z appoptics:patching patched http 
+2022-03-30T15:59:32.212Z appoptics:patching patched zlib 
+2022-03-30T15:59:32.219Z appoptics:debug starting runtimeMetrics
+
+
+  probes.https
+    https-server
+      ✔ UDP might lose a message running locally
+(node:859) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+      ✔ should send traces for https routing and response spans
+      ✔ should start a "Source" trace when receiving no w3c headers
+      ✔ should start a "Downstream" trace when receiving a traceparent only
+      ✔ should continue "Flow" tracing when receiving a traceparent and tracestate that match
+      ✔ should continue "Continuation" tracing when receiving a traceparent and tracestate that do not match in header
+      ✔ should forward sampling data in always trace mode
+      ✔ should not continue tracing when receiving a bad traceparent id header
+      ✔ should not continue tracing when receiving only tracestate id header
+      ✔ should not report anything when https probe is disabled
+      ✔ should not send a span or metrics when a string or regex filter matches (101ms)
+      ✔ should trace correctly within asyncrony
+      ✔ should support query param filtering
+      ✔ should map X-Forwarded-For header to event.kv.Forwarded-For
+      ✔ should map X-Forwarded-Host header to event.kv.Forwarded-Host
+      ✔ should map X-Forwarded-Port header to event.kv.Forwarded-Port
+      ✔ should map X-Forwarded-Proto header to event.kv.Forwarded-Proto
+      ✔ should map X-Request-Start header to event.kv.Request-Start
+      ✔ should map X-Queue-Start header to event.kv.Request-Start
+      ✔ should map X-Queue-Time header to event.kv.Queue-Time
+      ✔ should map a specific header to ClientIP when specified
+      ✔ should set ClientIP when req['client-ip-header'] is undefined
+      ✔ should report request errors
+      ✔ should report response errors
+      - should gracefully exit with no error when connection is aborted
+      ✔ should exit when timed out
+    https-client
+      ✔ should trace https request
+      ✔ should support object-based requests
+      ✔ should trace streaming https request
+      ✔ should support query filtering
+      ✔ should report socket errors sending request
+      ✔ should report socket errors when no server is listening
+      ✔ should report socket errors when the server hangs up
+      ✔ should not report an error if req.abort() is called
+      ✔ should report an error when the server has a socket error
+      - should report response errors handling request
+
+
+  34 passing (376ms)
+  2 pending
+
