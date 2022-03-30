@@ -627,6 +627,41 @@ describe(`probes.${p}`, function () {
     })
 
     //
+    // Test error when connection is aborted
+    //
+    it('should gracefully exit with no error when connection is aborted', function (done) {
+      // AbortController added in node 16
+      if (semver.satisfies(process.version, '< 16.0.0')) {
+        return this.skip()
+      }
+
+      let port
+      const server = createServer(options, function (req, res) {
+        // server will never response and client will abort after 500 ms
+      })
+
+      helper.doChecks(emitter, [
+        // there will only be an entry event as there is no response
+        function (msg) {
+          check.server.entry(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      const controller = new AbortController()
+
+      server.listen(function () {
+        port = server.address().port
+        axios(`${p}://localhost:${port}/foo?bar=baz`, { signal: controller.signal })
+        setTimeout(() => {
+          // cancel the request
+          controller.abort()
+        }, 500)
+      })
+    })
+
+    //
     // Validate that server.setTimeout(...) exits correctly
     //
     it('should exit when timed out', function (done) {
