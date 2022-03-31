@@ -133,12 +133,3 @@ These environment variables may be set:
 |APPOPTICS_REPORTER|`'ssl'`|The reporter that will be used throughout the runtime of the app. Possible values: `'ssl'`, `'udp'`. This is used for testing.|
 |APPOPTICS_COLLECTOR|`'collector.appoptics.com:443'`|SSL collector endpoint address and port. This is typically changed only for testing.|
 |APPOPTICS_TRUSTEDPATH|built-in|Path to the certificate used to verify the collector endpoint. Used only for testing.|
-
-Deprecated environment variables. They will be removed in the future:
-
-| Deprecated Name      | Default  | Description |
-| -------------------- | -------- | ----------- |
-|DEBUG|`'appoptics:error,appoptics:warn'`|This has been replaced with APPOPTICS_LOG_SETTINGS so the 'appoptics:' prefix does not need to be entered for each setting.|
-|APPOPTICS_TRIGGER_TRACE|`'enable'`|Enable or disable the trigger-trace feature. Options are `'enable'`, `'disable'`|
-
-
