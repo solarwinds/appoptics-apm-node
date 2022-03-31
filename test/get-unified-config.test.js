@@ -455,14 +455,8 @@ describe('get-unified-config', function () {
       doChecks(cfg, { global: config })
     })
 
-    it('should map an env var name to a different property name', function () {
-      process.env.APPOPTICS_TRIGGER_TRACE = 'disabled'
-
-      const cfg = guc()
-
-      const config = { triggerTraceEnabled: false }
-      const warnings = ['APPOPTICS_TRIGGER_TRACE is deprecated; it will be invalid in the future']
-      doChecks(cfg, { global: config, warnings })
+    it.skip('should map an env var name to a different property name', function () {
+      // functionality exists but is currently not being used, hence no test case.
     })
 
     it('should omit a setting when the execution environment is wrong', function () {
