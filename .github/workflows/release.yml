@@ -34,10 +34,6 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'  # Setup .npmrc file to publish to npm
 
-      # prepack script requires files and those in turn require specific packages
-      - name: NPM Install prepack packages
-        run: npm install shimmer debug-custom
-
       # *** IMPORTANT: 
       # by default any package published to npm registry is tagged with 'latest'. to set other pass --tag. 
       # any pre-release package (has - in version), regardless of name defined with version preid, will be npm tagged with 'prerelease'.
