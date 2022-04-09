@@ -158,7 +158,10 @@ completed          │   Verify  │
 
 Repo is defined with the following secrets:
 ```
-AO_TOKEN_PROD
-AO_TOKEN_STG
+APPOPTICS_SERVICE_KEY
+AO_TEST_SERVICE_KEY
+AO_TEST_COLLECTOR
+AO_TEST_PROD_SERVICE_KEY
+AO_TEST_PROD_COLLECTOR
 NPM_AUTH_TOKEN
 ```
