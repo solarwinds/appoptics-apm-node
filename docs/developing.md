@@ -43,9 +43,9 @@ Those are available in the Docker Dev Container.
 
 1. Start the Docker daemon (on a Mac that would be simplest using Docker desktop).
 2. Create a `.env` file and set: 
-  - `AO_TOKEN_PROD={a valid production token}`
-  - `AO_TOKEN_STG={a valid staging token}`.
-  - APPOPTICS_SERVICE_KEY={a valid staging token}:ao-node-test
+- `APPOPTICS_SERVICE_KEY={any string that looks like a valid service key}`
+- `AO_TEST_COLLECTOR={a url of a collector}`
+- `AO_TEST_SERVICE_KEY={a valid service key for the collector above}`.
 
 3. Run `npm run dev`. This will:
   - Create a docker container, set it up, and open a shell. Docker container will have all required build tools, nvm and multiple versions of node preinstalled, as well as nano installed, and access to GitHub SSH keys as configured. Repo code is **mounted** to the container.
@@ -78,9 +78,9 @@ Notes:
 `docker exec -it -w /usr/src/instrumented dev-agent bash -c "unset APPOPTICS_REPORTER && unset APPOPTICS_COLLECTOR && bash"`
 
 Note:
-- dev environment uses UDP reporter and a local host collector. The new shell shall use the defaults instead.
+- dev environment uses UDP reporter and a local host collector. The new shell shall use the default (production) instead.
 
-2. cd into the instrumented app directory (e.g `cd frameworks/express-morgan`)
+2. cd into the instrumented app directory (e.g `cd frameworks/fs`)
 3. Remove previous installs `rm -rf node_modules` (if exists).
 4. Reinstall dependencies `npm install`.
 3. Link the agent: `npm link {../relative_path}` (e.g. `npm link ../../../work --save`)
@@ -91,17 +91,13 @@ Tip: if `npm link` output `Error: Argument #2: Expected array but got string` it
 
 Test are run using [Mocha](https://github.com/mochajs/mocha).
 
-1. Run `npm test` to run the test suite. Almost all tests run using a mock reporter that listens on UDP port 7832 (hard-coded in `test/helper.js`). The mock reporter intercepts UDP messages and checks them for correctness. 
+1. Run `npm test` to run the test suite. All tests, but one, run using a mock reporter that listens on UDP port 7832 (hard-coded in `test/helper.js`). The mock reporter intercepts UDP messages and checks them for correctness.
 
 The `test` script in `package.json` runs `test.sh` which then manages how mocha runs each test file. To run individual tests use `npx mocha`. For example: `npx mocha test/probes/http.test.js` will run the `http` native module instrumentation tests.
 
-It is possible to use non-production versions of the `appoptics-bindings` package when developing. There
-are different ways to do accomplish this ranging from npm's `link` command to manually copying files.
-
-
 ## Docs
 
-The repo includes code comment based API docs, which can be generated with
+The repo includes API docs that are auto generated from code comments.
 `npm run docs:api`.
 
 

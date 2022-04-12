@@ -23,12 +23,13 @@ jobs:
     runs-on: ubuntu-latest # environment job will run in
 
     env:
-      AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
       # tests run against a "local" udp "collector"
       APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
       APPOPTICS_COLLECTOR: localhost:7832
       APPOPTICS_REPORTER: udp
-      APPOPTICS_SERVICE_KEY: ${{ secrets.AO_TOKEN_STG }}:ao-node-test
+      APPOPTICS_SERVICE_KEY: ${{ secrets.APPOPTICS_SERVICE_KEY }}
+      AO_TEST_SERVICE_KEY: ${{ secrets.AO_TEST_SERVICE_KEY }}
+      AO_TEST_COLLECTOR: ${{ secrets.AO_TEST_COLLECTOR }}
 
     steps:
       - name: Checkout ${{ github.ref }}

@@ -18,12 +18,13 @@ jobs:
     container: 
       image: ghcr.io/${{ github.repository }}/node-agent-runner:latest
       env:
-        AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
         # tests run against a "local" udp "collector"
         APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
         APPOPTICS_COLLECTOR: localhost:7832
         APPOPTICS_REPORTER: udp
-        APPOPTICS_SERVICE_KEY: ${{ secrets.AO_TOKEN_STG }}:ao-node-test
+        APPOPTICS_SERVICE_KEY: ${{ secrets.APPOPTICS_SERVICE_KEY }}
+        AO_TEST_SERVICE_KEY: ${{ secrets.AO_TEST_SERVICE_KEY }}
+        AO_TEST_COLLECTOR: ${{ secrets.AO_TEST_COLLECTOR }}
         AO_TEST_CASSANDRA_2_2: cassandra:9042
         AO_TEST_MEMCACHED_1_4: memcached:11211
         AO_TEST_MONGODB_2_4: mongo_2_4:27017
