@@ -91,8 +91,8 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR=${{ secrets.AO_TEST_COLLECTOR }}
+          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
+          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
@@ -101,8 +101,8 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR=${{ secrets.AO_TEST_COLLECTOR }}
+          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
+          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js & node client.js --total 20
         working-directory: .github/utils
 
@@ -112,8 +112,8 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR=${{ secrets.AO_TEST_PROD_COLLECTOR }}
+          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
+          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
@@ -122,7 +122,7 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.AO_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR=${{ secrets.AO_TEST_PROD_COLLECTOR }}
+          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
+          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --port 3001 & node client.js --port 3001 --total 20
         working-directory: .github/utils
