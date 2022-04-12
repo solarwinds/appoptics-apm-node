@@ -3,8 +3,8 @@
 
 // as well as REPORTER specifying that the COLLECTOR should be used.
 process.env.APPOPTICS_REPORTER = 'ssl'
-process.env.APPOPTICS_SERVICE_KEY = process.env.AO_TEST_SERVICE_KEY
-process.env.APPOPTICS_COLLECTOR = process.env.AO_TEST_COLLECTOR
+process.env.APPOPTICS_SERVICE_KEY = process.env.SW_APM_TEST_SERVICE_KEY
+process.env.APPOPTICS_COLLECTOR = process.env.SW_APM_TEST_COLLECTOR
 
 const ao = require('..')
 const assert = require('assert')
