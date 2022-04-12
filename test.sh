@@ -127,11 +127,6 @@ if [ "$group_to_run" = "NO-ADDON" ] || [ ! "$group_to_run" ]; then executeTestGr
 #
 if [ "$group_to_run" = "NO-SERVICE-KEY" ] || [ ! "$group_to_run" ]; then executeTestGroup "NO-SERVICE-KEY" "test/no-service-key/*.test.js" "$timeout"; fi
 
-# verify that both types of tokens work
-#
-if [ "$group_to_run" = "SWOKEN" ] || [ ! "$group_to_run" ]; then executeTestGroup "SWOKEN" "test/swoken/*.test.js" "$timeout"; fi
-
-#
 # this tests the http client through using the request package with promises. it's
 # a step in the direction of end-to-end testing that should incorporate a server and
 # verifying that the appoptics.com collector received the traces.
