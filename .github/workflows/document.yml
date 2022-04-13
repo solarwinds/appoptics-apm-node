@@ -12,9 +12,6 @@ jobs:
     container: 
       image: ghcr.io/${{ github.repository }}/node-agent-runner:latest
       env:
-        AO_TOKEN_STG: ${{ secrets.AO_TOKEN_STG }}
-        AO_TOKEN_NH: ${{ secrets.AO_TOKEN_NH }}
-        APPOPTICS_COLLECTOR_NH: ${{ secrets.APPOPTICS_COLLECTOR_NH }}
         # tests run against a "local" udp "collector"
         APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
         APPOPTICS_COLLECTOR: localhost:7832
