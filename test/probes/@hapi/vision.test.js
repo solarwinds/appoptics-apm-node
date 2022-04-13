@@ -28,7 +28,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   let port = 3500
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.fs.enabled = false

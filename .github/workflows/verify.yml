@@ -45,6 +45,9 @@ jobs:
         image:  ${{ matrix.image }}
 
     env:
+      # override defaults
+      SW_APM_LOG_SETTINGS: error,warn,patching,bind,debug
+      SW_APM_COLLECTOR: collector-stg.appoptics.com
       # workflow is "simulating" an end user
       NODE_ENV: production
 
@@ -91,8 +94,7 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          export SW_APM_SERVICE_KEY=${{ secrets.AO_TOKEN_STG }}:${image#"$pre"}
           node server.js --preflight
         working-directory: .github/utils
 
@@ -101,19 +103,18 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          export SW_APM_SERVICE_KEY=${{ secrets.AO_TOKEN_STG }}:${image#"$pre"}
           node server.js & node client.js --total 20
         working-directory: .github/utils
 
       # confirms that production server can be instrumented via .readyToSample
-      # override APPOPTICS_COLLECTOR
+      # override SW_APM_COLLECTOR
       - name: Preflight Production Server
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          export SW_APM_SERVICE_KEY=${{ secrets.AO_TOKEN_PROD }}:${image#"$pre"}
+          export SW_APM_COLLECTOR=collector.appoptics.com
           node server.js --preflight
         working-directory: .github/utils
 
@@ -122,7 +123,7 @@ jobs:
         run: |
           image=${{ matrix.image  }}
           pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          export SW_APM_SERVICE_KEY=${{ secrets.AO_TOKEN_PROD }}:${image#"$pre"}
+          export SW_APM_COLLECTOR=collector.appoptics.com
           node server.js --port 3001 & node client.js --port 3001 --total 20
         working-directory: .github/utils

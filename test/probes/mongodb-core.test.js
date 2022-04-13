@@ -54,7 +54,7 @@ describe('probes.mongodb-core UDP', function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)
@@ -101,7 +101,7 @@ function makeTests (db_host, host, isReplicaSet) {
   }
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     ao.probes.fs.enabled = false

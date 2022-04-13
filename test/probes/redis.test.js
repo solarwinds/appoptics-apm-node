@@ -22,7 +22,7 @@ describe('probes.redis ' + pkg.version, function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)

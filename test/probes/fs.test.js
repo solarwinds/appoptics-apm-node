@@ -71,7 +71,7 @@ describe('probes.fs', function () {
   }
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)

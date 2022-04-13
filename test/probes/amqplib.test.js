@@ -44,7 +44,7 @@ describe('probes.amqplib ' + pkg.version, function () {
   const xpat = /\b00-[0-9a-f]{32}-[0-9a-f]{16}-0[0-1]{1}\b/
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE

@@ -40,7 +40,7 @@ describe('probes.zlib once', function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)
@@ -70,7 +70,7 @@ describe('probes.zlib', function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)

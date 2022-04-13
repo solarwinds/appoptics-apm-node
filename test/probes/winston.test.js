@@ -203,7 +203,7 @@ describe(`winston v${version}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE

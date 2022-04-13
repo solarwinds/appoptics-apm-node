@@ -17,10 +17,10 @@ process.env.NODE_PATH += globalInstalls
 // create a fake lambda environment
 process.env.AWS_LAMBDA_FUNCTION_NAME = 'local-test-function'
 process.env.LAMBDA_TASK_ROOT = '/var/runtime'
-process.env.APPOPTICS_SAMPLE_PERCENT = 100
-process.env.APPOPTICS_LOG_SETTINGS = ''
-delete process.env.APPOPTICS_REPORTER
-delete process.env.APPOPTICS_COLLECTOR
+process.env.SW_APM_SAMPLE_PERCENT = 100
+process.env.SW_APM_LOG_SETTINGS = ''
+delete process.env.SW_APM_REPORTER
+delete process.env.SW_APM_COLLECTOR
 
 const child_process = require('child_process')
 const util = require('util')
@@ -52,7 +52,7 @@ const tracestateU = traceparentU.split('-')[2] + '-' + traceparentU.split('-')[3
 
 describe('test lambda promise function\'s core responses with empty events', function () {
   beforeEach(function () {
-    process.env.APPOPTICS_ENABLED = 'true'
+    process.env.SW_APM_ENABLED = 'true'
     process.env.AWS_REGION = randomRegion()
   })
 
@@ -83,7 +83,7 @@ describe('test lambda promise function\'s core responses with empty events', fun
     const event = JSON.stringify({})
     const context = randomContext()
     // don't let the env var override the configuration file
-    delete process.env.APPOPTICS_ENABLED
+    delete process.env.SW_APM_ENABLED
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
@@ -107,7 +107,7 @@ describe('test lambda promise function\'s core responses with empty events', fun
     const test = 'agentEnabledP'
     const event = JSON.stringify({})
     const context = randomContext()
-    process.env.APPOPTICS_ENABLED = false
+    process.env.SW_APM_ENABLED = false
 
     return exec(`node -e 'require("${testFile}").${test}(${event}, ${context})'`)
       .then(r => {
@@ -135,8 +135,8 @@ describe('test lambda promise function\'s core responses with empty events', fun
 //= ============================================================
 describe('test lambda promise functions with mock apig events', function () {
   beforeEach(function () {
-    delete process.env.APPOPTICS_ENABLED
-    process.env.APPOPTICS_LOG_SETTINGS = ''
+    delete process.env.SW_APM_ENABLED
+    process.env.SW_APM_LOG_SETTINGS = ''
     process.env.AWS_REGION = randomRegion()
   })
 
@@ -371,8 +371,8 @@ describe('test lambda promise functions with mock apig events', function () {
 //
 describe('test lambda callback functions with mock apig events', function () {
   beforeEach(function () {
-    delete process.env.APPOPTICS_ENABLED
-    process.env.APPOPTICS_LOG_SETTINGS = ''
+    delete process.env.SW_APM_ENABLED
+    process.env.SW_APM_LOG_SETTINGS = ''
     process.env.AWS_REGION = randomRegion()
   })
 
@@ -400,8 +400,8 @@ describe('test lambda callback functions with mock apig events', function () {
 //
 describe('test lambda functions with direct function call', function () {
   beforeEach(function () {
-    delete process.env.APPOPTICS_ENABLED
-    process.env.APPOPTICS_LOG_SETTINGS = ''
+    delete process.env.SW_APM_ENABLED
+    process.env.SW_APM_LOG_SETTINGS = ''
     process.env.AWS_REGION = randomRegion()
   })
 
@@ -459,14 +459,14 @@ describe('test lambda functions with direct function call', function () {
 //
 describe('verify auto-wrap function works', function () {
   beforeEach(function () {
-    delete process.env.APPOPTICS_WRAP_LAMBDA_HANDLER
+    delete process.env.SW_APM_WRAP_LAMBDA_HANDLER
     process.env.AWS_REGION = randomRegion()
   })
 
   it('should automatically wrap the user function and load APM', function () {
     process.env.AO_TEST_LAMBDA_APM = '../..'
     process.env.AO_TEST_LAMBDA_RUNTIME = require(testFile).runtimeRequirePath
-    delete process.env.APPOPTICS_ENABLED
+    delete process.env.SW_APM_ENABLED
 
     // now set auto-wrap up with the function that doesn't manually wrap the
     // user function.
@@ -558,7 +558,7 @@ describe('verify auto-wrap function works', function () {
 // a specified set of events.
 // test-specific settings are available by using test.debug and test.options.
 // debug - see t.debug below
-// options - {only: true, logging: ['span', 'debug']} defaults are false and APPOPTICS_LOG_SETTINGS;
+// options - {only: true, logging: ['span', 'debug']} defaults are false and SW_APM_LOG_SETTINGS;
 //
 function executeTests (tests) {
   for (const t of tests) {
@@ -623,17 +623,17 @@ function executeTests (tests) {
 
       const doit = options.only ? it.only : it
       doit(description, function () {
-        const previousLogging = process.env.APPOPTICS_LOG_SETTINGS
+        const previousLogging = process.env.SW_APM_LOG_SETTINGS
         if (options.logging) {
           if (Array.isArray(options.logging)) {
-            process.env.APPOPTICS_LOG_SETTINGS = options.logging.join(',')
+            process.env.SW_APM_LOG_SETTINGS = options.logging.join(',')
           } else {
-            process.env.APPOPTICS_LOG_SETTINGS = options.logging
+            process.env.SW_APM_LOG_SETTINGS = options.logging
           }
         }
         return exec(`node -e 'require("${testFile}").${test}(${clEvent}, ${clContext})'`)
           .then(r => {
-            process.env.APPOPTICS_LOG_SETTINGS = previousLogging
+            process.env.SW_APM_LOG_SETTINGS = previousLogging
             expect(checkStderr(r.stderr, dbg.stderr)).equal(undefined)
             const jsonObjs = parseStdout(r.stdout, dbg.stdout)
             for (const obj of jsonObjs) {

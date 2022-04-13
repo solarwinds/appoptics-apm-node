@@ -176,7 +176,7 @@ describe(`bunyan v${version}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     // make sure we get sampled traces

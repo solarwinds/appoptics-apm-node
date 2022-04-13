@@ -16,14 +16,10 @@ jobs:
         AO_TOKEN_NH: ${{ secrets.AO_TOKEN_NH }}
         APPOPTICS_COLLECTOR_NH: ${{ secrets.APPOPTICS_COLLECTOR_NH }}
         # tests run against a "local" udp "collector"
-        APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
-        APPOPTICS_COLLECTOR: localhost:7832
-        APPOPTICS_REPORTER: udp
-        APPOPTICS_SERVICE_KEY: ${{ secrets.APPOPTICS_SERVICE_KEY }}
-        AO_TEST_SERVICE_KEY: ${{ secrets.AO_TEST_SERVICE_KEY }}
-        AO_TEST_COLLECTOR: ${{ secrets.AO_TEST_COLLECTOR }}
-        SW_APM_TEST_SERVICE_KEY: ${{ secrets.SW_APM_TEST_SERVICE_KEY }}
-        SW_APM_TEST_COLLECTOR: ${{ secrets.SW_APM_TEST_COLLECTOR }}
+        SW_APM_LOG_SETTINGS: error,warn,patching,bind,debug
+        SW_APM_COLLECTOR: localhost:7832
+        SW_APM_REPORTER: udp
+        SW_APM_SERVICE_KEY: ${{ secrets.AO_TOKEN_STG }}:ao-node-test
         AO_TEST_CASSANDRA_2_2: cassandra:9042
         AO_TEST_MEMCACHED_1_4: memcached:11211
         AO_TEST_MONGODB_2_4: mongo_2_4:27017

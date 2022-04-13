@@ -19,7 +19,7 @@ describe('probes/koa-router ' + pkg.version, function () {
   const tests = canGenerator && require('./koa')
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.fs.enabled = false

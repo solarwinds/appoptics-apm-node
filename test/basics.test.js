@@ -140,7 +140,7 @@ describe('basics', function () {
 
   it('should not re-execute appoptics even if deleted from the require.cache', function () {
     const logChecks = [
-      { level: 'warn', message: 'appoptics-apm is being executed more than once' }
+      { level: 'warn', message: 'solarwinds-apm is being executed more than once' }
     ]
     helper.checkLogMessages(logChecks)
     const key = require.resolve('..')

@@ -16,7 +16,7 @@ describe('probes.memcached ' + pkg.version, function () {
   let mem
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)

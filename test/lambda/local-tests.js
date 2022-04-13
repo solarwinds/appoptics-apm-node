@@ -142,7 +142,7 @@ module.exports = {
   agentDisabledP (event, context) {
     const output = { 'test-data': { initialao: global[aos] !== undefined } }
 
-    process.env.APPOPTICS_APM_CONFIG_NODE = './disabled-config.json'
+    process.env.SW_APM_CONFIG_NODE = './disabled-config.json'
 
     const ao = require('../..')
     const wrapped = ao.wrapLambdaHandler(fakeLambdaPromiser)
@@ -165,7 +165,7 @@ module.exports = {
   agentDisabledCB (event, context) {
     const output = { 'test-data': { initialao: global[aos] !== undefined } }
 
-    process.env.APPOPTICS_APM_CONFIG_NODE = './disabled-config.json'
+    process.env.SW_APM_CONFIG_NODE = './disabled-config.json'
 
     const ao = require('../..')
     const wrapped = ao.wrapLambdaHandler(fakeLambdaPromiser)

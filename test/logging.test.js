@@ -280,9 +280,9 @@ describe('logging', function () {
     expect(formatted).equal(`${name} ${event.event.toString(1)}`)
   })
 
-  it('should suppress all startup logging when APPOPTICS_LOG_SETTINGS=""', function () {
+  it('should suppress all startup logging when SW_APM_LOG_SETTINGS=""', function () {
     this.slow(200)
-    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key', APPOPTICS_LOG_SETTINGS: '' })
+    const env = Object.assign({}, process.env, { SW_APM_SERVICE_KEY: 'bad key', SW_APM_LOG_SETTINGS: '' })
     const cmd = 'node'
     const args = ['-r ".."', '-e "process.exit()"']
 
@@ -298,11 +298,11 @@ describe('logging', function () {
 
   it('should not suppress startup logging by default', function () {
     this.slow(200)
-    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key' })
+    const env = Object.assign({}, process.env, { SW_APM_SERVICE_KEY: 'bad key' })
     // delete underlying debug package's state; the logging package will detect
     // and enable them too.
     delete env.DEBUG
-    delete env.APPOPTICS_LOG_SETTINGS
+    delete env.SW_APM_LOG_SETTINGS
     const cmd = 'node'
     const args = ['-r ".."', '-e "process.exit()"']
 

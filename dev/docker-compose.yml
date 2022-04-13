@@ -15,12 +15,11 @@ services:
       - ~/.aws/config:/root/.aws/config
     working_dir: /usr/src/work
     env_file:
-      - ../.env # contains AO_TEST_SERVICE_KEY, AO_TEST_COLLECTOR, APPOPTICS_SERVICE_KEY
+      - ../.env # contains AO_TOKEN_STG, AO_TOKEN_PROD, SW_APM_SERVICE_KEY.
     environment:
-      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
-      APPOPTICS_COLLECTOR: localhost:7832
-      APPOPTICS_REPORTER: udp
-
+      SW_APM_LOG_SETTINGS: error,warn,patching,bind,debug
+      SW_APM_COLLECTOR: localhost:7832
+      SW_APM_REPORTER: udp
       AO_TEST_CASSANDRA_2_2: cassandra:9042
       AO_TEST_MEMCACHED_1_4: memcached:11211
       AO_TEST_MONGODB_2_4: mongo_2_4:27017

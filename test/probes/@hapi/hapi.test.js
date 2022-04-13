@@ -29,7 +29,7 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   let clear
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.fs.enabled = false

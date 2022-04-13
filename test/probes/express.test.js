@@ -80,7 +80,7 @@ describe('probes.express ' + pkg.version, function () {
   let clear
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.express.collectBacktraces = false

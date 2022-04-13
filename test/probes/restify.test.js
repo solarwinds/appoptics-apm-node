@@ -23,7 +23,7 @@ describe(`probes.restify ${pkg.version}`, function () {
   const previousHttpClient = ao.probes['http-client'].enabled
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     emitter = helper.appoptics(done)

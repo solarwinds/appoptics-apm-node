@@ -125,8 +125,8 @@ FUNCTION CONFIGURATION {
   Environment: {
     Variables: {
       AO_LAMBDA_WAIT: '0',
-      APPOPTICS_LOG_SETTINGS: 'error,warn,patching,debug,span,info',
-      APPOPTICS_SAMPLE_RATE: '1000000',
+      SW_APM_LOG_SETTINGS: 'error,warn,patching,debug,span,info',
+      SW_APM_SAMPLE_RATE: '1000000',
       AO_LAMBDA_FS_ENABLED: '1'
     }
   },
@@ -195,9 +195,9 @@ async function publishFunctionVersion (fn, options) {
 //  Version: '1',
 //  Environment: {
 //    Variables: {
-//      APPOPTICS_SERVICE_NAME: 'node-bam-f2',
-//      APPOPTICS_SAMPLE_PERCENT: '100',
-//      APPOPTICS_LOG_SETTINGS: 'error,warn,patching,debug,span',
+//      SW_APM_SERVICE_NAME: 'node-bam-f2',
+//      SW_APM_SAMPLE_PERCENT: '100',
+//      SW_APM_LOG_SETTINGS: 'error,warn,patching,debug,span',
 //      AO_TRACE: 'true'
 //    }
 //  },

@@ -105,7 +105,7 @@ describe('custom', function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     ao.sampleRate = aob.MAX_SAMPLE_RATE

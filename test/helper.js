@@ -69,8 +69,8 @@ if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
 
 let udpPort = 7832
 
-if (process.env.APPOPTICS_REPORTER_UDP) {
-  const parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
+if (process.env.SW_APM_REPORTER_UDP) {
+  const parts = process.env.SW_APM_REPORTER_UDP.split(':')
   if (parts.length === 2) udpPort = parts[1]
 }
 
