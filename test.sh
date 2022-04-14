@@ -39,6 +39,7 @@ SUITES_SKIPPED=0
 # it's best to start with "test/" and provide as much of the path as possible.
 SKIP="test/a-test-you-might-want-to-skip $SKIP"
 SKIP="test/lambda/remote $SKIP" # timeout too long to run with group
+SKIP="test/lambda/local $SKIP" # timeout too long to run with group
 
 skipThis() {
   for s in $SKIP
