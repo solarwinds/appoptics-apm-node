@@ -9,9 +9,9 @@ const pkg = require('tedious/package.json')
 
 const semver = require('semver')
 
-const addr = helper.Address.from(process.env.AO_TEST_SQLSERVER_EX || 'mssql:1433')[0]
-const user = process.env.AO_TEST_SQLSERVER_EX_USERNAME || 'sa'
-const pass = process.env.AO_TEST_SQLSERVER_EX_PASSWORD || 'MeetSQL2017requirements!'
+const addr = helper.Address.from(process.env.SW_APM_TEST_SQLSERVER_EX || 'mssql:1433')[0]
+const user = process.env.SW_APM_TEST_SQLSERVER_EX_USERNAME || 'sa'
+const pass = process.env.SW_APM_TEST_SQLSERVER_EX_PASSWORD || 'MeetSQL2017requirements!'
 
 // test with and without a database name
 let dbname
@@ -31,7 +31,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
   // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)

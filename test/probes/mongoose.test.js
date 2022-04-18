@@ -14,13 +14,13 @@ const pkg = require('mongoose/package')
 // use built-in Promise, replacing mongoose's own implementation (deprecated)
 mongoose.Promise = Promise
 
-let host = process.env.AO_TEST_MONGODB_3_0 ||
-  process.env.AO_TEST_MONGODB_2_6 ||
-  process.env.AO_TEST_MONGODB_2_4 ||
+let host = process.env.SW_APM_TEST_MONGODB_3_0 ||
+  process.env.SW_APM_TEST_MONGODB_2_6 ||
+  process.env.SW_APM_TEST_MONGODB_2_4 ||
   'localhost:27017'
 
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
-  host = process.env.AO_TEST_MONGODB_3_0 || 'localhost:27017'
+  host = process.env.SW_APM_TEST_MONGODB_3_0 || 'localhost:27017'
 }
 
 const major = semver.major(pkg.version)
@@ -48,10 +48,10 @@ describe(`probes/mongoose ${pkg.version} using ${moduleName}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // make them more readable

@@ -11,7 +11,7 @@ const addon = ao.addon
 const redis = require('redis')
 const pkg = require('redis/package')
 
-const parts = (process.env.AO_TEST_REDIS_3_0 || 'redis:6379').split(':')
+const parts = (process.env.SW_APM_TEST_REDIS_3_0 || 'redis:6379').split(':')
 const host = parts.shift()
 const port = parts.shift()
 const addr = new Address(host, port)
@@ -22,10 +22,10 @@ describe('probes.redis ' + pkg.version, function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
 

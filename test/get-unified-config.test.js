@@ -8,6 +8,7 @@ const expect = require('chai').expect
 const relativeDir = '..'
 const guc = require(`${relativeDir}/lib/get-unified-config`)
 
+console.log(guc)
 //
 // expected results when neither a config file nor environment variables are present.
 //
@@ -29,7 +30,7 @@ const expectedProbeDefaults = require(`${relativeDir}/lib/probe-defaults`)
 //  file: '',                           // the resolved configuration file path
 //  global: {},                         // the top-level configuration items
 //  unusedConfig: [],                   // parts of the global configuration that weren't used
-//  unusedEnvVars: [],                  // environment variables starting with APPOPTICS_ that weren't used
+//  unusedEnvVars: [],                  // environment variables starting with SW_APM_ that weren't used
 //  probes: {},                         // probe settings
 //  unusedProbes: [],                   // probes in the configuration file that weren't used
 //  transactionSettings: undefined,     // special settings based on transaction type
@@ -38,7 +39,7 @@ const expectedProbeDefaults = require(`${relativeDir}/lib/probe-defaults`)
 //  warnings: [],                       // general warnings
 // }
 
-const rootConfigName = `${process.cwd()}/appoptics-apm-config`
+const rootConfigName = `${process.cwd()}/solarwinds-apm-config`
 
 //
 // core function to check results
@@ -172,7 +173,7 @@ describe('get-unified-config', function () {
   const savedEnv = {}
   before(function () {
     for (const k in process.env) {
-      if (k.startsWith('APPOPTICS_')) {
+      if (k.startsWith('SW_APM_')) {
         savedEnv[k] = process.env[k]
         delete process.env[k]
       }
@@ -185,7 +186,7 @@ describe('get-unified-config', function () {
   afterEach(function () {
     // clean up the environment variables
     for (const k in process.env) {
-      if (k.startsWith('APPOPTICS_')) {
+      if (k.startsWith('SW_APM_')) {
         delete process.env[k]
       }
     }
@@ -306,7 +307,7 @@ describe('get-unified-config', function () {
       writeConfigJs(literal.join('\n'))
 
       // specify the filename with extension to work around node bug/feature/issue.
-      const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm-config.js'
+      const file = process.env.SW_APM_CONFIG_NODE = 'solarwinds-apm-config.js'
 
       const cfg = guc()
 
@@ -327,7 +328,7 @@ describe('get-unified-config', function () {
       const filename = 'non-default.json'
       fs.writeFileSync(filename, JSON.stringify(config))
 
-      process.env.APPOPTICS_APM_CONFIG_NODE = filename
+      process.env.SW_APM_CONFIG_NODE = filename
 
       const cfg = guc()
 
@@ -340,7 +341,7 @@ describe('get-unified-config', function () {
     // config file errors
     //
     it('should correctly report an error reading a non-default config file', function () {
-      const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'xyzzy-bruce.json'
+      const file = process.env.SW_APM_CONFIG_NODE = 'xyzzy-bruce.json'
       const fullpath = `${process.cwd()}/${file}`
 
       const cfg = guc()
@@ -363,24 +364,24 @@ describe('get-unified-config', function () {
     //
     // env vars
     //
-    it('should warn about unknown APPOPTICS_ environment variables', function () {
-      process.env.APPOPTICS_YINYIN_ROCKS = 'truth'
+    it('should warn about unknown SW_APM_ environment variables', function () {
+      process.env.SW_APM_YINYIN_ROCKS = 'truth'
 
       const cfg = guc()
 
-      const unusedEnvVars = ['APPOPTICS_YINYIN_ROCKS=truth']
+      const unusedEnvVars = ['SW_APM_YINYIN_ROCKS=truth']
       doChecks(cfg, { unusedEnvVars })
     })
 
     it('should not use invalid env var values', function () {
-      process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 'xyzzy'
-      process.env.APPOPTICS_UNIFIED_LOGGING = 'maybe'
+      process.env.SW_APM_EC2_METADATA_TIMEOUT = 'xyzzy'
+      process.env.SW_APM_UNIFIED_LOGGING = 'maybe'
 
       const cfg = guc()
 
       const warnings = [
-        'invalid environment variable value APPOPTICS_EC2_METADATA_TIMEOUT=xyzzy',
-        'invalid environment variable value APPOPTICS_UNIFIED_LOGGING=maybe'
+        'invalid environment variable value SW_APM_EC2_METADATA_TIMEOUT=xyzzy',
+        'invalid environment variable value SW_APM_UNIFIED_LOGGING=maybe'
       ]
       doChecks(cfg, { warnings })
     })
@@ -388,11 +389,11 @@ describe('get-unified-config', function () {
     it('should keep valid config file value when there is a bad env var value', function () {
       const config = { ec2MetadataTimeout: 1000 }
       writeConfigJSON(config)
-      process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 'xyzzy'
+      process.env.SW_APM_EC2_METADATA_TIMEOUT = 'xyzzy'
 
       const cfg = guc()
 
-      const warnings = ['invalid environment variable value APPOPTICS_EC2_METADATA_TIMEOUT=xyzzy']
+      const warnings = ['invalid environment variable value SW_APM_EC2_METADATA_TIMEOUT=xyzzy']
       doChecks(cfg, { global: config, warnings })
     })
 
@@ -405,15 +406,15 @@ describe('get-unified-config', function () {
         unifiedLogging: 'never'
       }
       writeConfigJSON(config)
-      process.env.APPOPTICS_SERVICE_KEY = 'ab'.repeat(32)
-      process.env.APPOPTICS_HOSTNAME_ALIAS = 'macnaughton'
-      process.env.APPOPTICS_UNIFIED_LOGGING = 'always'
+      process.env.SW_APM_SERVICE_KEY = 'ab'.repeat(32)
+      process.env.SW_APM_HOSTNAME_ALIAS = 'macnaughton'
+      process.env.SW_APM_UNIFIED_LOGGING = 'always'
 
       const cfg = guc()
 
-      config.hostnameAlias = process.env.APPOPTICS_HOSTNAME_ALIAS
-      config.serviceKey = process.env.APPOPTICS_SERVICE_KEY
-      config.unifiedLogging = process.env.APPOPTICS_UNIFIED_LOGGING
+      config.hostnameAlias = process.env.SW_APM_HOSTNAME_ALIAS
+      config.serviceKey = process.env.SW_APM_SERVICE_KEY
+      config.unifiedLogging = process.env.SW_APM_UNIFIED_LOGGING
 
       const expected = Object.assign(config, { serviceKey: '' })
       doChecks(cfg, { global: expected, fatals: [`not a valid serviceKey: ${'ab'.repeat(32)}`] })
@@ -421,7 +422,7 @@ describe('get-unified-config', function () {
 
     it('should use environment variables when the config file is invalid', function () {
       writeConfigLiteral('{"i am: bad\n')
-      process.env.APPOPTICS_SERVICE_KEY = `${'ac'.repeat(32)}:valid-service-key`
+      process.env.SW_APM_SERVICE_KEY = `${'ac'.repeat(32)}:valid-service-key`
 
       const cfg = guc()
 
@@ -431,7 +432,7 @@ describe('get-unified-config', function () {
       ]
       // it's a valid service key so clear fatals which expects an invalid key
       const fatals = []
-      doChecks(cfg, { global: { serviceKey: process.env.APPOPTICS_SERVICE_KEY }, errors, fatals })
+      doChecks(cfg, { global: { serviceKey: process.env.SW_APM_SERVICE_KEY }, errors, fatals })
     })
   })
 
@@ -440,17 +441,17 @@ describe('get-unified-config', function () {
   //
   describe('environment variable handling', function () {
     it('should correctly handle env vars with explicit names', function () {
-      process.env.APPOPTICS_DEBUG_LEVEL = 4
-      process.env.APPOPTICS_COLLECTOR = 'collector-stg.appoptics.com'
-      process.env.APPOPTICS_TRUSTEDPATH = './certs/special.cert'
+      process.env.SW_APM_DEBUG_LEVEL = 4
+      process.env.SW_APM_COLLECTOR = 'collector-stg.appoptics.com'
+      process.env.SW_APM_TRUSTEDPATH = './certs/special.cert'
 
       const cfg = guc()
 
-      const expectedLogLevel = +process.env.APPOPTICS_DEBUG_LEVEL
+      const expectedLogLevel = +process.env.SW_APM_DEBUG_LEVEL
       const config = {
         logLevel: expectedLogLevel,
-        endpoint: process.env.APPOPTICS_COLLECTOR,
-        trustedPath: process.env.APPOPTICS_TRUSTEDPATH
+        endpoint: process.env.SW_APM_COLLECTOR,
+        trustedPath: process.env.SW_APM_TRUSTEDPATH
       }
       doChecks(cfg, { global: config })
     })
@@ -460,7 +461,7 @@ describe('get-unified-config', function () {
     })
 
     it('should omit a setting when the execution environment is wrong', function () {
-      const key = 'APPOPTICS_TOKEN_BUCKET_CAPACITY'
+      const key = 'SW_APM_TOKEN_BUCKET_CAPACITY'
       const canonicalKey = 'tokenBucketCapacity'
       const tokenBucketCapacity = 10000
       process.env[key] = tokenBucketCapacity
@@ -473,7 +474,7 @@ describe('get-unified-config', function () {
       const config = {}
       const debuggings = [`omitting ${canonicalKey}: eeid: ${settingId} !== undefined`]
       const unusedEnvVars = [
-        `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
+        `SW_APM_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
       ]
       doChecks(cfg, { global: config, debuggings, unusedEnvVars })
       // doChecks() doesn't check debugging information.
@@ -481,7 +482,7 @@ describe('get-unified-config', function () {
     })
 
     it('should use a setting when the execution environment is correct', function () {
-      const key = 'APPOPTICS_TOKEN_BUCKET_CAPACITY'
+      const key = 'SW_APM_TOKEN_BUCKET_CAPACITY'
       const canonicalKey = 'tokenBucketCapacity'
       process.env[key] = 10000
 
@@ -514,14 +515,14 @@ describe('get-unified-config', function () {
       ]
       for (const t of tests) {
         let expected
-        delete process.env.APPOPTICS_SAMPLE_RATE
-        delete process.env.APPOPTICS_SAMPLE_PERCENT
+        delete process.env.SW_APM_SAMPLE_RATE
+        delete process.env.SW_APM_SAMPLE_PERCENT
         if (t.RATE !== undefined) {
-          process.env.APPOPTICS_SAMPLE_RATE = t.RATE
+          process.env.SW_APM_SAMPLE_RATE = t.RATE
           expected = { sampleRate: t.RATE }
         }
         if (t.PERCENT !== undefined) {
-          process.env.APPOPTICS_SAMPLE_PERCENT = t.PERCENT
+          process.env.SW_APM_SAMPLE_PERCENT = t.PERCENT
           expected = { sampleRate: t.PERCENT * 10000 }
         }
 
@@ -539,7 +540,7 @@ describe('get-unified-config', function () {
     //
     it('an invalid serviceKey is a fatal error', function () {
       const serviceKey = `${'f'.repeat(32)}:service-name`
-      process.env.APPOPTICS_SERVICE_KEY = serviceKey
+      process.env.SW_APM_SERVICE_KEY = serviceKey
 
       const cfg = guc()
 
@@ -550,9 +551,9 @@ describe('get-unified-config', function () {
     })
 
     it('settings ignored in a lambda environment should not be set', function () {
-      process.env.APPOPTICS_PROXY = 'proxy-thing'
-      process.env.APPOPTICS_HOSTNAME_ALIAS = 'bruce-place'
-      process.env.APPOPTICS_EC2_METADATA_TIMEOUT = 200
+      process.env.SW_APM_PROXY = 'proxy-thing'
+      process.env.SW_APM_HOSTNAME_ALIAS = 'bruce-place'
+      process.env.SW_APM_EC2_METADATA_TIMEOUT = 200
 
       const global = setupLambdaEnv()
 
@@ -568,10 +569,10 @@ describe('get-unified-config', function () {
       const stdoutClearNonblocking = 0
       const tokenBucketRate = 100
       const tokenBucketCapacity = 1000
-      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = stdoutClearNonblocking
-      process.env.APPOPTICS_SAMPLE_PERCENT = samplePercent
-      process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate
-      process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity
+      process.env.SW_APM_STDOUT_CLEAR_NONBLOCKING = stdoutClearNonblocking
+      process.env.SW_APM_SAMPLE_PERCENT = samplePercent
+      process.env.SW_APM_TOKEN_BUCKET_RATE = tokenBucketRate
+      process.env.SW_APM_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity
 
       const globals = setupLambdaEnv()
 
@@ -592,18 +593,18 @@ describe('get-unified-config', function () {
     it('should flag certain parameters in a non-lambda environment', function () {
       const tokenBucketRate = 100
       const tokenBucketCapacity = 1000
-      process.env.APPOPTICS_STDOUT_CLEAR_NONBLOCKING = 99
-      process.env.APPOPTICS_TOKEN_BUCKET_RATE = tokenBucketRate
-      process.env.APPOPTICS_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity
+      process.env.SW_APM_STDOUT_CLEAR_NONBLOCKING = 99
+      process.env.SW_APM_TOKEN_BUCKET_RATE = tokenBucketRate
+      process.env.SW_APM_TOKEN_BUCKET_CAPACITY = tokenBucketCapacity
 
       const cfg = guc()
 
       expect(cfg.execEnv).property('type', 'linux')
 
       const unusedEnvVars = [
-        'APPOPTICS_STDOUT_CLEAR_NONBLOCKING=99',
-        `APPOPTICS_TOKEN_BUCKET_RATE=${tokenBucketRate}`,
-        `APPOPTICS_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
+        'SW_APM_STDOUT_CLEAR_NONBLOCKING=99',
+        `SW_APM_TOKEN_BUCKET_RATE=${tokenBucketRate}`,
+        `SW_APM_TOKEN_BUCKET_CAPACITY=${tokenBucketCapacity}`
       ]
       const expected = Object.assign({ debug: false, unusedEnvVars })
       doChecks(cfg, expected)
@@ -722,7 +723,7 @@ describe('get-unified-config', function () {
       writeConfigJs(literal.join('\n'))
 
       // specify the filename with extension to work around node bug/feature/issue.
-      const file = process.env.APPOPTICS_APM_CONFIG_NODE = 'appoptics-apm-config.js'
+      const file = process.env.SW_APM_CONFIG_NODE = 'solarwinds-apm-config.js'
 
       const cfg = guc()
 

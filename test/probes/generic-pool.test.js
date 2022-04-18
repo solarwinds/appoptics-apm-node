@@ -10,7 +10,7 @@ const expect = require('chai').expect
 
 const { ao } = require('../1.test-common')
 
-const gpDebug = ao.logger.debug('appoptics:probe:generic-pool')
+const gpDebug = ao.logger.debug('solarwinds-apm:probe:generic-pool')
 // ao.logger.addEnabled('probe:generic-pool');
 
 const gp = require('generic-pool')

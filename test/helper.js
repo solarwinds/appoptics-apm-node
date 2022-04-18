@@ -55,13 +55,13 @@ const env = process.env
 // turn off logging if requested. pretty much any falsey string except '' does
 // it. don't accept '' because that used to turn on showing logs, but the
 // default has inverted.
-if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
-  log.debug('AO_TEST_SHOW_LOGS set falsey, turning off logging')
+if (['false', 'f', '0', 'n', 'no'].indexOf(env.SW_APM_TEST_SHOW_LOGS) >= 0) {
+  log.debug('SW_APM_TEST_SHOW_LOGS set falsey, turning off logging')
   let logs = (process.env.DEBUG || '').split(',')
   logs = logs.filter(function (item) {
-    return !item.startsWith('appoptics:')
+    return !item.startsWith('solarwinds-apm:')
   }).join(',')
-  // set to whatever it was with appoptics items removed
+  // set to whatever it was with agent items removed
   process.env.DEBUG = logs
   // pseudo-log-level that has no logger.
   ao.logLevel = 'none'
@@ -69,8 +69,8 @@ if (['false', 'f', '0', 'n', 'no'].indexOf(env.AO_TEST_SHOW_LOGS) >= 0) {
 
 let udpPort = 7832
 
-if (process.env.APPOPTICS_REPORTER_UDP) {
-  const parts = process.env.APPOPTICS_REPORTER_UDP.split(':')
+if (process.env.SW_APM_REPORTER_UDP) {
+  const parts = process.env.SW_APM_REPORTER_UDP.split(':')
   if (parts.length === 2) udpPort = parts[1]
 }
 
@@ -83,15 +83,15 @@ function udpSend (msg, port, host) {
   })
 }
 
-exports.appoptics = function (done) {
-  // Create UDP server to mock appoptics
+exports.backend = function (done) {
+  // Create UDP server to mock backend
   const server = dgram.createSocket('udp4')
 
   // Create emitter to forward messages
   const emitter = new Emitter()
 
-  // note emitter is being handled by appoptics. some tests don't invoke
-  // appoptics, only doChecks() which will need to log messages if this is
+  // note emitter is being handled by backend. some tests don't invoke
+  // backend, only doChecks() which will need to log messages if this is
   // not active.
   emitter.__aoActive = true
 
@@ -105,7 +105,7 @@ exports.appoptics = function (done) {
         parsed[key] = parsed[key].toString('utf8')
       }
     }
-    log.test.messages('mock appoptics (port ' + port + ') received', parsed)
+    log.test.messages('mock backend (port ' + port + ') received', parsed)
     if (emitter.log) {
       console.log(parsed) // eslint-disable-line no-console
     }
@@ -121,7 +121,7 @@ exports.appoptics = function (done) {
     const port = server.address().port
     ao.port = port.toString()
     emitter.port = port
-    log.test.info('mock appoptics (port ' + port + ') listening')
+    log.test.info('mock backend (port ' + port + ') listening')
     process.nextTick(done)
   })
 
@@ -135,7 +135,7 @@ exports.appoptics = function (done) {
   emitter.close = function (done) {
     const port = server.address().port
     server.on('close', function () {
-      log.test.info('mock appoptics (port ' + port + ') closed')
+      log.test.info('mock backend (port ' + port + ') closed')
       process.nextTick(done)
     })
     server.close()
@@ -502,9 +502,9 @@ function checkLogMessages (checks) {
 
   // if the level is not one of these ignore it.
   const levelsToCheck = {
-    'appoptics:error': true,
-    'appoptics:warn': true,
-    'appoptics:patching': true
+    'solarwinds-apm:error': true,
+    'solarwinds-apm:warn': true,
+    'solarwinds-apm:patching': true
   }
 
   // log is called before substitutions are done, so don't check for the final
@@ -519,7 +519,7 @@ function checkLogMessages (checks) {
     const check = checks[counter++]
     // catch errors so this logger isn't left in place after an error is found
     try {
-      expect(level).equal(`appoptics:${check.level}`, `level is wrong for message "${text}"`)
+      expect(level).equal(`solarwinds-apm:${check.level}`, `level is wrong for message "${text}"`)
       expect(text.indexOf(check.message) === 0).equal(
         true, `found: "${text}" expected "${check.message}"`
       )
