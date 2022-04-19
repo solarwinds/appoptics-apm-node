@@ -1,0 +1,2162 @@
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.1.0
+added 1 package from 1 contributor, removed 3 packages, updated 4 packages and audited 931 packages in 4.759s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:57:37.465Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:57:37.465Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:57:37.465Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:57:37.465Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:57:37.525Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:57:37.658Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:57:37.684Z solarwinds-apm:patching patched https 
+2022-04-18T23:57:37.684Z solarwinds-apm:patching patched http 
+2022-04-18T23:57:37.711Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:57:37.711Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:57:37.711Z solarwinds-apm:patching patched fs 
+2022-04-18T23:57:37.727Z solarwinds-apm:patching patched mysql 2.1.0
+2022-04-18T23:57:37.735Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.0
+    ✔ UDP might lose a message
+    1) should see if a database exists
+    2) should create a database if it doesn't exist
+    3) should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    4) should trace a basic query
+    5) should trace a query with a value list
+    6) should trace a query with a value object
+    7) should trace a streaming query
+    8) should trace a pooled query
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+    9) should trace a cluster pooled query
+    10) should sanitize a query
+    11) should truncate long queries
+    12) should tag queries when feature is enabled
+    13) should skip when disabled
+    14) "after all" hook for "should skip when disabled"
+
+
+  4 passing (1m)
+  14 failing
+
+  1) probes.mysql 2.1.0
+       should see if a database exists:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at addChunk (internal/streams/readable.js:293:12)
+      at readableAddChunk (internal/streams/readable.js:267:9)
+      at Socket.Readable.push (internal/streams/readable.js:206:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+      at TCP.callbackTrampoline (internal/async_hooks.js:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:118:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  2) probes.mysql 2.1.0
+       should create a database if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at addChunk (internal/streams/readable.js:293:12)
+      at readableAddChunk (internal/streams/readable.js:267:9)
+      at Socket.Readable.push (internal/streams/readable.js:206:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+      at TCP.callbackTrampoline (internal/async_hooks.js:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:147:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  3) probes.mysql 2.1.0
+       should create a table if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at addChunk (internal/streams/readable.js:293:12)
+      at readableAddChunk (internal/streams/readable.js:267:9)
+      at Socket.Readable.push (internal/streams/readable.js:206:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+      at TCP.callbackTrampoline (internal/async_hooks.js:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:162:22)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  4) probes.mysql 2.1.0
+       should trace a basic query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  5) probes.mysql 2.1.0
+       should trace a query with a value list:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  6) probes.mysql 2.1.0
+       should trace a query with a value object:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  7) probes.mysql 2.1.0
+       should trace a streaming query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  8) probes.mysql 2.1.0
+       should trace a pooled query:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at addChunk (internal/streams/readable.js:293:12)
+      at readableAddChunk (internal/streams/readable.js:267:9)
+      at Socket.Readable.push (internal/streams/readable.js:206:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+      at TCP.callbackTrampoline (internal/async_hooks.js:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at PoolConnection.Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at PoolConnection.connect (lib/probes/mysql.js:84:15)
+      at Pool.getConnection (node_modules/mysql/lib/Pool.js:44:23)
+      at Pool.getConnection (lib/probes/mysql.js:52:15)
+      at Pool.query (node_modules/mysql/lib/Pool.js:131:8)
+      at /__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:289:22
+      at ao.requestStore.run.newContext (test/helper.js:296:5)
+      at Namespace.run (node_modules/ace-context/context.js:187:5)
+      at Object.exports.test (test/helper.js:288:19)
+      at Context.test_pool (test/probes/mysql.test.js:287:12)
+
+  9) probes.mysql 2.1.0
+       should trace a cluster pooled query:
+     Error: Pool does Not exists.
+      at PoolNamespace.getConnection (node_modules/mysql/lib/PoolCluster.js:185:15)
+      at PoolNamespace.<anonymous> (node_modules/mysql/lib/PoolCluster.js:194:19)
+      at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mysql/lib/PoolCluster.js:154:16
+      at clsBind (node_modules/ace-context/context.js:263:17)
+      at Pool.<anonymous> (node_modules/mysql/lib/Pool.js:49:16)
+      at Handshake.clsBind [as _callback] (node_modules/ace-context/context.js:263:17)
+      at Handshake.Sequence.end (node_modules/mysql/lib/protocol/sequences/Sequence.js:78:24)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:93:8)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at addChunk (internal/streams/readable.js:293:12)
+      at readableAddChunk (internal/streams/readable.js:267:9)
+      at Socket.Readable.push (internal/streams/readable.js:206:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+      at TCP.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  10) probes.mysql 2.1.0
+       should sanitize a query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  11) probes.mysql 2.1.0
+       should truncate long queries:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  12) probes.mysql 2.1.0
+       should tag queries when feature is enabled:
+     Uncaught expected Object {
+  Async: true,
+  Backtrace: 'at Object.backtrace (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:285:15)\nat runSpan (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:922:43)\nat runInstrument (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:909:10)\nat Object.instrument (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:800:10)\nat Connection.query (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/mysql.js:112:15)\nat helper.test.ao.probes.mysql.tagSql (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:374:17)\nat ao.requestStore.run.newContext (/__w/appoptics-apm-node/appoptics-apm-node/test/helper.js:296:5)\nat Namespace.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/ace-context/context.js:187:5)\nat Object.exports.test (/__w/appoptics-apm-node/appoptics-apm-node/test/helper.js:288:19)\nat Context.test_tag (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:372:12)\nat callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)\nat Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)\nat Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)\nat cbHookRun (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:551:7)\nat done (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:310:5)\nat callFn (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:389:7)\nat Hook.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:354:5)\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:510:10)\nat cbHookRun (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:551:7)\nat done (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:310:5)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:414:7',
+  Database: 'test',
+  Edge: 'E5F40C21E510C1C4',
+  Flavor: 'mysql',
+  Hostname: '395366530f54',
+  Label: 'entry',
+  Layer: 'mysql',
+  Query: 'SELECT 0',
+  QueryTag: '/*traceparent=\'00-56523556fb07ba69c7febbf7e63a7ccc-6a18a7a8e4524041-01\'*/',
+  RemoteHost: 'mysql:3306',
+  Spec: 'query',
+  TID: 877,
+  Timestamp_u: 1650326319462692,
+  'X-Trace': '2B56523556FB07BA69C7FEBBF7E63A7CCC000000006A18A7A8E452404101',
+  _V: '1',
+  'sw.parent_span_id': 'e5f40c21e510c1c4',
+  'sw.trace_context': '00-56523556fb07ba69c7febbf7e63a7ccc-6a18a7a8e4524041-01'
+} to have property Query of 'SELECT 1' (got 'SELECT 0')
+  AssertionError: expected Object {
+    Async: true,
+    Database: 'test',
+    Edge: 'E5F40C21E510C1C4',
+    Flavor: 'mysql',
+    Hostname: '395366530f54',
+    Label: 'entry',
+    Layer: 'mysql',
+    Query: 'SELECT 0',
+    QueryTag: '/*traceparent=\'00-56523556fb07ba69c7febbf7e63a7ccc-6a18a7a8e4524041-01\'*/',
+    RemoteHost: 'mysql:3306',
+    Spec: 'query',
+    TID: 877,
+    Timestamp_u: 1650326319462692,
+    'X-Trace': '2B56523556FB07BA69C7FEBBF7E63A7CCC000000006A18A7A8E452404101',
+    _V: '1',
+    'sw.parent_span_id': 'e5f40c21e510c1c4',
+    'sw.trace_context': '00-56523556fb07ba69c7febbf7e63a7ccc-6a18a7a8e4524041-01'
+  } to have property Query of 'SELECT 1' (got 'SELECT 0')
+      at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+      at Assertion.value [as property] (node_modules/should/lib/assertion.js:164:19)
+      at helper.test.ao.probes.mysql.tagSql (test/probes/mysql.test.js:379:25)
+      at EventEmitter.onMessage (test/helper.js:170:9)
+      at Socket.<anonymous> (test/helper.js:112:13)
+      at UDP.onMessage [as onmessage] (dgram.js:931:8)
+      at UDP.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  13) probes.mysql 2.1.0
+       should skip when disabled:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  14) probes.mysql 2.1.0
+       "after all" hook for "should skip when disabled":
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.1.1
+updated 1 package and audited 931 packages in 4.306s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:04.951Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:04.951Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:04.951Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:04.951Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:05.011Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:05.142Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:05.160Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:05.160Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:05.189Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:05.190Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:05.190Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:05.204Z solarwinds-apm:patching patched mysql 2.1.1
+2022-04-18T23:59:05.212Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.2.0
+updated 3 packages and audited 931 packages in 4.168s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:12.231Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:12.232Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:12.232Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:12.232Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:12.304Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:12.472Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:12.518Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:12.518Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:12.557Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:12.558Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:12.558Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:12.585Z solarwinds-apm:patching patched mysql 2.2.0
+2022-04-18T23:59:12.596Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.2.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.3.0
+updated 2 packages and audited 931 packages in 4.184s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:19.542Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:19.543Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:19.543Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:19.543Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:19.602Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:19.733Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:19.749Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:19.750Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:19.780Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:19.780Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:19.780Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:19.799Z solarwinds-apm:patching patched mysql 2.3.0
+2022-04-18T23:59:19.806Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.3.1
+updated 1 package and audited 931 packages in 4.491s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:26.981Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:26.981Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:26.981Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:26.981Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:27.063Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:27.209Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:27.226Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:27.226Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:27.256Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:27.256Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:27.256Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:27.282Z solarwinds-apm:patching patched mysql 2.3.1
+2022-04-18T23:59:27.290Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.3.2
+updated 1 package and audited 931 packages in 3.807s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:33.769Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:33.770Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:33.770Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:33.770Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:33.828Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:33.956Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:33.973Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:33.974Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:34.003Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:34.004Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:34.004Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:34.030Z solarwinds-apm:patching patched mysql 2.3.2
+2022-04-18T23:59:34.038Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.2
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.4.0
+updated 1 package and audited 931 packages in 4.077s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:40.861Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:40.862Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:40.862Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:40.862Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:40.935Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:41.100Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:41.125Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:41.126Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:41.148Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:41.148Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:41.148Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:41.179Z solarwinds-apm:patching patched mysql 2.4.0
+2022-04-18T23:59:41.187Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.0
+    ✔ UDP might lose a message
+(node:1009) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1009) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1009) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.4.1
+updated 1 package and audited 931 packages in 4.711s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:48.585Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:48.585Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:48.585Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:48.585Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:48.644Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:48.772Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:48.788Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:48.789Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:48.818Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:48.818Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:48.818Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:48.844Z solarwinds-apm:patching patched mysql 2.4.1
+2022-04-18T23:59:48.851Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.1
+    ✔ UDP might lose a message
+(node:1031) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1031) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1031) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.4.2
+updated 1 package and audited 931 packages in 4.071s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-18T23:59:55.713Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:55.713Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:55.713Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:55.713Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:55.771Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:55.900Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:55.917Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:55.917Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:55.946Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:55.946Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:55.947Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:55.974Z solarwinds-apm:patching patched mysql 2.4.2
+2022-04-18T23:59:55.981Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.2
+    ✔ UDP might lose a message
+(node:1053) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1053) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1053) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.4.3
+updated 1 package and audited 931 packages in 4.354s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:03.104Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:03.105Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:03.105Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:03.105Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:03.163Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:03.294Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:03.311Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:03.311Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:03.340Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:03.341Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:03.341Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:03.367Z solarwinds-apm:patching patched mysql 2.4.3
+2022-04-19T00:00:03.374Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.3
+    ✔ UDP might lose a message
+(node:1075) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1075) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1075) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.0
+updated 2 packages and audited 931 packages in 4.771s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:10.956Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:10.956Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:10.956Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:10.956Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:11.037Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:11.183Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:11.219Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:11.220Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:11.254Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:11.255Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:11.255Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:11.287Z solarwinds-apm:patching patched mysql 2.5.0
+2022-04-19T00:00:11.296Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.0
+    ✔ UDP might lose a message
+(node:1097) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1097) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1097) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.1
+updated 1 package and audited 931 packages in 4.108s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:18.165Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:18.166Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:18.166Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:18.166Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:18.225Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:18.353Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:18.370Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:18.370Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:18.399Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:18.400Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:18.400Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:18.426Z solarwinds-apm:patching patched mysql 2.5.1
+2022-04-19T00:00:18.434Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.1
+    ✔ UDP might lose a message
+(node:1119) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1119) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1119) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.2
+updated 1 package and audited 931 packages in 4.347s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:25.434Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:25.435Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:25.435Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:25.435Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:25.495Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:25.625Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:25.642Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:25.642Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:25.672Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:25.672Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:25.672Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:25.698Z solarwinds-apm:patching patched mysql 2.5.2
+2022-04-19T00:00:25.705Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.2
+    ✔ UDP might lose a message
+(node:1141) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1141) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1141) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.3
+updated 1 package and audited 931 packages in 3.99s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:32.392Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:32.393Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:32.393Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:32.393Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:32.453Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:32.584Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:32.601Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:32.601Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:32.629Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:32.630Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:32.630Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:32.656Z solarwinds-apm:patching patched mysql 2.5.3
+2022-04-19T00:00:32.664Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.3
+    ✔ UDP might lose a message
+(node:1163) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1163) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1163) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.4
+updated 1 package and audited 931 packages in 3.989s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:39.396Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:39.396Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:39.396Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:39.396Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:39.456Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:39.584Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:39.601Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:39.602Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:39.631Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:39.631Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:39.631Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:39.658Z solarwinds-apm:patching patched mysql 2.5.4
+2022-04-19T00:00:39.665Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.4
+    ✔ UDP might lose a message
+(node:1185) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1185) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1185) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN deprecated bignumber.js@2.0.0: critical bug fixed in v2.0.4
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.5.5
+updated 3 packages and audited 931 packages in 4.143s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:47.108Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:47.108Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:47.108Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:47.108Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:47.167Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:47.297Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:47.315Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:47.315Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:47.344Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:47.345Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:47.345Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:47.372Z solarwinds-apm:patching patched mysql 2.5.5
+2022-04-19T00:00:47.379Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.5
+    ✔ UDP might lose a message
+(node:1207) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1207) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1207) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN deprecated bignumber.js@2.0.0: critical bug fixed in v2.0.4
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.6.0
+updated 1 package and audited 931 packages in 4.178s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:54.254Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:54.254Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:54.254Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:54.254Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:54.316Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:54.446Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:54.463Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:54.463Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:54.493Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:54.494Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:54.494Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:54.521Z solarwinds-apm:patching patched mysql 2.6.0
+2022-04-19T00:00:54.527Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.0
+    ✔ UDP might lose a message
+(node:1229) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1229) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1229) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.6.1
+updated 2 packages and audited 931 packages in 5.252s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:02.560Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:02.561Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:02.561Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:02.561Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:02.620Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:02.749Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:02.765Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:02.766Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:02.796Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:02.796Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:02.796Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:02.823Z solarwinds-apm:patching patched mysql 2.6.1
+2022-04-19T00:01:02.829Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.1
+    ✔ UDP might lose a message
+(node:1251) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1251) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1251) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.6.2
+updated 2 packages and audited 931 packages in 3.994s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:09.578Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:09.579Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:09.579Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:09.579Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:09.651Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:09.803Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:09.840Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:09.840Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:09.873Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:09.873Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:09.874Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:09.906Z solarwinds-apm:patching patched mysql 2.6.2
+2022-04-19T00:01:09.913Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.2
+    ✔ UDP might lose a message
+(node:1273) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1273) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1273) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.7.0
+updated 1 package and audited 931 packages in 4.043s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:16.688Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:16.689Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:16.689Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:16.689Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:16.747Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:16.914Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:16.970Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:16.971Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:16.994Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:16.994Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:16.995Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:17.031Z solarwinds-apm:patching patched mysql 2.7.0
+2022-04-19T00:01:17.037Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.7.0
+    ✔ UDP might lose a message
+(node:1295) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1295) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1295) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.8.0
+removed 1 package, updated 1 package and audited 930 packages in 3.958s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:23.745Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:23.746Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:23.746Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:23.746Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:23.805Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:23.936Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:23.954Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:23.954Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:23.994Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:23.994Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:23.995Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:24.009Z solarwinds-apm:patching patched mysql 2.8.0
+2022-04-19T00:01:24.015Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.8.0
+    ✔ UDP might lose a message
+(node:1317) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1317) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1317) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.9.0
+updated 1 package and audited 930 packages in 3.826s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:30.579Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:30.580Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:30.580Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:30.580Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:30.639Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:30.768Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:30.785Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:30.785Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:30.827Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:30.827Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:30.827Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:30.841Z solarwinds-apm:patching patched mysql 2.9.0
+2022-04-19T00:01:30.848Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.9.0
+    ✔ UDP might lose a message
+(node:1339) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1339) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1339) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.10.0
+updated 2 packages and audited 930 packages in 5.24s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:38.825Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:38.826Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:38.826Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:38.826Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:38.892Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:39.049Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:39.066Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:39.067Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:39.110Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:39.110Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:39.110Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:39.125Z solarwinds-apm:patching patched mysql 2.10.0
+2022-04-19T00:01:39.131Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.0
+    ✔ UDP might lose a message
+(node:1361) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1361) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1361) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.10.1
+updated 1 package and audited 930 packages in 4.077s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:46.015Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:46.016Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:46.016Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:46.016Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:46.085Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:46.314Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:46.347Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:46.347Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:46.390Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:46.390Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:46.391Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:46.412Z solarwinds-apm:patching patched mysql 2.10.1
+2022-04-19T00:01:46.420Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.1
+    ✔ UDP might lose a message
+(node:1383) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1383) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1383) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.10.2
+updated 2 packages and audited 930 packages in 3.788s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:52.892Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:52.892Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:52.892Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:52.892Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:52.951Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:53.083Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:53.100Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:53.100Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:53.142Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:53.142Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:53.142Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:53.157Z solarwinds-apm:patching patched mysql 2.10.2
+2022-04-19T00:01:53.163Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.2
+    ✔ UDP might lose a message
+(node:1405) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1405) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1405) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.11.0
+added 1 package from 3 contributors, updated 2 packages and audited 931 packages in 4.599s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:02:00.441Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:00.441Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:00.441Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:00.441Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:00.500Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:00.628Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:00.645Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:00.645Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:00.686Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:00.686Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:00.686Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:00.701Z solarwinds-apm:patching patched mysql 2.11.0
+2022-04-19T00:02:00.707Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.0
+    ✔ UDP might lose a message
+(node:1427) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1427) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1427) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.11.1
+updated 1 package and audited 931 packages in 3.58s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:02:07.024Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:07.025Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:07.025Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:07.025Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:07.084Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:07.215Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:07.232Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:07.232Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:07.273Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:07.273Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:07.273Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:07.288Z solarwinds-apm:patching patched mysql 2.11.1
+2022-04-19T00:02:07.294Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.1
+    ✔ UDP might lose a message
+(node:1449) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1449) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1449) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.12.0
+updated 3 packages and audited 931 packages in 4.078s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:02:14.181Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:14.182Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:14.182Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:14.182Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:14.241Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:14.371Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:14.388Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:14.388Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:14.429Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:14.430Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:14.430Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:14.445Z solarwinds-apm:patching patched mysql 2.12.0
+2022-04-19T00:02:14.451Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.12.0
+    ✔ UDP might lose a message
+(node:1471) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1471) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1471) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.13.0
+updated 2 packages and audited 931 packages in 3.713s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 1 moderate severity vulnerability
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:02:20.877Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:20.878Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:20.878Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:20.878Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:20.952Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:21.106Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:21.144Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:21.144Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:21.190Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:21.191Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:21.191Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:21.209Z solarwinds-apm:patching patched mysql 2.13.0
+2022-04-19T00:02:21.216Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.13.0
+    ✔ UDP might lose a message
+(node:1493) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1493) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1493) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.14.0
+added 3 packages from 2 contributors, updated 4 packages and audited 934 packages in 3.981s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:02:27.913Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:27.914Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:27.914Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:27.914Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:27.995Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:28.190Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:28.207Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:28.207Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:28.249Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:28.250Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:28.250Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:28.267Z solarwinds-apm:patching patched mysql 2.14.0
+2022-04-19T00:02:28.273Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.0
+    ✔ UDP might lose a message
+(node:1515) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1515) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1515) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.14.1
+updated 1 package and audited 934 packages in 4.264s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:02:35.193Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:35.194Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:35.194Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:35.194Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:35.252Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:35.388Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:35.428Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:35.429Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:35.467Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:35.468Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:35.468Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:35.488Z solarwinds-apm:patching patched mysql 2.14.1
+2022-04-19T00:02:35.497Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.1
+    ✔ UDP might lose a message
+(node:1537) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1537) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1537) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.15.0
+updated 3 packages and audited 934 packages in 3.807s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:02:41.980Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:41.981Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:41.981Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:41.981Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:42.041Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:42.172Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:42.197Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:42.198Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:42.236Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:42.237Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:42.237Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:42.254Z solarwinds-apm:patching patched mysql 2.15.0
+2022-04-19T00:02:42.260Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.15.0
+    ✔ UDP might lose a message
+(node:1559) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1559) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1559) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.16.0
+removed 1 package, updated 6 packages and audited 933 packages in 4.748s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:02:49.727Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:49.727Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:49.727Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:49.727Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:49.786Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:49.918Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:49.935Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:49.935Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:49.979Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:49.979Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:49.980Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:50.007Z solarwinds-apm:patching patched mysql 2.16.0
+2022-04-19T00:02:50.014Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.16.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN deprecated bignumber.js@6.0.0: Custom ALPHABET bug fixed in v7.0.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.17.0
+updated 2 packages and audited 933 packages in 4.212s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:02:57.391Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:57.392Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:57.392Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:57.392Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:57.533Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:57.714Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:57.750Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:57.751Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:57.797Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:57.798Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:57.798Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:57.818Z solarwinds-apm:patching patched mysql 2.17.0
+2022-04-19T00:02:57.824Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.17.1
+updated 2 packages and audited 933 packages in 3.87s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:03:04.356Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:04.356Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:04.356Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:04.356Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:04.416Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:04.550Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:04.582Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:04.582Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:04.633Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:04.633Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:04.633Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:04.655Z solarwinds-apm:patching patched mysql 2.17.1
+2022-04-19T00:03:04.661Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.18.0
+updated 3 packages and audited 933 packages in 4.743s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:03:12.075Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:12.075Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:12.075Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:12.075Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:12.134Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:12.263Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:12.280Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:12.281Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:12.305Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:12.305Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:12.305Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:12.341Z solarwinds-apm:patching patched mysql 2.18.0
+2022-04-19T00:03:12.348Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.18.1
+updated 1 package and audited 933 packages in 3.611s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:03:18.700Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:18.701Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:18.701Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:18.701Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:18.798Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:19.009Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:19.054Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:19.055Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:19.089Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:19.089Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:19.089Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:19.139Z solarwinds-apm:patching patched mysql 2.18.1
+2022-04-19T00:03:19.146Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mysql@2.18.1
+updated 1 package and audited 933 packages in 3.549s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+

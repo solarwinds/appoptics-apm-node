@@ -1,0 +1,853 @@
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.2.0: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.2.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.2.0
+added 1 package from 3 contributors, removed 6 packages, updated 3 packages and audited 927 packages in 5.531s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:10.457Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:10.458Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:10.458Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:10.458Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:10.537Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:10.744Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:10.771Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:10.771Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:10.847Z solarwinds-apm:patching patched amqplib 0.2.0
+2022-04-18T23:59:10.850Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:10.853Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.0
+    ✔ UDP might lose a message
+    promises
+      1) "before all" hook for "should report send and consume in existing trace"
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      3) "before all" hook for "should report send and consume in existing trace"
+      4) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  1 passing (4s)
+  4 failing
+
+  1) probes.amqplib 0.2.0
+       promises
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  2) probes.amqplib 0.2.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read property 'close' of undefined
+      at Context.<anonymous> (test/probes/amqplib.test.js:181:23)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  3) probes.amqplib 0.2.0
+       callbacks
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+  4) probes.amqplib 0.2.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read property 'close' of undefined
+      at Context.<anonymous> (test/probes/amqplib.test.js:211:23)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.2.1: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.2.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.2.1
+updated 2 packages and audited 927 packages in 5.424s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:21.558Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:21.559Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:21.559Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:21.559Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:21.644Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:21.853Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:21.874Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:21.875Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:21.935Z solarwinds-apm:patching patched amqplib 0.2.1
+2022-04-18T23:59:21.937Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:21.940Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.1
+    ✔ UDP might lose a message
+    promises
+(node:898) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (80ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (258ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.3.0: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.0
+updated 1 package and audited 927 packages in 6.941s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:30.408Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:30.409Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:30.409Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:30.409Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:30.489Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:30.806Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:30.852Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:30.852Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:30.916Z solarwinds-apm:patching patched amqplib 0.3.0
+2022-04-18T23:59:30.918Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:30.922Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.0
+    ✔ UDP might lose a message
+    promises
+(node:920) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (47ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (54ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (292ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.3.1: wanted: {"node":"0.8 || 0.9 || 0.10 || 0.11 || 0.12 || 1.0 || 1.1"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.1
+updated 2 packages and audited 927 packages in 6.542s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:39.060Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:39.061Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:39.061Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:39.061Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:39.148Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:39.371Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:39.423Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:39.424Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:39.490Z solarwinds-apm:patching patched amqplib 0.3.1
+2022-04-18T23:59:39.492Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:39.495Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.1
+    ✔ UDP might lose a message
+    promises
+(node:942) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (49ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (51ms)
+
+
+  7 passing (289ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.3.2: wanted: {"node":">=0.8 <0.13 || ^1"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.3.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.3.2
+updated 1 package and audited 927 packages in 5.879s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:46.925Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:46.926Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:46.926Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:46.926Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:47.002Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:47.215Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:47.251Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:47.251Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:47.306Z solarwinds-apm:patching patched amqplib 0.3.2
+2022-04-18T23:59:47.308Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:47.313Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.2
+    ✔ UDP might lose a message
+    promises
+(node:964) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (51ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (245ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.4.0: wanted: {"node":">=0.8 <4 || ^4"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.0
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.0
+updated 1 package and audited 927 packages in 6.102s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-18T23:59:54.918Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:54.919Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:54.920Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:54.920Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:55.026Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:55.229Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:55.251Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:55.252Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:55.315Z solarwinds-apm:patching patched amqplib 0.4.0
+2022-04-18T23:59:55.317Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:55.320Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.0
+    ✔ UDP might lose a message
+    promises
+(node:986) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (49ms)
+      ✔ should include SourceTrace in consume external to traced publish
+      1) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (48ms)
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  7 passing (199ms)
+  2 failing
+
+  1) probes.amqplib 0.4.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at emitReadable_ (internal/streams/readable.js:555:12)
+      at processTicksAndRejections (internal/process/task_queues.js:81:21)
+
+  2) probes.amqplib 0.4.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at emitReadable_ (internal/streams/readable.js:555:12)
+      at processTicksAndRejections (internal/process/task_queues.js:81:21)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.4.1: wanted: {"node":">=0.8 <5 || ^5"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.1
+updated 1 package and audited 927 packages in 6.021s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:00:02.892Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:02.892Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:02.893Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:02.893Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:02.975Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:03.184Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:03.208Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:03.209Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:03.293Z solarwinds-apm:patching patched amqplib 0.4.1
+2022-04-19T00:00:03.298Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:03.301Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.1
+    ✔ UDP might lose a message
+    promises
+(node:1008) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (65ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (51ms)
+
+
+  7 passing (279ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.4.2: wanted: {"node":">=0.8 <6 || ^6"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.4.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.4.2
+updated 1 package and audited 927 packages in 6.037s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:00:10.983Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:10.983Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:10.983Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:10.984Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:11.068Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:11.256Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:11.276Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:11.277Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:11.354Z solarwinds-apm:patching patched amqplib 0.4.2
+2022-04-19T00:00:11.356Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:11.360Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.2
+    ✔ UDP might lose a message
+    promises
+(node:1030) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (51ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (217ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.1: wanted: {"node":">=0.8 <6 || ^6"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.1
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.1
+removed 1 package, updated 1 package and audited 927 packages in 5.929s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:00:18.958Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:18.959Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:18.959Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:18.959Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:19.054Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:19.263Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:19.314Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:19.314Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:19.384Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:00:19.391Z solarwinds-apm:patching patched amqplib 0.5.1
+2022-04-19T00:00:19.394Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:19.401Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.1
+    ✔ UDP might lose a message
+    promises
+(node:1052) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (51ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (167ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.2: wanted: {"node":">=0.8 <=9"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.2
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.2
+updated 1 package and audited 927 packages in 5.598s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:00:26.445Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:26.445Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:26.446Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:26.446Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:26.529Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:26.723Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:26.743Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:26.743Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:26.814Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:00:26.817Z solarwinds-apm:patching patched amqplib 0.5.2
+2022-04-19T00:00:26.820Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:26.823Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.2
+    ✔ UDP might lose a message
+    promises
+(node:1074) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (60ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (241ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.3: wanted: {"node":">=0.8 <=9"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.3
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.3
+added 7 packages from 5 contributors, updated 3 packages and audited 934 packages in 7.304s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:35.674Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:35.675Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:35.675Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:35.675Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:35.756Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:35.933Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:35.958Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:35.959Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:36.040Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:00:36.042Z solarwinds-apm:patching patched amqplib 0.5.3
+2022-04-19T00:00:36.044Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:36.047Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.3
+    ✔ UDP might lose a message
+    promises
+(node:1096) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (71ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (46ms)
+
+
+  7 passing (261ms)
+
+npm WARN deprecated amqplib@0.5.4: See github.com/squaremo/amqp.node/issues/534
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.4: wanted: {"node":">=0.8 <=12"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.4
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.4
+updated 1 package and audited 934 packages in 6.807s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:44.589Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:44.591Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:44.591Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:44.591Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:44.717Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:44.909Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:44.931Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:44.932Z solarwinds-apm:patching patched http 
+
+Error: Cannot find module './defs'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:902:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:746:27)
+    at Module.require (internal/modules/cjs/loader.js:974:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (internal/modules/cjs/helpers.js:101:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js:7:12)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:790:12)
+    at Module.require (internal/modules/cjs/loader.js:974:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (internal/modules/cjs/helpers.js:101:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js:11:18)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:790:12)
+    at Module.require (internal/modules/cjs/loader.js:974:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (internal/modules/cjs/helpers.js:101:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js:1:19)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1114:10)
+    at Module.load (internal/modules/cjs/loader.js:950:32)
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.5: wanted: {"node":">=0.8 <=12"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.5
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.5
+updated 1 package and audited 934 packages in 5.485s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:00:51.719Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:51.720Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:51.720Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:51.720Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:51.800Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:52.025Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:52.047Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:52.048Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:52.125Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:00:52.128Z solarwinds-apm:patching patched amqplib 0.5.5
+2022-04-19T00:00:52.130Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:52.133Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.5
+    ✔ UDP might lose a message
+    promises
+(node:1136) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (46ms)
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (204ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN notsup Unsupported engine for amqplib@0.5.6: wanted: {"node":">=0.8 <=12"} (current: {"node":"14.19.1","npm":"6.14.16"})
+npm WARN notsup Not compatible with your version of node/npm: amqplib@0.5.6
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.5.6
+updated 1 package and audited 934 packages in 6.576s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:00.311Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:00.312Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:00.312Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:00.312Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:00.382Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:00.562Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:00.595Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:00.596Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:00.668Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:00.671Z solarwinds-apm:patching patched amqplib 0.5.6
+2022-04-19T00:01:00.673Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:00.676Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.6
+    ✔ UDP might lose a message
+    promises
+(node:1158) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (48ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (49ms)
+
+
+  7 passing (202ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.6.0
+updated 1 package and audited 934 packages in 5.709s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:08.085Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:08.087Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:08.087Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:08.087Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:08.186Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:08.421Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:08.481Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:08.482Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:08.647Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:08.649Z solarwinds-apm:patching patched amqplib 0.6.0
+2022-04-19T00:01:08.651Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:08.654Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.6.0
+    ✔ UDP might lose a message
+    promises
+(node:1180) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (74ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (44ms)
+
+
+  7 passing (320ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.7.0
+updated 1 package and audited 934 packages in 5.493s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 6 vulnerabilities (4 moderate, 1 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-19T00:01:16.218Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:16.219Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:16.219Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:16.219Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:16.317Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:16.525Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:16.547Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:16.547Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:16.623Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:16.626Z solarwinds-apm:patching patched amqplib 0.7.0
+2022-04-19T00:01:16.628Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:16.631Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.0
+    ✔ UDP might lose a message
+    promises
+(node:1202) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (50ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (91ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (255ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.7.1
+removed 1 package, updated 2 packages and audited 933 packages in 6.435s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:01:24.626Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:24.627Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:24.627Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:24.627Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:24.711Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:24.899Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:24.922Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:24.922Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:25.006Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:25.011Z solarwinds-apm:patching patched amqplib 0.7.1
+2022-04-19T00:01:25.013Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:25.016Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.1
+    ✔ UDP might lose a message
+    promises
+(node:1224) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (60ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (49ms)
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (50ms)
+
+
+  7 passing (251ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.8.0
+updated 1 package and audited 933 packages in 5.658s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+2022-04-19T00:01:32.192Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:32.193Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:32.193Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:32.193Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:32.279Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:32.486Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:32.512Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:32.512Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:32.605Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:32.608Z solarwinds-apm:patching patched amqplib 0.8.0
+2022-04-19T00:01:32.610Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:32.613Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.8.0
+    ✔ UDP might lose a message
+    promises
+(node:1246) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (68ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (52ms)
+
+
+  7 passing (284ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.2 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ amqplib@0.8.0
+updated 1 package and audited 933 packages in 6.178s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+

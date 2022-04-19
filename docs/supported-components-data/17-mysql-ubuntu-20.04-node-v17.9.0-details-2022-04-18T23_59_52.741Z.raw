@@ -1,0 +1,2313 @@
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 1 package, removed 4 packages, changed 2 packages, and audited 929 packages in 10s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:00:03.464Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:03.464Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:03.464Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:03.464Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:03.544Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:03.925Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:03.948Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:03.949Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:03.991Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:03.992Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:03.992Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:04.012Z solarwinds-apm:patching patched mysql 2.1.0
+2022-04-19T00:00:04.021Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.0
+    ✔ UDP might lose a message
+    1) should see if a database exists
+    2) should create a database if it doesn't exist
+    3) should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    4) should trace a basic query
+    5) should trace a query with a value list
+    6) should trace a query with a value object
+    7) should trace a streaming query
+    8) should trace a pooled query
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+    9) should trace a cluster pooled query
+    10) should sanitize a query
+    11) should truncate long queries
+    12) should tag queries when feature is enabled
+    13) should skip when disabled
+    14) "after all" hook for "should skip when disabled"
+
+
+  4 passing (1m)
+  14 failing
+
+  1) probes.mysql 2.1.0
+       should see if a database exists:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      at readableAddChunk (node:internal/streams/readable:297:9)
+      at Socket.Readable.push (node:internal/streams/readable:234:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:118:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  2) probes.mysql 2.1.0
+       should create a database if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      at readableAddChunk (node:internal/streams/readable:297:9)
+      at Socket.Readable.push (node:internal/streams/readable:234:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:147:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  3) probes.mysql 2.1.0
+       should create a table if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      at readableAddChunk (node:internal/streams/readable:297:9)
+      at Socket.Readable.push (node:internal/streams/readable:234:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:84:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:162:22)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  4) probes.mysql 2.1.0
+       should trace a basic query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  5) probes.mysql 2.1.0
+       should trace a query with a value list:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  6) probes.mysql 2.1.0
+       should trace a query with a value object:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  7) probes.mysql 2.1.0
+       should trace a streaming query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  8) probes.mysql 2.1.0
+       should trace a pooled query:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      at readableAddChunk (node:internal/streams/readable:297:9)
+      at Socket.Readable.push (node:internal/streams/readable:234:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at PoolConnection.Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at PoolConnection.connect (lib/probes/mysql.js:84:15)
+      at Pool.getConnection (node_modules/mysql/lib/Pool.js:44:23)
+      at Pool.getConnection (lib/probes/mysql.js:52:15)
+      at Pool.query (node_modules/mysql/lib/Pool.js:131:8)
+      at /__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:289:22
+      at ao.requestStore.run.newContext (test/helper.js:296:5)
+      at Namespace.run (node_modules/ace-context/context.js:187:5)
+      at Object.exports.test (test/helper.js:288:19)
+      at Context.test_pool (test/probes/mysql.test.js:287:12)
+
+  9) probes.mysql 2.1.0
+       should trace a cluster pooled query:
+     Error: Pool does Not exists.
+      at PoolNamespace.getConnection (node_modules/mysql/lib/PoolCluster.js:185:15)
+      at PoolNamespace.<anonymous> (node_modules/mysql/lib/PoolCluster.js:194:19)
+      at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mysql/lib/PoolCluster.js:154:16
+      at clsBind (node_modules/ace-context/context.js:263:17)
+      at Pool.<anonymous> (node_modules/mysql/lib/Pool.js:49:16)
+      at Handshake.clsBind [as _callback] (node_modules/ace-context/context.js:263:17)
+      at Handshake.Sequence.end (node_modules/mysql/lib/protocol/sequences/Sequence.js:78:24)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:93:8)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      at readableAddChunk (node:internal/streams/readable:297:9)
+      at Socket.Readable.push (node:internal/streams/readable:234:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+
+  10) probes.mysql 2.1.0
+       should sanitize a query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  11) probes.mysql 2.1.0
+       should truncate long queries:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  12) probes.mysql 2.1.0
+       should tag queries when feature is enabled:
+     Uncaught expected Object {
+  Async: true,
+  Backtrace: 'at Object.backtrace (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:285:15)\nat runSpan (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:922:43)\nat runInstrument (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:909:10)\nat Object.instrument (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:800:10)\nat Connection.query (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/mysql.js:112:15)\nat helper.test.ao.probes.mysql.tagSql (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:374:17)\nat ao.requestStore.run.newContext (/__w/appoptics-apm-node/appoptics-apm-node/test/helper.js:296:5)\nat Namespace.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/ace-context/context.js:187:5)\nat Object.exports.test (/__w/appoptics-apm-node/appoptics-apm-node/test/helper.js:288:19)\nat Context.test_tag (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:372:12)\nat callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)\nat Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)\nat Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)\nat cbHookRun (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:551:7)\nat done (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:310:5)\nat callFn (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:389:7)\nat Hook.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:354:5)\nat next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:510:10)\nat cbHookRun (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:551:7)\nat done (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:310:5)\nat /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:414:7',
+  Database: 'test',
+  Edge: '72B61D5D1E06AACB',
+  Flavor: 'mysql',
+  Hostname: 'd463706c63ba',
+  Label: 'entry',
+  Layer: 'mysql',
+  Query: 'SELECT 0',
+  QueryTag: '/*traceparent=\'00-0c268267ab901e675f1378e38a0d09a2-251d6a160ed211ac-01\'*/',
+  RemoteHost: 'mysql:3306',
+  Spec: 'query',
+  TID: 1274,
+  Timestamp_u: 1650326465778903,
+  'X-Trace': '2B0C268267AB901E675F1378E38A0D09A200000000251D6A160ED211AC01',
+  _V: '1',
+  'sw.parent_span_id': '72b61d5d1e06aacb',
+  'sw.trace_context': '00-0c268267ab901e675f1378e38a0d09a2-251d6a160ed211ac-01'
+} to have property Query of 'SELECT 1' (got 'SELECT 0')
+  AssertionError: expected Object {
+    Async: true,
+    Database: 'test',
+    Edge: '72B61D5D1E06AACB',
+    Flavor: 'mysql',
+    Hostname: 'd463706c63ba',
+    Label: 'entry',
+    Layer: 'mysql',
+    Query: 'SELECT 0',
+    QueryTag: '/*traceparent=\'00-0c268267ab901e675f1378e38a0d09a2-251d6a160ed211ac-01\'*/',
+    RemoteHost: 'mysql:3306',
+    Spec: 'query',
+    TID: 1274,
+    Timestamp_u: 1650326465778903,
+    'X-Trace': '2B0C268267AB901E675F1378E38A0D09A200000000251D6A160ED211AC01',
+    _V: '1',
+    'sw.parent_span_id': '72b61d5d1e06aacb',
+    'sw.trace_context': '00-0c268267ab901e675f1378e38a0d09a2-251d6a160ed211ac-01'
+  } to have property Query of 'SELECT 1' (got 'SELECT 0')
+      at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+      at Assertion.value [as property] (node_modules/should/lib/assertion.js:164:19)
+      at helper.test.ao.probes.mysql.tagSql (test/probes/mysql.test.js:379:25)
+      at EventEmitter.onMessage (test/helper.js:170:9)
+      at EventEmitter.emit (node:events:527:28)
+      at Socket.<anonymous> (test/helper.js:112:13)
+      at Socket.emit (node:events:527:28)
+      at UDP.onMessage [as onmessage] (node:dgram:922:8)
+      at UDP.callbackTrampoline (node:internal/async_hooks:130:17)
+
+  13) probes.mysql 2.1.0
+       should skip when disabled:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  14) probes.mysql 2.1.0
+       "after all" hook for "should skip when disabled":
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:35.428Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:35.430Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:35.430Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:35.430Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:35.597Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:35.780Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:35.799Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:35.800Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:35.837Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:35.837Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:35.838Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:35.857Z solarwinds-apm:patching patched mysql 2.1.1
+2022-04-19T00:01:35.867Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists (42ms)
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 3 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:46.774Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:46.774Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:46.774Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:46.775Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:46.858Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:47.027Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:47.048Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:47.049Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:47.132Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:47.133Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:47.134Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:47.202Z solarwinds-apm:patching patched mysql 2.2.0
+2022-04-19T00:01:47.221Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.2.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:57.511Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:57.511Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:57.512Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:57.512Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:57.589Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:57.787Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:57.815Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:57.815Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:57.871Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:57.871Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:57.872Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:57.898Z solarwinds-apm:patching patched mysql 2.3.0
+2022-04-19T00:01:57.908Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:02:08.709Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:08.710Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:08.710Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:08.710Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:08.781Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:08.941Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:08.960Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:08.961Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:08.999Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:09.000Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:09.000Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:09.036Z solarwinds-apm:patching patched mysql 2.3.1
+2022-04-19T00:02:09.045Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:02:19.086Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:19.086Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:19.086Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:19.086Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:19.157Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:19.318Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:19.339Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:19.339Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:19.376Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:19.376Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:19.377Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:19.408Z solarwinds-apm:patching patched mysql 2.3.2
+2022-04-19T00:02:19.417Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.2
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:02:29.990Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:29.990Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:29.990Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:29.991Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:30.066Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:30.229Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:30.248Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:30.249Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:30.288Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:30.289Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:30.289Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:30.321Z solarwinds-apm:patching patched mysql 2.4.0
+2022-04-19T00:02:30.330Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.0
+    ✔ UDP might lose a message
+(node:1664) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1664) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1664) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:02:41.365Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:41.365Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:41.365Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:41.366Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:41.436Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:41.595Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:41.618Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:41.618Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:41.655Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:41.656Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:41.656Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:41.717Z solarwinds-apm:patching patched mysql 2.4.1
+2022-04-19T00:02:41.726Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.1
+    ✔ UDP might lose a message
+(node:1729) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1729) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1729) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:02:53.075Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:53.075Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:53.076Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:53.076Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:53.155Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:53.326Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:53.348Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:53.348Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:53.398Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:02:53.399Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:02:53.399Z solarwinds-apm:patching patched fs 
+2022-04-19T00:02:53.438Z solarwinds-apm:patching patched mysql 2.4.2
+2022-04-19T00:02:53.448Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.2
+    ✔ UDP might lose a message
+(node:1794) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1794) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1794) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:03:05.274Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:05.275Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:05.275Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:05.275Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:05.346Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:05.513Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:05.534Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:05.535Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:05.596Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:05.597Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:05.597Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:05.636Z solarwinds-apm:patching patched mysql 2.4.3
+2022-04-19T00:03:05.645Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.3
+    ✔ UDP might lose a message
+(node:1859) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1859) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1859) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 25s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:03:33.834Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:33.835Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:33.835Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:33.835Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:34.074Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:34.339Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:34.362Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:34.362Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:34.421Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:34.421Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:34.422Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:34.460Z solarwinds-apm:patching patched mysql 2.5.0
+2022-04-19T00:03:34.470Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.0
+    ✔ UDP might lose a message
+(node:1924) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1924) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1924) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 12s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:03:48.371Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:03:48.372Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:03:48.372Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:03:48.372Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:03:48.452Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:03:48.623Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:03:48.644Z solarwinds-apm:patching patched https 
+2022-04-19T00:03:48.645Z solarwinds-apm:patching patched http 
+2022-04-19T00:03:48.685Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:03:48.686Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:03:48.686Z solarwinds-apm:patching patched fs 
+2022-04-19T00:03:48.724Z solarwinds-apm:patching patched mysql 2.5.1
+2022-04-19T00:03:48.734Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.1
+    ✔ UDP might lose a message
+(node:1989) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1989) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:1989) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:00.257Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:00.258Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:00.258Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:00.258Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:00.337Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:00.505Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:00.534Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:00.534Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:00.572Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:00.573Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:00.573Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:00.607Z solarwinds-apm:patching patched mysql 2.5.2
+2022-04-19T00:04:00.616Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.2
+    ✔ UDP might lose a message
+(node:2054) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2054) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2054) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:11.223Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:11.223Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:11.223Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:11.224Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:11.313Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:11.544Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:11.573Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:11.573Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:11.676Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:11.677Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:11.677Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:11.722Z solarwinds-apm:patching patched mysql 2.5.3
+2022-04-19T00:04:11.738Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.3
+    ✔ UDP might lose a message
+(node:2119) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2119) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2119) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:23.682Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:23.688Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:23.688Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:23.688Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:23.944Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:24.161Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:24.182Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:24.182Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:24.221Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:24.222Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:24.222Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:24.253Z solarwinds-apm:patching patched mysql 2.5.4
+2022-04-19T00:04:24.263Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.4
+    ✔ UDP might lose a message
+(node:2184) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2184) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2184) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN deprecated bignumber.js@2.0.0: critical bug fixed in v2.0.4
+
+changed 3 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:34.626Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:34.627Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:34.627Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:34.627Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:34.749Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:34.977Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:34.997Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:34.998Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:35.066Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:35.066Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:35.067Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:35.102Z solarwinds-apm:patching patched mysql 2.5.5
+2022-04-19T00:04:35.113Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.5
+    ✔ UDP might lose a message
+(node:2249) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2249) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2249) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:45.317Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:45.318Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:45.318Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:45.318Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:45.387Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:45.542Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:45.563Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:45.564Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:45.604Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:45.605Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:45.605Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:45.640Z solarwinds-apm:patching patched mysql 2.6.0
+2022-04-19T00:04:45.647Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.0
+    ✔ UDP might lose a message
+(node:2314) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2314) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2314) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:04:56.927Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:04:56.928Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:04:56.928Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:04:56.928Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:04:57.000Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:04:57.208Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:04:57.229Z solarwinds-apm:patching patched https 
+2022-04-19T00:04:57.229Z solarwinds-apm:patching patched http 
+2022-04-19T00:04:57.281Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:04:57.281Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:04:57.282Z solarwinds-apm:patching patched fs 
+2022-04-19T00:04:57.314Z solarwinds-apm:patching patched mysql 2.6.1
+2022-04-19T00:04:57.322Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.1
+    ✔ UDP might lose a message
+(node:2379) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2379) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2379) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:05:07.633Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:05:07.634Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:05:07.634Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:05:07.634Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:05:07.709Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:05:07.868Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:05:07.888Z solarwinds-apm:patching patched https 
+2022-04-19T00:05:07.889Z solarwinds-apm:patching patched http 
+2022-04-19T00:05:07.927Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:05:07.928Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:05:07.928Z solarwinds-apm:patching patched fs 
+2022-04-19T00:05:07.964Z solarwinds-apm:patching patched mysql 2.6.2
+2022-04-19T00:05:07.972Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.2
+    ✔ UDP might lose a message
+(node:2444) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2444) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2444) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:05:18.818Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:05:18.819Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:05:18.819Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:05:18.819Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:05:18.894Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:05:19.058Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:05:19.080Z solarwinds-apm:patching patched https 
+2022-04-19T00:05:19.080Z solarwinds-apm:patching patched http 
+2022-04-19T00:05:19.113Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:05:19.113Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:05:19.114Z solarwinds-apm:patching patched fs 
+2022-04-19T00:05:19.154Z solarwinds-apm:patching patched mysql 2.7.0
+2022-04-19T00:05:19.164Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.7.0
+    ✔ UDP might lose a message
+(node:2509) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2509) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+(node:2509) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+removed 1 package, changed 1 package, and audited 928 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:05:29.860Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:05:29.861Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:05:29.861Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:05:29.861Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:05:29.933Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:05:30.108Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:05:30.132Z solarwinds-apm:patching patched https 
+2022-04-19T00:05:30.133Z solarwinds-apm:patching patched http 
+2022-04-19T00:05:30.189Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:05:30.189Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:05:30.189Z solarwinds-apm:patching patched fs 
+2022-04-19T00:05:30.206Z solarwinds-apm:patching patched mysql 2.8.0
+2022-04-19T00:05:30.215Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.8.0
+    ✔ UDP might lose a message
+(node:2574) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2574) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2574) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 928 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:05:40.672Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:05:40.677Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:05:40.677Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:05:40.678Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:05:40.753Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:05:40.923Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:05:40.943Z solarwinds-apm:patching patched https 
+2022-04-19T00:05:40.943Z solarwinds-apm:patching patched http 
+2022-04-19T00:05:40.994Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:05:40.995Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:05:40.995Z solarwinds-apm:patching patched fs 
+2022-04-19T00:05:41.011Z solarwinds-apm:patching patched mysql 2.9.0
+2022-04-19T00:05:41.020Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.9.0
+    ✔ UDP might lose a message
+(node:2639) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2639) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2639) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 928 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:05:51.968Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:05:51.968Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:05:51.968Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:05:51.968Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:05:52.038Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:05:52.194Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:05:52.221Z solarwinds-apm:patching patched https 
+2022-04-19T00:05:52.222Z solarwinds-apm:patching patched http 
+2022-04-19T00:05:52.270Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:05:52.271Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:05:52.271Z solarwinds-apm:patching patched fs 
+2022-04-19T00:05:52.287Z solarwinds-apm:patching patched mysql 2.10.0
+2022-04-19T00:05:52.295Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.0
+    ✔ UDP might lose a message
+(node:2704) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2704) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2704) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 928 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:06:03.708Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:06:03.709Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:06:03.709Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:06:03.709Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:06:03.781Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:06:03.946Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:06:03.966Z solarwinds-apm:patching patched https 
+2022-04-19T00:06:03.967Z solarwinds-apm:patching patched http 
+2022-04-19T00:06:04.017Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:06:04.018Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:06:04.018Z solarwinds-apm:patching patched fs 
+2022-04-19T00:06:04.034Z solarwinds-apm:patching patched mysql 2.10.1
+2022-04-19T00:06:04.042Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.1
+    ✔ UDP might lose a message
+(node:2769) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2769) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2769) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 928 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:06:14.673Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:06:14.674Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:06:14.674Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:06:14.674Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:06:14.746Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:06:14.907Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:06:14.927Z solarwinds-apm:patching patched https 
+2022-04-19T00:06:14.927Z solarwinds-apm:patching patched http 
+2022-04-19T00:06:14.981Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:06:14.981Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:06:14.982Z solarwinds-apm:patching patched fs 
+2022-04-19T00:06:14.997Z solarwinds-apm:patching patched mysql 2.10.2
+2022-04-19T00:06:15.005Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.2
+    ✔ UDP might lose a message
+(node:2834) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2834) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2834) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 1 package, changed 2 packages, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:06:26.034Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:06:26.035Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:06:26.035Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:06:26.035Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:06:26.109Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:06:26.268Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:06:26.289Z solarwinds-apm:patching patched https 
+2022-04-19T00:06:26.290Z solarwinds-apm:patching patched http 
+2022-04-19T00:06:26.341Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:06:26.342Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:06:26.342Z solarwinds-apm:patching patched fs 
+2022-04-19T00:06:26.360Z solarwinds-apm:patching patched mysql 2.11.0
+2022-04-19T00:06:26.368Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.0
+    ✔ UDP might lose a message
+(node:2899) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2899) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2899) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:06:38.074Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:06:38.074Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:06:38.074Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:06:38.075Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:06:38.152Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:06:38.308Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:06:38.331Z solarwinds-apm:patching patched https 
+2022-04-19T00:06:38.331Z solarwinds-apm:patching patched http 
+2022-04-19T00:06:38.386Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:06:38.387Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:06:38.388Z solarwinds-apm:patching patched fs 
+2022-04-19T00:06:38.406Z solarwinds-apm:patching patched mysql 2.11.1
+2022-04-19T00:06:38.414Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.1
+    ✔ UDP might lose a message
+(node:2964) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:2964) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:2964) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 3 packages, and audited 929 packages in 10s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:06:50.507Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:06:50.508Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:06:50.508Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:06:50.508Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:06:50.582Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:06:50.740Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:06:50.761Z solarwinds-apm:patching patched https 
+2022-04-19T00:06:50.761Z solarwinds-apm:patching patched http 
+2022-04-19T00:06:50.810Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:06:50.810Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:06:50.811Z solarwinds-apm:patching patched fs 
+2022-04-19T00:06:50.827Z solarwinds-apm:patching patched mysql 2.12.0
+2022-04-19T00:06:50.835Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.12.0
+    ✔ UDP might lose a message
+(node:3029) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3029) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:3029) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+1 moderate severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:07:01.183Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:01.191Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:01.191Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:01.191Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:01.286Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:01.496Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:01.524Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:01.524Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:01.645Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:01.646Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:01.646Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:01.682Z solarwinds-apm:patching patched mysql 2.13.0
+2022-04-19T00:07:01.697Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.13.0
+    ✔ UDP might lose a message
+(node:3094) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3094) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:3094) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 4 packages, changed 2 packages, and audited 933 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:07:11.684Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:11.685Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:11.685Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:11.685Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:11.757Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:11.975Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:11.997Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:11.998Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:12.109Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:12.110Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:12.111Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:12.136Z solarwinds-apm:patching patched mysql 2.14.0
+2022-04-19T00:07:12.145Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.0
+    ✔ UDP might lose a message
+(node:3159) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3159) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:3159) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 933 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:07:22.035Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:22.036Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:22.036Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:22.036Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:22.111Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:22.291Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:22.312Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:22.313Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:22.366Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:22.367Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:22.367Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:22.387Z solarwinds-apm:patching patched mysql 2.14.1
+2022-04-19T00:07:22.396Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.1
+    ✔ UDP might lose a message
+(node:3224) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3224) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:3224) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 3 packages, and audited 933 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:07:34.371Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:34.372Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:34.372Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:34.372Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:34.453Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:34.623Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:34.644Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:34.645Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:34.697Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:34.698Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:34.698Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:34.719Z solarwinds-apm:patching patched mysql 2.15.0
+2022-04-19T00:07:34.728Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.15.0
+    ✔ UDP might lose a message
+(node:3289) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3289) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:3289) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+removed 1 package, changed 6 packages, and audited 932 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:07:46.230Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:46.231Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:46.231Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:46.231Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:46.319Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:46.496Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:46.516Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:46.517Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:46.578Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:46.578Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:46.578Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:46.600Z solarwinds-apm:patching patched mysql 2.16.0
+2022-04-19T00:07:46.609Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.16.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN deprecated bignumber.js@6.0.0: Custom ALPHABET bug fixed in v7.0.2
+
+changed 2 packages, and audited 932 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:07:57.121Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:07:57.122Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:07:57.122Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:07:57.122Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:07:57.212Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:07:57.482Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:07:57.502Z solarwinds-apm:patching patched https 
+2022-04-19T00:07:57.502Z solarwinds-apm:patching patched http 
+2022-04-19T00:07:57.570Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:07:57.570Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:07:57.571Z solarwinds-apm:patching patched fs 
+2022-04-19T00:07:57.593Z solarwinds-apm:patching patched mysql 2.17.0
+2022-04-19T00:07:57.601Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 932 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:08:07.823Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:08:07.824Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:08:07.824Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:08:07.824Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:08:07.910Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:08:08.099Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:08:08.153Z solarwinds-apm:patching patched https 
+2022-04-19T00:08:08.153Z solarwinds-apm:patching patched http 
+2022-04-19T00:08:08.210Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:08:08.211Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:08:08.211Z solarwinds-apm:patching patched fs 
+2022-04-19T00:08:08.237Z solarwinds-apm:patching patched mysql 2.17.1
+2022-04-19T00:08:08.246Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 3 packages, and audited 932 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:08:19.434Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:08:19.435Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:08:19.435Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:08:19.435Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:08:19.515Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:08:19.690Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:08:19.712Z solarwinds-apm:patching patched https 
+2022-04-19T00:08:19.713Z solarwinds-apm:patching patched http 
+2022-04-19T00:08:19.744Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:08:19.752Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:08:19.753Z solarwinds-apm:patching patched fs 
+2022-04-19T00:08:19.799Z solarwinds-apm:patching patched mysql 2.18.0
+2022-04-19T00:08:19.809Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.0
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 932 packages in 21s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:08:43.112Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:08:43.112Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:08:43.112Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:08:43.112Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:08:43.183Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:08:43.381Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:08:43.420Z solarwinds-apm:patching patched https 
+2022-04-19T00:08:43.420Z solarwinds-apm:patching patched http 
+2022-04-19T00:08:43.444Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:08:43.445Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:08:43.445Z solarwinds-apm:patching patched fs 
+2022-04-19T00:08:43.490Z solarwinds-apm:patching patched mysql 2.18.1
+2022-04-19T00:08:43.498Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.1
+    ✔ UDP might lose a message
+    ✔ should see if a database exists
+    ✔ should create a database if it doesn't exist
+    ✔ should create a table if it doesn't exist
+    ✔ should create a pool and pool cluster
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    ✔ should trace a basic query
+    ✔ should trace a query with a value list
+    ✔ should trace a query with a value object
+    ✔ should trace a streaming query
+    ✔ should trace a pooled query
+    ✔ should trace a cluster pooled query
+    ✔ should sanitize a query
+    ✔ should truncate long queries
+    ✔ should tag queries when feature is enabled
+    ✔ should skip when disabled
+
+
+  17 passing (2s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+up to date, audited 932 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities

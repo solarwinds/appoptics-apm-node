@@ -1,0 +1,1681 @@
+
+changed 1 package, and audited 932 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:23.215Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:23.216Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:23.216Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:23.216Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:23.311Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:23.579Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:23.597Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:23.597Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:23.619Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:23.620Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:23.620Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:23.624Z solarwinds-apm:patching patched q 0.9.0
+2022-04-18T23:58:23.626Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.0
+2022-04-18T23:58:23.638Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:23.639Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:23.642Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:23.644Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:23.645Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:23.646Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:23.646Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:23.647Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:23.647Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:23.647Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:30.130Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:30.130Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:30.131Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:30.131Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:30.192Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:30.322Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:30.339Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:30.339Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:30.357Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:30.357Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:30.358Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:30.361Z solarwinds-apm:patching patched q 0.9.1
+2022-04-18T23:58:30.364Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.1
+2022-04-18T23:58:30.377Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:30.378Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:30.381Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:30.384Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:30.384Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:30.386Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:30.386Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:30.386Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:30.387Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:30.387Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:37.199Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:37.199Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:37.199Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:37.199Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:37.260Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:37.390Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:37.406Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:37.406Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:37.424Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:37.424Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:37.424Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:37.428Z solarwinds-apm:patching patched q 0.9.2
+2022-04-18T23:58:37.430Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.2
+2022-04-18T23:58:37.442Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:37.443Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:37.446Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:37.447Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:37.447Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:37.449Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:37.449Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:37.451Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:37.451Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:37.451Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:43.758Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:43.759Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:43.759Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:43.759Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:43.820Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:43.956Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:43.972Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:43.972Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:43.990Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:43.990Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:43.991Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:43.994Z solarwinds-apm:patching patched q 0.9.3
+2022-04-18T23:58:43.996Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.3
+2022-04-18T23:58:44.007Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:44.008Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:44.011Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:44.013Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:44.013Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:44.014Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:44.015Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:44.017Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:44.017Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:44.017Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (15ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:50.843Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:50.844Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:50.844Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:50.844Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:50.903Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:51.046Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:51.062Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:51.063Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:51.079Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:51.080Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:51.080Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:51.084Z solarwinds-apm:patching patched q 0.9.4
+2022-04-18T23:58:51.086Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.4
+2022-04-18T23:58:51.097Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:51.098Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:51.101Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:51.104Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:51.104Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:51.107Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:51.107Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:51.109Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:51.109Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:51.109Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (17ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:58:58.030Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:58:58.030Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:58:58.030Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:58:58.030Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:58:58.094Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:58:58.268Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:58:58.285Z solarwinds-apm:patching patched https 
+2022-04-18T23:58:58.286Z solarwinds-apm:patching patched http 
+2022-04-18T23:58:58.303Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:58:58.304Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:58:58.304Z solarwinds-apm:patching patched fs 
+2022-04-18T23:58:58.309Z solarwinds-apm:patching patched q 0.9.5
+2022-04-18T23:58:58.311Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.5
+2022-04-18T23:58:58.322Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:58.322Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:58:58.326Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:58:58.328Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:58.328Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:58:58.331Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:58:58.331Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:58:58.333Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:58.333Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:58:58.333Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (17ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:04.790Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:04.790Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:04.790Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:04.790Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:04.866Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:05.008Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:05.026Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:05.026Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:05.045Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:05.046Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:05.046Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:05.050Z solarwinds-apm:patching patched q 0.9.6
+2022-04-18T23:59:05.053Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.6
+2022-04-18T23:59:05.068Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.068Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.068Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:05.069Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.069Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:05.071Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.071Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:05.072Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.072Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:05.074Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.074Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:05.076Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:05.076Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:05.077Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.077Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:05.077Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:11.917Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:11.918Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:11.918Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:11.918Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:11.976Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:12.102Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:12.118Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:12.118Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:12.134Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:12.135Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:12.135Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:12.139Z solarwinds-apm:patching patched q 0.9.7
+2022-04-18T23:59:12.142Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 0.9.7
+2022-04-18T23:59:12.152Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.152Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.152Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:12.152Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:12.155Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.155Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:12.155Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:12.158Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.158Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:12.159Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:12.159Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:12.160Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.160Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:12.161Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:18.310Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:18.310Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:18.310Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:18.311Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:18.369Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:18.497Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:18.513Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:18.513Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:18.529Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:18.530Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:18.530Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:18.534Z solarwinds-apm:patching patched q 1.0.0
+2022-04-18T23:59:18.537Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.0.0
+2022-04-18T23:59:18.547Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.548Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.548Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:18.548Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:18.551Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.551Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:18.551Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:18.552Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.552Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:18.554Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:18.554Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:18.555Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.555Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:18.555Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:25.307Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:25.307Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:25.307Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:25.308Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:25.367Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:25.501Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:25.517Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:25.518Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:25.535Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:25.535Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:25.536Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:25.540Z solarwinds-apm:patching patched q 1.0.1
+2022-04-18T23:59:25.542Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.0.1
+2022-04-18T23:59:25.554Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.554Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.554Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:25.554Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:25.557Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.557Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:25.557Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:25.559Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.560Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:25.561Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:25.561Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:25.562Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.562Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:25.562Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:32.564Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:32.565Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:32.565Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:32.565Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:32.625Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:32.753Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:32.769Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:32.769Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:32.786Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:32.787Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:32.787Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:32.791Z solarwinds-apm:patching patched q 1.1.0
+2022-04-18T23:59:32.794Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.1.0
+2022-04-18T23:59:32.805Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.805Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.806Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:32.806Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:32.809Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.809Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:32.809Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:32.811Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.811Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:32.813Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:32.813Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:32.814Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.814Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:32.814Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:39.737Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:39.737Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:39.737Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:39.738Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:39.799Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:39.927Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:39.944Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:39.944Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:39.961Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:39.961Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:39.962Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:39.966Z solarwinds-apm:patching patched q 1.1.1
+2022-04-18T23:59:39.968Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.1.1
+2022-04-18T23:59:39.979Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.979Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.980Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:39.980Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:39.982Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.982Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:39.982Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:39.984Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.984Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:39.985Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:39.986Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:39.986Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.987Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:39.987Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:46.240Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:46.240Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:46.240Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:46.240Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:46.314Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:46.469Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:46.486Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:46.486Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:46.504Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:46.504Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:46.504Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:46.509Z solarwinds-apm:patching patched q 1.1.2
+2022-04-18T23:59:46.511Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.1.2
+2022-04-18T23:59:46.523Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.523Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.523Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:46.523Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:46.526Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.526Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:46.526Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:46.528Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.528Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:46.529Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:46.530Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:46.530Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.531Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:46.531Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:52.976Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:52.977Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:52.977Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:52.977Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:53.035Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:53.162Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:53.177Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:53.178Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:53.194Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-18T23:59:53.195Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-18T23:59:53.195Z solarwinds-apm:patching patched fs 
+2022-04-18T23:59:53.199Z solarwinds-apm:patching patched q 1.2.0
+2022-04-18T23:59:53.202Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.2.0
+2022-04-18T23:59:53.212Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.212Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.213Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:53.213Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-18T23:59:53.216Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.216Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-18T23:59:53.216Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-18T23:59:53.218Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.218Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-18T23:59:53.220Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-18T23:59:53.220Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-18T23:59:53.221Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.221Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-18T23:59:53.221Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:00.411Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:00.412Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:00.412Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:00.412Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:00.486Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:00.664Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:00.682Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:00.682Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:00.700Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:00.700Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:00.701Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:00.705Z solarwinds-apm:patching patched q 1.2.1
+2022-04-19T00:00:00.708Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.2.1
+2022-04-19T00:00:00.719Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.719Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.720Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:00.720Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:00.723Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.723Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:00.723Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:00.724Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.724Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:00.726Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:00.726Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:00.727Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.727Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:00.727Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:08.737Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:08.737Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:08.737Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:08.738Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:08.797Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:08.936Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:08.952Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:08.953Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:08.970Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:08.970Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:08.970Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:08.975Z solarwinds-apm:patching patched q 1.3.0
+2022-04-19T00:00:08.977Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.3.0
+2022-04-19T00:00:08.988Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.988Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.989Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:08.989Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:08.991Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.991Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:08.991Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:08.993Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.993Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:08.994Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:08.995Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:08.995Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.996Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:08.996Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:16.296Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:16.297Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:16.297Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:16.297Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:16.356Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:16.482Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:16.498Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:16.498Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:16.515Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:16.515Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:16.515Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:16.520Z solarwinds-apm:patching patched q 1.4.0
+2022-04-19T00:00:16.522Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.4.0
+2022-04-19T00:00:16.533Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.533Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.533Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:16.533Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:16.536Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.536Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:16.536Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:16.538Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.538Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:16.539Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:16.539Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:16.540Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.540Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:16.540Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:23.220Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:23.220Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:23.220Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:23.220Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:23.292Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:23.457Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:23.473Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:23.474Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:23.491Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:23.492Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:23.492Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:23.496Z solarwinds-apm:patching patched q 1.4.1
+2022-04-19T00:00:23.499Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.4.1
+2022-04-19T00:00:23.510Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.511Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.511Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:23.511Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:23.513Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.514Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:23.514Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:23.515Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.515Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:23.517Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:23.517Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:23.518Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.518Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:23.518Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:29.778Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:29.779Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:29.779Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:29.779Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:29.843Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:30.013Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:30.031Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:30.032Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:30.050Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:30.051Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:30.051Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:30.055Z solarwinds-apm:patching patched q 1.5.0
+2022-04-19T00:00:30.058Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.5.0
+2022-04-19T00:00:30.069Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.069Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.069Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:30.069Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:30.072Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.072Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:30.072Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:30.074Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.074Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:30.075Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:30.075Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:30.076Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.076Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:30.076Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:37.080Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:37.081Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:37.081Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:37.081Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:37.141Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:37.275Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:37.291Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:37.291Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:37.308Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:37.308Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:37.308Z solarwinds-apm:patching patched fs 
+2022-04-19T00:00:37.313Z solarwinds-apm:patching patched q 1.5.1
+2022-04-19T00:00:37.315Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 1.5.1
+2022-04-19T00:00:37.326Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.326Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.326Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:37.326Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via delay
+2022-04-19T00:00:37.329Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.329Z solarwinds-apm:bind ao.bind(anonymous) - not tracing
+2022-04-19T00:00:37.329Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises via fs.readFile
+2022-04-19T00:00:37.331Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.331Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support promises in domains
+2022-04-19T00:00:37.332Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-19T00:00:37.332Z solarwinds-apm:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:306:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:678:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:593:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:603:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:571:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✔ should not interfere with untraced promises
+2022-04-19T00:00:37.333Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.333Z solarwinds-apm:bind ao.bind() - not tracing
+2022-04-19T00:00:37.333Z solarwinds-apm:bind ao.bind() - not tracing
+    ✔ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+added 16 packages, changed 1 package, and audited 948 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:44.558Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:44.559Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:44.559Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:44.559Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:44.619Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:44.752Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:44.768Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:44.768Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:44.785Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:44.786Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:44.786Z solarwinds-apm:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:168:29)
+    at ModuleJob.run (node:internal/modules/esm/module_job:197:25)
+    at async Promise.all (index 0)
+    at async ESMLoader.import (node:internal/modules/esm/loader:337:24)
+
+changed 1 package, and audited 948 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:52.108Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:52.108Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:52.108Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:52.108Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:52.170Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:52.305Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:52.321Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:52.321Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:52.338Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:52.338Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:52.339Z solarwinds-apm:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:168:29)
+    at ModuleJob.run (node:internal/modules/esm/module_job:197:25)
+    at async Promise.all (index 0)
+    at async ESMLoader.import (node:internal/modules/esm/loader:337:24)
+
+changed 1 package, and audited 948 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:58.619Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:58.619Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:58.619Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:58.619Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:58.691Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:58.851Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:58.868Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:58.869Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:58.886Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:00:58.886Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:00:58.887Z solarwinds-apm:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:168:29)
+    at ModuleJob.run (node:internal/modules/esm/module_job:197:25)
+    at async Promise.all (index 0)
+    at async ESMLoader.import (node:internal/modules/esm/loader:337:24)
+
+removed 13 packages, changed 2 packages, and audited 935 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:01:05.572Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:05.573Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:05.573Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:05.573Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:05.633Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:05.758Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:05.774Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:05.774Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:05.791Z solarwinds-apm:patching fs.realpath - adding native method
+2022-04-19T00:01:05.791Z solarwinds-apm:patching fsPromises.exists not a function
+2022-04-19T00:01:05.791Z solarwinds-apm:patching patched fs 
+2022-04-19T00:01:05.798Z solarwinds-apm:patching patched q 2.0.3
+2022-04-19T00:01:05.800Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes/q 2.0.3
+    ✔ should support promises via delay
+    ✔ should support promises via fs.readFile
+    ✔ should support promises in domains
+    ✔ should not interfere with untraced promises
+    ✔ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+removed 3 packages, changed 1 package, and audited 932 packages in 6s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities

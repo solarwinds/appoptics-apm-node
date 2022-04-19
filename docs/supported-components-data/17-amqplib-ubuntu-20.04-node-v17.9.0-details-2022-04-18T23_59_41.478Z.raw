@@ -1,0 +1,946 @@
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.2.0',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 1 package, removed 4 packages, changed 3 packages, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-18T23:59:50.624Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-18T23:59:50.624Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-18T23:59:50.624Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-18T23:59:50.625Z solarwinds-apm:debug using context provider: ace-context
+2022-04-18T23:59:50.703Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-18T23:59:51.093Z solarwinds-apm:patching patched crypto 
+2022-04-18T23:59:51.132Z solarwinds-apm:patching patched https 
+2022-04-18T23:59:51.132Z solarwinds-apm:patching patched http 
+2022-04-18T23:59:51.199Z solarwinds-apm:patching patched amqplib 0.2.0
+2022-04-18T23:59:51.201Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-18T23:59:51.206Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.0
+    ✔ UDP might lose a message
+    promises
+      1) "before all" hook for "should report send and consume in existing trace"
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      3) "before all" hook for "should report send and consume in existing trace"
+      4) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  1 passing (4s)
+  4 failing
+
+  1) probes.amqplib 0.2.0
+       promises
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  2) probes.amqplib 0.2.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read properties of undefined (reading 'close')
+      at Context.<anonymous> (test/probes/amqplib.test.js:181:23)
+      at processImmediate (node:internal/timers:466:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17)
+
+  3) probes.amqplib 0.2.0
+       callbacks
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  4) probes.amqplib 0.2.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read properties of undefined (reading 'close')
+      at Context.<anonymous> (test/probes/amqplib.test.js:211:23)
+      at processImmediate (node:internal/timers:466:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17)
+
+
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.2.1',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:04.587Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:04.588Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:04.588Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:04.588Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:04.677Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:04.839Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:04.860Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:04.861Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:04.948Z solarwinds-apm:patching patched amqplib 0.2.1
+2022-04-19T00:00:04.951Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:04.954Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.1
+    ✔ UDP might lose a message
+    promises
+(node:1340) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (62ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (206ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.0',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:13.753Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:13.754Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:13.754Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:13.754Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:13.825Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:13.961Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:13.982Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:13.983Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:14.045Z solarwinds-apm:patching patched amqplib 0.3.0
+2022-04-19T00:00:14.047Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:14.050Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.0
+    ✔ UDP might lose a message
+    promises
+(node:1405) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (47ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (47ms)
+
+
+  7 passing (248ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.1',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11 || 0.12 || 1.0 || 1.1' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 929 packages in 9s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:23.915Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:23.916Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:23.916Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:23.916Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:24.004Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:24.159Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:24.180Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:24.181Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:24.269Z solarwinds-apm:patching patched amqplib 0.3.1
+2022-04-19T00:00:24.272Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:24.275Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.1
+    ✔ UDP might lose a message
+    promises
+(node:1470) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (62ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (48ms)
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (262ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <0.13 || ^1' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:32.538Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:32.538Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:32.538Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:32.538Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:32.618Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:32.755Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:32.777Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:32.777Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:32.839Z solarwinds-apm:patching patched amqplib 0.3.2
+2022-04-19T00:00:32.841Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:32.844Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.2
+    ✔ UDP might lose a message
+    promises
+(node:1535) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (57ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (47ms)
+
+
+  7 passing (278ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <4 || ^4' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:41.476Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:41.477Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:41.477Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:41.477Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:41.548Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:41.700Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:41.722Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:41.723Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:41.787Z solarwinds-apm:patching patched amqplib 0.4.0
+2022-04-19T00:00:41.790Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:41.792Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.0
+    ✔ UDP might lose a message
+    promises
+(node:1600) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (54ms)
+      1) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (51ms)
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  7 passing (203ms)
+  2 failing
+
+  1) probes.amqplib 0.4.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at ChannelModel.emit (node:events:527:28)
+      at Connection.emit (node:events:527:28)
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at Socket.emit (node:events:527:28)
+      at emitReadable_ (node:internal/streams/readable:601:12)
+      at processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+  2) probes.amqplib 0.4.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at CallbackModel.emit (node:events:527:28)
+      at Connection.emit (node:events:527:28)
+      at Connection.C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at Socket.emit (node:events:527:28)
+      at emitReadable_ (node:internal/streams/readable:601:12)
+      at processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <5 || ^5' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:50.022Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:50.022Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:50.022Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:50.022Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:50.109Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:50.272Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:50.305Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:50.305Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:50.470Z solarwinds-apm:patching patched amqplib 0.4.1
+2022-04-19T00:00:50.476Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:50.478Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.1
+    ✔ UDP might lose a message
+    promises
+(node:1665) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (78ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (45ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (310ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <6 || ^6' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:00:58.248Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:00:58.249Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:00:58.249Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:00:58.249Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:00:58.321Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:00:58.457Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:00:58.477Z solarwinds-apm:patching patched https 
+2022-04-19T00:00:58.477Z solarwinds-apm:patching patched http 
+2022-04-19T00:00:58.545Z solarwinds-apm:patching patched amqplib 0.4.2
+2022-04-19T00:00:58.547Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:00:58.550Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.2
+    ✔ UDP might lose a message
+    promises
+(node:1730) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (66ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (51ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (249ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <6 || ^6' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+removed 1 package, changed 1 package, and audited 928 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:01:07.493Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:07.494Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:07.494Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:07.494Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:07.565Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:07.711Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:07.732Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:07.733Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:07.804Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:07.806Z solarwinds-apm:patching patched amqplib 0.5.1
+2022-04-19T00:01:07.809Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:07.811Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.1
+    ✔ UDP might lose a message
+    promises
+(node:1795) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (63ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (49ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (248ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=9' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 928 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:01:16.432Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:16.433Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:16.433Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:16.433Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:16.520Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:16.676Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:16.711Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:16.712Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:16.778Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:16.781Z solarwinds-apm:patching patched amqplib 0.5.2
+2022-04-19T00:01:16.783Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:16.786Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.2
+    ✔ UDP might lose a message
+    promises
+(node:1860) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (46ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (220ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.3',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=9' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 14 packages, removed 7 packages, changed 4 packages, and audited 935 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:25.182Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:25.182Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:25.182Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:25.183Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:25.253Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:25.390Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:25.411Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:25.412Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:25.493Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:25.496Z solarwinds-apm:patching patched amqplib 0.5.3
+2022-04-19T00:01:25.498Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:25.501Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.3
+    ✔ UDP might lose a message
+    promises
+(node:1925) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (54ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (50ms)
+
+
+  7 passing (213ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.4',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN deprecated amqplib@0.5.4: See github.com/squaremo/amqp.node/issues/534
+
+changed 1 package, and audited 935 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:34.358Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:34.359Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:34.359Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:34.359Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:34.431Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:34.564Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:34.586Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:34.587Z solarwinds-apm:patching patched http 
+
+Error: Cannot find module './defs'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:999:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js:7:12)
+    at Module._compile (node:internal/modules/cjs/loader:1099:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+    at Module.load (node:internal/modules/cjs/loader:975:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:999:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js:11:18)
+    at Module._compile (node:internal/modules/cjs/loader:1099:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+    at Module.load (node:internal/modules/cjs/loader:975:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:999:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:54:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js:1:19)
+    at Module._compile (node:internal/modules/cjs/loader:1099:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+    at Module.load (node:internal/modules/cjs/loader:975:32)
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.5',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 935 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:42.613Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:42.613Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:42.613Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:42.614Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:42.689Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:42.843Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:42.864Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:42.865Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:42.938Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:42.941Z solarwinds-apm:patching patched amqplib 0.5.5
+2022-04-19T00:01:42.943Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:42.946Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.5
+    ✔ UDP might lose a message
+    promises
+(node:2051) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (65ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (48ms)
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (56ms)
+
+
+  7 passing (276ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.6',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 935 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:50.802Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:50.803Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:50.803Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:50.803Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:50.897Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:01:51.073Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:01:51.132Z solarwinds-apm:patching patched https 
+2022-04-19T00:01:51.133Z solarwinds-apm:patching patched http 
+2022-04-19T00:01:51.199Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:01:51.202Z solarwinds-apm:patching patched amqplib 0.5.6
+2022-04-19T00:01:51.204Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:01:51.207Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.6
+    ✔ UDP might lose a message
+    promises
+(node:2116) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (67ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (49ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (319ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.6.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=14' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 935 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+2022-04-19T00:01:59.821Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:01:59.822Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:01:59.822Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:01:59.822Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:01:59.892Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:00.025Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:00.046Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:00.046Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:00.120Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:02:00.122Z solarwinds-apm:patching patched amqplib 0.6.0
+2022-04-19T00:02:00.125Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:02:00.127Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.6.0
+    ✔ UDP might lose a message
+    promises
+(node:2181) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (80ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (47ms)
+
+
+  7 passing (267ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.7.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=15' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 935 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 critical)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+2022-04-19T00:02:08.777Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:08.778Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:08.778Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:08.778Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:08.847Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:08.979Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:09.001Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:09.002Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:09.074Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:02:09.077Z solarwinds-apm:patching patched amqplib 0.7.0
+2022-04-19T00:02:09.079Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:02:09.082Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.0
+    ✔ UDP might lose a message
+    promises
+(node:2246) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (65ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (253ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.7.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=15' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+added 8 packages, removed 11 packages, changed 3 packages, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:02:16.820Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:16.821Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:16.821Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:16.821Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:16.932Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:17.114Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:17.134Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:17.135Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:17.256Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:02:17.259Z solarwinds-apm:patching patched amqplib 0.7.1
+2022-04-19T00:02:17.261Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:02:17.264Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.1
+    ✔ UDP might lose a message
+    promises
+(node:2311) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (59ms)
+      ✔ should start new trace for consume (38ms)
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume (47ms)
+      ✔ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (342ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 932 packages in 7s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+2022-04-19T00:02:25.312Z solarwinds-apm:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/solarwinds-apm-config
+2022-04-19T00:02:25.313Z solarwinds-apm:debug guc ignoring SW_APM_LOG_SETTINGS
+2022-04-19T00:02:25.313Z solarwinds-apm:debug serviceKey 2QGJ...n2tU:node-agent-test
+2022-04-19T00:02:25.313Z solarwinds-apm:debug using context provider: ace-context
+2022-04-19T00:02:25.382Z solarwinds-apm:debug apm 11.0.0-sw.0, bindings 12.0.0-sw.0, oboe 10.3.2
+2022-04-19T00:02:25.517Z solarwinds-apm:patching patched crypto 
+2022-04-19T00:02:25.538Z solarwinds-apm:patching patched https 
+2022-04-19T00:02:25.538Z solarwinds-apm:patching patched http 
+2022-04-19T00:02:25.611Z solarwinds-apm:patching patched bluebird 3.7.2
+2022-04-19T00:02:25.613Z solarwinds-apm:patching patched amqplib 0.8.0
+2022-04-19T00:02:25.615Z solarwinds-apm:patching patched amqplib/callback_api 
+2022-04-19T00:02:25.618Z solarwinds-apm:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.8.0
+    ✔ UDP might lose a message
+    promises
+(node:2376) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ should report send and consume in existing trace (65ms)
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✔ should report send and consume in existing trace
+      ✔ should start new trace for consume
+      ✔ should include SourceTrace in consume external to traced publish (49ms)
+
+
+  7 passing (253ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v17.9.0', npm: '8.5.5' }
+npm WARN EBADENGINE }
+
+up to date, audited 932 packages in 8s
+
+90 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
