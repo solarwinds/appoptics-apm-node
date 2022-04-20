@@ -1,0 +1,1872 @@
+
+changed 1 package, and audited 927 packages in 7s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:16.472Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:16.472Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:16.472Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:16.473Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:16.535Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:16.661Z appoptics:patching patched crypto 
+2022-04-20T15:27:16.680Z appoptics:patching patched https 
+2022-04-20T15:27:16.681Z appoptics:patching patched http 
+2022-04-20T15:27:16.706Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:16.707Z appoptics:patching patched fs 
+2022-04-20T15:27:16.710Z appoptics:patching patched q 0.9.0
+2022-04-20T15:27:16.713Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.0
+2022-04-20T15:27:16.723Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:16.724Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:16.726Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:16.728Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:16.728Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:16.730Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:16.730Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:16.731Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:16.731Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:16.731Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:23.575Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:23.576Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:23.576Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:23.577Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:23.636Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:23.760Z appoptics:patching patched crypto 
+2022-04-20T15:27:23.778Z appoptics:patching patched https 
+2022-04-20T15:27:23.779Z appoptics:patching patched http 
+2022-04-20T15:27:23.805Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:23.805Z appoptics:patching patched fs 
+2022-04-20T15:27:23.809Z appoptics:patching patched q 0.9.1
+2022-04-20T15:27:23.811Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.1
+2022-04-20T15:27:23.822Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:23.823Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:23.826Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:23.829Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:23.829Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:23.830Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:23.831Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:23.831Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:23.831Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:23.831Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:29.890Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:29.891Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:29.891Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:29.892Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:29.952Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:30.072Z appoptics:patching patched crypto 
+2022-04-20T15:27:30.090Z appoptics:patching patched https 
+2022-04-20T15:27:30.091Z appoptics:patching patched http 
+2022-04-20T15:27:30.116Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:30.116Z appoptics:patching patched fs 
+2022-04-20T15:27:30.120Z appoptics:patching patched q 0.9.2
+2022-04-20T15:27:30.122Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.2
+2022-04-20T15:27:30.132Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:30.133Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:30.136Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:30.138Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:30.138Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:30.140Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:30.140Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:30.140Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:30.140Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:30.141Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:36.750Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:36.751Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:36.751Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:36.752Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:36.813Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:36.933Z appoptics:patching patched crypto 
+2022-04-20T15:27:36.951Z appoptics:patching patched https 
+2022-04-20T15:27:36.952Z appoptics:patching patched http 
+2022-04-20T15:27:36.979Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:36.980Z appoptics:patching patched fs 
+2022-04-20T15:27:36.983Z appoptics:patching patched q 0.9.3
+2022-04-20T15:27:36.985Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.3
+2022-04-20T15:27:36.997Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:36.997Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:37.001Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:37.003Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:37.004Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:37.006Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:37.007Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:37.009Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:37.009Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:37.009Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (18ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:42.376Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:42.377Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:42.377Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:42.378Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:42.449Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:42.566Z appoptics:patching patched crypto 
+2022-04-20T15:27:42.594Z appoptics:patching patched https 
+2022-04-20T15:27:42.604Z appoptics:patching patched http 
+2022-04-20T15:27:42.621Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:42.621Z appoptics:patching patched fs 
+2022-04-20T15:27:42.625Z appoptics:patching patched q 0.9.4
+2022-04-20T15:27:42.627Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.4
+2022-04-20T15:27:42.637Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:42.638Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:42.641Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:42.644Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:42.644Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:42.647Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:42.647Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:42.649Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:42.649Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:42.649Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (18ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:48.666Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:48.667Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:48.667Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:48.667Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:48.735Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:48.852Z appoptics:patching patched crypto 
+2022-04-20T15:27:48.869Z appoptics:patching patched https 
+2022-04-20T15:27:48.870Z appoptics:patching patched http 
+2022-04-20T15:27:48.898Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:48.898Z appoptics:patching patched fs 
+2022-04-20T15:27:48.902Z appoptics:patching patched q 0.9.5
+2022-04-20T15:27:48.904Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.5
+2022-04-20T15:27:48.914Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:48.915Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:48.917Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:48.919Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:48.919Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:48.921Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:48.921Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at makePromise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:48.924Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:48.924Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:48.924Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:27:54.716Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:54.717Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:54.717Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:54.717Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:54.776Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:54.893Z appoptics:patching patched crypto 
+2022-04-20T15:27:54.910Z appoptics:patching patched https 
+2022-04-20T15:27:54.910Z appoptics:patching patched http 
+2022-04-20T15:27:54.936Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:54.936Z appoptics:patching patched fs 
+2022-04-20T15:27:54.940Z appoptics:patching patched q 0.9.6
+2022-04-20T15:27:54.942Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.6
+2022-04-20T15:27:54.952Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.953Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.953Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:27:54.953Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.953Z appoptics:bind ao.bind(anonymous) - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:27:54.955Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.956Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:27:54.956Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.956Z appoptics:bind ao.bind(anonymous) - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:27:54.957Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.957Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:27:54.959Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:27:54.959Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:27:54.960Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.960Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:27:54.960Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:00.764Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:00.765Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:00.765Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:00.766Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:00.824Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:00.939Z appoptics:patching patched crypto 
+2022-04-20T15:28:00.957Z appoptics:patching patched https 
+2022-04-20T15:28:00.957Z appoptics:patching patched http 
+2022-04-20T15:28:00.984Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:00.985Z appoptics:patching patched fs 
+2022-04-20T15:28:00.989Z appoptics:patching patched q 0.9.7
+2022-04-20T15:28:00.991Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 0.9.7
+2022-04-20T15:28:01.001Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.001Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.002Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:01.002Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:01.004Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.004Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:01.004Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:01.007Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.007Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:01.008Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:01.008Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:01.009Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.010Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:01.010Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:06.762Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:06.763Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:06.763Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:06.764Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:06.843Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:06.964Z appoptics:patching patched crypto 
+2022-04-20T15:28:06.981Z appoptics:patching patched https 
+2022-04-20T15:28:06.982Z appoptics:patching patched http 
+2022-04-20T15:28:07.009Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:07.009Z appoptics:patching patched fs 
+2022-04-20T15:28:07.014Z appoptics:patching patched q 1.0.0
+2022-04-20T15:28:07.016Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.0.0
+2022-04-20T15:28:07.026Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.026Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.026Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:07.026Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:07.029Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.029Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:07.029Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:07.030Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.030Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:07.032Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:07.032Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:07.033Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.033Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:07.033Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:12.806Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:12.807Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:12.807Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:12.807Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:12.867Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:12.984Z appoptics:patching patched crypto 
+2022-04-20T15:28:13.010Z appoptics:patching patched https 
+2022-04-20T15:28:13.011Z appoptics:patching patched http 
+2022-04-20T15:28:13.027Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:13.027Z appoptics:patching patched fs 
+2022-04-20T15:28:13.031Z appoptics:patching patched q 1.0.1
+2022-04-20T15:28:13.034Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.0.1
+2022-04-20T15:28:13.044Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.044Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.044Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:13.044Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:13.047Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.047Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:13.047Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:13.048Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.048Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:13.050Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:13.050Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:13.051Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.051Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:13.051Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:18.908Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:18.909Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:18.909Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:18.910Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:18.999Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:19.124Z appoptics:patching patched crypto 
+2022-04-20T15:28:19.141Z appoptics:patching patched https 
+2022-04-20T15:28:19.142Z appoptics:patching patched http 
+2022-04-20T15:28:19.169Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:19.170Z appoptics:patching patched fs 
+2022-04-20T15:28:19.174Z appoptics:patching patched q 1.1.0
+2022-04-20T15:28:19.176Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.1.0
+2022-04-20T15:28:19.186Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.186Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.187Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:19.187Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:19.189Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.189Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:19.189Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:19.192Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.192Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:19.193Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:19.193Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:19.194Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.194Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:19.194Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:25.201Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:25.202Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:25.202Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:25.203Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:25.264Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:25.395Z appoptics:patching patched crypto 
+2022-04-20T15:28:25.432Z appoptics:patching patched https 
+2022-04-20T15:28:25.433Z appoptics:patching patched http 
+2022-04-20T15:28:25.460Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:25.461Z appoptics:patching patched fs 
+2022-04-20T15:28:25.465Z appoptics:patching patched q 1.1.1
+2022-04-20T15:28:25.467Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.1.1
+2022-04-20T15:28:25.478Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.478Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.478Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:25.478Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:25.481Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.481Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:25.481Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:25.482Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.482Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:25.484Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:25.484Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:25.485Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.485Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:25.485Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:30.926Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:30.927Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:30.927Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:30.927Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:30.987Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:31.102Z appoptics:patching patched crypto 
+2022-04-20T15:28:31.120Z appoptics:patching patched https 
+2022-04-20T15:28:31.120Z appoptics:patching patched http 
+2022-04-20T15:28:31.145Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:31.146Z appoptics:patching patched fs 
+2022-04-20T15:28:31.150Z appoptics:patching patched q 1.1.2
+2022-04-20T15:28:31.152Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.1.2
+2022-04-20T15:28:31.162Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.162Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.162Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:31.162Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:31.165Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.165Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:31.165Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:31.166Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.166Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:31.168Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:31.168Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:31.169Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.169Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:31.169Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:37.406Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:37.407Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:37.407Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:37.408Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:37.467Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:37.586Z appoptics:patching patched crypto 
+2022-04-20T15:28:37.604Z appoptics:patching patched https 
+2022-04-20T15:28:37.604Z appoptics:patching patched http 
+2022-04-20T15:28:37.630Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:37.631Z appoptics:patching patched fs 
+2022-04-20T15:28:37.635Z appoptics:patching patched q 1.2.0
+2022-04-20T15:28:37.637Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.2.0
+2022-04-20T15:28:37.647Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.647Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.647Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:37.647Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:37.650Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.650Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:37.650Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:37.652Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.653Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:37.654Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:37.654Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:37.655Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.655Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:37.655Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:42.902Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:42.902Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:42.902Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:42.903Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:42.961Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:43.077Z appoptics:patching patched crypto 
+2022-04-20T15:28:43.095Z appoptics:patching patched https 
+2022-04-20T15:28:43.096Z appoptics:patching patched http 
+2022-04-20T15:28:43.119Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:43.119Z appoptics:patching patched fs 
+2022-04-20T15:28:43.123Z appoptics:patching patched q 1.2.1
+2022-04-20T15:28:43.125Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.2.1
+2022-04-20T15:28:43.135Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.136Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.136Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:43.136Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:43.138Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.139Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:43.139Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:43.140Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.140Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:43.142Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:43.142Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:43.143Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.143Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:43.143Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:49.469Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:49.470Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:49.470Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:49.471Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:49.532Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:49.651Z appoptics:patching patched crypto 
+2022-04-20T15:28:49.668Z appoptics:patching patched https 
+2022-04-20T15:28:49.669Z appoptics:patching patched http 
+2022-04-20T15:28:49.697Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:49.697Z appoptics:patching patched fs 
+2022-04-20T15:28:49.701Z appoptics:patching patched q 1.3.0
+2022-04-20T15:28:49.703Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.3.0
+2022-04-20T15:28:49.714Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.714Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.714Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:49.714Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:49.717Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.717Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:49.717Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:49.718Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.718Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:49.720Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:49.720Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:49.721Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.721Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:49.721Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:28:55.291Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:55.291Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:55.291Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:55.292Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:55.364Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:55.486Z appoptics:patching patched crypto 
+2022-04-20T15:28:55.504Z appoptics:patching patched https 
+2022-04-20T15:28:55.505Z appoptics:patching patched http 
+2022-04-20T15:28:55.544Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:55.544Z appoptics:patching patched fs 
+2022-04-20T15:28:55.552Z appoptics:patching patched q 1.4.0
+2022-04-20T15:28:55.554Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.4.0
+2022-04-20T15:28:55.565Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.566Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.566Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:55.566Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:28:55.569Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.569Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:28:55.569Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:28:55.572Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.572Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:28:55.573Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:28:55.573Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:28:55.574Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.574Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:28:55.574Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (15ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:01.702Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:01.703Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:01.703Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:01.704Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:01.763Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:01.881Z appoptics:patching patched crypto 
+2022-04-20T15:29:01.898Z appoptics:patching patched https 
+2022-04-20T15:29:01.899Z appoptics:patching patched http 
+2022-04-20T15:29:01.925Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:01.925Z appoptics:patching patched fs 
+2022-04-20T15:29:01.929Z appoptics:patching patched q 1.4.1
+2022-04-20T15:29:01.931Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.4.1
+2022-04-20T15:29:01.941Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.942Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.942Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:01.942Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:29:01.944Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.945Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:01.945Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:29:01.946Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.946Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:29:01.948Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:29:01.948Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:29:01.949Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.949Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:01.949Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (11ms)
+
+
+changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:07.361Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:07.362Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:07.362Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:07.362Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:07.421Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:07.553Z appoptics:patching patched crypto 
+2022-04-20T15:29:07.575Z appoptics:patching patched https 
+2022-04-20T15:29:07.576Z appoptics:patching patched http 
+2022-04-20T15:29:07.624Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:07.625Z appoptics:patching patched fs 
+2022-04-20T15:29:07.633Z appoptics:patching patched q 1.5.0
+2022-04-20T15:29:07.635Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.5.0
+2022-04-20T15:29:07.645Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.646Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.646Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:07.646Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:29:07.648Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.648Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:07.648Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:29:07.650Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.650Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:29:07.652Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:29:07.652Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:29:07.653Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.653Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:07.653Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (13ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:13.848Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:13.848Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:13.848Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:13.849Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:13.910Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:14.026Z appoptics:patching patched crypto 
+2022-04-20T15:29:14.043Z appoptics:patching patched https 
+2022-04-20T15:29:14.044Z appoptics:patching patched http 
+2022-04-20T15:29:14.069Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:14.069Z appoptics:patching patched fs 
+2022-04-20T15:29:14.074Z appoptics:patching patched q 1.5.1
+2022-04-20T15:29:14.076Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 1.5.1
+2022-04-20T15:29:14.087Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.088Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.088Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:14.088Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via delay
+2022-04-20T15:29:14.090Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.090Z appoptics:bind ao.bind(anonymous) - not tracing
+2022-04-20T15:29:14.090Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises via fs.readFile
+2022-04-20T15:29:14.092Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.092Z appoptics:bind ao.bind() - not tracing
+    ✓ should support promises in domains
+2022-04-20T15:29:14.094Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+2022-04-20T15:29:14.094Z appoptics:bind ao.bind() - no context Error: CLS NOT ACTIVE
+    at bind (/__w/appoptics-apm-node/appoptics-apm-node/lib/api.js:322:19)
+    at Array.map (<anonymous>)
+    at Promise.then (/__w/appoptics-apm-node/appoptics-apm-node/lib/probes/q.js:9:34)
+    at Context.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/promises/index.js:105:16)
+    at callFnAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:394:21)
+    at Test.Runnable.run (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runnable.js:338:7)
+    at Runner.runTest (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:677:10)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:801:12
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:594:14)
+    at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:604:7
+    at next (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:486:14)
+    at Immediate._onImmediate (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/runner.js:572:5)
+    at processImmediate (node:internal/timers:466:21)
+    at process.topLevelDomainCallback (node:domain:152:15)
+    at process.callbackTrampoline (node:internal/async_hooks:128:24)
+    ✓ should not interfere with untraced promises
+2022-04-20T15:29:14.095Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.095Z appoptics:bind ao.bind() - not tracing
+2022-04-20T15:29:14.095Z appoptics:bind ao.bind() - not tracing
+    ✓ should support progress callbacks
+
+
+  5 passing (12ms)
+
+
+added 16 packages, changed 1 package, and audited 943 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:20.306Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:20.306Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:20.306Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:20.309Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:20.376Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:20.576Z appoptics:patching patched crypto 
+2022-04-20T15:29:20.638Z appoptics:patching patched https 
+2022-04-20T15:29:20.639Z appoptics:patching patched http 
+2022-04-20T15:29:20.681Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:20.681Z appoptics:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/mocha.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/one-and-dones.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/options.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/bin/mocha
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.exports.requireOrImport (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:42:12)
+    at Object.exports.loadFilesAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:55:34)
+
+changed 1 package, and audited 943 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:26.640Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:26.641Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:26.641Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:26.641Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:26.701Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:26.855Z appoptics:patching patched crypto 
+2022-04-20T15:29:26.872Z appoptics:patching patched https 
+2022-04-20T15:29:26.873Z appoptics:patching patched http 
+2022-04-20T15:29:26.900Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:26.901Z appoptics:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/mocha.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/one-and-dones.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/options.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/bin/mocha
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.exports.requireOrImport (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:42:12)
+    at Object.exports.loadFilesAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:55:34)
+
+changed 1 package, and audited 943 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:32.994Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:32.995Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:32.995Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:32.996Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:33.094Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:33.226Z appoptics:patching patched crypto 
+2022-04-20T15:29:33.263Z appoptics:patching patched https 
+2022-04-20T15:29:33.264Z appoptics:patching patched http 
+2022-04-20T15:29:33.291Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:33.291Z appoptics:patching patched fs 
+
+Error: Cannot find module 'collections/shim'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/mocha.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/one-and-dones.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/options.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/bin/mocha
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/q/q.js:43:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Suite.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:12:25)
+    at Object.create (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/q.test.js:8:1)
+    at Module._compile (node:internal/modules/cjs/loader:1103:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1157:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.exports.requireOrImport (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:42:12)
+    at Object.exports.loadFilesAsync (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js:55:34)
+
+removed 13 packages, changed 2 packages, and audited 930 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-20T15:29:38.991Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:38.991Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:38.991Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:38.992Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:39.052Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:39.171Z appoptics:patching patched crypto 
+2022-04-20T15:29:39.188Z appoptics:patching patched https 
+2022-04-20T15:29:39.189Z appoptics:patching patched http 
+2022-04-20T15:29:39.214Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:39.214Z appoptics:patching patched fs 
+2022-04-20T15:29:39.220Z appoptics:patching patched q 2.0.3
+2022-04-20T15:29:39.223Z appoptics:debug starting runtimeMetrics
+
+
+  probes/q 2.0.3
+    ✓ should support promises via delay
+    ✓ should support promises via fs.readFile
+    ✓ should support promises in domains
+    ✓ should not interfere with untraced promises
+    ✓ should support progress callbacks
+
+
+  5 passing (14ms)
+
+
+removed 3 packages, changed 1 package, and audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.

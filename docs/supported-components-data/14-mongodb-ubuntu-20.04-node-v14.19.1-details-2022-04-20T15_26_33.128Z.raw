@@ -1,0 +1,4284 @@
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.0
+added 1 package from 1 contributor, updated 1 package, moved 1 package and audited 936 packages in 3.634s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:26:38.065Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:26:38.065Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:26:38.065Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:26:38.066Z appoptics:debug using context provider: ace-context
+2022-04-20T15:26:38.119Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:26:38.242Z appoptics:patching patched crypto 
+2022-04-20T15:26:38.260Z appoptics:patching patched https 
+2022-04-20T15:26:38.260Z appoptics:patching patched http 
+2022-04-20T15:26:38.291Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:26:38.292Z appoptics:patching patched fs 
+2022-04-20T15:26:38.302Z appoptics:patching patched zlib 
+2022-04-20T15:26:38.371Z appoptics:patching patched mongodb 3.3.0
+2022-04-20T15:26:38.378Z appoptics:debug starting runtimeMetrics
+(node:473) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:473) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:473) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:473) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.0
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (51ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:473) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:473) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:473) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group (39ms)
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group (56ms)
+        ✓ should map_reduce
+
+
+  35 passing (437ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.1
+updated 1 package and audited 936 packages in 3.709s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:26:43.380Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:26:43.381Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:26:43.381Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:26:43.381Z appoptics:debug using context provider: ace-context
+2022-04-20T15:26:43.433Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:26:43.549Z appoptics:patching patched crypto 
+2022-04-20T15:26:43.564Z appoptics:patching patched https 
+2022-04-20T15:26:43.564Z appoptics:patching patched http 
+2022-04-20T15:26:43.599Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:26:43.599Z appoptics:patching patched fs 
+2022-04-20T15:26:43.609Z appoptics:patching patched zlib 
+2022-04-20T15:26:43.677Z appoptics:patching patched mongodb 3.3.1
+2022-04-20T15:26:43.684Z appoptics:debug starting runtimeMetrics
+(node:495) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:495) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:495) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:495) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.1
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:495) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:495) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:495) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (237ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.2
+updated 1 package and audited 936 packages in 3.386s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:26:48.081Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:26:48.082Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:26:48.082Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:26:48.083Z appoptics:debug using context provider: ace-context
+2022-04-20T15:26:48.135Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:26:48.252Z appoptics:patching patched crypto 
+2022-04-20T15:26:48.266Z appoptics:patching patched https 
+2022-04-20T15:26:48.267Z appoptics:patching patched http 
+2022-04-20T15:26:48.297Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:26:48.298Z appoptics:patching patched fs 
+2022-04-20T15:26:48.307Z appoptics:patching patched zlib 
+2022-04-20T15:26:48.375Z appoptics:patching patched mongodb 3.3.2
+2022-04-20T15:26:48.382Z appoptics:debug starting runtimeMetrics
+(node:517) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:517) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:517) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:517) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.2
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:517) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:517) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:517) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (259ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.3
+updated 1 package and audited 936 packages in 4.465s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:26:53.863Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:26:53.864Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:26:53.864Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:26:53.864Z appoptics:debug using context provider: ace-context
+2022-04-20T15:26:53.916Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:26:54.035Z appoptics:patching patched crypto 
+2022-04-20T15:26:54.050Z appoptics:patching patched https 
+2022-04-20T15:26:54.051Z appoptics:patching patched http 
+2022-04-20T15:26:54.082Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:26:54.082Z appoptics:patching patched fs 
+2022-04-20T15:26:54.092Z appoptics:patching patched zlib 
+2022-04-20T15:26:54.160Z appoptics:patching patched mongodb 3.3.3
+2022-04-20T15:26:54.167Z appoptics:debug starting runtimeMetrics
+(node:539) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:539) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:539) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:539) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.3
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:539) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:539) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:539) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (235ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.4
+updated 1 package and audited 936 packages in 4.14s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:26:59.367Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:26:59.367Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:26:59.367Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:26:59.369Z appoptics:debug using context provider: ace-context
+2022-04-20T15:26:59.432Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:26:59.562Z appoptics:patching patched crypto 
+2022-04-20T15:26:59.580Z appoptics:patching patched https 
+2022-04-20T15:26:59.580Z appoptics:patching patched http 
+2022-04-20T15:26:59.622Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:26:59.623Z appoptics:patching patched fs 
+2022-04-20T15:26:59.633Z appoptics:patching patched zlib 
+2022-04-20T15:26:59.702Z appoptics:patching patched mongodb 3.3.4
+2022-04-20T15:26:59.707Z appoptics:debug starting runtimeMetrics
+(node:561) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:561) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:561) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:561) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.4
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:561) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:561) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:561) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (311ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.3.5
+updated 1 package and audited 936 packages in 3.954s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:04.963Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:04.963Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:04.963Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:04.964Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:05.019Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:05.144Z appoptics:patching patched crypto 
+2022-04-20T15:27:05.161Z appoptics:patching patched https 
+2022-04-20T15:27:05.161Z appoptics:patching patched http 
+2022-04-20T15:27:05.192Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:05.192Z appoptics:patching patched fs 
+2022-04-20T15:27:05.202Z appoptics:patching patched zlib 
+2022-04-20T15:27:05.282Z appoptics:patching patched mongodb 3.3.5
+2022-04-20T15:27:05.292Z appoptics:debug starting runtimeMetrics
+(node:583) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:583) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:583) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:583) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.3.5
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:583) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:583) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:583) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (248ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.4.0
+updated 1 package and audited 936 packages in 3.685s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:10.001Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:10.002Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:10.002Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:10.003Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:10.055Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:10.169Z appoptics:patching patched crypto 
+2022-04-20T15:27:10.184Z appoptics:patching patched https 
+2022-04-20T15:27:10.184Z appoptics:patching patched http 
+2022-04-20T15:27:10.217Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:10.217Z appoptics:patching patched fs 
+2022-04-20T15:27:10.227Z appoptics:patching patched zlib 
+2022-04-20T15:27:10.294Z appoptics:patching patched mongodb 3.4.0
+2022-04-20T15:27:10.301Z appoptics:debug starting runtimeMetrics
+(node:605) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:605) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:605) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:605) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.4.0
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:605) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:605) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:605) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (217ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.4.1
+updated 1 package and audited 936 packages in 3.204s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:14.475Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:14.476Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:14.476Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:14.477Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:14.530Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:14.647Z appoptics:patching patched crypto 
+2022-04-20T15:27:14.665Z appoptics:patching patched https 
+2022-04-20T15:27:14.666Z appoptics:patching patched http 
+2022-04-20T15:27:14.697Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:14.697Z appoptics:patching patched fs 
+2022-04-20T15:27:14.707Z appoptics:patching patched zlib 
+2022-04-20T15:27:14.774Z appoptics:patching patched mongodb 3.4.1
+2022-04-20T15:27:14.781Z appoptics:debug starting runtimeMetrics
+(node:627) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:627) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:627) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:627) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.4.1
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:627) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:627) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:627) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (229ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.0
+updated 1 package and audited 936 packages in 3.958s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:19.790Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:19.790Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:19.790Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:19.791Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:19.842Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:19.959Z appoptics:patching patched crypto 
+2022-04-20T15:27:19.974Z appoptics:patching patched https 
+2022-04-20T15:27:19.975Z appoptics:patching patched http 
+2022-04-20T15:27:20.008Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:20.009Z appoptics:patching patched fs 
+2022-04-20T15:27:20.018Z appoptics:patching patched zlib 
+2022-04-20T15:27:20.099Z appoptics:patching patched mongodb 3.5.0
+2022-04-20T15:27:20.103Z appoptics:debug starting runtimeMetrics
+(node:649) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:649) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:649) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:649) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.0
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:649) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:649) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:649) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (212ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.1
+updated 1 package and audited 936 packages in 3.399s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:24.485Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:24.485Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:24.485Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:24.486Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:24.538Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:24.654Z appoptics:patching patched crypto 
+2022-04-20T15:27:24.669Z appoptics:patching patched https 
+2022-04-20T15:27:24.669Z appoptics:patching patched http 
+2022-04-20T15:27:24.701Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:24.701Z appoptics:patching patched fs 
+2022-04-20T15:27:24.711Z appoptics:patching patched zlib 
+2022-04-20T15:27:24.792Z appoptics:patching patched mongodb 3.5.1
+2022-04-20T15:27:24.796Z appoptics:debug starting runtimeMetrics
+(node:671) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:671) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:671) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:671) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.1
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:671) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:671) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:671) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (219ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.2
+updated 1 package and audited 936 packages in 3.616s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:29.548Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:29.549Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:29.549Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:29.549Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:29.618Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:29.734Z appoptics:patching patched crypto 
+2022-04-20T15:27:29.749Z appoptics:patching patched https 
+2022-04-20T15:27:29.749Z appoptics:patching patched http 
+2022-04-20T15:27:29.779Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:29.779Z appoptics:patching patched fs 
+2022-04-20T15:27:29.789Z appoptics:patching patched zlib 
+2022-04-20T15:27:29.869Z appoptics:patching patched mongodb 3.5.2
+2022-04-20T15:27:29.873Z appoptics:debug starting runtimeMetrics
+(node:693) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:693) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:693) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:693) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.2
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:693) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:693) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:693) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (210ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.3
+updated 1 package and audited 936 packages in 3.306s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:34.159Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:34.160Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:34.160Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:34.160Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:34.213Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:34.327Z appoptics:patching patched crypto 
+2022-04-20T15:27:34.342Z appoptics:patching patched https 
+2022-04-20T15:27:34.342Z appoptics:patching patched http 
+2022-04-20T15:27:34.373Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:34.373Z appoptics:patching patched fs 
+2022-04-20T15:27:34.383Z appoptics:patching patched zlib 
+2022-04-20T15:27:34.461Z appoptics:patching patched mongodb 3.5.3
+2022-04-20T15:27:34.465Z appoptics:debug starting runtimeMetrics
+(node:715) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:715) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:715) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:715) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.3
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:715) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:715) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:715) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (238ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.4
+updated 1 package and audited 936 packages in 3.273s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:38.838Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:38.839Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:38.839Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:38.841Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:38.904Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:39.036Z appoptics:patching patched crypto 
+2022-04-20T15:27:39.068Z appoptics:patching patched https 
+2022-04-20T15:27:39.075Z appoptics:patching patched http 
+2022-04-20T15:27:39.105Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:39.105Z appoptics:patching patched fs 
+2022-04-20T15:27:39.115Z appoptics:patching patched zlib 
+2022-04-20T15:27:39.206Z appoptics:patching patched mongodb 3.5.4
+2022-04-20T15:27:39.210Z appoptics:debug starting runtimeMetrics
+(node:737) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:737) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:737) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:737) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.4
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (44ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:737) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:737) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:737) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (336ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.5
+updated 1 package and audited 936 packages in 3.974s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:44.444Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:44.445Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:44.445Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:44.447Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:44.506Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:44.634Z appoptics:patching patched crypto 
+2022-04-20T15:27:44.651Z appoptics:patching patched https 
+2022-04-20T15:27:44.652Z appoptics:patching patched http 
+2022-04-20T15:27:44.685Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:44.686Z appoptics:patching patched fs 
+2022-04-20T15:27:44.696Z appoptics:patching patched zlib 
+2022-04-20T15:27:44.784Z appoptics:patching patched mongodb 3.5.5
+2022-04-20T15:27:44.788Z appoptics:debug starting runtimeMetrics
+(node:759) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:759) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:759) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:759) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.5
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (38ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:759) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:759) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:759) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (232ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.6
+updated 1 package and audited 936 packages in 3.389s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:49.235Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:49.235Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:49.235Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:49.236Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:49.298Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:49.428Z appoptics:patching patched crypto 
+2022-04-20T15:27:49.445Z appoptics:patching patched https 
+2022-04-20T15:27:49.446Z appoptics:patching patched http 
+2022-04-20T15:27:49.479Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:49.480Z appoptics:patching patched fs 
+2022-04-20T15:27:49.491Z appoptics:patching patched zlib 
+2022-04-20T15:27:49.601Z appoptics:patching patched mongodb 3.5.6
+2022-04-20T15:27:49.606Z appoptics:debug starting runtimeMetrics
+(node:781) Warning: Accessing non-existent property 'count' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:781) Warning: Accessing non-existent property 'findOne' of module exports inside circular dependency
+(node:781) Warning: Accessing non-existent property 'remove' of module exports inside circular dependency
+(node:781) Warning: Accessing non-existent property 'updateOne' of module exports inside circular dependency
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.6
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:781) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:781) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:781) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (277ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.7
+updated 1 package and audited 936 packages in 4.462s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:55.177Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:55.178Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:55.178Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:55.179Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:55.235Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:55.360Z appoptics:patching patched crypto 
+2022-04-20T15:27:55.378Z appoptics:patching patched https 
+2022-04-20T15:27:55.378Z appoptics:patching patched http 
+2022-04-20T15:27:55.409Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:27:55.409Z appoptics:patching patched fs 
+2022-04-20T15:27:55.419Z appoptics:patching patched zlib 
+2022-04-20T15:27:55.499Z appoptics:patching patched mongodb 3.5.7
+2022-04-20T15:27:55.503Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.7
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:803) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:803) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:803) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (218ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.8
+updated 1 package and audited 936 packages in 3.373s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:27:59.914Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:59.914Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:59.914Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:59.915Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:59.968Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:00.085Z appoptics:patching patched crypto 
+2022-04-20T15:28:00.100Z appoptics:patching patched https 
+2022-04-20T15:28:00.101Z appoptics:patching patched http 
+2022-04-20T15:28:00.132Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:00.132Z appoptics:patching patched fs 
+2022-04-20T15:28:00.142Z appoptics:patching patched zlib 
+2022-04-20T15:28:00.222Z appoptics:patching patched mongodb 3.5.8
+2022-04-20T15:28:00.227Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.8
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:825) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:825) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:825) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (222ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.9
+updated 1 package and audited 936 packages in 3.904s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:05.289Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:05.290Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:05.290Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:05.291Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:05.343Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:05.467Z appoptics:patching patched crypto 
+2022-04-20T15:28:05.482Z appoptics:patching patched https 
+2022-04-20T15:28:05.483Z appoptics:patching patched http 
+2022-04-20T15:28:05.516Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:05.517Z appoptics:patching patched fs 
+2022-04-20T15:28:05.528Z appoptics:patching patched zlib 
+2022-04-20T15:28:05.640Z appoptics:patching patched mongodb 3.5.9
+2022-04-20T15:28:05.645Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.9
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:847) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:847) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:847) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (230ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.10
+updated 1 package and audited 936 packages in 3.447s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:10.105Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:10.105Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:10.105Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:10.106Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:10.157Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:10.274Z appoptics:patching patched crypto 
+2022-04-20T15:28:10.290Z appoptics:patching patched https 
+2022-04-20T15:28:10.290Z appoptics:patching patched http 
+2022-04-20T15:28:10.325Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:10.325Z appoptics:patching patched fs 
+2022-04-20T15:28:10.337Z appoptics:patching patched zlib 
+2022-04-20T15:28:10.424Z appoptics:patching patched mongodb 3.5.10
+2022-04-20T15:28:10.428Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.10
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:869) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:869) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:869) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (221ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.5.11
+updated 1 package and audited 936 packages in 3.619s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:15.074Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:15.075Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:15.075Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:15.077Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:15.139Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:15.276Z appoptics:patching patched crypto 
+2022-04-20T15:28:15.291Z appoptics:patching patched https 
+2022-04-20T15:28:15.292Z appoptics:patching patched http 
+2022-04-20T15:28:15.346Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:15.347Z appoptics:patching patched fs 
+2022-04-20T15:28:15.358Z appoptics:patching patched zlib 
+2022-04-20T15:28:15.449Z appoptics:patching patched mongodb 3.5.11
+2022-04-20T15:28:15.453Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.5.11
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (41ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:891) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:891) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:891) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (279ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.0
+updated 1 package and audited 936 packages in 3.789s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:20.400Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:20.401Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:20.401Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:20.402Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:20.454Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:20.571Z appoptics:patching patched crypto 
+2022-04-20T15:28:20.586Z appoptics:patching patched https 
+2022-04-20T15:28:20.586Z appoptics:patching patched http 
+2022-04-20T15:28:20.617Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:20.617Z appoptics:patching patched fs 
+2022-04-20T15:28:20.629Z appoptics:patching patched zlib 
+2022-04-20T15:28:20.709Z appoptics:patching patched mongodb 3.6.0
+2022-04-20T15:28:20.713Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.0
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:913) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:913) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:913) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:913) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (229ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.1
+updated 1 package and audited 936 packages in 3.469s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:25.187Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:25.188Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:25.188Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:25.189Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:25.247Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:25.375Z appoptics:patching patched crypto 
+2022-04-20T15:28:25.392Z appoptics:patching patched https 
+2022-04-20T15:28:25.392Z appoptics:patching patched http 
+2022-04-20T15:28:25.426Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:25.426Z appoptics:patching patched fs 
+2022-04-20T15:28:25.438Z appoptics:patching patched zlib 
+2022-04-20T15:28:25.527Z appoptics:patching patched mongodb 3.6.1
+2022-04-20T15:28:25.531Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.1
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:935) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:935) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:935) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:935) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (218ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.2
+updated 1 package and audited 936 packages in 3.983s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:30.552Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:30.552Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:30.552Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:30.553Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:30.610Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:30.740Z appoptics:patching patched crypto 
+2022-04-20T15:28:30.757Z appoptics:patching patched https 
+2022-04-20T15:28:30.758Z appoptics:patching patched http 
+2022-04-20T15:28:30.790Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:30.791Z appoptics:patching patched fs 
+2022-04-20T15:28:30.803Z appoptics:patching patched zlib 
+2022-04-20T15:28:30.892Z appoptics:patching patched mongodb 3.6.2
+2022-04-20T15:28:30.896Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.2
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:957) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:957) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:957) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:957) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (226ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.3
+updated 1 package and audited 936 packages in 3.463s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:35.382Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:35.383Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:35.383Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:35.383Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:35.435Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:35.552Z appoptics:patching patched crypto 
+2022-04-20T15:28:35.568Z appoptics:patching patched https 
+2022-04-20T15:28:35.568Z appoptics:patching patched http 
+2022-04-20T15:28:35.601Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:35.601Z appoptics:patching patched fs 
+2022-04-20T15:28:35.612Z appoptics:patching patched zlib 
+2022-04-20T15:28:35.693Z appoptics:patching patched mongodb 3.6.3
+2022-04-20T15:28:35.697Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.3
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:979) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:979) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:979) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:979) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (227ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.4
+updated 1 package and audited 936 packages in 3.911s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:40.826Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:40.826Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:40.826Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:40.827Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:40.877Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:40.991Z appoptics:patching patched crypto 
+2022-04-20T15:28:41.007Z appoptics:patching patched https 
+2022-04-20T15:28:41.007Z appoptics:patching patched http 
+2022-04-20T15:28:41.038Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:41.039Z appoptics:patching patched fs 
+2022-04-20T15:28:41.050Z appoptics:patching patched zlib 
+2022-04-20T15:28:41.132Z appoptics:patching patched mongodb 3.6.4
+2022-04-20T15:28:41.136Z appoptics:debug starting runtimeMetrics
+(node:1001) Warning: Accessing non-existent property 'MongoError' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.4
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1001) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+        ✓ should count
+        ✓ should countDocuments
+(node:1001) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1001) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1001) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (251ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.5
+updated 1 package and audited 936 packages in 3.45s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:45.728Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:45.728Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:45.728Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:45.729Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:45.802Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:45.934Z appoptics:patching patched crypto 
+2022-04-20T15:28:45.960Z appoptics:patching patched https 
+2022-04-20T15:28:45.961Z appoptics:patching patched http 
+2022-04-20T15:28:45.992Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:45.992Z appoptics:patching patched fs 
+2022-04-20T15:28:46.005Z appoptics:patching patched zlib 
+2022-04-20T15:28:46.095Z appoptics:patching patched mongodb 3.6.5
+2022-04-20T15:28:46.099Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.5
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1023) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1023) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1023) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1023) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (223ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.6
+added 1 package from 1 contributor, updated 1 package and audited 937 packages in 3.597s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:50.746Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:50.746Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:50.746Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:50.747Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:50.818Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:50.964Z appoptics:patching patched crypto 
+2022-04-20T15:28:51.009Z appoptics:patching patched https 
+2022-04-20T15:28:51.009Z appoptics:patching patched http 
+2022-04-20T15:28:51.066Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:51.066Z appoptics:patching patched fs 
+2022-04-20T15:28:51.080Z appoptics:patching patched zlib 
+2022-04-20T15:28:51.185Z appoptics:patching patched mongodb 3.6.6
+2022-04-20T15:28:51.189Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.6
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (43ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1045) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1045) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1045) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1045) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (266ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.7
+updated 1 package and audited 937 packages in 3.532s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:28:55.896Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:28:55.897Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:28:55.897Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:28:55.898Z appoptics:debug using context provider: ace-context
+2022-04-20T15:28:55.970Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:28:56.118Z appoptics:patching patched crypto 
+2022-04-20T15:28:56.160Z appoptics:patching patched https 
+2022-04-20T15:28:56.160Z appoptics:patching patched http 
+2022-04-20T15:28:56.192Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:28:56.192Z appoptics:patching patched fs 
+2022-04-20T15:28:56.202Z appoptics:patching patched zlib 
+2022-04-20T15:28:56.300Z appoptics:patching patched mongodb 3.6.7
+2022-04-20T15:28:56.305Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.7
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1067) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1067) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1067) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1067) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (270ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.8
+updated 1 package and audited 937 packages in 3.47s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:00.882Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:00.882Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:00.882Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:00.883Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:00.934Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:01.048Z appoptics:patching patched crypto 
+2022-04-20T15:29:01.063Z appoptics:patching patched https 
+2022-04-20T15:29:01.063Z appoptics:patching patched http 
+2022-04-20T15:29:01.095Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:01.095Z appoptics:patching patched fs 
+2022-04-20T15:29:01.104Z appoptics:patching patched zlib 
+2022-04-20T15:29:01.181Z appoptics:patching patched mongodb 3.6.8
+2022-04-20T15:29:01.186Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.8
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1089) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1089) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1089) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1089) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (242ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.9
+updated 1 package and audited 937 packages in 4.032s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:06.290Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:06.291Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:06.291Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:06.292Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:06.349Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:06.477Z appoptics:patching patched crypto 
+2022-04-20T15:29:06.494Z appoptics:patching patched https 
+2022-04-20T15:29:06.494Z appoptics:patching patched http 
+2022-04-20T15:29:06.529Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:06.529Z appoptics:patching patched fs 
+2022-04-20T15:29:06.540Z appoptics:patching patched zlib 
+2022-04-20T15:29:06.639Z appoptics:patching patched mongodb 3.6.9
+2022-04-20T15:29:06.644Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.9
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1111) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1111) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1111) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1111) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (255ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.10
+updated 1 package and audited 937 packages in 3.509s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:11.225Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:11.225Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:11.226Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:11.227Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:11.279Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:11.393Z appoptics:patching patched crypto 
+2022-04-20T15:29:11.407Z appoptics:patching patched https 
+2022-04-20T15:29:11.408Z appoptics:patching patched http 
+2022-04-20T15:29:11.439Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:11.439Z appoptics:patching patched fs 
+2022-04-20T15:29:11.449Z appoptics:patching patched zlib 
+2022-04-20T15:29:11.525Z appoptics:patching patched mongodb 3.6.10
+2022-04-20T15:29:11.529Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.10
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1133) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1133) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1133) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1133) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (223ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.11
+updated 1 package and audited 937 packages in 3.904s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:16.512Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:16.512Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:16.513Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:16.513Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:16.565Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:16.682Z appoptics:patching patched crypto 
+2022-04-20T15:29:16.697Z appoptics:patching patched https 
+2022-04-20T15:29:16.698Z appoptics:patching patched http 
+2022-04-20T15:29:16.729Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:16.729Z appoptics:patching patched fs 
+2022-04-20T15:29:16.739Z appoptics:patching patched zlib 
+2022-04-20T15:29:16.818Z appoptics:patching patched mongodb 3.6.11
+2022-04-20T15:29:16.822Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.11
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1155) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1155) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1155) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1155) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (220ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.6.12
+updated 1 package and audited 937 packages in 3.583s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:21.420Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:21.421Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:21.421Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:21.423Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:21.482Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:21.611Z appoptics:patching patched crypto 
+2022-04-20T15:29:21.637Z appoptics:patching patched https 
+2022-04-20T15:29:21.637Z appoptics:patching patched http 
+2022-04-20T15:29:21.668Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:21.668Z appoptics:patching patched fs 
+2022-04-20T15:29:21.678Z appoptics:patching patched zlib 
+2022-04-20T15:29:21.757Z appoptics:patching patched mongodb 3.6.12
+2022-04-20T15:29:21.762Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.6.12
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1177) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1177) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1177) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1177) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (220ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.7.0
+updated 1 package and audited 937 packages in 3.443s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:26.252Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:26.253Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:26.253Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:26.253Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:26.308Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:26.439Z appoptics:patching patched crypto 
+2022-04-20T15:29:26.468Z appoptics:patching patched https 
+2022-04-20T15:29:26.469Z appoptics:patching patched http 
+2022-04-20T15:29:26.513Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:26.513Z appoptics:patching patched fs 
+2022-04-20T15:29:26.524Z appoptics:patching patched zlib 
+2022-04-20T15:29:26.623Z appoptics:patching patched mongodb 3.7.0
+2022-04-20T15:29:26.628Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.7.0
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create (42ms)
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1199) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1199) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1199) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1199) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (298ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.7.1
+updated 1 package and audited 937 packages in 3.926s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:31.664Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:31.664Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:31.664Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:31.665Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:31.716Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:31.832Z appoptics:patching patched crypto 
+2022-04-20T15:29:31.846Z appoptics:patching patched https 
+2022-04-20T15:29:31.847Z appoptics:patching patched http 
+2022-04-20T15:29:31.879Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:31.879Z appoptics:patching patched fs 
+2022-04-20T15:29:31.889Z appoptics:patching patched zlib 
+2022-04-20T15:29:31.967Z appoptics:patching patched mongodb 3.7.1
+2022-04-20T15:29:31.971Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.7.1
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1221) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1221) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1221) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1221) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (215ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.7.2
+updated 1 package and audited 937 packages in 3.234s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:36.171Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:36.171Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:36.171Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:36.172Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:36.223Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:36.336Z appoptics:patching patched crypto 
+2022-04-20T15:29:36.351Z appoptics:patching patched https 
+2022-04-20T15:29:36.351Z appoptics:patching patched http 
+2022-04-20T15:29:36.382Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:36.382Z appoptics:patching patched fs 
+2022-04-20T15:29:36.392Z appoptics:patching patched zlib 
+2022-04-20T15:29:36.472Z appoptics:patching patched mongodb 3.7.2
+2022-04-20T15:29:36.476Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.7.2
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1243) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1243) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1243) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1243) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (257ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.7.3
+updated 1 package and audited 937 packages in 4.406s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:41.899Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:41.899Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:41.899Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:41.901Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:41.953Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:42.069Z appoptics:patching patched crypto 
+2022-04-20T15:29:42.084Z appoptics:patching patched https 
+2022-04-20T15:29:42.084Z appoptics:patching patched http 
+2022-04-20T15:29:42.115Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:42.115Z appoptics:patching patched fs 
+2022-04-20T15:29:42.125Z appoptics:patching patched zlib 
+2022-04-20T15:29:42.204Z appoptics:patching patched mongodb 3.7.3
+2022-04-20T15:29:42.209Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 3.7.3
+    2.6
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+(node:1265) DeprecationWarning: collection.count is deprecated, and will be removed in a future version. Use Collection.countDocuments or Collection.estimatedDocumentCount instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+        ✓ should count
+        ✓ should countDocuments
+(node:1265) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+(node:1265) DeprecationWarning: collection.reIndex is deprecated. Use db.command instead.
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+(node:1265) DeprecationWarning: MongoDB 3.6 or higher no longer supports the group command. We recommend rewriting using the aggregation framework.
+        ✓ should group
+        ✓ should map_reduce
+    3.0
+      databases
+        ✓ should drop
+      collections
+        ✓ should create
+        ✓ should rename
+        ✓ should drop
+      queries
+        ✓ should insertMany
+        ✓ should updateOne
+        ✓ should findOneAndUpdate
+        ✓ should distinct
+        ✓ should count
+        ✓ should countDocuments
+        ✓ should remove
+      indexes
+        ✓ should create_indexes
+        ✓ should reindex
+        ✓ should drop_indexes
+      cursors
+        ✓ should find
+      aggregations
+        ✓ should group
+        ✓ should map_reduce
+
+
+  35 passing (249ms)
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.0.0
+added 7 packages from 7 contributors, removed 2 packages, updated 1 package and audited 942 packages in 3.615s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:46.826Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:46.827Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:46.827Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:46.827Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:46.879Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:46.994Z appoptics:patching patched crypto 
+2022-04-20T15:29:47.008Z appoptics:patching patched https 
+2022-04-20T15:29:47.008Z appoptics:patching patched http 
+2022-04-20T15:29:47.059Z appoptics:patching patched zlib 
+2022-04-20T15:29:47.061Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:47.062Z appoptics:patching patched fs 
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:29:47.120Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:29:47.120Z appoptics:patching patched mongodb 4.0.0
+2022-04-20T15:29:47.124Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.0.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (15ms)
+  2 failing
+
+  1) probes.mongodb 4.0.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.0.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.0.1
+updated 1 package and audited 942 packages in 4.074s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:52.071Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:52.072Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:52.072Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:52.074Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:52.139Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:52.274Z appoptics:patching patched crypto 
+2022-04-20T15:29:52.307Z appoptics:patching patched https 
+2022-04-20T15:29:52.314Z appoptics:patching patched http 
+2022-04-20T15:29:52.373Z appoptics:patching patched zlib 
+2022-04-20T15:29:52.375Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:52.375Z appoptics:patching patched fs 
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:29:52.468Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:29:52.468Z appoptics:patching patched mongodb 4.0.1
+2022-04-20T15:29:52.473Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.0.1
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (21ms)
+  2 failing
+
+  1) probes.mongodb 4.0.1
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.0.1
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.1.0
+updated 1 package and audited 942 packages in 3.473s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:29:56.839Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:29:56.840Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:29:56.840Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:29:56.840Z appoptics:debug using context provider: ace-context
+2022-04-20T15:29:56.891Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:29:57.004Z appoptics:patching patched crypto 
+2022-04-20T15:29:57.019Z appoptics:patching patched https 
+2022-04-20T15:29:57.019Z appoptics:patching patched http 
+2022-04-20T15:29:57.053Z appoptics:patching patched zlib 
+2022-04-20T15:29:57.055Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:29:57.055Z appoptics:patching patched fs 
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:29:57.131Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:29:57.131Z appoptics:patching patched mongodb 4.1.0
+2022-04-20T15:29:57.139Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.1.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (14ms)
+  2 failing
+
+  1) probes.mongodb 4.1.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.1.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.1.1
+updated 5 packages and audited 942 packages in 3.704s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:01.688Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:01.689Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:01.689Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:01.689Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:01.746Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:01.894Z appoptics:patching patched crypto 
+2022-04-20T15:30:01.931Z appoptics:patching patched https 
+2022-04-20T15:30:01.931Z appoptics:patching patched http 
+2022-04-20T15:30:01.975Z appoptics:patching patched zlib 
+2022-04-20T15:30:01.977Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:01.978Z appoptics:patching patched fs 
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:02.037Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:02.037Z appoptics:patching patched mongodb 4.1.1
+2022-04-20T15:30:02.042Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.1.1
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (17ms)
+  2 failing
+
+  1) probes.mongodb 4.1.1
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.1.1
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.1.2
+added 1 package from 2 contributors, updated 1 package and audited 943 packages in 4.376s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:07.273Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:07.274Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:07.274Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:07.274Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:07.327Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:07.456Z appoptics:patching patched crypto 
+2022-04-20T15:30:07.473Z appoptics:patching patched https 
+2022-04-20T15:30:07.473Z appoptics:patching patched http 
+2022-04-20T15:30:07.511Z appoptics:patching patched zlib 
+2022-04-20T15:30:07.513Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:07.513Z appoptics:patching patched fs 
+2022-04-20T15:30:07.569Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:07.570Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:07.570Z appoptics:patching patched mongodb 4.1.2
+2022-04-20T15:30:07.574Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.1.2
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (16ms)
+  2 failing
+
+  1) probes.mongodb 4.1.2
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.1.2
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.1.3
+updated 1 package and audited 943 packages in 3.599s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:11.960Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:11.961Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:11.961Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:11.962Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:12.015Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:12.132Z appoptics:patching patched crypto 
+2022-04-20T15:30:12.147Z appoptics:patching patched https 
+2022-04-20T15:30:12.147Z appoptics:patching patched http 
+2022-04-20T15:30:12.183Z appoptics:patching patched zlib 
+2022-04-20T15:30:12.185Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:12.185Z appoptics:patching patched fs 
+2022-04-20T15:30:12.236Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:12.236Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:12.236Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:12.237Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:12.237Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:12.237Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:12.237Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:12.237Z appoptics:patching patched mongodb 4.1.3
+2022-04-20T15:30:12.241Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.1.3
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (27ms)
+  2 failing
+
+  1) probes.mongodb 4.1.3
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.1.3
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.1.4
+updated 1 package and audited 943 packages in 4.037s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:17.193Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:17.194Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:17.194Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:17.194Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:17.247Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:17.363Z appoptics:patching patched crypto 
+2022-04-20T15:30:17.379Z appoptics:patching patched https 
+2022-04-20T15:30:17.379Z appoptics:patching patched http 
+2022-04-20T15:30:17.414Z appoptics:patching patched zlib 
+2022-04-20T15:30:17.416Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:17.416Z appoptics:patching patched fs 
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:17.467Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:17.467Z appoptics:patching patched mongodb 4.1.4
+2022-04-20T15:30:17.471Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.1.4
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (16ms)
+  2 failing
+
+  1) probes.mongodb 4.1.4
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.1.4
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.2.0
+updated 1 package and audited 943 packages in 4.51s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:22.777Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:22.778Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:22.778Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:22.778Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:22.832Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:22.956Z appoptics:patching patched crypto 
+2022-04-20T15:30:22.985Z appoptics:patching patched https 
+2022-04-20T15:30:22.985Z appoptics:patching patched http 
+2022-04-20T15:30:23.026Z appoptics:patching patched zlib 
+2022-04-20T15:30:23.028Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:23.028Z appoptics:patching patched fs 
+2022-04-20T15:30:23.082Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:23.082Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:23.082Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:23.082Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:23.082Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:23.083Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:23.083Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:23.083Z appoptics:patching patched mongodb 4.2.0
+2022-04-20T15:30:23.088Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.2.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (15ms)
+  2 failing
+
+  1) probes.mongodb 4.2.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.2.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.2.1
+updated 1 package and audited 943 packages in 3.518s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:27.538Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:27.539Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:27.539Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:27.539Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:27.594Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:27.722Z appoptics:patching patched crypto 
+2022-04-20T15:30:27.756Z appoptics:patching patched https 
+2022-04-20T15:30:27.757Z appoptics:patching patched http 
+2022-04-20T15:30:27.795Z appoptics:patching patched zlib 
+2022-04-20T15:30:27.798Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:27.798Z appoptics:patching patched fs 
+2022-04-20T15:30:27.862Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:27.862Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:27.862Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:27.862Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:27.863Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:27.863Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:27.863Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:27.863Z appoptics:patching patched mongodb 4.2.1
+2022-04-20T15:30:27.867Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.2.1
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (20ms)
+  2 failing
+
+  1) probes.mongodb 4.2.1
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.2.1
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.2.2
+updated 1 package and audited 943 packages in 3.448s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:32.191Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:32.192Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:32.192Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:32.192Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:32.243Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:32.367Z appoptics:patching patched crypto 
+2022-04-20T15:30:32.382Z appoptics:patching patched https 
+2022-04-20T15:30:32.383Z appoptics:patching patched http 
+2022-04-20T15:30:32.420Z appoptics:patching patched zlib 
+2022-04-20T15:30:32.422Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:32.422Z appoptics:patching patched fs 
+2022-04-20T15:30:32.473Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:32.473Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:32.474Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:32.474Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:32.474Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:32.474Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:32.474Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:32.474Z appoptics:patching patched mongodb 4.2.2
+2022-04-20T15:30:32.478Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.2.2
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (15ms)
+  2 failing
+
+  1) probes.mongodb 4.2.2
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.2.2
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.3.0
+added 3 packages from 4 contributors, updated 1 package and audited 946 packages in 3.773s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:37.072Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:37.073Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:37.073Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:37.073Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:37.125Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:37.240Z appoptics:patching patched crypto 
+2022-04-20T15:30:37.255Z appoptics:patching patched https 
+2022-04-20T15:30:37.256Z appoptics:patching patched http 
+2022-04-20T15:30:37.301Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:37.301Z appoptics:patching patched fs 
+2022-04-20T15:30:37.317Z appoptics:patching patched zlib 
+2022-04-20T15:30:37.346Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:37.346Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:37.347Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:37.347Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:37.347Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:37.347Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:37.347Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:37.347Z appoptics:patching patched mongodb 4.3.0
+2022-04-20T15:30:37.351Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.3.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (14ms)
+  2 failing
+
+  1) probes.mongodb 4.3.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.3.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.3.1
+updated 1 package and audited 946 packages in 3.918s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:42.069Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:42.070Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:42.070Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:42.070Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:42.122Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:42.243Z appoptics:patching patched crypto 
+2022-04-20T15:30:42.258Z appoptics:patching patched https 
+2022-04-20T15:30:42.259Z appoptics:patching patched http 
+2022-04-20T15:30:42.306Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:42.306Z appoptics:patching patched fs 
+2022-04-20T15:30:42.323Z appoptics:patching patched zlib 
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:42.352Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:42.352Z appoptics:patching patched mongodb 4.3.1
+2022-04-20T15:30:42.356Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.3.1
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (16ms)
+  2 failing
+
+  1) probes.mongodb 4.3.1
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.3.1
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.4.0
+updated 1 package and audited 946 packages in 3.812s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:46.977Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:46.978Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:46.978Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:46.979Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:47.031Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:47.163Z appoptics:patching patched crypto 
+2022-04-20T15:30:47.180Z appoptics:patching patched https 
+2022-04-20T15:30:47.180Z appoptics:patching patched http 
+2022-04-20T15:30:47.231Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:47.231Z appoptics:patching patched fs 
+2022-04-20T15:30:47.256Z appoptics:patching patched zlib 
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:47.282Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:47.282Z appoptics:patching patched mongodb 4.4.0
+2022-04-20T15:30:47.287Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.4.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (16ms)
+  2 failing
+
+  1) probes.mongodb 4.4.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.4.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.4.1
+updated 1 package and audited 946 packages in 4.07s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:52.217Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:52.218Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:52.218Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:52.219Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:52.276Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:52.405Z appoptics:patching patched crypto 
+2022-04-20T15:30:52.422Z appoptics:patching patched https 
+2022-04-20T15:30:52.422Z appoptics:patching patched http 
+2022-04-20T15:30:52.472Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:52.472Z appoptics:patching patched fs 
+2022-04-20T15:30:52.497Z appoptics:patching patched zlib 
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:52.523Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:52.523Z appoptics:patching patched mongodb 4.4.1
+2022-04-20T15:30:52.527Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.4.1
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (16ms)
+  2 failing
+
+  1) probes.mongodb 4.4.1
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.4.1
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@4.5.0
+updated 1 package and audited 946 packages in 4.523s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+2022-04-20T15:30:57.872Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:30:57.872Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:30:57.872Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:30:57.873Z appoptics:debug using context provider: ace-context
+2022-04-20T15:30:57.925Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:30:58.042Z appoptics:patching patched crypto 
+2022-04-20T15:30:58.057Z appoptics:patching patched https 
+2022-04-20T15:30:58.058Z appoptics:patching patched http 
+2022-04-20T15:30:58.103Z appoptics:patching fs.realpath - adding native method
+2022-04-20T15:30:58.103Z appoptics:patching patched fs 
+2022-04-20T15:30:58.126Z appoptics:patching patched zlib 
+2022-04-20T15:30:58.149Z appoptics:patching probes.mongodb "topologies/server.js" not found
+2022-04-20T15:30:58.149Z appoptics:patching probes.mongodb "Server.prototype" not found
+2022-04-20T15:30:58.150Z appoptics:patching probes.mongodb "topologies/replset.js" not found
+2022-04-20T15:30:58.150Z appoptics:patching probes.mongodb "ReplSet.prototype" not found
+2022-04-20T15:30:58.150Z appoptics:patching probes.mongodb "topologies/mongos.js" not found
+2022-04-20T15:30:58.150Z appoptics:patching probes.mongodb "Mongos.prototype" not found
+2022-04-20T15:30:58.150Z appoptics:patching probes.mongodb "Cursor.prototype" not found
+2022-04-20T15:30:58.150Z appoptics:patching patched mongodb 4.5.0
+2022-04-20T15:30:58.154Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mongodb UDP
+    ✓ UDP might lose a message
+
+  probes.mongodb 4.5.0
+    2.6
+      1) "before all" hook in "2.6"
+    3.0
+      2) "before all" hook in "3.0"
+
+
+  1 passing (14ms)
+  2 failing
+
+  1) probes.mongodb 4.5.0
+       2.6
+         "before all" hook in "2.6":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+  2) probes.mongodb 4.5.0
+       3.0
+         "before all" hook in "3.0":
+     TypeError: mongodb.Server is not a constructor
+      at Context.<anonymous> (test/probes/mongodb.test.js:205:18)
+      at processImmediate (internal/timers.js:464:21)
+      at process.callbackTrampoline (internal/async_hooks.js:130:17)
+
+
+
+npm WARN read-shrinkwrap This version of npm is compatible with lockfileVersion@1, but package-lock.json was generated for lockfileVersion@2. I'll try to do my best with it!
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@~2.3.1 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.2: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+
++ mongodb@3.7.3
+added 2 packages from 2 contributors, removed 11 packages, updated 1 package and audited 937 packages in 3.484s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 7 vulnerabilities (2 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details

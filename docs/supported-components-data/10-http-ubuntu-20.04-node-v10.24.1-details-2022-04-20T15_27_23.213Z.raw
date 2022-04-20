@@ -1,0 +1,52 @@
+2022-04-20T15:27:23.657Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-20T15:27:23.659Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-20T15:27:23.659Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-20T15:27:23.660Z appoptics:debug using context provider: ace-context
+2022-04-20T15:27:23.754Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-20T15:27:24.032Z appoptics:patching patched crypto 
+2022-04-20T15:27:24.106Z appoptics:patching patched https 
+2022-04-20T15:27:24.107Z appoptics:patching patched http 
+2022-04-20T15:27:24.164Z appoptics:patching patched zlib 
+2022-04-20T15:27:24.198Z appoptics:debug starting runtimeMetrics
+
+
+  probes.http
+    http-server
+      ✓ UDP might lose a message running locally
+      ✓ should send traces for http routing and response spans
+      ✓ should continue tracing when receiving an xtrace id header
+      ✓ should forward sampling data in always trace mode
+      ✓ should not continue tracing when receiving a bad xtrace id header
+      ✓ should not report anything when http probe is disabled
+      ✓ should not send a span or metrics when a string or regex filter matches (102ms)
+      ✓ should trace correctly within asyncrony
+      ✓ should support query param filtering
+      ✓ should map X-Forwarded-For header to event.kv.Forwarded-For
+      ✓ should map X-Forwarded-Host header to event.kv.Forwarded-Host
+      ✓ should map X-Forwarded-Port header to event.kv.Forwarded-Port
+      ✓ should map X-Forwarded-Proto header to event.kv.Forwarded-Proto
+      ✓ should map X-Request-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Start header to event.kv.Request-Start
+      ✓ should map X-Queue-Time header to event.kv.Queue-Time
+      ✓ should map a specific header to ClientIP when specified
+      ✓ should set ClientIP when req['client-ip-header'] is undefined
+      ✓ should report request errors
+      ✓ should report response errors
+      - should gracefully exit with no error when connection is aborted
+      ✓ should exit when timed out
+    http-client
+      ✓ should trace http request
+      ✓ should support object-based requests
+      ✓ should trace streaming http request
+      ✓ should support query filtering
+      ✓ should report socket errors sending request
+      ✓ should report socket errors when no server is listening
+      ✓ should report socket errors when the server hangs up
+      ✓ should not report an error if req.abort() is called
+      ✓ should report an error when the server has a socket error
+      - should report response errors handling request
+
+
+  30 passing (386ms)
+  2 pending
+
