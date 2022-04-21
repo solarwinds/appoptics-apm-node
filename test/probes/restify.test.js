@@ -15,10 +15,7 @@ const opts = {
   name: 'restify-test'
 }
 
-if (!semver.satisfies(process.version, '>=4')) {
-  describe('probes.restify', function () {
-    it.skip('not supported for node version < 4', function () {})
-  })
+if (semver.satisfies(process.version, '<4') || semver.satisfies(process.version, '>=18')) {
   process.exit()
 }
 

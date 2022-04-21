@@ -8,7 +8,7 @@ on:
       node:
         required: false
         description: 'A node version (e.g 10.16.0)'
-        default: '14' # TODO: update to 16 when support is added
+        default: '16'
 
 jobs:
  full-tests:
@@ -151,10 +151,10 @@ jobs:
       - name: Checkout ${{ github.ref }}
         uses: actions/checkout@v2
 
-      - name: Setup Node ${{ github.event.inputs.node || '14' }}
+      - name: Setup Node ${{ github.event.inputs.node || '16' }}
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ github.event.inputs.node || '14' }}
+          node-version: ${{ github.event.inputs.node || '16' }}
 
       - name: Show Environment Info
         run: |
