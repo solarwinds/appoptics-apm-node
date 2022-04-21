@@ -1,0 +1,2165 @@
+
+added 1 package, removed 4 packages, changed 2 packages, and audited 924 packages in 8s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:04:45.557Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:04:45.558Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:04:45.558Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:04:45.559Z appoptics:debug using context provider: ace-context
+2022-04-21T21:04:45.624Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:04:45.762Z appoptics:patching patched crypto 
+2022-04-21T21:04:45.792Z appoptics:patching patched https 
+2022-04-21T21:04:45.792Z appoptics:patching patched http 
+2022-04-21T21:04:45.825Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:04:45.826Z appoptics:patching patched fs 
+2022-04-21T21:04:45.841Z appoptics:patching patched mysql 2.1.0
+2022-04-21T21:04:45.849Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.0
+    ✓ UDP might lose a message
+    1) should see if a database exists
+    2) should create a database if it doesn't exist
+    3) should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    4) should trace a basic query
+    5) should trace a query with a value list
+    6) should trace a query with a value object
+    7) should trace a streaming query
+    8) should trace a pooled query
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+[Error] PoolCluster : Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+    9) should trace a cluster pooled query
+    10) should sanitize a query
+    11) should truncate long queries
+    12) should skip when disabled
+    13) "after all" hook for "should skip when disabled"
+
+
+  3 passing (1m)
+  13 failing
+
+  1) probes.mysql 2.1.0
+       should see if a database exists:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:526:28)
+      at addChunk (node:internal/streams/readable:315:12)
+      at readableAddChunk (node:internal/streams/readable:289:9)
+      at Socket.Readable.push (node:internal/streams/readable:228:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:83:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:118:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  2) probes.mysql 2.1.0
+       should create a database if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:526:28)
+      at addChunk (node:internal/streams/readable:315:12)
+      at readableAddChunk (node:internal/streams/readable:289:9)
+      at Socket.Readable.push (node:internal/streams/readable:228:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:83:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:147:16)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  3) probes.mysql 2.1.0
+       should create a table if it doesn't exist:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:526:28)
+      at addChunk (node:internal/streams/readable:315:12)
+      at readableAddChunk (node:internal/streams/readable:289:9)
+      at Socket.Readable.push (node:internal/streams/readable:228:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at Connection.connect (lib/probes/mysql.js:83:15)
+      at makeDb (test/probes/mysql.test.js:85:8)
+      at Context.<anonymous> (test/probes/mysql.test.js:162:22)
+      at Timeout._onTimeout (test/probes/mysql.test.js:33:7)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  4) probes.mysql 2.1.0
+       should trace a basic query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  5) probes.mysql 2.1.0
+       should trace a query with a value list:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  6) probes.mysql 2.1.0
+       should trace a query with a value object:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  7) probes.mysql 2.1.0
+       should trace a streaming query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  8) probes.mysql 2.1.0
+       should trace a pooled query:
+     Error: ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'172.18.0.2' (using password: YES)
+      at Handshake.Sequence._packetToError (node_modules/mysql/lib/protocol/sequences/Sequence.js:30:14)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:91:18)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:526:28)
+      at addChunk (node:internal/streams/readable:315:12)
+      at readableAddChunk (node:internal/streams/readable:289:9)
+      at Socket.Readable.push (node:internal/streams/readable:228:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+      --------------------
+      at Protocol._enqueue (node_modules/mysql/lib/protocol/Protocol.js:110:26)
+      at Protocol.handshake (node_modules/mysql/lib/protocol/Protocol.js:42:41)
+      at PoolConnection.Connection.connect (node_modules/mysql/lib/Connection.js:98:18)
+      at PoolConnection.connect (lib/probes/mysql.js:83:15)
+      at Pool.getConnection (node_modules/mysql/lib/Pool.js:44:23)
+      at Pool.getConnection (lib/probes/mysql.js:51:15)
+      at Pool.query (node_modules/mysql/lib/Pool.js:131:8)
+      at /__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js:283:22
+      at ao.requestStore.run.newContext (test/helper.js:296:5)
+      at Namespace.run (node_modules/ace-context/context.js:187:5)
+      at Object.exports.test (test/helper.js:288:19)
+      at Context.test_pool (test/probes/mysql.test.js:281:12)
+
+  9) probes.mysql 2.1.0
+       should trace a cluster pooled query:
+     Error: Pool does Not exists.
+      at PoolNamespace.getConnection (node_modules/mysql/lib/PoolCluster.js:185:15)
+      at PoolNamespace.<anonymous> (node_modules/mysql/lib/PoolCluster.js:194:19)
+      at /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mysql/lib/PoolCluster.js:154:16
+      at clsBind (node_modules/ace-context/context.js:263:17)
+      at Pool.<anonymous> (node_modules/mysql/lib/Pool.js:49:16)
+      at Handshake.clsBind [as _callback] (node_modules/ace-context/context.js:263:17)
+      at Handshake.Sequence.end (node_modules/mysql/lib/protocol/sequences/Sequence.js:78:24)
+      at Handshake.ErrorPacket (node_modules/mysql/lib/protocol/sequences/Handshake.js:93:8)
+      at Protocol._parsePacket (node_modules/mysql/lib/protocol/Protocol.js:202:24)
+      at Parser.write (node_modules/mysql/lib/protocol/Parser.js:62:12)
+      at Protocol.write (node_modules/mysql/lib/protocol/Protocol.js:37:16)
+      at Socket.<anonymous> (node_modules/mysql/lib/Connection.js:72:28)
+      at Socket.emit (node:events:526:28)
+      at addChunk (node:internal/streams/readable:315:12)
+      at readableAddChunk (node:internal/streams/readable:289:9)
+      at Socket.Readable.push (node:internal/streams/readable:228:10)
+      at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+      at TCP.callbackTrampoline (node:internal/async_hooks:130:17)
+
+  10) probes.mysql 2.1.0
+       should sanitize a query:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  11) probes.mysql 2.1.0
+       should truncate long queries:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  12) probes.mysql 2.1.0
+       should skip when disabled:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+  13) probes.mysql 2.1.0
+       "after all" hook for "should skip when disabled":
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/mysql.test.js)
+      at listOnTimeout (node:internal/timers:559:17)
+      at processTimers (node:internal/timers:502:7)
+
+
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:13.443Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:13.443Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:13.443Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:13.444Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:13.506Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:13.634Z appoptics:patching patched crypto 
+2022-04-21T21:06:13.674Z appoptics:patching patched https 
+2022-04-21T21:06:13.675Z appoptics:patching patched http 
+2022-04-21T21:06:13.710Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:13.711Z appoptics:patching patched fs 
+2022-04-21T21:06:13.725Z appoptics:patching patched mysql 2.1.1
+2022-04-21T21:06:13.733Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.1.1
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 3 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:22.142Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:22.143Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:22.143Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:22.144Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:22.204Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:22.324Z appoptics:patching patched crypto 
+2022-04-21T21:06:22.342Z appoptics:patching patched https 
+2022-04-21T21:06:22.343Z appoptics:patching patched http 
+2022-04-21T21:06:22.376Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:22.376Z appoptics:patching patched fs 
+2022-04-21T21:06:22.394Z appoptics:patching patched mysql 2.2.0
+2022-04-21T21:06:22.401Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.2.0
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:30.497Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:30.498Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:30.498Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:30.499Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:30.571Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:30.722Z appoptics:patching patched crypto 
+2022-04-21T21:06:30.766Z appoptics:patching patched https 
+2022-04-21T21:06:30.767Z appoptics:patching patched http 
+2022-04-21T21:06:30.810Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:30.811Z appoptics:patching patched fs 
+2022-04-21T21:06:30.835Z appoptics:patching patched mysql 2.3.0
+2022-04-21T21:06:30.845Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.0
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:38.449Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:38.450Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:38.450Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:38.451Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:38.523Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:38.649Z appoptics:patching patched crypto 
+2022-04-21T21:06:38.695Z appoptics:patching patched https 
+2022-04-21T21:06:38.695Z appoptics:patching patched http 
+2022-04-21T21:06:38.733Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:38.733Z appoptics:patching patched fs 
+2022-04-21T21:06:38.767Z appoptics:patching patched mysql 2.3.1
+2022-04-21T21:06:38.775Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.1
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:46.711Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:46.712Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:46.712Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:46.713Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:46.773Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:46.889Z appoptics:patching patched crypto 
+2022-04-21T21:06:46.907Z appoptics:patching patched https 
+2022-04-21T21:06:46.907Z appoptics:patching patched http 
+2022-04-21T21:06:46.943Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:46.943Z appoptics:patching patched fs 
+2022-04-21T21:06:46.968Z appoptics:patching patched mysql 2.3.2
+2022-04-21T21:06:46.975Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.3.2
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:06:55.126Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:06:55.127Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:06:55.127Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:06:55.127Z appoptics:debug using context provider: ace-context
+2022-04-21T21:06:55.219Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:06:55.372Z appoptics:patching patched crypto 
+2022-04-21T21:06:55.401Z appoptics:patching patched https 
+2022-04-21T21:06:55.401Z appoptics:patching patched http 
+2022-04-21T21:06:55.424Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:06:55.424Z appoptics:patching patched fs 
+2022-04-21T21:06:55.450Z appoptics:patching patched mysql 2.4.0
+2022-04-21T21:06:55.457Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.0
+    ✓ UDP might lose a message
+(node:576) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:576) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:576) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:03.389Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:03.390Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:03.390Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:03.390Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:03.451Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:03.587Z appoptics:patching patched crypto 
+2022-04-21T21:07:03.617Z appoptics:patching patched https 
+2022-04-21T21:07:03.618Z appoptics:patching patched http 
+2022-04-21T21:07:03.646Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:03.647Z appoptics:patching patched fs 
+2022-04-21T21:07:03.672Z appoptics:patching patched mysql 2.4.1
+2022-04-21T21:07:03.679Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.1
+    ✓ UDP might lose a message
+(node:598) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:598) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:598) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:11.730Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:11.731Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:11.731Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:11.732Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:11.790Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:11.910Z appoptics:patching patched crypto 
+2022-04-21T21:07:11.927Z appoptics:patching patched https 
+2022-04-21T21:07:11.928Z appoptics:patching patched http 
+2022-04-21T21:07:11.980Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:11.980Z appoptics:patching patched fs 
+2022-04-21T21:07:12.006Z appoptics:patching patched mysql 2.4.2
+2022-04-21T21:07:12.014Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.2
+    ✓ UDP might lose a message
+(node:620) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:620) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:620) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:19.628Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:19.629Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:19.629Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:19.630Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:19.690Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:19.806Z appoptics:patching patched crypto 
+2022-04-21T21:07:19.824Z appoptics:patching patched https 
+2022-04-21T21:07:19.825Z appoptics:patching patched http 
+2022-04-21T21:07:19.858Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:19.859Z appoptics:patching patched fs 
+2022-04-21T21:07:19.883Z appoptics:patching patched mysql 2.4.3
+2022-04-21T21:07:19.891Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.4.3
+    ✓ UDP might lose a message
+(node:642) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:642) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:642) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:28.087Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:28.088Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:28.088Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:28.089Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:28.149Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:28.265Z appoptics:patching patched crypto 
+2022-04-21T21:07:28.283Z appoptics:patching patched https 
+2022-04-21T21:07:28.283Z appoptics:patching patched http 
+2022-04-21T21:07:28.317Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:28.318Z appoptics:patching patched fs 
+2022-04-21T21:07:28.343Z appoptics:patching patched mysql 2.5.0
+2022-04-21T21:07:28.350Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.0
+    ✓ UDP might lose a message
+(node:664) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:664) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:664) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:36.217Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:36.217Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:36.217Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:36.218Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:36.278Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:36.395Z appoptics:patching patched crypto 
+2022-04-21T21:07:36.413Z appoptics:patching patched https 
+2022-04-21T21:07:36.414Z appoptics:patching patched http 
+2022-04-21T21:07:36.446Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:36.447Z appoptics:patching patched fs 
+2022-04-21T21:07:36.471Z appoptics:patching patched mysql 2.5.1
+2022-04-21T21:07:36.478Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.1
+    ✓ UDP might lose a message
+(node:686) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:686) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:686) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:44.826Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:44.827Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:44.827Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:44.828Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:44.888Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:45.007Z appoptics:patching patched crypto 
+2022-04-21T21:07:45.026Z appoptics:patching patched https 
+2022-04-21T21:07:45.026Z appoptics:patching patched http 
+2022-04-21T21:07:45.059Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:45.059Z appoptics:patching patched fs 
+2022-04-21T21:07:45.085Z appoptics:patching patched mysql 2.5.2
+2022-04-21T21:07:45.092Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.2
+    ✓ UDP might lose a message
+(node:708) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:708) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:708) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:07:52.608Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:07:52.609Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:07:52.609Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:07:52.610Z appoptics:debug using context provider: ace-context
+2022-04-21T21:07:52.684Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:07:52.844Z appoptics:patching patched crypto 
+2022-04-21T21:07:52.867Z appoptics:patching patched https 
+2022-04-21T21:07:52.867Z appoptics:patching patched http 
+2022-04-21T21:07:52.913Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:07:52.913Z appoptics:patching patched fs 
+2022-04-21T21:07:52.947Z appoptics:patching patched mysql 2.5.3
+2022-04-21T21:07:52.955Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.3
+    ✓ UDP might lose a message
+(node:730) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:730) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:730) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:00.232Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:00.232Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:00.232Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:00.233Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:00.294Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:00.413Z appoptics:patching patched crypto 
+2022-04-21T21:08:00.431Z appoptics:patching patched https 
+2022-04-21T21:08:00.431Z appoptics:patching patched http 
+2022-04-21T21:08:00.465Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:00.465Z appoptics:patching patched fs 
+2022-04-21T21:08:00.490Z appoptics:patching patched mysql 2.5.4
+2022-04-21T21:08:00.498Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.4
+    ✓ UDP might lose a message
+(node:752) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:752) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:752) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+npm WARN deprecated bignumber.js@2.0.0: critical bug fixed in v2.0.4
+
+changed 3 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:08.769Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:08.770Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:08.770Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:08.771Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:08.831Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:08.947Z appoptics:patching patched crypto 
+2022-04-21T21:08:08.965Z appoptics:patching patched https 
+2022-04-21T21:08:08.965Z appoptics:patching patched http 
+2022-04-21T21:08:08.999Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:09.000Z appoptics:patching patched fs 
+2022-04-21T21:08:09.024Z appoptics:patching patched mysql 2.5.5
+2022-04-21T21:08:09.032Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.5.5
+    ✓ UDP might lose a message
+(node:774) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:774) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:774) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:16.387Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:16.388Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:16.388Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:16.389Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:16.450Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:16.569Z appoptics:patching patched crypto 
+2022-04-21T21:08:16.619Z appoptics:patching patched https 
+2022-04-21T21:08:16.631Z appoptics:patching patched http 
+2022-04-21T21:08:16.657Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:16.658Z appoptics:patching patched fs 
+2022-04-21T21:08:16.685Z appoptics:patching patched mysql 2.6.0
+2022-04-21T21:08:16.693Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.0
+    ✓ UDP might lose a message
+(node:796) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:796) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:796) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:24.429Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:24.430Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:24.430Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:24.430Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:24.495Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:24.619Z appoptics:patching patched crypto 
+2022-04-21T21:08:24.638Z appoptics:patching patched https 
+2022-04-21T21:08:24.639Z appoptics:patching patched http 
+2022-04-21T21:08:24.676Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:24.676Z appoptics:patching patched fs 
+2022-04-21T21:08:24.703Z appoptics:patching patched mysql 2.6.1
+2022-04-21T21:08:24.710Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.1
+    ✓ UDP might lose a message
+(node:818) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:818) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:818) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:32.709Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:32.709Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:32.709Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:32.710Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:32.770Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:32.887Z appoptics:patching patched crypto 
+2022-04-21T21:08:32.907Z appoptics:patching patched https 
+2022-04-21T21:08:32.907Z appoptics:patching patched http 
+2022-04-21T21:08:32.938Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:32.938Z appoptics:patching patched fs 
+2022-04-21T21:08:32.964Z appoptics:patching patched mysql 2.6.2
+2022-04-21T21:08:32.970Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.6.2
+    ✓ UDP might lose a message
+(node:840) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:840) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:840) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:40.375Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:40.375Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:40.375Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:40.376Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:40.458Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:40.587Z appoptics:patching patched crypto 
+2022-04-21T21:08:40.626Z appoptics:patching patched https 
+2022-04-21T21:08:40.627Z appoptics:patching patched http 
+2022-04-21T21:08:40.663Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:40.663Z appoptics:patching patched fs 
+2022-04-21T21:08:40.694Z appoptics:patching patched mysql 2.7.0
+2022-04-21T21:08:40.701Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.7.0
+    ✓ UDP might lose a message
+(node:862) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:862) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+(node:862) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+removed 1 package, changed 1 package, and audited 923 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:48.092Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:48.093Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:48.093Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:48.094Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:48.154Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:48.273Z appoptics:patching patched crypto 
+2022-04-21T21:08:48.294Z appoptics:patching patched https 
+2022-04-21T21:08:48.294Z appoptics:patching patched http 
+2022-04-21T21:08:48.334Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:48.335Z appoptics:patching patched fs 
+2022-04-21T21:08:48.348Z appoptics:patching patched mysql 2.8.0
+2022-04-21T21:08:48.355Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.8.0
+    ✓ UDP might lose a message
+(node:884) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:884) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:884) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 923 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:08:56.494Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:08:56.494Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:08:56.495Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:08:56.495Z appoptics:debug using context provider: ace-context
+2022-04-21T21:08:56.556Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:08:56.673Z appoptics:patching patched crypto 
+2022-04-21T21:08:56.691Z appoptics:patching patched https 
+2022-04-21T21:08:56.692Z appoptics:patching patched http 
+2022-04-21T21:08:56.736Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:08:56.736Z appoptics:patching patched fs 
+2022-04-21T21:08:56.749Z appoptics:patching patched mysql 2.9.0
+2022-04-21T21:08:56.756Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.9.0
+    ✓ UDP might lose a message
+(node:906) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:906) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:906) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 923 packages in 28s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:09:26.357Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:09:26.358Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:09:26.358Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:09:26.359Z appoptics:debug using context provider: ace-context
+2022-04-21T21:09:26.423Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:09:26.559Z appoptics:patching patched crypto 
+2022-04-21T21:09:26.578Z appoptics:patching patched https 
+2022-04-21T21:09:26.579Z appoptics:patching patched http 
+2022-04-21T21:09:26.627Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:09:26.628Z appoptics:patching patched fs 
+2022-04-21T21:09:26.642Z appoptics:patching patched mysql 2.10.0
+2022-04-21T21:09:26.649Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.0
+    ✓ UDP might lose a message
+(node:928) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:928) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:928) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 923 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:09:34.331Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:09:34.331Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:09:34.332Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:09:34.332Z appoptics:debug using context provider: ace-context
+2022-04-21T21:09:34.393Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:09:34.597Z appoptics:patching patched crypto 
+2022-04-21T21:09:34.673Z appoptics:patching patched https 
+2022-04-21T21:09:34.674Z appoptics:patching patched http 
+2022-04-21T21:09:34.712Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:09:34.713Z appoptics:patching patched fs 
+2022-04-21T21:09:34.727Z appoptics:patching patched mysql 2.10.1
+2022-04-21T21:09:34.733Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.1
+    ✓ UDP might lose a message
+(node:950) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:950) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:950) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 923 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:09:42.786Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:09:42.786Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:09:42.786Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:09:42.787Z appoptics:debug using context provider: ace-context
+2022-04-21T21:09:42.860Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:09:42.994Z appoptics:patching patched crypto 
+2022-04-21T21:09:43.016Z appoptics:patching patched https 
+2022-04-21T21:09:43.016Z appoptics:patching patched http 
+2022-04-21T21:09:43.059Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:09:43.060Z appoptics:patching patched fs 
+2022-04-21T21:09:43.074Z appoptics:patching patched mysql 2.10.2
+2022-04-21T21:09:43.081Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.10.2
+    ✓ UDP might lose a message
+(node:972) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:972) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:972) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+added 1 package, changed 2 packages, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:09:50.622Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:09:50.623Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:09:50.623Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:09:50.624Z appoptics:debug using context provider: ace-context
+2022-04-21T21:09:50.697Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:09:50.835Z appoptics:patching patched crypto 
+2022-04-21T21:09:50.873Z appoptics:patching patched https 
+2022-04-21T21:09:50.874Z appoptics:patching patched http 
+2022-04-21T21:09:50.923Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:09:50.923Z appoptics:patching patched fs 
+2022-04-21T21:09:50.939Z appoptics:patching patched mysql 2.11.0
+2022-04-21T21:09:50.946Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.0
+    ✓ UDP might lose a message
+(node:994) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:994) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:994) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:09:58.481Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:09:58.482Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:09:58.482Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:09:58.482Z appoptics:debug using context provider: ace-context
+2022-04-21T21:09:58.541Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:09:58.662Z appoptics:patching patched crypto 
+2022-04-21T21:09:58.680Z appoptics:patching patched https 
+2022-04-21T21:09:58.681Z appoptics:patching patched http 
+2022-04-21T21:09:58.725Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:09:58.726Z appoptics:patching patched fs 
+2022-04-21T21:09:58.740Z appoptics:patching patched mysql 2.11.1
+2022-04-21T21:09:58.746Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.11.1
+    ✓ UDP might lose a message
+(node:1016) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1016) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1016) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 3 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:07.217Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:07.217Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:07.217Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:07.218Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:07.278Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:07.400Z appoptics:patching patched crypto 
+2022-04-21T21:10:07.418Z appoptics:patching patched https 
+2022-04-21T21:10:07.418Z appoptics:patching patched http 
+2022-04-21T21:10:07.465Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:07.465Z appoptics:patching patched fs 
+2022-04-21T21:10:07.479Z appoptics:patching patched mysql 2.12.0
+2022-04-21T21:10:07.486Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.12.0
+    ✓ UDP might lose a message
+(node:1038) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1038) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1038) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:15.508Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:15.508Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:15.508Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:15.509Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:15.703Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:15.968Z appoptics:patching patched crypto 
+2022-04-21T21:10:16.075Z appoptics:patching patched https 
+2022-04-21T21:10:16.076Z appoptics:patching patched http 
+2022-04-21T21:10:16.124Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:16.125Z appoptics:patching patched fs 
+2022-04-21T21:10:16.140Z appoptics:patching patched mysql 2.13.0
+2022-04-21T21:10:16.146Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.13.0
+    ✓ UDP might lose a message
+(node:1060) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1060) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1060) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+added 4 packages, changed 2 packages, and audited 928 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:23.585Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:23.586Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:23.586Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:23.587Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:23.650Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:23.776Z appoptics:patching patched crypto 
+2022-04-21T21:10:23.796Z appoptics:patching patched https 
+2022-04-21T21:10:23.797Z appoptics:patching patched http 
+2022-04-21T21:10:23.842Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:23.842Z appoptics:patching patched fs 
+2022-04-21T21:10:23.861Z appoptics:patching patched mysql 2.14.0
+2022-04-21T21:10:23.868Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.0
+    ✓ UDP might lose a message
+(node:1082) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1082) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1082) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 928 packages in 7s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:33.004Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:33.004Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:33.004Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:33.005Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:33.065Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:33.190Z appoptics:patching patched crypto 
+2022-04-21T21:10:33.208Z appoptics:patching patched https 
+2022-04-21T21:10:33.209Z appoptics:patching patched http 
+2022-04-21T21:10:33.257Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:33.257Z appoptics:patching patched fs 
+2022-04-21T21:10:33.276Z appoptics:patching patched mysql 2.14.1
+2022-04-21T21:10:33.282Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.14.1
+    ✓ UDP might lose a message
+(node:1104) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1104) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1104) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 3 packages, and audited 928 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:41.560Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:41.561Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:41.561Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:41.562Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:41.624Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:41.745Z appoptics:patching patched crypto 
+2022-04-21T21:10:41.766Z appoptics:patching patched https 
+2022-04-21T21:10:41.767Z appoptics:patching patched http 
+2022-04-21T21:10:41.812Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:41.812Z appoptics:patching patched fs 
+2022-04-21T21:10:41.831Z appoptics:patching patched mysql 2.15.0
+2022-04-21T21:10:41.838Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.15.0
+    ✓ UDP might lose a message
+(node:1126) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1126) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:1126) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+removed 1 package, changed 6 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:49.724Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:49.724Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:49.725Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:49.725Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:49.792Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:49.934Z appoptics:patching patched crypto 
+2022-04-21T21:10:49.961Z appoptics:patching patched https 
+2022-04-21T21:10:49.962Z appoptics:patching patched http 
+2022-04-21T21:10:50.007Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:50.008Z appoptics:patching patched fs 
+2022-04-21T21:10:50.027Z appoptics:patching patched mysql 2.16.0
+2022-04-21T21:10:50.034Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.16.0
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+npm WARN deprecated bignumber.js@6.0.0: Custom ALPHABET bug fixed in v7.0.2
+
+changed 2 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:10:58.210Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:10:58.210Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:10:58.210Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:10:58.211Z appoptics:debug using context provider: ace-context
+2022-04-21T21:10:58.274Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:10:58.400Z appoptics:patching patched crypto 
+2022-04-21T21:10:58.419Z appoptics:patching patched https 
+2022-04-21T21:10:58.419Z appoptics:patching patched http 
+2022-04-21T21:10:58.468Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:10:58.469Z appoptics:patching patched fs 
+2022-04-21T21:10:58.487Z appoptics:patching patched mysql 2.17.0
+2022-04-21T21:10:58.494Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.0
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 2 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:11:06.942Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:11:06.942Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:11:06.942Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:11:06.943Z appoptics:debug using context provider: ace-context
+2022-04-21T21:11:07.006Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:11:07.130Z appoptics:patching patched crypto 
+2022-04-21T21:11:07.148Z appoptics:patching patched https 
+2022-04-21T21:11:07.149Z appoptics:patching patched http 
+2022-04-21T21:11:07.197Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:11:07.197Z appoptics:patching patched fs 
+2022-04-21T21:11:07.215Z appoptics:patching patched mysql 2.17.1
+2022-04-21T21:11:07.221Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.17.1
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 3 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:11:14.807Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:11:14.808Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:11:14.808Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:11:14.808Z appoptics:debug using context provider: ace-context
+2022-04-21T21:11:14.871Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:11:14.997Z appoptics:patching patched crypto 
+2022-04-21T21:11:15.026Z appoptics:patching patched https 
+2022-04-21T21:11:15.027Z appoptics:patching patched http 
+2022-04-21T21:11:15.054Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:11:15.054Z appoptics:patching patched fs 
+2022-04-21T21:11:15.093Z appoptics:patching patched mysql 2.18.0
+2022-04-21T21:11:15.099Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.0
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T21:11:22.868Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T21:11:22.869Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T21:11:22.869Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T21:11:22.870Z appoptics:debug using context provider: ace-context
+2022-04-21T21:11:22.932Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T21:11:23.054Z appoptics:patching patched crypto 
+2022-04-21T21:11:23.072Z appoptics:patching patched https 
+2022-04-21T21:11:23.072Z appoptics:patching patched http 
+2022-04-21T21:11:23.105Z appoptics:patching fs.realpath - adding native method
+2022-04-21T21:11:23.105Z appoptics:patching patched fs 
+2022-04-21T21:11:23.143Z appoptics:patching patched mysql 2.18.1
+2022-04-21T21:11:23.149Z appoptics:debug starting runtimeMetrics
+
+
+  probes.mysql 2.18.1
+    ✓ UDP might lose a message
+    ✓ should see if a database exists
+    ✓ should create a database if it doesn't exist
+    ✓ should create a table if it doesn't exist
+    ✓ should create a pool and pool cluster
+    ✓ should be configured to sanitize SQL by default
+    ✓ should trace a basic query
+    ✓ should trace a query with a value list
+    ✓ should trace a query with a value object
+    ✓ should trace a streaming query
+    ✓ should trace a pooled query
+    ✓ should trace a cluster pooled query
+    ✓ should sanitize a query
+    ✓ should truncate long queries
+    ✓ should skip when disabled
+
+
+  15 passing (2s)
+
+
+up to date, audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
