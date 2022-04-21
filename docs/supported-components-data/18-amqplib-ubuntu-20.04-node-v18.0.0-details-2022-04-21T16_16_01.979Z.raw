@@ -1,0 +1,981 @@
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.2.0',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+added 1 package, removed 4 packages, changed 3 packages, and audited 924 packages in 7s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:09.929Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:09.930Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:09.930Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:09.931Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:09.991Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:10.112Z appoptics:patching patched crypto 
+2022-04-21T16:16:10.134Z appoptics:patching patched https 
+2022-04-21T16:16:10.134Z appoptics:patching patched http 
+2022-04-21T16:16:10.191Z appoptics:patching patched amqplib 0.2.0
+2022-04-21T16:16:10.193Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:10.196Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.0
+    ✓ UDP might lose a message
+    promises
+      1) "before all" hook for "should report send and consume in existing trace"
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      3) "before all" hook for "should report send and consume in existing trace"
+      4) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  1 passing (4s)
+  4 failing
+
+  1) probes.amqplib 0.2.0
+       promises
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (node:internal/timers:564:17)
+      at process.processTimers (node:internal/timers:507:7)
+
+  2) probes.amqplib 0.2.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read properties of undefined (reading 'close')
+      at Context.<anonymous> (test/probes/amqplib.test.js:181:23)
+      at process.processImmediate (node:internal/timers:471:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17)
+
+  3) probes.amqplib 0.2.0
+       callbacks
+         "before all" hook for "should report send and consume in existing trace":
+     Error: Timeout of 2000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js)
+      at listOnTimeout (node:internal/timers:564:17)
+      at process.processTimers (node:internal/timers:507:7)
+
+  4) probes.amqplib 0.2.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     TypeError: Cannot read properties of undefined (reading 'close')
+      at Context.<anonymous> (test/probes/amqplib.test.js:211:23)
+      at process.processImmediate (node:internal/timers:471:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17)
+
+
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.2.1',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:20.237Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:20.238Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:20.238Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:20.239Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:20.300Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:20.410Z appoptics:patching patched crypto 
+2022-04-21T16:16:20.427Z appoptics:patching patched https 
+2022-04-21T16:16:20.428Z appoptics:patching patched http 
+2022-04-21T16:16:20.483Z appoptics:patching patched amqplib 0.2.1
+2022-04-21T16:16:20.485Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:20.487Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.2.1
+    ✓ UDP might lose a message
+    promises
+(node:843) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (44ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (175ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.0',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:27.352Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:27.353Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:27.353Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:27.353Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:27.412Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:27.524Z appoptics:patching patched crypto 
+2022-04-21T16:16:27.541Z appoptics:patching patched https 
+2022-04-21T16:16:27.542Z appoptics:patching patched http 
+2022-04-21T16:16:27.595Z appoptics:patching patched amqplib 0.3.0
+2022-04-21T16:16:27.597Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:27.599Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.0
+    ✓ UDP might lose a message
+    promises
+(node:865) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (45ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (49ms)
+
+
+  7 passing (173ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.1',
+npm WARN EBADENGINE   required: { node: '0.8 || 0.9 || 0.10 || 0.11 || 0.12 || 1.0 || 1.1' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:33.753Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:33.754Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:33.754Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:33.755Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:33.817Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:33.928Z appoptics:patching patched crypto 
+2022-04-21T16:16:33.945Z appoptics:patching patched https 
+2022-04-21T16:16:33.946Z appoptics:patching patched http 
+2022-04-21T16:16:33.997Z appoptics:patching patched amqplib 0.3.1
+2022-04-21T16:16:33.998Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:34.001Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.1
+    ✓ UDP might lose a message
+    promises
+(node:887) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (49ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (174ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.3.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <0.13 || ^1' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:40.510Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:40.510Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:40.510Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:40.511Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:40.573Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:40.697Z appoptics:patching patched crypto 
+2022-04-21T16:16:40.749Z appoptics:patching patched https 
+2022-04-21T16:16:40.750Z appoptics:patching patched http 
+2022-04-21T16:16:40.803Z appoptics:patching patched amqplib 0.3.2
+2022-04-21T16:16:40.805Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:40.807Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.3.2
+    ✓ UDP might lose a message
+    promises
+(node:909) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (49ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (54ms)
+
+
+  7 passing (197ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <4 || ^4' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:46.924Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:46.924Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:46.924Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:46.925Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:46.983Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:47.097Z appoptics:patching patched crypto 
+2022-04-21T16:16:47.114Z appoptics:patching patched https 
+2022-04-21T16:16:47.115Z appoptics:patching patched http 
+2022-04-21T16:16:47.166Z appoptics:patching patched amqplib 0.4.0
+2022-04-21T16:16:47.168Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:47.170Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.0
+    ✓ UDP might lose a message
+    promises
+(node:931) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (46ms)
+      ✓ should include SourceTrace in consume external to traced publish
+      1) "after all" hook for "should include SourceTrace in consume external to traced publish"
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (47ms)
+      2) "after all" hook for "should include SourceTrace in consume external to traced publish"
+
+
+  7 passing (214ms)
+  2 failing
+
+  1) probes.amqplib 0.4.0
+       promises
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at ChannelModel.emit (node:events:527:28)
+      at Connection.emit (node:events:527:28)
+      at C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at Socket.emit (node:events:527:28)
+      at emitReadable_ (node:internal/streams/readable:590:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:81:21)
+
+  2) probes.amqplib 0.4.0
+       callbacks
+         "after all" hook for "should include SourceTrace in consume external to traced publish":
+     Error: done() invoked with non-Error: Closed by client
+      at CallbackModel.emit (node:events:527:28)
+      at Connection.emit (node:events:527:28)
+      at C.toClosed (node_modules/amqplib/lib/connection.js:411:8)
+      at Connection.accept (node_modules/amqplib/lib/connection.js:378:12)
+      at Socket.go (node_modules/amqplib/lib/connection.js:474:48)
+      at Socket.emit (node:events:527:28)
+      at emitReadable_ (node:internal/streams/readable:590:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:81:21)
+
+
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <5 || ^5' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:53.726Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:53.727Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:53.727Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:53.727Z appoptics:debug using context provider: ace-context
+2022-04-21T16:16:53.786Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:16:53.895Z appoptics:patching patched crypto 
+2022-04-21T16:16:53.913Z appoptics:patching patched https 
+2022-04-21T16:16:53.913Z appoptics:patching patched http 
+2022-04-21T16:16:53.966Z appoptics:patching patched amqplib 0.4.1
+2022-04-21T16:16:53.968Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:16:53.970Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.1
+    ✓ UDP might lose a message
+    promises
+(node:953) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (48ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (47ms)
+
+
+  7 passing (213ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.4.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <6 || ^6' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:16:59.942Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:16:59.943Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:16:59.943Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:16:59.943Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:00.013Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:00.138Z appoptics:patching patched crypto 
+2022-04-21T16:17:00.177Z appoptics:patching patched https 
+2022-04-21T16:17:00.177Z appoptics:patching patched http 
+2022-04-21T16:17:00.231Z appoptics:patching patched amqplib 0.4.2
+2022-04-21T16:17:00.233Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:00.235Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.4.2
+    ✓ UDP might lose a message
+    promises
+(node:975) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (50ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+
+
+  7 passing (201ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <6 || ^6' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+removed 1 package, changed 1 package, and audited 923 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:06.844Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:06.845Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:06.845Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:06.846Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:06.905Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:07.016Z appoptics:patching patched crypto 
+2022-04-21T16:17:07.034Z appoptics:patching patched https 
+2022-04-21T16:17:07.035Z appoptics:patching patched http 
+2022-04-21T16:17:07.097Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:07.099Z appoptics:patching patched amqplib 0.5.1
+2022-04-21T16:17:07.101Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:07.103Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.1
+    ✓ UDP might lose a message
+    promises
+(node:997) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (51ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (46ms)
+
+
+  7 passing (216ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.2',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=9' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:13.684Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:13.684Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:13.684Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:13.685Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:13.759Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:13.959Z appoptics:patching patched crypto 
+2022-04-21T16:17:13.977Z appoptics:patching patched https 
+2022-04-21T16:17:13.978Z appoptics:patching patched http 
+2022-04-21T16:17:14.063Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:14.066Z appoptics:patching patched amqplib 0.5.2
+2022-04-21T16:17:14.068Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:14.071Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.2
+    ✓ UDP might lose a message
+    promises
+(node:1019) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace (60ms)
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (188ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.3',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=9' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+added 13 packages, removed 7 packages, changed 4 packages, and audited 929 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:20.122Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:20.123Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:20.123Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:20.124Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:20.181Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:20.293Z appoptics:patching patched crypto 
+2022-04-21T16:17:20.310Z appoptics:patching patched https 
+2022-04-21T16:17:20.310Z appoptics:patching patched http 
+2022-04-21T16:17:20.374Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:20.376Z appoptics:patching patched amqplib 0.5.3
+2022-04-21T16:17:20.377Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:20.379Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.3
+    ✓ UDP might lose a message
+    promises
+(node:1041) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace (66ms)
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (187ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.4',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+npm WARN deprecated amqplib@0.5.4: See github.com/squaremo/amqp.node/issues/534
+
+changed 1 package, and audited 929 packages in 7s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:27.603Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:27.603Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:27.603Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:27.604Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:27.662Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:27.771Z appoptics:patching patched crypto 
+2022-04-21T16:17:27.789Z appoptics:patching patched https 
+2022-04-21T16:17:27.789Z appoptics:patching patched http 
+
+Error: Cannot find module './defs'
+Require stack:
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js
+- /__w/appoptics-apm-node/appoptics-apm-node/test/probes/amqplib.test.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/esm-utils.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/mocha.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/one-and-dones.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/lib/cli/options.js
+- /__w/appoptics-apm-node/appoptics-apm-node/node_modules/mocha/bin/mocha
+    at Module._resolveFilename (node:internal/modules/cjs/loader:939:15)
+    at Module._load (node:internal/modules/cjs/loader:780:27)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connection.js:7:12)
+    at Module._compile (node:internal/modules/cjs/loader:1105:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1159:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Module._load (node:internal/modules/cjs/loader:827:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/lib/connect.js:11:18)
+    at Module._compile (node:internal/modules/cjs/loader:1105:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1159:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+    at Module._load (node:internal/modules/cjs/loader:827:12)
+    at Module.require (node:internal/modules/cjs/loader:1005:19)
+    at Module.patchedRequire [as require] (/__w/appoptics-apm-node/appoptics-apm-node/lib/require-patch.js:57:25)
+    at require (node:internal/modules/cjs/helpers:102:18)
+    at Object.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/amqplib/channel_api.js:1:19)
+    at Module._compile (node:internal/modules/cjs/loader:1105:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1159:10)
+    at Module.load (node:internal/modules/cjs/loader:981:32)
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.5',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:33.440Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:33.441Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:33.441Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:33.441Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:33.504Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:33.613Z appoptics:patching patched crypto 
+2022-04-21T16:17:33.631Z appoptics:patching patched https 
+2022-04-21T16:17:33.632Z appoptics:patching patched http 
+2022-04-21T16:17:33.695Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:33.697Z appoptics:patching patched amqplib 0.5.5
+2022-04-21T16:17:33.699Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:33.701Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.5
+    ✓ UDP might lose a message
+    promises
+(node:1081) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (45ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (213ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.5.6',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=12' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:40.665Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:40.666Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:40.666Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:40.667Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:40.727Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:40.836Z appoptics:patching patched crypto 
+2022-04-21T16:17:40.854Z appoptics:patching patched https 
+2022-04-21T16:17:40.855Z appoptics:patching patched http 
+2022-04-21T16:17:40.918Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:40.921Z appoptics:patching patched amqplib 0.5.6
+2022-04-21T16:17:40.922Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:40.924Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.5.6
+    ✓ UDP might lose a message
+    promises
+(node:1103) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (49ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (226ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.6.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=14' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:47.140Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:47.141Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:47.148Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:47.149Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:47.213Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:47.337Z appoptics:patching patched crypto 
+2022-04-21T16:17:47.378Z appoptics:patching patched https 
+2022-04-21T16:17:47.379Z appoptics:patching patched http 
+2022-04-21T16:17:47.445Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:47.447Z appoptics:patching patched amqplib 0.6.0
+2022-04-21T16:17:47.449Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:47.451Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.6.0
+    ✓ UDP might lose a message
+    promises
+(node:1125) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (47ms)
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (48ms)
+
+
+  7 passing (185ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.7.0',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=15' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 929 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (7 moderate, 3 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:17:53.782Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:17:53.783Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:17:53.783Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:17:53.783Z appoptics:debug using context provider: ace-context
+2022-04-21T16:17:53.842Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:17:53.955Z appoptics:patching patched crypto 
+2022-04-21T16:17:53.972Z appoptics:patching patched https 
+2022-04-21T16:17:53.973Z appoptics:patching patched http 
+2022-04-21T16:17:54.037Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:17:54.039Z appoptics:patching patched amqplib 0.7.0
+2022-04-21T16:17:54.040Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:17:54.043Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.0
+    ✓ UDP might lose a message
+    promises
+(node:1147) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (45ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (175ms)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'amqplib@0.7.1',
+npm WARN EBADENGINE   required: { node: '>=0.8 <=15' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+added 8 packages, removed 10 packages, changed 3 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:18:00.326Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:18:00.327Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:18:00.327Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:18:00.327Z appoptics:debug using context provider: ace-context
+2022-04-21T16:18:00.386Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:18:00.507Z appoptics:patching patched crypto 
+2022-04-21T16:18:00.531Z appoptics:patching patched https 
+2022-04-21T16:18:00.531Z appoptics:patching patched http 
+2022-04-21T16:18:00.620Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:18:00.623Z appoptics:patching patched amqplib 0.7.1
+2022-04-21T16:18:00.624Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:18:00.627Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.7.1
+    ✓ UDP might lose a message
+    promises
+(node:1169) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace (60ms)
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (46ms)
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (282ms)
+
+
+changed 1 package, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-21T16:18:07.094Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-21T16:18:07.095Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-21T16:18:07.095Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-21T16:18:07.096Z appoptics:debug using context provider: ace-context
+2022-04-21T16:18:07.156Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-21T16:18:07.266Z appoptics:patching patched crypto 
+2022-04-21T16:18:07.284Z appoptics:patching patched https 
+2022-04-21T16:18:07.285Z appoptics:patching patched http 
+2022-04-21T16:18:07.357Z appoptics:patching patched bluebird 3.7.2
+2022-04-21T16:18:07.360Z appoptics:patching patched amqplib 0.8.0
+2022-04-21T16:18:07.361Z appoptics:patching patched amqplib/callback_api 
+2022-04-21T16:18:07.364Z appoptics:debug starting runtimeMetrics
+
+
+  probes.amqplib 0.8.0
+    ✓ UDP might lose a message
+    promises
+(node:1191) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume
+      ✓ should include SourceTrace in consume external to traced publish (45ms)
+    callbacks
+      ✓ should report send and consume in existing trace
+      ✓ should start new trace for consume (47ms)
+      ✓ should include SourceTrace in consume external to traced publish
+
+
+  7 passing (187ms)
+
+
+up to date, audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
