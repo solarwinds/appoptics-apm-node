@@ -258,7 +258,7 @@ jobs:
         id: date
         run: |
           sudo timedatectl set-timezone America/Los_Angeles
-          echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')" # must be valid branch name
+          echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
 
       - name: Create Git Branch
         run: |
@@ -293,6 +293,6 @@ jobs:
           git push origin test-each-version-${{ steps.date.outputs.date }}
 
       - name: Open Pull Request
-        run: gh pr create --title "Test Each Version Results ${{ steps.date.outputs.date }}" --body ""
+        run: gh pr create --base ${{ github.ref }} --title "Test Each Version Results ${{ steps.date.outputs.date }}" --body ""
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

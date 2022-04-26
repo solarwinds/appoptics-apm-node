@@ -1,0 +1,558 @@
+npm WARN deprecated bcrypt@3.0.6: versions < v5.0.0 do not handle NUL in passwords properly
+npm WARN deprecated node-pre-gyp@0.12.0: Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future
+npm ERR! code 1
+npm ERR! path /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! command failed
+npm ERR! command sh -c node-pre-gyp install --fallback-to-build
+npm ERR! make: Entering directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/blowfish.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt_node.o
+npm ERR! make: Leaving directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR! Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp info it worked if it ends with ok
+npm ERR! node-pre-gyp info using node-pre-gyp@0.12.0
+npm ERR! node-pre-gyp info using node@18.0.0 | linux | x64
+npm ERR! node-pre-gyp WARN Using request for node-pre-gyp https download 
+npm ERR! node-pre-gyp info check checked for "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" (not found)
+npm ERR! node-pre-gyp http GET https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.6/bcrypt_lib-v3.0.6-node-v108-linux-x64-glibc.tar.gz
+npm ERR! node-pre-gyp http 404 https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.6/bcrypt_lib-v3.0.6-node-v108-linux-x64-glibc.tar.gz
+npm ERR! node-pre-gyp WARN Tried to download(404): https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.6/bcrypt_lib-v3.0.6-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! node-pre-gyp WARN Pre-built binaries not found for bcrypt@3.0.6 and node@18.0.0 (node-v108 ABI, glibc) (falling back to source compile with node-gyp) 
+npm ERR! node-pre-gyp http 404 status code downloading tarball https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.6/bcrypt_lib-v3.0.6-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info find Python using Python version 3.8.10 found at "/usr/bin/python3"
+npm ERR! gyp info spawn /usr/bin/python3
+npm ERR! gyp info spawn args [
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py',
+npm ERR! gyp info spawn args   'binding.gyp',
+npm ERR! gyp info spawn args   '-f',
+npm ERR! gyp info spawn args   'make',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build/config.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/addon.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/github/home/.cache/node-gyp/18.0.0/include/node/common.gypi',
+npm ERR! gyp info spawn args   '-Dlibrary=shared_library',
+npm ERR! gyp info spawn args   '-Dvisibility=default',
+npm ERR! gyp info spawn args   '-Dnode_root_dir=/github/home/.cache/node-gyp/18.0.0',
+npm ERR! gyp info spawn args   '-Dnode_gyp_dir=/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp',
+npm ERR! gyp info spawn args   '-Dnode_lib_file=/github/home/.cache/node-gyp/18.0.0/<(target_arch)/node.lib',
+npm ERR! gyp info spawn args   '-Dmodule_root_dir=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt',
+npm ERR! gyp info spawn args   '-Dnode_engine=v8',
+npm ERR! gyp info spawn args   '--depth=.',
+npm ERR! gyp info spawn args   '--no-parallel',
+npm ERR! gyp info spawn args   '--generator-output',
+npm ERR! gyp info spawn args   'build',
+npm ERR! gyp info spawn args   '-Goutput_dir=.'
+npm ERR! gyp info spawn args ]
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info spawn make
+npm ERR! gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+npm ERR! In file included from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::AsyncQueueWorker(Nan::AsyncWorker*)':
+npm ERR! ../node_modules/nan/nan.h:2232:62: warning: cast between incompatible function types from 'void (*)(uv_work_t*)' {aka 'void (*)(uv_work_s*)'} to 'uv_after_work_cb' {aka 'void (*)(uv_work_s*, int)'} [-Wcast-function-type]
+npm ERR!  2232 |     , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
+npm ERR!       |                                                              ^
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::SetAccessor(v8::Local<v8::ObjectTemplate>, v8::Local<v8::String>, Nan::GetterCallback, Nan::SetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, Nan::imp::Sig)':
+npm ERR! ../node_modules/nan/nan.h:2477:16: warning: 'void v8::ObjectTemplate::SetAccessor(v8::Local<v8::Name>, v8::AccessorNameGetterCallback, v8::AccessorNameSetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, v8::Local<v8::AccessorSignature>, v8::SideEffectType, v8::SideEffectType)' is deprecated: Do signature check in accessor [-Wdeprecated-declarations]
+npm ERR!  2477 |     , signature);
+npm ERR!       |                ^
+npm ERR! In file included from /github/home/.cache/node-gyp/18.0.0/include/node/v8-function.h:15,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/v8.h:33,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/node.h:63,
+npm ERR!                  from ../node_modules/nan/nan.h:53,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/v8-template.h:838:8: note: declared here
+npm ERR!   838 |   void SetAccessor(
+npm ERR!       |        ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:2818,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h: In constructor 'Nan::TypedArrayContents<T>::TypedArrayContents(v8::Local<v8::Value>)':
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h:34:43: error: 'class v8::ArrayBuffer' has no member named 'GetContents'
+npm ERR!    34 |       data   = static_cast<char*>(buffer->GetContents().Data()) + byte_offset;
+npm ERR!       |                                           ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:53,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../src/bcrypt_node.cc: At global scope:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:852:43: warning: cast between incompatible function types from 'void (*)(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE)' {aka 'void (*)(v8::Local<v8::Object>)'} to 'node::addon_register_func' {aka 'void (*)(v8::Local<v8::Object>, v8::Local<v8::Value>, void*)'} [-Wcast-function-type]
+npm ERR!   852 |       (node::addon_register_func) (regfunc),                          \
+npm ERR!       |                                           ^
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:886:3: note: in expansion of macro 'NODE_MODULE_X'
+npm ERR!   886 |   NODE_MODULE_X(modname, regfunc, NULL, 0)  // NOLINT (readability/null_usage)
+npm ERR!       |   ^~~~~~~~~~~~~
+npm ERR! ../src/bcrypt_node.cc:378:1: note: in expansion of macro 'NODE_MODULE'
+npm ERR!   378 | NODE_MODULE(bcrypt_lib, init);
+npm ERR!       | ^~~~~~~~~~~
+npm ERR! make: *** [bcrypt_lib.target.mk:115: Release/obj.target/bcrypt_lib/src/bcrypt_node.o] Error 1
+npm ERR! gyp ERR! build error 
+npm ERR! gyp ERR! stack Error: `make` failed with exit code: 2
+npm ERR! gyp ERR! stack     at ChildProcess.onExit (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/lib/build.js:194:23)
+npm ERR! gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+npm ERR! gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "build" "--fallback-to-build" "--module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" "--module_name=bcrypt_lib" "--module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding" "--napi_version=8" "--node_abi_napi=napi" "--napi_build_version=0" "--node_napi_label=node-v108"
+npm ERR! gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! gyp ERR! node -v v18.0.0
+npm ERR! gyp ERR! node-gyp -v v9.0.0
+npm ERR! gyp ERR! not ok 
+npm ERR! node-pre-gyp ERR! build error 
+npm ERR! node-pre-gyp ERR! stack Error: Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/node-pre-gyp/lib/util/compile.js:83:29)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! node-pre-gyp ERR! stack     at maybeClose (node:internal/child_process:1090:16)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:302:5)
+npm ERR! node-pre-gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! node-pre-gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/.bin/node-pre-gyp" "install" "--fallback-to-build"
+npm ERR! node-pre-gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! node-pre-gyp ERR! node -v v18.0.0
+npm ERR! node-pre-gyp ERR! node-pre-gyp -v v0.12.0
+npm ERR! node-pre-gyp ERR! not ok
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /github/home/.npm/_logs/2022-04-25T18_38_00_598Z-debug-0.log
+npm WARN deprecated node-pre-gyp@0.13.0: Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future
+npm WARN deprecated bcrypt@3.0.7: versions < v5.0.0 do not handle NUL in passwords properly
+npm WARN cleanup Failed to remove some directories [
+npm WARN cleanup   [
+npm WARN cleanup     undefined,
+npm WARN cleanup     AssertionError [ERR_ASSERTION]: rimraf: missing path
+npm WARN cleanup         at rimraf (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/rimraf/rimraf.js:54:3)
+npm WARN cleanup         at node:internal/util:360:7
+npm WARN cleanup         at new Promise (<anonymous>)
+npm WARN cleanup         at rimraf (node:internal/util:346:12)
+npm WARN cleanup         at /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:532:20
+npm WARN cleanup         at Array.map (<anonymous>)
+npm WARN cleanup         at [rollbackCreateSparseTree] (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:532:8)
+npm WARN cleanup         at /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:1078:50
+npm WARN cleanup         at async [reifyPackages] (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:235:11)
+npm WARN cleanup         at async Arborist.reify (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:155:5) {
+npm WARN cleanup       generatedMessage: false,
+npm WARN cleanup       code: 'ERR_ASSERTION',
+npm WARN cleanup       actual: undefined,
+npm WARN cleanup       expected: true,
+npm WARN cleanup       operator: '=='
+npm WARN cleanup     }
+npm WARN cleanup   ]
+npm WARN cleanup ]
+npm ERR! code 1
+npm ERR! path /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! command failed
+npm ERR! command sh -c node-pre-gyp install --fallback-to-build
+npm ERR! make: Entering directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/blowfish.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt_node.o
+npm ERR! make: Leaving directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR! Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp info it worked if it ends with ok
+npm ERR! node-pre-gyp info using node-pre-gyp@1.0.9
+npm ERR! node-pre-gyp info using node@18.0.0 | linux | x64
+npm ERR! node-pre-gyp info check checked for "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" (not found)
+npm ERR! node-pre-gyp http GET https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.7/bcrypt_lib-v3.0.7-node-v108-linux-x64-glibc.tar.gz
+npm ERR! node-pre-gyp ERR! install response status 404 Not Found on https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.7/bcrypt_lib-v3.0.7-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! node-pre-gyp WARN Pre-built binaries not installable for bcrypt@3.0.7 and node@18.0.0 (node-v108 ABI, glibc) (falling back to source compile with node-gyp) 
+npm ERR! node-pre-gyp WARN Hit error response status 404 Not Found on https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.7/bcrypt_lib-v3.0.7-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info find Python using Python version 3.8.10 found at "/usr/bin/python3"
+npm ERR! gyp info spawn /usr/bin/python3
+npm ERR! gyp info spawn args [
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py',
+npm ERR! gyp info spawn args   'binding.gyp',
+npm ERR! gyp info spawn args   '-f',
+npm ERR! gyp info spawn args   'make',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build/config.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/addon.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/github/home/.cache/node-gyp/18.0.0/include/node/common.gypi',
+npm ERR! gyp info spawn args   '-Dlibrary=shared_library',
+npm ERR! gyp info spawn args   '-Dvisibility=default',
+npm ERR! gyp info spawn args   '-Dnode_root_dir=/github/home/.cache/node-gyp/18.0.0',
+npm ERR! gyp info spawn args   '-Dnode_gyp_dir=/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp',
+npm ERR! gyp info spawn args   '-Dnode_lib_file=/github/home/.cache/node-gyp/18.0.0/<(target_arch)/node.lib',
+npm ERR! gyp info spawn args   '-Dmodule_root_dir=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt',
+npm ERR! gyp info spawn args   '-Dnode_engine=v8',
+npm ERR! gyp info spawn args   '--depth=.',
+npm ERR! gyp info spawn args   '--no-parallel',
+npm ERR! gyp info spawn args   '--generator-output',
+npm ERR! gyp info spawn args   'build',
+npm ERR! gyp info spawn args   '-Goutput_dir=.'
+npm ERR! gyp info spawn args ]
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info spawn make
+npm ERR! gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+npm ERR! In file included from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::AsyncQueueWorker(Nan::AsyncWorker*)':
+npm ERR! ../node_modules/nan/nan.h:2298:62: warning: cast between incompatible function types from 'void (*)(uv_work_t*)' {aka 'void (*)(uv_work_s*)'} to 'uv_after_work_cb' {aka 'void (*)(uv_work_s*, int)'} [-Wcast-function-type]
+npm ERR!  2298 |     , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
+npm ERR!       |                                                              ^
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::SetAccessor(v8::Local<v8::ObjectTemplate>, v8::Local<v8::String>, Nan::GetterCallback, Nan::SetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, Nan::imp::Sig)':
+npm ERR! ../node_modules/nan/nan.h:2543:16: warning: 'void v8::ObjectTemplate::SetAccessor(v8::Local<v8::Name>, v8::AccessorNameGetterCallback, v8::AccessorNameSetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, v8::Local<v8::AccessorSignature>, v8::SideEffectType, v8::SideEffectType)' is deprecated: Do signature check in accessor [-Wdeprecated-declarations]
+npm ERR!  2543 |     , signature);
+npm ERR!       |                ^
+npm ERR! In file included from /github/home/.cache/node-gyp/18.0.0/include/node/v8-function.h:15,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/v8.h:33,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/node.h:63,
+npm ERR!                  from ../node_modules/nan/nan.h:54,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/v8-template.h:838:8: note: declared here
+npm ERR!   838 |   void SetAccessor(
+npm ERR!       |        ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:2884,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h: In constructor 'Nan::TypedArrayContents<T>::TypedArrayContents(v8::Local<v8::Value>)':
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h:34:43: error: 'class v8::ArrayBuffer' has no member named 'GetContents'
+npm ERR!    34 |       data   = static_cast<char*>(buffer->GetContents().Data()) + byte_offset;
+npm ERR!       |                                           ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:54,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../src/bcrypt_node.cc: At global scope:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:852:43: warning: cast between incompatible function types from 'void (*)(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE)' {aka 'void (*)(v8::Local<v8::Object>)'} to 'node::addon_register_func' {aka 'void (*)(v8::Local<v8::Object>, v8::Local<v8::Value>, void*)'} [-Wcast-function-type]
+npm ERR!   852 |       (node::addon_register_func) (regfunc),                          \
+npm ERR!       |                                           ^
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:886:3: note: in expansion of macro 'NODE_MODULE_X'
+npm ERR!   886 |   NODE_MODULE_X(modname, regfunc, NULL, 0)  // NOLINT (readability/null_usage)
+npm ERR!       |   ^~~~~~~~~~~~~
+npm ERR! ../src/bcrypt_node.cc:378:1: note: in expansion of macro 'NODE_MODULE'
+npm ERR!   378 | NODE_MODULE(bcrypt_lib, init);
+npm ERR!       | ^~~~~~~~~~~
+npm ERR! make: *** [bcrypt_lib.target.mk:115: Release/obj.target/bcrypt_lib/src/bcrypt_node.o] Error 1
+npm ERR! gyp ERR! build error 
+npm ERR! gyp ERR! stack Error: `make` failed with exit code: 2
+npm ERR! gyp ERR! stack     at ChildProcess.onExit (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/lib/build.js:194:23)
+npm ERR! gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+npm ERR! gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "build" "--fallback-to-build" "--module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" "--module_name=bcrypt_lib" "--module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding" "--napi_version=8" "--node_abi_napi=napi" "--napi_build_version=0" "--node_napi_label=node-v108"
+npm ERR! gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! gyp ERR! node -v v18.0.0
+npm ERR! gyp ERR! node-gyp -v v9.0.0
+npm ERR! gyp ERR! not ok 
+npm ERR! node-pre-gyp ERR! build error 
+npm ERR! node-pre-gyp ERR! stack Error: Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/@mapbox/node-pre-gyp/lib/util/compile.js:89:23)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! node-pre-gyp ERR! stack     at maybeClose (node:internal/child_process:1090:16)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:302:5)
+npm ERR! node-pre-gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! node-pre-gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/.bin/node-pre-gyp" "install" "--fallback-to-build"
+npm ERR! node-pre-gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! node-pre-gyp ERR! node -v v18.0.0
+npm ERR! node-pre-gyp ERR! node-pre-gyp -v v1.0.9
+npm ERR! node-pre-gyp ERR! not ok
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /github/home/.npm/_logs/2022-04-25T18_38_11_238Z-debug-0.log
+npm WARN deprecated bcrypt@3.0.8: versions < v5.0.0 do not handle NUL in passwords properly
+npm WARN deprecated node-pre-gyp@0.14.0: Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future
+npm WARN cleanup Failed to remove some directories [
+npm WARN cleanup   [
+npm WARN cleanup     undefined,
+npm WARN cleanup     AssertionError [ERR_ASSERTION]: rimraf: missing path
+npm WARN cleanup         at rimraf (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/rimraf/rimraf.js:54:3)
+npm WARN cleanup         at node:internal/util:360:7
+npm WARN cleanup         at new Promise (<anonymous>)
+npm WARN cleanup         at rimraf (node:internal/util:346:12)
+npm WARN cleanup         at /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:532:20
+npm WARN cleanup         at Array.map (<anonymous>)
+npm WARN cleanup         at [rollbackCreateSparseTree] (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:532:8)
+npm WARN cleanup         at /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:1078:50
+npm WARN cleanup         at async [reifyPackages] (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:235:11)
+npm WARN cleanup         at async Arborist.reify (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:155:5) {
+npm WARN cleanup       generatedMessage: false,
+npm WARN cleanup       code: 'ERR_ASSERTION',
+npm WARN cleanup       actual: undefined,
+npm WARN cleanup       expected: true,
+npm WARN cleanup       operator: '=='
+npm WARN cleanup     }
+npm WARN cleanup   ]
+npm WARN cleanup ]
+npm ERR! code 1
+npm ERR! path /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! command failed
+npm ERR! command sh -c node-pre-gyp install --fallback-to-build
+npm ERR! make: Entering directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/blowfish.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt.o
+npm ERR!   CXX(target) Release/obj.target/bcrypt_lib/src/bcrypt_node.o
+npm ERR! make: Leaving directory '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build'
+npm ERR! Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp info it worked if it ends with ok
+npm ERR! node-pre-gyp info using node-pre-gyp@1.0.9
+npm ERR! node-pre-gyp info using node@18.0.0 | linux | x64
+npm ERR! node-pre-gyp info check checked for "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" (not found)
+npm ERR! node-pre-gyp http GET https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.8/bcrypt_lib-v3.0.8-node-v108-linux-x64-glibc.tar.gz
+npm ERR! node-pre-gyp ERR! install response status 404 Not Found on https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.8/bcrypt_lib-v3.0.8-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! node-pre-gyp WARN Pre-built binaries not installable for bcrypt@3.0.8 and node@18.0.0 (node-v108 ABI, glibc) (falling back to source compile with node-gyp) 
+npm ERR! node-pre-gyp WARN Hit error response status 404 Not Found on https://github.com/kelektiv/node.bcrypt.js/releases/download/v3.0.8/bcrypt_lib-v3.0.8-node-v108-linux-x64-glibc.tar.gz 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info find Python using Python version 3.8.10 found at "/usr/bin/python3"
+npm ERR! gyp info spawn /usr/bin/python3
+npm ERR! gyp info spawn args [
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py',
+npm ERR! gyp info spawn args   'binding.gyp',
+npm ERR! gyp info spawn args   '-f',
+npm ERR! gyp info spawn args   'make',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/build/config.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/addon.gypi',
+npm ERR! gyp info spawn args   '-I',
+npm ERR! gyp info spawn args   '/github/home/.cache/node-gyp/18.0.0/include/node/common.gypi',
+npm ERR! gyp info spawn args   '-Dlibrary=shared_library',
+npm ERR! gyp info spawn args   '-Dvisibility=default',
+npm ERR! gyp info spawn args   '-Dnode_root_dir=/github/home/.cache/node-gyp/18.0.0',
+npm ERR! gyp info spawn args   '-Dnode_gyp_dir=/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp',
+npm ERR! gyp info spawn args   '-Dnode_lib_file=/github/home/.cache/node-gyp/18.0.0/<(target_arch)/node.lib',
+npm ERR! gyp info spawn args   '-Dmodule_root_dir=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt',
+npm ERR! gyp info spawn args   '-Dnode_engine=v8',
+npm ERR! gyp info spawn args   '--depth=.',
+npm ERR! gyp info spawn args   '--no-parallel',
+npm ERR! gyp info spawn args   '--generator-output',
+npm ERR! gyp info spawn args   'build',
+npm ERR! gyp info spawn args   '-Goutput_dir=.'
+npm ERR! gyp info spawn args ]
+npm ERR! gyp info ok 
+npm ERR! gyp info it worked if it ends with ok
+npm ERR! gyp info using node-gyp@9.0.0
+npm ERR! gyp info using node@18.0.0 | linux | x64
+npm ERR! gyp info spawn make
+npm ERR! gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+npm ERR! In file included from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::AsyncQueueWorker(Nan::AsyncWorker*)':
+npm ERR! ../node_modules/nan/nan.h:2298:62: warning: cast between incompatible function types from 'void (*)(uv_work_t*)' {aka 'void (*)(uv_work_s*)'} to 'uv_after_work_cb' {aka 'void (*)(uv_work_s*, int)'} [-Wcast-function-type]
+npm ERR!  2298 |     , reinterpret_cast<uv_after_work_cb>(AsyncExecuteComplete)
+npm ERR!       |                                                              ^
+npm ERR! ../node_modules/nan/nan.h: In function 'void Nan::SetAccessor(v8::Local<v8::ObjectTemplate>, v8::Local<v8::String>, Nan::GetterCallback, Nan::SetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, Nan::imp::Sig)':
+npm ERR! ../node_modules/nan/nan.h:2543:16: warning: 'void v8::ObjectTemplate::SetAccessor(v8::Local<v8::Name>, v8::AccessorNameGetterCallback, v8::AccessorNameSetterCallback, v8::Local<v8::Value>, v8::AccessControl, v8::PropertyAttribute, v8::Local<v8::AccessorSignature>, v8::SideEffectType, v8::SideEffectType)' is deprecated: Do signature check in accessor [-Wdeprecated-declarations]
+npm ERR!  2543 |     , signature);
+npm ERR!       |                ^
+npm ERR! In file included from /github/home/.cache/node-gyp/18.0.0/include/node/v8-function.h:15,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/v8.h:33,
+npm ERR!                  from /github/home/.cache/node-gyp/18.0.0/include/node/node.h:63,
+npm ERR!                  from ../node_modules/nan/nan.h:54,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/v8-template.h:838:8: note: declared here
+npm ERR!   838 |   void SetAccessor(
+npm ERR!       |        ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:2884,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h: In constructor 'Nan::TypedArrayContents<T>::TypedArrayContents(v8::Local<v8::Value>)':
+npm ERR! ../node_modules/nan/nan_typedarray_contents.h:34:43: error: 'class v8::ArrayBuffer' has no member named 'GetContents'
+npm ERR!    34 |       data   = static_cast<char*>(buffer->GetContents().Data()) + byte_offset;
+npm ERR!       |                                           ^~~~~~~~~~~
+npm ERR! In file included from ../node_modules/nan/nan.h:54,
+npm ERR!                  from ../src/bcrypt_node.cc:1:
+npm ERR! ../src/bcrypt_node.cc: At global scope:
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:852:43: warning: cast between incompatible function types from 'void (*)(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE)' {aka 'void (*)(v8::Local<v8::Object>)'} to 'node::addon_register_func' {aka 'void (*)(v8::Local<v8::Object>, v8::Local<v8::Value>, void*)'} [-Wcast-function-type]
+npm ERR!   852 |       (node::addon_register_func) (regfunc),                          \
+npm ERR!       |                                           ^
+npm ERR! /github/home/.cache/node-gyp/18.0.0/include/node/node.h:886:3: note: in expansion of macro 'NODE_MODULE_X'
+npm ERR!   886 |   NODE_MODULE_X(modname, regfunc, NULL, 0)  // NOLINT (readability/null_usage)
+npm ERR!       |   ^~~~~~~~~~~~~
+npm ERR! ../src/bcrypt_node.cc:359:1: note: in expansion of macro 'NODE_MODULE'
+npm ERR!   359 | NODE_MODULE(bcrypt_lib, init);
+npm ERR!       | ^~~~~~~~~~~
+npm ERR! make: *** [bcrypt_lib.target.mk:115: Release/obj.target/bcrypt_lib/src/bcrypt_node.o] Error 1
+npm ERR! gyp ERR! build error 
+npm ERR! gyp ERR! stack Error: `make` failed with exit code: 2
+npm ERR! gyp ERR! stack     at ChildProcess.onExit (/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/lib/build.js:194:23)
+npm ERR! gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+npm ERR! gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "build" "--fallback-to-build" "--module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node" "--module_name=bcrypt_lib" "--module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding" "--napi_version=8" "--node_abi_napi=napi" "--napi_build_version=0" "--node_napi_label=node-v108"
+npm ERR! gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! gyp ERR! node -v v18.0.0
+npm ERR! gyp ERR! node-gyp -v v9.0.0
+npm ERR! gyp ERR! not ok 
+npm ERR! node-pre-gyp ERR! build error 
+npm ERR! node-pre-gyp ERR! stack Error: Failed to execute '/__t/node/18.0.0/x64/bin/node /__t/node/18.0.0/x64/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js build --fallback-to-build --module=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding/bcrypt_lib.node --module_name=bcrypt_lib --module_path=/__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt/lib/binding --napi_version=8 --node_abi_napi=napi --napi_build_version=0 --node_napi_label=node-v108' (1)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.<anonymous> (/__w/appoptics-apm-node/appoptics-apm-node/node_modules/@mapbox/node-pre-gyp/lib/util/compile.js:89:23)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess.emit (node:events:527:28)
+npm ERR! node-pre-gyp ERR! stack     at maybeClose (node:internal/child_process:1090:16)
+npm ERR! node-pre-gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:302:5)
+npm ERR! node-pre-gyp ERR! System Linux 5.13.0-1021-azure
+npm ERR! node-pre-gyp ERR! command "/__t/node/18.0.0/x64/bin/node" "/__w/appoptics-apm-node/appoptics-apm-node/node_modules/.bin/node-pre-gyp" "install" "--fallback-to-build"
+npm ERR! node-pre-gyp ERR! cwd /__w/appoptics-apm-node/appoptics-apm-node/node_modules/bcrypt
+npm ERR! node-pre-gyp ERR! node -v v18.0.0
+npm ERR! node-pre-gyp ERR! node-pre-gyp -v v1.0.9
+npm ERR! node-pre-gyp ERR! not ok
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /github/home/.npm/_logs/2022-04-25T18_38_22_374Z-debug-0.log
+npm WARN deprecated node-pre-gyp@0.14.0: Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future
+npm WARN deprecated bcrypt@4.0.0: versions < v5.0.0 do not handle NUL in passwords properly
+
+added 38 packages, changed 141 packages, and audited 965 packages in 9s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-25T18:38:42.815Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-25T18:38:42.816Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-25T18:38:42.816Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-25T18:38:42.816Z appoptics:debug using context provider: ace-context
+2022-04-25T18:38:42.878Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-25T18:38:43.005Z appoptics:patching fs.realpath - adding native method
+2022-04-25T18:38:43.006Z appoptics:patching patched fs 
+2022-04-25T18:38:43.044Z appoptics:patching patched crypto 
+2022-04-25T18:38:43.045Z appoptics:patching patched bcrypt 4.0.0
+2022-04-25T18:38:43.048Z appoptics:debug starting runtimeMetrics
+
+
+  probes.bcrypt 4.0.0
+    ✓ should trace through async bcrypt (160ms)
+
+
+  1 passing (165ms)
+
+npm WARN deprecated bcrypt@4.0.1: versions < v5.0.0 do not handle NUL in passwords properly
+
+changed 1 package, and audited 965 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+10 vulnerabilities (7 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-25T18:38:49.705Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-25T18:38:49.705Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-25T18:38:49.705Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-25T18:38:49.706Z appoptics:debug using context provider: ace-context
+2022-04-25T18:38:49.779Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-25T18:38:49.918Z appoptics:patching fs.realpath - adding native method
+2022-04-25T18:38:49.919Z appoptics:patching patched fs 
+2022-04-25T18:38:49.957Z appoptics:patching patched crypto 
+2022-04-25T18:38:49.958Z appoptics:patching patched bcrypt 4.0.1
+2022-04-25T18:38:49.961Z appoptics:debug starting runtimeMetrics
+
+
+  probes.bcrypt 4.0.1
+    ✓ should trace through async bcrypt (154ms)
+
+
+  1 passing (170ms)
+
+npm WARN deprecated node-pre-gyp@0.15.0: Please upgrade to @mapbox/node-pre-gyp: the non-scoped node-pre-gyp package is deprecated and only the @mapbox scoped package will recieve updates in the future
+
+changed 8 packages, and audited 965 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-25T18:38:56.617Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-25T18:38:56.617Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-25T18:38:56.617Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-25T18:38:56.618Z appoptics:debug using context provider: ace-context
+2022-04-25T18:38:56.689Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-25T18:38:56.826Z appoptics:patching fs.realpath - adding native method
+2022-04-25T18:38:56.827Z appoptics:patching patched fs 
+2022-04-25T18:38:56.863Z appoptics:patching patched crypto 
+2022-04-25T18:38:56.864Z appoptics:patching patched bcrypt 5.0.0
+2022-04-25T18:38:56.867Z appoptics:debug starting runtimeMetrics
+
+
+  probes.bcrypt 5.0.0
+    ✓ should trace through async bcrypt (160ms)
+
+
+  1 passing (172ms)
+
+
+removed 38 packages, changed 2 packages, and audited 927 packages in 6s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-25T18:39:04.073Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-25T18:39:04.074Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-25T18:39:04.074Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-25T18:39:04.075Z appoptics:debug using context provider: ace-context
+2022-04-25T18:39:04.132Z appoptics:debug apm 10.2.2-ao.0, bindings 11.2.0, oboe 10.2.0
+2022-04-25T18:39:04.256Z appoptics:patching patched crypto 
+2022-04-25T18:39:04.256Z appoptics:patching patched bcrypt 5.0.1
+2022-04-25T18:39:04.259Z appoptics:debug starting runtimeMetrics
+
+
+  probes.bcrypt 5.0.1
+    ✓ should trace through async bcrypt (154ms)
+
+
+  1 passing (158ms)
+
+
+up to date, audited 927 packages in 5s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+9 vulnerabilities (6 moderate, 3 high)
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
