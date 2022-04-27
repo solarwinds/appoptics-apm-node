@@ -124,6 +124,11 @@ if [ "$group_to_run" = "CORE" ] || [ ! "$group_to_run" ]; then executeTestGroup 
 if [ "$group_to_run" = "NO-ADDON" ] || [ ! "$group_to_run" ]; then executeTestGroup "NO-ADDON" "test/no-addon/*.test.js" "$timeout"; fi
 
 #
+# run unit tests without the addon disabled
+#
+if [ "$group_to_run" = "NO-SERVICE-KEY" ] || [ ! "$group_to_run" ]; then executeTestGroup "NO-SERVICE-KEY" "test/no-service-key/*.test.js" "$timeout"; fi
+
+#
 # originally these tests were the only ones to run one-at-a-time
 # because it's not possible to change the oboe logging level after
 # initialization time. now they don't really need to be separate.

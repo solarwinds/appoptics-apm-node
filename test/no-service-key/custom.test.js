@@ -1,7 +1,7 @@
 /* global it, describe */
 'use strict'
 
-process.env.AO_TEST_NO_BINDINGS = '1'
+process.env.APPOPTICS_SERVICE_KEY = ''
 
 const ao = require('../..')
 const aob = ao.addon
@@ -18,9 +18,9 @@ function psoon () {
 
 const xtrace = '2B4FC9017BA3404828F253638A697DC7CF1A6BB1A4A544D5B98159B55501'
 
-// Without the native liboboe bindings present,
+// Without the service key present,
 // the custom instrumentation should be a no-op
-describe('custom (without native bindings present)', function () {
+describe('custom (without service key present)', function () {
   it('should have a bindings version of \'not loaded\'', function () {
     assert(ao.addon.version === 'not loaded')
   })
@@ -137,9 +137,9 @@ describe('custom (without native bindings present)', function () {
     assert(typeof o === 'object')
     assert(Object.keys(o).length === 0)
 
-    o = ao.insertLogObject({ existing: 'bruce' })
+    o = ao.insertLogObject({ existing: 'ron' })
     assert(typeof o === 'object')
     assert(Object.keys(o).length === 1)
-    assert(o.existing === 'bruce')
+    assert(o.existing === 'ron')
   })
 })
