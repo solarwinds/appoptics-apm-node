@@ -4,6 +4,7 @@
 
 const helper = require('../helper')
 const { ao } = require('../1.test-common')
+const semver = require('semver')
 
 const expect = require('chai').expect
 
