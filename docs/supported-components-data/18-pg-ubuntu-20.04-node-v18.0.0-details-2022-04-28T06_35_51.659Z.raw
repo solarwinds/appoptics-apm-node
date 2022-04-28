@@ -1,0 +1,2159 @@
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+added 1 package, changed 2 packages, and audited 924 packages in 8s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:36:00.417Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:36:00.418Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:36:00.418Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:36:00.418Z appoptics:debug using context provider: ace-context
+2022-04-28T06:36:00.490Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:36:00.745Z appoptics:patching patched crypto 
+2022-04-28T06:36:00.767Z appoptics:patching patched https 
+2022-04-28T06:36:00.768Z appoptics:patching patched http 
+2022-04-28T06:36:00.813Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:36:00.814Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:36:00.814Z appoptics:patching patched fs 
+2022-04-28T06:36:00.819Z appoptics:patching patched dns 
+2022-04-28T06:36:00.826Z appoptics:patching patched pg 8.0.3
+2022-04-28T06:36:00.861Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.0.3 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.0.3
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (270ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (41ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (975ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (221ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (232ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (224ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (223ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (75ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (222ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (213ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (250ms)
+        ✔ should trace a basic query using callback (964ms)
+        ✔ should trace a basic query using promises (40ms)
+        ✔ should trace a prepared statement using a callback (212ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (220ms)
+        ✔ should truncate long queries using promises (38ms)
+        ✔ should tag queries when feature is enabledusing callback (210ms)
+        ✔ should tag queries when feature is enabled using promises (41ms)
+        ✔ should do nothing when disabled using a callback (209ms)
+        ✔ should do nothing when disabled using promises (41ms)
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 2 packages, and audited 924 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:36:15.530Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:36:15.531Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:36:15.531Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:36:15.531Z appoptics:debug using context provider: ace-context
+2022-04-28T06:36:15.617Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:36:15.765Z appoptics:patching patched crypto 
+2022-04-28T06:36:15.826Z appoptics:patching patched https 
+2022-04-28T06:36:15.827Z appoptics:patching patched http 
+2022-04-28T06:36:15.854Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:36:15.854Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:36:15.854Z appoptics:patching patched fs 
+2022-04-28T06:36:15.859Z appoptics:patching patched dns 
+2022-04-28T06:36:15.865Z appoptics:patching patched pg 8.1.0
+2022-04-28T06:36:15.891Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.1.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.1.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (156ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (79ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (53ms)
+        ✔ should trace a basic query using callback (948ms)
+        ✔ should trace a basic query using promises (49ms)
+        ✔ should trace a prepared statement using a callback (203ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (43ms)
+        ✔ should truncate long queries using a callback (211ms)
+        ✔ should truncate long queries using promises (43ms)
+        ✔ should tag queries when feature is enabledusing callback (205ms)
+        ✔ should tag queries when feature is enabled using promises (47ms)
+        ✔ should do nothing when disabled using a callback (202ms)
+        ✔ should do nothing when disabled using promises (49ms)
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (87ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (40ms)
+        ✔ should trace a basic query using promises (45ms)
+        ✔ should trace a prepared statement using a callback (207ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (41ms)
+        ✔ should truncate long queries using a callback (215ms)
+        ✔ should truncate long queries using promises (39ms)
+        ✔ should tag queries when feature is enabledusing callback (207ms)
+        ✔ should tag queries when feature is enabled using promises (44ms)
+        ✔ should do nothing when disabled using a callback (205ms)
+        ✔ should do nothing when disabled using promises (45ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (250ms)
+        ✔ should trace a basic query using callback (957ms)
+        ✔ should trace a basic query using promises (44ms)
+        ✔ should trace a prepared statement using a callback (208ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (40ms)
+        ✔ should truncate long queries using a callback (220ms)
+        ✔ should truncate long queries using promises (38ms)
+        ✔ should tag queries when feature is enabledusing callback (208ms)
+        ✔ should tag queries when feature is enabled using promises (43ms)
+        ✔ should do nothing when disabled using a callback (207ms)
+        ✔ should do nothing when disabled using promises (43ms)
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:36:30.335Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:36:30.335Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:36:30.335Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:36:30.336Z appoptics:debug using context provider: ace-context
+2022-04-28T06:36:30.411Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:36:30.544Z appoptics:patching patched crypto 
+2022-04-28T06:36:30.567Z appoptics:patching patched https 
+2022-04-28T06:36:30.567Z appoptics:patching patched http 
+2022-04-28T06:36:30.608Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:36:30.608Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:36:30.608Z appoptics:patching patched fs 
+2022-04-28T06:36:30.613Z appoptics:patching patched dns 
+2022-04-28T06:36:30.623Z appoptics:patching patched pg 8.2.0
+2022-04-28T06:36:30.649Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.2.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.2.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (142ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (40ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (969ms)
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (225ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (218ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (120ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (52ms)
+        ✔ should trace a basic query using promises (40ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (221ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (216ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (215ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (968ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (218ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (219ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (218ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:36:44.511Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:36:44.513Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:36:44.513Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:36:44.513Z appoptics:debug using context provider: ace-context
+2022-04-28T06:36:44.589Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:36:44.774Z appoptics:patching patched crypto 
+2022-04-28T06:36:44.866Z appoptics:patching patched https 
+2022-04-28T06:36:44.867Z appoptics:patching patched http 
+2022-04-28T06:36:44.911Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:36:44.912Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:36:44.912Z appoptics:patching patched fs 
+2022-04-28T06:36:44.916Z appoptics:patching patched dns 
+2022-04-28T06:36:44.924Z appoptics:patching patched pg 8.2.1
+2022-04-28T06:36:44.948Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.2.1 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.2.1
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (135ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (49ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (965ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (218ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (225ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (219ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (84ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (42ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (233ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (226ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (225ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (250ms)
+        ✔ should trace a basic query using callback (975ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (227ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (237ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (232ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (229ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:36:59.428Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:36:59.429Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:36:59.429Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:36:59.429Z appoptics:debug using context provider: ace-context
+2022-04-28T06:36:59.509Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:36:59.648Z appoptics:patching patched crypto 
+2022-04-28T06:36:59.703Z appoptics:patching patched https 
+2022-04-28T06:36:59.703Z appoptics:patching patched http 
+2022-04-28T06:36:59.731Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:36:59.731Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:36:59.731Z appoptics:patching patched fs 
+2022-04-28T06:36:59.736Z appoptics:patching patched dns 
+2022-04-28T06:36:59.742Z appoptics:patching patched pg 8.2.2
+2022-04-28T06:36:59.768Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.2.2 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.2.2
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (145ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (44ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (969ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (226ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (219ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (102ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (43ms)
+        ✔ should trace a basic query using promises (38ms)
+        ✔ should trace a prepared statement using a callback (213ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (223ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (213ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (212ms)
+        ✔ should do nothing when disabled using promises (40ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (961ms)
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (211ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (221ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (212ms)
+        ✔ should do nothing when disabled using promises (39ms)
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 8s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:37:14.518Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:37:14.518Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:37:14.518Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:37:14.518Z appoptics:debug using context provider: ace-context
+2022-04-28T06:37:14.585Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:37:14.717Z appoptics:patching patched crypto 
+2022-04-28T06:37:14.751Z appoptics:patching patched https 
+2022-04-28T06:37:14.752Z appoptics:patching patched http 
+2022-04-28T06:37:14.786Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:37:14.787Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:37:14.787Z appoptics:patching patched fs 
+2022-04-28T06:37:14.791Z appoptics:patching patched dns 
+2022-04-28T06:37:14.799Z appoptics:patching patched pg 8.3.0
+2022-04-28T06:37:14.824Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.3.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.3.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (117ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (65ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (44ms)
+        ✔ should trace a basic query using callback (962ms)
+        ✔ should trace a basic query using promises (38ms)
+        ✔ should trace a prepared statement using a callback (211ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (222ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (213ms)
+        ✔ should tag queries when feature is enabled using promises (39ms)
+        ✔ should do nothing when disabled using a callback (210ms)
+        ✔ should do nothing when disabled using promises (41ms)
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (83ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (46ms)
+        ✔ should trace a basic query using promises (40ms)
+        ✔ should trace a prepared statement using a callback (213ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (220ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (214ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (213ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (966ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (216ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (223ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (218ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:37:29.586Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:37:29.587Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:37:29.587Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:37:29.587Z appoptics:debug using context provider: ace-context
+2022-04-28T06:37:29.657Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:37:29.779Z appoptics:patching patched crypto 
+2022-04-28T06:37:29.799Z appoptics:patching patched https 
+2022-04-28T06:37:29.799Z appoptics:patching patched http 
+2022-04-28T06:37:29.840Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:37:29.840Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:37:29.840Z appoptics:patching patched fs 
+2022-04-28T06:37:29.844Z appoptics:patching patched dns 
+2022-04-28T06:37:29.851Z appoptics:patching patched pg 8.3.2
+2022-04-28T06:37:29.876Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.3.2 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.3.2
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (118ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (38ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (971ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (220ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (80ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (221ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (213ms)
+        ✔ should tag queries when feature is enabled using promises (38ms)
+        ✔ should do nothing when disabled using a callback (213ms)
+        ✔ should do nothing when disabled using promises (38ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (250ms)
+        ✔ should trace a basic query using callback (962ms)
+        ✔ should trace a basic query using promises (40ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (224ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (219ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (218ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 924 packages in 6s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:37:43.030Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:37:43.031Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:37:43.031Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:37:43.031Z appoptics:debug using context provider: ace-context
+2022-04-28T06:37:43.099Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:37:43.245Z appoptics:patching patched crypto 
+2022-04-28T06:37:43.265Z appoptics:patching patched https 
+2022-04-28T06:37:43.265Z appoptics:patching patched http 
+2022-04-28T06:37:43.306Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:37:43.306Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:37:43.306Z appoptics:patching patched fs 
+2022-04-28T06:37:43.311Z appoptics:patching patched dns 
+2022-04-28T06:37:43.319Z appoptics:patching patched pg 8.3.3
+2022-04-28T06:37:43.345Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.3.3 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.3.3
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (142ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (41ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (38ms)
+        ✔ should trace a basic query using callback (966ms)
+        ✔ should trace a basic query using promises (38ms)
+        ✔ should trace a prepared statement using a callback (212ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (217ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (219ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (87ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (55ms)
+        ✔ should trace a basic query using promises (60ms)
+        ✔ should trace a prepared statement using a callback (193ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (47ms)
+        ✔ should truncate long queries using a callback (207ms)
+        ✔ should truncate long queries using promises (49ms)
+        ✔ should tag queries when feature is enabledusing callback (198ms)
+        ✔ should tag queries when feature is enabled using promises (54ms)
+        ✔ should do nothing when disabled using a callback (195ms)
+        ✔ should do nothing when disabled using promises (56ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (946ms)
+        ✔ should trace a basic query using promises (56ms)
+        ✔ should trace a prepared statement using a callback (196ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (51ms)
+        ✔ should truncate long queries using a callback (206ms)
+        ✔ should truncate long queries using promises (49ms)
+        ✔ should tag queries when feature is enabledusing callback (196ms)
+        ✔ should tag queries when feature is enabled using promises (59ms)
+        ✔ should do nothing when disabled using a callback (191ms)
+        ✔ should do nothing when disabled using promises (60ms)
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+removed 1 package, changed 1 package, and audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:37:57.508Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:37:57.509Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:37:57.509Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:37:57.509Z appoptics:debug using context provider: ace-context
+2022-04-28T06:37:57.592Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:37:57.739Z appoptics:patching patched crypto 
+2022-04-28T06:37:57.794Z appoptics:patching patched https 
+2022-04-28T06:37:57.794Z appoptics:patching patched http 
+2022-04-28T06:37:57.836Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:37:57.836Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:37:57.836Z appoptics:patching patched fs 
+2022-04-28T06:37:57.842Z appoptics:patching patched dns 
+2022-04-28T06:37:57.852Z appoptics:patching patched pg 8.4.0
+2022-04-28T06:37:57.896Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.4.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.4.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (217ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (42ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (40ms)
+        ✔ should trace a basic query using callback (960ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (228ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (223ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (220ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (79ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises (45ms)
+        ✔ should trace a prepared statement using a callback (208ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (40ms)
+        ✔ should truncate long queries using a callback (217ms)
+        ✔ should truncate long queries using promises (40ms)
+        ✔ should tag queries when feature is enabledusing callback (206ms)
+        ✔ should tag queries when feature is enabled using promises (45ms)
+        ✔ should do nothing when disabled using a callback (204ms)
+        ✔ should do nothing when disabled using promises (46ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (250ms)
+        ✔ should trace a basic query using callback (956ms)
+        ✔ should trace a basic query using promises (44ms)
+        ✔ should trace a prepared statement using a callback (207ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (39ms)
+        ✔ should truncate long queries using a callback (217ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (209ms)
+        ✔ should tag queries when feature is enabled using promises (42ms)
+        ✔ should do nothing when disabled using a callback (207ms)
+        ✔ should do nothing when disabled using promises (43ms)
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 8s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:38:12.909Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:38:12.910Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:38:12.910Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:38:12.910Z appoptics:debug using context provider: ace-context
+2022-04-28T06:38:12.978Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:38:13.102Z appoptics:patching patched crypto 
+2022-04-28T06:38:13.122Z appoptics:patching patched https 
+2022-04-28T06:38:13.122Z appoptics:patching patched http 
+2022-04-28T06:38:13.162Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:38:13.162Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:38:13.162Z appoptics:patching patched fs 
+2022-04-28T06:38:13.166Z appoptics:patching patched dns 
+2022-04-28T06:38:13.174Z appoptics:patching patched pg 8.4.1
+2022-04-28T06:38:13.196Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.4.1 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.4.1
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (116ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (41ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (50ms)
+        ✔ should trace a basic query using callback (954ms)
+        ✔ should trace a basic query using promises (47ms)
+        ✔ should trace a prepared statement using a callback (206ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (225ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (216ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (214ms)
+        ✔ should do nothing when disabled using promises (38ms)
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (111ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (70ms)
+        ✔ should trace a basic query using promises (45ms)
+        ✔ should trace a prepared statement using a callback (207ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (39ms)
+        ✔ should truncate long queries using a callback (212ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (207ms)
+        ✔ should tag queries when feature is enabled using promises (48ms)
+        ✔ should do nothing when disabled using a callback (203ms)
+        ✔ should do nothing when disabled using promises (48ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (953ms)
+        ✔ should trace a basic query using promises (48ms)
+        ✔ should trace a prepared statement using a callback (206ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (39ms)
+        ✔ should truncate long queries using a callback (215ms)
+        ✔ should truncate long queries using promises (40ms)
+        ✔ should tag queries when feature is enabledusing callback (207ms)
+        ✔ should tag queries when feature is enabled using promises (45ms)
+        ✔ should do nothing when disabled using a callback (205ms)
+        ✔ should do nothing when disabled using promises (47ms)
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:38:27.627Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:38:27.628Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:38:27.628Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:38:27.628Z appoptics:debug using context provider: ace-context
+2022-04-28T06:38:27.712Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:38:27.850Z appoptics:patching patched crypto 
+2022-04-28T06:38:27.888Z appoptics:patching patched https 
+2022-04-28T06:38:27.889Z appoptics:patching patched http 
+2022-04-28T06:38:27.915Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:38:27.915Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:38:27.916Z appoptics:patching patched fs 
+2022-04-28T06:38:27.920Z appoptics:patching patched dns 
+2022-04-28T06:38:27.927Z appoptics:patching patched pg 8.4.2
+2022-04-28T06:38:27.949Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.4.2 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.4.2
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (121ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (43ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (47ms)
+        ✔ should trace a basic query using callback (959ms)
+        ✔ should trace a basic query using promises (44ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (228ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (220ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (219ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (76ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (42ms)
+        ✔ should trace a basic query using promises (41ms)
+        ✔ should trace a prepared statement using a callback (211ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (219ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (212ms)
+        ✔ should tag queries when feature is enabled using promises (40ms)
+        ✔ should do nothing when disabled using a callback (210ms)
+        ✔ should do nothing when disabled using promises (42ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (961ms)
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (211ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (219ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (211ms)
+        ✔ should tag queries when feature is enabled using promises (41ms)
+        ✔ should do nothing when disabled using a callback (209ms)
+        ✔ should do nothing when disabled using promises (42ms)
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:38:41.989Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:38:41.990Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:38:41.990Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:38:41.990Z appoptics:debug using context provider: ace-context
+2022-04-28T06:38:42.059Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:38:42.186Z appoptics:patching patched crypto 
+2022-04-28T06:38:42.206Z appoptics:patching patched https 
+2022-04-28T06:38:42.207Z appoptics:patching patched http 
+2022-04-28T06:38:42.244Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:38:42.244Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:38:42.245Z appoptics:patching patched fs 
+2022-04-28T06:38:42.249Z appoptics:patching patched dns 
+2022-04-28T06:38:42.257Z appoptics:patching patched pg 8.5.0
+2022-04-28T06:38:42.279Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.5.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.5.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (127ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (39ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (967ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (224ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (233ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (228ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (227ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (131ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (44ms)
+        ✔ should trace a basic query using promises (38ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (229ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (214ms)
+        ✔ should do nothing when disabled using promises (45ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (251ms)
+        ✔ should trace a basic query using callback (955ms)
+        ✔ should trace a basic query using promises (47ms)
+        ✔ should trace a prepared statement using a callback (204ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises (41ms)
+        ✔ should truncate long queries using a callback (214ms)
+        ✔ should truncate long queries using promises (42ms)
+        ✔ should tag queries when feature is enabledusing callback (206ms)
+        ✔ should tag queries when feature is enabled using promises (45ms)
+        ✔ should do nothing when disabled using a callback (206ms)
+        ✔ should do nothing when disabled using promises (45ms)
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:38:56.574Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:38:56.574Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:38:56.574Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:38:56.575Z appoptics:debug using context provider: ace-context
+2022-04-28T06:38:56.682Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:38:56.826Z appoptics:patching patched crypto 
+2022-04-28T06:38:56.881Z appoptics:patching patched https 
+2022-04-28T06:38:56.882Z appoptics:patching patched http 
+2022-04-28T06:38:56.920Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:38:56.920Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:38:56.920Z appoptics:patching patched fs 
+2022-04-28T06:38:56.929Z appoptics:patching patched dns 
+2022-04-28T06:38:56.937Z appoptics:patching patched pg 8.5.1
+2022-04-28T06:38:56.967Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.5.1 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.5.1
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (200ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (56ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (40ms)
+        ✔ should trace a basic query using callback (961ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (223ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (218ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (216ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (83ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (43ms)
+        ✔ should trace a basic query using promises (42ms)
+        ✔ should trace a prepared statement using a callback (210ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (220ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (210ms)
+        ✔ should tag queries when feature is enabled using promises (43ms)
+        ✔ should do nothing when disabled using a callback (206ms)
+        ✔ should do nothing when disabled using promises (43ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (959ms)
+        ✔ should trace a basic query using promises (43ms)
+        ✔ should trace a prepared statement using a callback (209ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (216ms)
+        ✔ should truncate long queries using promises (38ms)
+        ✔ should tag queries when feature is enabledusing callback (208ms)
+        ✔ should tag queries when feature is enabled using promises (43ms)
+        ✔ should do nothing when disabled using a callback (207ms)
+        ✔ should do nothing when disabled using promises (42ms)
+
+
+  80 passing (7s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 8s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:39:11.982Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:39:11.983Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:39:11.983Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:39:11.983Z appoptics:debug using context provider: ace-context
+2022-04-28T06:39:12.052Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:39:12.176Z appoptics:patching patched crypto 
+2022-04-28T06:39:12.217Z appoptics:patching patched https 
+2022-04-28T06:39:12.218Z appoptics:patching patched http 
+2022-04-28T06:39:12.244Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:39:12.245Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:39:12.245Z appoptics:patching patched fs 
+2022-04-28T06:39:12.249Z appoptics:patching patched dns 
+2022-04-28T06:39:12.256Z appoptics:patching patched pg 8.6.0
+2022-04-28T06:39:12.279Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.6.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.6.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (114ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (39ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool
+        ✔ should trace a basic query using callback (970ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (219ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (215ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (81ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (214ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (223ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (214ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (967ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (225ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (219ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 17s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:39:36.095Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:39:36.096Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:39:36.096Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:39:36.096Z appoptics:debug using context provider: ace-context
+2022-04-28T06:39:36.165Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:39:36.290Z appoptics:patching patched crypto 
+2022-04-28T06:39:36.310Z appoptics:patching patched https 
+2022-04-28T06:39:36.310Z appoptics:patching patched http 
+2022-04-28T06:39:36.347Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:39:36.347Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:39:36.347Z appoptics:patching patched fs 
+2022-04-28T06:39:36.351Z appoptics:patching patched dns 
+2022-04-28T06:39:36.359Z appoptics:patching patched pg 8.7.0
+2022-04-28T06:39:36.381Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.7.0 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.7.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (118ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (40ms)
+        ✔ should trace a basic query using callback (966ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (216ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (228ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (218ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (106ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (41ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (226ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (217ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (216ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (251ms)
+        ✔ should trace a basic query using callback (967ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (227ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (218ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 8s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:39:50.979Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:39:50.980Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:39:50.980Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:39:50.980Z appoptics:debug using context provider: ace-context
+2022-04-28T06:39:51.050Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:39:51.178Z appoptics:patching patched crypto 
+2022-04-28T06:39:51.199Z appoptics:patching patched https 
+2022-04-28T06:39:51.199Z appoptics:patching patched http 
+2022-04-28T06:39:51.238Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:39:51.239Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:39:51.239Z appoptics:patching patched fs 
+2022-04-28T06:39:51.243Z appoptics:patching patched dns 
+2022-04-28T06:39:51.251Z appoptics:patching patched pg 8.7.1
+2022-04-28T06:39:51.274Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.7.1 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.7.1
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (112ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (47ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (40ms)
+        ✔ should trace a basic query using callback (965ms)
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (213ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (223ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (214ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (81ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (42ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (228ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (215ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (217ms)
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (251ms)
+        ✔ should trace a basic query using callback (967ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback (218ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (224ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (217ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (219ms)
+        ✔ should do nothing when disabled using promises
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+changed 1 package, and audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+2022-04-28T06:40:05.238Z appoptics:debug read config from /__w/appoptics-apm-node/appoptics-apm-node/appoptics-apm-config
+2022-04-28T06:40:05.239Z appoptics:debug guc ignoring APPOPTICS_LOG_SETTINGS
+2022-04-28T06:40:05.239Z appoptics:debug serviceKey dIOz...wWK0:node-agent-test
+2022-04-28T06:40:05.239Z appoptics:debug using context provider: ace-context
+2022-04-28T06:40:05.308Z appoptics:debug apm 10.2.2-nh.0, bindings 12.0.0-nh.1, oboe 10.3.3
+2022-04-28T06:40:05.464Z appoptics:patching patched crypto 
+2022-04-28T06:40:05.528Z appoptics:patching patched https 
+2022-04-28T06:40:05.529Z appoptics:patching patched http 
+2022-04-28T06:40:05.560Z appoptics:patching fs.realpath - adding native method
+2022-04-28T06:40:05.560Z appoptics:patching fsPromises.exists not a function
+2022-04-28T06:40:05.560Z appoptics:patching patched fs 
+2022-04-28T06:40:05.565Z appoptics:patching patched dns 
+2022-04-28T06:40:05.573Z appoptics:patching patched pg 8.7.3
+2022-04-28T06:40:05.596Z appoptics:debug starting runtimeMetrics
+
+
+  probes.pg 8.7.3 pg-native 3.0.0
+    ✔ should be configured to sanitize SQL by default
+    ✔ should be configured to not tag SQL by default
+    javascript 8.7.3
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (141ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (41ms)
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool with backed up queue
+        ✔ should exhaust the pool (42ms)
+        ✔ should trace a basic query using callback (962ms)
+        ✔ should trace a basic query using promises (39ms)
+        ✔ should trace a prepared statement using a callback (217ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (226ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (219ms)
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback (218ms)
+        ✔ should do nothing when disabled using promises
+    native 3.0.0
+      ✔ UDP might lose a message
+      ✔ should create the pg testing context (85ms)
+      using client
+        ✔ should trace a basic query using callback
+        ✔ should trace a basic query using promises
+        ✔ should trace a prepared statement using a callback
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback
+        ✔ should tag queries when feature is enabled using promises
+        ✔ should do nothing when disabled using a callback
+        ✔ should do nothing when disabled using promises
+      using pool
+        ✔ should trace a basic query using callback (38ms)
+        ✔ should trace a basic query using promises (42ms)
+        ✔ should trace a prepared statement using a callback (210ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (217ms)
+        ✔ should truncate long queries using promises (39ms)
+        ✔ should tag queries when feature is enabledusing callback (211ms)
+        ✔ should tag queries when feature is enabled using promises (41ms)
+        ✔ should do nothing when disabled using a callback (209ms)
+        ✔ should do nothing when disabled using promises (42ms)
+      using pool with backed up queue
+        ✔ should exhaust the pool (249ms)
+        ✔ should trace a basic query using callback (961ms)
+        ✔ should trace a basic query using promises (41ms)
+        ✔ should trace a prepared statement using a callback (212ms)
+        ✔ should trace a prepared statement using promises
+        ✔ should sanitize query when no value list using a callback
+        ✔ should sanitize query when no value list using promises
+        ✔ should truncate long queries using a callback (222ms)
+        ✔ should truncate long queries using promises
+        ✔ should tag queries when feature is enabledusing callback (212ms)
+        ✔ should tag queries when feature is enabled using promises (40ms)
+        ✔ should do nothing when disabled using a callback (210ms)
+        ✔ should do nothing when disabled using promises (40ms)
+
+
+  80 passing (6s)
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: '@azure/msal-node@1.8.0',
+npm WARN EBADENGINE   required: { node: '10 || 12 || 14 || 16' },
+npm WARN EBADENGINE   current: { node: 'v18.0.0', npm: '8.6.0' }
+npm WARN EBADENGINE }
+
+up to date, audited 923 packages in 7s
+
+89 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
