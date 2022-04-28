@@ -81,7 +81,7 @@ jobs:
       - name: Check Artifacts
         run: |
           ls node_modules/solarwinds-apm-bindings/dist/napi-v*/apm_bindings.node 
-          ls node_modules/solarwinds/apm-bindings/dist/napi-v*/ao_metrics.node
+          ls node_modules/solarwinds-apm-bindings/dist/napi-v*/ao_metrics.node
         working-directory: .github/utils
 
       # confirms thst server can be instrumented via .readyToSample
@@ -92,7 +92,7 @@ jobs:
           image=${{ matrix.image  }}
           pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
           export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          export SW_APM_COLLECTOR=${{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
@@ -102,7 +102,7 @@ jobs:
           image=${{ matrix.image  }}
           pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
           export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          export SW_APM_COLLECTOR=${{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js & node client.js --total 20
         working-directory: .github/utils
 
@@ -113,7 +113,7 @@ jobs:
           image=${{ matrix.image  }}
           pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
           export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          export SW_APM_COLLECTOR=${{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
@@ -123,6 +123,6 @@ jobs:
           image=${{ matrix.image  }}
           pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
           export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          export SW_APM_COLLECTOR=${{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --port 3001 & node client.js --port 3001 --total 20
         working-directory: .github/utils
