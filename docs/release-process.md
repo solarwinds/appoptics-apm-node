@@ -43,7 +43,7 @@ Release of `latest` tagged package versions is governed by SolarWinds and requir
 
 ### Preparation CheckList
 
-A release should **always** come after a prerelease. The head of the master branch should be the head of the released version.
+A release should **always** come after a prerelease. The head of the main branch should be the head of the released version.
 
 1. Define what **version of the agent** will be released via what promotion (Major, Monor or Patch).
 2. Ask admin to create a Jira Release named `agent-nodejs-X.Y.Z` and allocate relevant Jira issue tickets to it.

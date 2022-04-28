@@ -64,7 +64,7 @@ require in the code will just get a reference to the results of the command line
 
 ## Configuration
 
-See the [Configuration Guide](https://github.com/solarwindscloud/solarwinds-apm-node/blob/master/CONFIGURATION.md)
+See the [Configuration Guide](https://github.com/solarwindscloud/solarwinds-apm-node/blob/main/CONFIGURATION.md)
 
 ## Upgrading
 
