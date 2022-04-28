@@ -92,6 +92,7 @@ test('koa-router', {
 })
 
 test('level', node('gte', '12.0.0') ? '>= 5.0.0' : '>= 1.3.0')
+test('log4js')
 
 test('memcached', '>= 2.2.0')
 // prior to version 3.3.0 mongodb used mongodb-core.
