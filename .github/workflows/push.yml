@@ -1,12 +1,12 @@
 name: Push - Core Tests (on push)
 
-# workflow is for a branch push only and ignores master.
-# push to master (which is also pull request merge) has a more elaborate workflow to run
-# github repo is configured with branch protection on master.
+# workflow is for a branch push only and ignores main.
+# push to main (which is also pull request merge) has a more elaborate workflow to run
+# github repo is configured with branch protection on main.
 on: 
   push:
     branches-ignore:
-      - 'master'
+      - 'main'
       # any branch with a name ending in -no-action will not trigger this workflow.
       - '*-no-action'
 

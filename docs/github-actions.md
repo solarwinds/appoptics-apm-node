@@ -14,7 +14,7 @@ The upstream package uses a similar [Development & Release process](https://gith
 
 ### Prep - Push Dockerfile
 
-* Push to master is disabled by branch protection.
+* Push to main is disabled by branch protection.
 * Push to branch which changes any Dockerfile in the `.github/docker-node/` directory will trigger [docker-node.yml](./workflows/docker-node.yml).
 * Workflow will:
   - Build all Dockerfile and create a [single package](https://github.com/solarwindscloud/solarwinds-apm-node/pkgs/container/solarwinds-apm-node%2Fnode-agent-runner) named `node-agent-runner` scoped to solarwindscloud/solarwinds-apm-node (the repo). The workflow is triggered by a push of a Dockerfile. Hence it has already ran successfully on commits in this Pull Request. Since this repo is public, the image is also public.
@@ -29,7 +29,7 @@ manual ──────────► └────────────
 
 ### Develop - Push
 
-* Push to master is disabled by branch protection.
+* Push to main is disabled by branch protection.
 * Push to branch will trigger [push.yml](./workflows/push.yml). 
 * Workflow will:
   - Run core tests on single node version set on the GitHub Actions runner. 
@@ -63,7 +63,7 @@ manual ──────────► └────────────
 * Manual trigger supported.
 ```
 
-merge to master ─► ┌──────────────────────────┐
+merge to main   ─► ┌──────────────────────────┐
                    │Matrix Networked Full Test│
 manual ──────────► └──────────────────────────┘
 ```
