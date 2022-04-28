@@ -9,7 +9,7 @@ const conf = ao.probes['cassandra-driver']
 
 const should = require('should') // eslint-disable-line no-unused-vars
 const hosts = helper.Address.from(
-  process.env.AO_TEST_CASSANDRA_2_2 || 'cassandra:9042'
+  process.env.SW_APM_TEST_CASSANDRA_2_2 || 'cassandra:9042'
 )
 
 const ks = 'test' + (process.env.AO_IX || '')
@@ -57,10 +57,10 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
   }
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)

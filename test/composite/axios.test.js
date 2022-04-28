@@ -15,10 +15,10 @@ describe('composite.axios', function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
   })

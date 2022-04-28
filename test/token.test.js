@@ -1,9 +1,9 @@
 /* global it, describe */
 'use strict'
 
-const token = process.env.AO_TEST_SERVICE_KEY.split(':')[0]
+const token = process.env.SW_APM_TEST_SERVICE_KEY.split(':')[0]
 const name = 'swoken-Modification-test'
-process.env.APPOPTICS_SERVICE_KEY = `${token}:${name}`
+process.env.SW_APM_SERVICE_KEY = `${token}:${name}`
 
 const ao = require('..')
 const assert = require('assert')
@@ -14,6 +14,6 @@ describe('verify that a swoken is handled correctly', function () {
   })
 
   it('shouldn\'t change the environment variable', function () {
-    assert.strictEqual(process.env.APPOPTICS_SERVICE_KEY, `${token}:${name}`)
+    assert.strictEqual(process.env.SW_APM_SERVICE_KEY, `${token}:${name}`)
   })
 })

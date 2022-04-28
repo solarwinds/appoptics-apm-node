@@ -7,7 +7,7 @@ const path = require('path')
 const helloDotEjs = 'hello.ejs'
 
 const helper = require(path.join(base, 'test/helper'))
-const ao = global[Symbol.for('AppOptics.Apm.Once')]
+const ao = global[Symbol.for('SolarWinds.Apm.Once')]
 
 const axios = require('axios')
 
@@ -29,11 +29,11 @@ describe(`probes.${hapiName} ${pkg.version} ${visionText}`, function () {
   let clear
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     ao.probes.fs.enabled = false
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)

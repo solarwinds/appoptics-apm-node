@@ -7,7 +7,7 @@ const { ao } = require('../1.test-common')
 const oracledb = require('oracledb')
 const pkg = require('oracledb/package.json')
 
-const addr = process.env.AO_TEST_ORACLE || 'oracle:1521'
+const addr = process.env.SW_APM_TEST_ORACLE || 'oracle:1521'
 
 // IMPORTANT: those are "hard set" for the test image
 const database = 'xe'
@@ -22,10 +22,10 @@ describe(`probes.oracledb ${pkg.version}`, function () {
   let lastConnection
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
 

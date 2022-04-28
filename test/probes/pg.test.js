@@ -7,17 +7,17 @@ const { ao } = require('../1.test-common')
 const postgres = require('pg')
 const pkg = require('pg/package.json')
 
-const addr = helper.Address.from(process.env.AO_TEST_POSTGRES || 'postgres:5432')[0]
+const addr = helper.Address.from(process.env.SW_APM_TEST_POSTGRES || 'postgres:5432')[0]
 
 // using a null password is valid.
-const password = 'AO_TEST_POSTGRES_PASSWORD' in process.env ? process.env.AO_TEST_POSTGRES_PASSWORD : 'xyzzy'
+const password = 'SW_APM_TEST_POSTGRES_PASSWORD' in process.env ? process.env.SW_APM_TEST_POSTGRES_PASSWORD : 'xyzzy'
 // make a unique table name so multiple tests can run concurrently without colliding.
 const tName = 'tbl' + (process.env.AO_IX ? process.env.AO_IX : '')
 
 const auth = {
   host: addr.host,
   port: addr.port,
-  user: process.env.AO_TEST_POSTGRES_USERNAME || 'postgres',
+  user: process.env.SW_APM_TEST_POSTGRES_USERNAME || 'postgres',
   password: password,
   database: 'test'
 }
@@ -49,7 +49,7 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
     if (ao.lastEvent) {
@@ -57,7 +57,7 @@ describe(`probes.pg ${pkg.version} pg-native ${nativeVer}`, function () {
       ao.loggers.debug(`id ${c} event.last at startup %e`, ao.lastEvent)
     }
 
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.probes.fs.enabled = false

@@ -7,10 +7,10 @@ on:
 
   workflow_dispatch:
     inputs: 
-      appoptics-version:
+      solarwinds-version:
         required: false
-        description: 'appoptics-apm version (e.g. appoptics-apm@prerelease)'
-        default: 'appoptics-apm@latest'
+        description: 'solarwinds-apm version (e.g. solarwinds-apm@prerelease)'
+        default: 'solarwinds-apm@latest'
 
 jobs:
   load-target-group:
@@ -21,17 +21,17 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
-      - name: Checkout appoptics/appoptics-bindings-node ${{ github.ref }}
+      - name: Checkout solarwindscloud/solarwinds-bindings-node ${{ github.ref }}
         uses: actions/checkout@v2
         with:
-          repository: appoptics/appoptics-bindings-node
+          repository: solarwindscloud/solarwinds-bindings-node
 
       - name: Load target group data
         id: set-matrix
         # json load script is does variable substitution based on repo where workflow runs
         # this workflow runs in the agent repo thus needs to "tweak" environment for correct load.
         run: |
-          export GITHUB_REPOSITORY=appoptics/appoptics-bindings-node
+          export GITHUB_REPOSITORY=solarwindscloud/solarwinds-bindings-node
           .github/scripts/matrix-from-json.sh .github/config/target-group.json
 
   install-trace:
@@ -60,28 +60,28 @@ jobs:
           cat /etc/os-release
 
       # of all bad options, this is the cleanest way to branch the version of the package
-      - name: NPM Install (appoptics-apm version from Input)
+      - name: NPM Install (solarwinds-apm version from Input)
         run: |
-          version=${{ github.event.inputs.appoptics-version }}
+          version=${{ github.event.inputs.solarwinds-version }}
           npm install
           npm install $version --unsafe-perm
         working-directory: .github/utils
-        if: ${{ github.event.inputs.appoptics-version }}
+        if: ${{ github.event.inputs.solarwinds-version }}
 
-      - name: NPM Install (appoptics-apm version from Package)
+      - name: NPM Install (solarwinds-apm version from Package)
         run: |
-          version=appoptics-apm@$(node -e "console.log(require('../../package.json').version)")
+          version=solarwinds-apm@$(node -e "console.log(require('../../package.json').version)")
           npm install
           npm install $version --unsafe-perm
         working-directory: .github/utils
-        if: ${{ !github.event.inputs.appoptics-version }}
+        if: ${{ !github.event.inputs.solarwinds-version }}
 
       # when installing the package, the binding dependency is either built from source or downloaded as pre-built tarball
       # in either case, the binary has to be present. if it is not, it is a failed install and the step will fail
       - name: Check Artifacts
         run: |
-          ls node_modules/@appoptics/apm-bindings/dist/napi-v*/apm_bindings.node 
-          ls node_modules/@appoptics/apm-bindings/dist/napi-v*/ao_metrics.node
+          ls node_modules/solarwinds-apm-bindings/dist/napi-v*/apm_bindings.node 
+          ls node_modules/solarwinds/apm-bindings/dist/napi-v*/ao_metrics.node
         working-directory: .github/utils
 
       # confirms thst server can be instrumented via .readyToSample
@@ -90,39 +90,39 @@ jobs:
         # use client multiple times to make an easily noticeable mark on UI
         run: |
           image=${{ matrix.image  }}
-          pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
+          export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
+          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
-      # results of step should be visually examined in https://my-stg.appoptics.com/
+      # results of step should be visually examined in solarwinds staging backend
       - name: Start Server & use Client against Staging
         run: |
           image=${{ matrix.image  }}
-          pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
+          pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
+          export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_SERVICE_KEY }}-${image#"$pre"}
+          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_COLLECTOR }}
           node server.js & node client.js --total 20
         working-directory: .github/utils
 
       # confirms that production server can be instrumented via .readyToSample
-      # override APPOPTICS_COLLECTOR
+      # override SW_APM_COLLECTOR
       - name: Preflight Production Server
         run: |
           image=${{ matrix.image  }}
-          pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
+          export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
+          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --preflight
         working-directory: .github/utils
 
-      # results of step should be visually examined in https://my.appoptics.com/
+      # results of step should be visually examined in solarwinds production backend
       - name: Start Server & use Client against Production
         run: |
           image=${{ matrix.image  }}
-          pre=ghcr.io/appoptics/appoptics-bindings-node/
-          export APPOPTICS_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
-          export APPOPTICS_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
+          pre=ghcr.io/solarwindscloud/solarwinds-bindings-node/
+          export SW_APM_SERVICE_KEY=${{ secrets.SW_APM_TEST_PROD_SERVICE_KEY }}-${image#"$pre"}
+          export SW_APM_COLLECTOR={{ secrets.SW_APM_TEST_PROD_COLLECTOR }}
           node server.js --port 3001 & node client.js --port 3001 --total 20
         working-directory: .github/utils

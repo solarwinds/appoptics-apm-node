@@ -9,9 +9,9 @@ const pkg = require('mysql/package.json')
 
 const semver = require('semver')
 
-const addr = helper.Address.from(process.env.AO_TEST_MYSQL || 'mysql:3306')[0]
-const user = process.env.AO_TEST_MYSQL_USERNAME || 'root'
-const pass = process.env.AO_TEST_MYSQL_PASSWORD || 'admin'
+const addr = helper.Address.from(process.env.SW_APM_TEST_MYSQL || 'mysql:3306')[0]
+const user = process.env.SW_APM_TEST_MYSQL_USERNAME || 'root'
+const pass = process.env.SW_APM_TEST_MYSQL_PASSWORD || 'admin'
 
 let dbExists = false
 
@@ -36,10 +36,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.probes.fs.enabled = false

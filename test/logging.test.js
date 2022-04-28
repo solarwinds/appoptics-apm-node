@@ -41,7 +41,7 @@ describe('logging', function () {
     let correct = false
     const real = debug.enable
     debug.enable = function (level) {
-      correct = level === 'appoptics:span'
+      correct = level === 'solarwinds-apm:span'
       debug.enable = real
     }
     ao.logLevel = 'span'
@@ -63,7 +63,7 @@ describe('logging', function () {
   it('should interact with existing debug logging correctly', function () {
     process.env.DEBUG = 'xyzzy:plover,xyzzy:dragon'
     ao.logLevel = 'error'
-    expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon', 'appoptics:error'])
+    expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon', 'solarwinds-apm:error'])
     ao.logLevel = ''
     expect(process.env.DEBUG.split(',')).include.members(['xyzzy:plover', 'xyzzy:dragon'])
   })
@@ -73,7 +73,7 @@ describe('logging', function () {
     let called = false
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      expect(level).equal('appoptics:error')
+      expect(level).equal('solarwinds-apm:error')
       expect(text).equal(msg)
       called = true
     }
@@ -115,7 +115,7 @@ describe('logging', function () {
     let i
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      expect(level).equal('appoptics:' + aolevel)
+      expect(level).equal('solarwinds-apm:' + aolevel)
       expect(text).equal(`[${i + 1}]${msg}`)
       count += 1
     }
@@ -148,7 +148,7 @@ describe('logging', function () {
 
     debug.log = function (output) {
       const [level, text] = getLevelAndText(output)
-      expect(level).equal('appoptics:' + aolevel)
+      expect(level).equal('solarwinds-apm:' + aolevel)
       expect(text).equal('[' + calls + ']' + msg)
       count += 1
     }
@@ -178,7 +178,7 @@ describe('logging', function () {
     ao.loggers.error('embed a string "%s" with a number %d', 'adventure', 98.6)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true, 'logger must be called')
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted).equal('embed a string "adventure" with a number 98.6');
 
     [logger, getter] = makeLogHandler()
@@ -186,18 +186,18 @@ describe('logging', function () {
     ao.loggers.warn('embed integer %i floating %f object %o Object %O', 17.5, 17.5, [1, 2], [1, 2]);
     [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true, 'logger must be called')
-    expect(level).equal('appoptics:warn')
+    expect(level).equal('solarwinds-apm:warn')
     expect(formatted).equal('embed integer 17 floating 17.5 object [ 1, 2, [length]: 2 ] Object [ 1, 2 ]')
   })
 
-  it('should handle the appoptics extended xtrace (%x) format', function () {
+  it('should handle the extended xtrace (%x) format', function () {
     let [logger, getter] = makeLogHandler()
     debug.log = logger
     const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     ao.loggers.error('xtrace %x', md)
     let [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted, '%x formatted').equal(`xtrace ${md.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
@@ -205,7 +205,7 @@ describe('logging', function () {
     ao.loggers.error('xtrace %x', '');
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted, 'null').equal('xtrace <no xtrace>');
 
     [logger, getter] = makeLogHandler()
@@ -213,7 +213,7 @@ describe('logging', function () {
     ao.loggers.error('xtrace %x', 'bad:beef:cafe');
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted, 'bad:beef:cafe').equal('xtrace ?-?-?-?(bad:beef:cafe)');
 
     [logger, getter] = makeLogHandler()
@@ -222,7 +222,7 @@ describe('logging', function () {
     ao.loggers.error('native event xtrace %x', event);
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted, 'event').equal(`native event xtrace ${event.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
@@ -231,7 +231,7 @@ describe('logging', function () {
     ao.loggers.error('event xtrace %x', event);
     [called, level, text, formatted] = getter()
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted, 'span').equal(`event xtrace ${event.event.toString(1)}`);
 
     [logger, getter] = makeLogHandler()
@@ -241,14 +241,14 @@ describe('logging', function () {
     ao.loggers.error('string xtrace %x', s);
     [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     // TODO: oString(1) is erroneous
     // expect(formatted, 'string').equal(`string xtrace ${md.toString(1)}`)
   })
 
   // check span formatting (%l). it was done when they were called layers and %s already
   // means string.
-  it('should handle the appoptics extended span (%l) format', function () {
+  it('should handle the extended span (%l) format', function () {
     const span = ao.Span.makeEntrySpan('log-span', makeSettings())
     const name = span.name
     const entry = `${name}:entry`
@@ -261,11 +261,11 @@ describe('logging', function () {
     ao.loggers.error('%l', span)
     const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted).equal(`${name} ${entry} ${entryEvent} ${exit} ${exitEvent}`)
   })
 
-  it('should handle the appoptics extended event (%e) format', function () {
+  it('should handle the extended event (%e) format', function () {
     const md = new ao.addon.Event.makeRandom() // eslint-disable-line new-cap
     const edge = false
     const event = new ao.Event('log-event', 'entry', md, edge)
@@ -276,13 +276,13 @@ describe('logging', function () {
     ao.loggers.error('%e', event)
     const [called, level, text, formatted] = getter() // eslint-disable-line no-unused-vars
     expect(called).equal(true)
-    expect(level).equal('appoptics:error')
+    expect(level).equal('solarwinds-apm:error')
     expect(formatted).equal(`${name} ${event.event.toString(1)}`)
   })
 
-  it('should suppress all startup logging when APPOPTICS_LOG_SETTINGS=""', function () {
+  it('should suppress all startup logging when SW_APM_LOG_SETTINGS=""', function () {
     this.slow(200)
-    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key', APPOPTICS_LOG_SETTINGS: '' })
+    const env = Object.assign({}, process.env, { SW_APM_SERVICE_KEY: 'bad key', SW_APM_LOG_SETTINGS: '' })
     const cmd = 'node'
     const args = ['-r ".."', '-e "process.exit()"']
 
@@ -298,11 +298,11 @@ describe('logging', function () {
 
   it('should not suppress startup logging by default', function () {
     this.slow(200)
-    const env = Object.assign({}, process.env, { APPOPTICS_SERVICE_KEY: 'bad key' })
+    const env = Object.assign({}, process.env, { SW_APM_SERVICE_KEY: 'bad key' })
     // delete underlying debug package's state; the logging package will detect
     // and enable them too.
     delete env.DEBUG
-    delete env.APPOPTICS_LOG_SETTINGS
+    delete env.SW_APM_LOG_SETTINGS
     const cmd = 'node'
     const args = ['-r ".."', '-e "process.exit()"']
 
@@ -315,15 +315,15 @@ describe('logging', function () {
     expect(r.stdout.length).equal(0, 'nothing should be written to stdout')
     expect(r.stderr.length).not.equal(0, 'stderr should not be empty')
 
-    // line format: 2020-08-07T21:48:36.268Z appoptics:error
+    // line format: 2020-08-07T21:48:36.268Z solarwinds-apm:error
     const lines = r.stderr.split('\n')
-    const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z appoptics:(error|warn)/
+    const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z solarwinds-apm:(error|warn)/
     lines.forEach(l => {
       expect(l.match(pattern, 'each line should contain only default logging levels'))
     })
   })
 
-  it.skip('should handle the appoptics extended cls (%c) format', function () {})
+  it.skip('should handle the extended cls (%c) format', function () {})
 
   //
   // helpers

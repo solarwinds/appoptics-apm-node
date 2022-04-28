@@ -1,7 +1,7 @@
 /* global it, describe */
 'use strict'
 
-process.env.APPOPTICS_SERVICE_KEY = ''
+process.env.SW_APM_SERVICE_KEY = ''
 
 const ao = require('../..')
 const aob = ao.addon

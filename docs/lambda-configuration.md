@@ -19,16 +19,16 @@ copied above.
 - use the AWS SDK to invoke the update-function-configuration equivalent.
 
 ## no-code change instrumentation
-- add the environment variable `APPOPTICS_WRAP_LAMBDA_HANDLER` set to the function's current handler.
+- add the environment variable `SW_APM_WRAP_LAMBDA_HANDLER` set to the function's current handler.
 The current handler can be found in the function's `Basic Settings` `Handler` setting, e.g.,
 `index.handler`.
 - change the function's `Basic Settings` `Handler` setting to `appoptics-auto-lambda.handler`.
 
 That's it! When lambda loads the function it will invoke AppOptics' handler which will load your function
-(specified by the env var `APPOPTICS_WRAP_LAMBDA_HANDLER`) and automatically set up your function's instrumentation.
+(specified by the env var `SW_APM_WRAP_LAMBDA_HANDLER`) and automatically set up your function's instrumentation.
 
 ## manual instrumentation
-- DO NOT change the lambda function's `Handler` setting nor create the env var `APPOPTICS_WRAP_LAMBDA_HANDLER`
+- DO NOT change the lambda function's `Handler` setting nor create the env var `SW_APM_WRAP_LAMBDA_HANDLER`
 - add `const ao = require('appoptics-apm');` as the first module required in your function's code.
 - use `ao.wrapLambdaHandler()` to wrap your function before exporting it.
 

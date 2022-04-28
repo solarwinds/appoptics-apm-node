@@ -1,5 +1,5 @@
 'use strict'
 
-process.env.AO_TEST_HTTP = 'https'
+process.env.SW_APM_TEST_HTTP = 'https'
 
 require('./http-websocket-common.js')

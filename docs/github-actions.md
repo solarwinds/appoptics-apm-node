@@ -4,11 +4,11 @@
 
 ## Overview
 
-The package is dependent on the upstream package [@appoptics/apm-bindings](https://www.npmjs.com/package/@appoptics/apm-bindings) which contains a binary node add-on. 
+The package is dependent on the upstream package [solarwinds-apm-bindings](https://www.npmjs.com/package/solarwinds-apm-bindings) which contains a binary node add-on. 
 
 End users do not directly install the upstream package. Hence, any release of the upstream package requires a release of this package. Versions however do not have to be synced and tere can be multiple releases of this package with same dependency on upstream package.
 
-The upstream package uses a similar [Development & Release process](https://github.com/appoptics/appoptics-bindings-node#development--release-with-github-actions).
+The upstream package uses a similar [Development & Release process](https://github.com/solarwindscloud/solarwinds-bindings-node/tree/main/.github#development--release-with-github-actions).
 
 ## Usage
 
@@ -17,7 +17,7 @@ The upstream package uses a similar [Development & Release process](https://gith
 * Push to master is disabled by branch protection.
 * Push to branch which changes any Dockerfile in the `.github/docker-node/` directory will trigger [docker-node.yml](./workflows/docker-node.yml).
 * Workflow will:
-  - Build all Dockerfile and create a [single package](https://github.com/appoptics/appoptics-apm-node/pkgs/container/appoptics-apm-node%2Fnode-agent-runner) named `node-agent-runner` scoped to appoptics/appoptics-apm-node (the repo). The workflow is triggered by a push of a Dockerfile. Hence it has already ran successfully on commits in this Pull Request. Since this repo is public, the image is also public.
+  - Build all Dockerfile and create a [single package](https://github.com/solarwindscloud/solarwinds-apm-node/pkgs/container/solarwinds-apm-node%2Fnode-agent-runner) named `node-agent-runner` scoped to solarwindscloud/solarwinds-apm-node (the repo). The workflow is triggered by a push of a Dockerfile. Hence it has already ran successfully on commits in this Pull Request. Since this repo is public, the image is also public.
 * Workflow creates (or recreates) image used in other workflows.
 * Manual trigger supported.
 
@@ -91,7 +91,7 @@ push alpha tag     │NPM Publish│
 * Runs after the Release workflow has completed.
 * Workflow will:
   - Load the Target Group from the bindings repo and for each image in group:
-  - Install Appoptics agent (either the released version or the one specified manually).
+  - Install Agent (either the released version or the one specified manually).
   - Check that installation of binary completed successfully (either from prebuilt tarball or from source).
   - Start an instrumented http server to confirm auto instrumentation against staging is working.
   - Run a simulation http client to generate data on staging backend.
@@ -158,13 +158,10 @@ completed          │   Verify  │
 
 Repo is defined with the following secrets:
 ```
-APPOPTICS_SERVICE_KEY
-AO_TEST_SERVICE_KEY
-AO_TEST_COLLECTOR
-AO_TEST_PROD_SERVICE_KEY
-AO_TEST_PROD_COLLECTOR
 SW_APM_SERVICE_KEY
 SW_TEST_SERVICE_KEY
 SW_TEST_COLLECTOR
+SW_APM_TEST_PROD_SERVICE_KEY
+SW_APM_TEST_PROD_COLLECTOR
 NPM_AUTH_TOKEN
 ```

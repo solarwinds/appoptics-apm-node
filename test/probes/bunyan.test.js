@@ -176,7 +176,7 @@ describe(`bunyan v${version}`, function () {
   })
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     // make sure we get sampled traces
@@ -186,7 +186,7 @@ describe(`bunyan v${version}`, function () {
     ao.cfg.insertTraceIdsIntoLogs = true
     ao.probes.fs.enabled = false
 
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
   })
   afterEach(function (done) {
     emitter.close(done)

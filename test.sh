@@ -130,7 +130,7 @@ if [ "$group_to_run" = "NO-SERVICE-KEY" ] || [ ! "$group_to_run" ]; then execute
 
 # this tests the http client through using the request package with promises. it's
 # a step in the direction of end-to-end testing that should incorporate a server and
-# verifying that the appoptics.com collector received the traces.
+# verifying that the collector received the traces.
 #
 if [ "$group_to_run" = "COMPOSITE" ] || [ ! "$group_to_run" ]; then executeTestGroup "COMPOSITE" "test/composite/*.test.js" "$timeout"; fi
 
