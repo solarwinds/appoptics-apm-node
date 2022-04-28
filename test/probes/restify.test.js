@@ -28,10 +28,10 @@ describe(`probes.restify ${pkg.version}`, function () {
   const previousHttpClient = ao.probes['http-client'].enabled
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // restify newer versions of restify use negotiator which does file io

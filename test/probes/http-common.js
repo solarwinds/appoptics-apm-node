@@ -15,12 +15,12 @@ const addon = ao.addon
 const semver = require('semver')
 const axios = require('axios')
 
-if (process.env.AO_TEST_HTTP !== 'http' && process.env.AO_TEST_HTTP !== 'https') {
-  throw new Error(`invalid value for AO_TEST_HTTP: ${process.env.AO_TEST_HTTP}`)
+if (process.env.SW_APM_TEST_HTTP !== 'http' && process.env.SW_APM_TEST_HTTP !== 'https') {
+  throw new Error(`invalid value for SW_APM_TEST_HTTP: ${process.env.SW_APM_TEST_HTTP}`)
 }
 
 // p stands for protocol
-const p = process.env.AO_TEST_HTTP
+const p = process.env.SW_APM_TEST_HTTP
 
 const driver = require(p)
 
@@ -52,10 +52,10 @@ describe(`probes.${p}`, function () {
   let originalFlag
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)

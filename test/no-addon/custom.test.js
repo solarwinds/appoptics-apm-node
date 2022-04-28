@@ -1,7 +1,7 @@
 /* global it, describe */
 'use strict'
 
-process.env.AO_TEST_NO_BINDINGS = '1'
+process.env.SW_APM_TEST_NO_BINDINGS = '1'
 
 const ao = require('../..')
 const aob = ao.addon

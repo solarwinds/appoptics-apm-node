@@ -44,8 +44,8 @@ Those are available in the Docker Dev Container.
 1. Start the Docker daemon (on a Mac that would be simplest using Docker desktop).
 2. Create a `.env` file and set: 
 - `APPOPTICS_SERVICE_KEY={any string that looks like a valid service key}`
-- `AO_TEST_COLLECTOR={a url of a collector}`
-- `AO_TEST_SERVICE_KEY={a valid service key for the collector above}`.
+- `SW_APM_TEST_COLLECTOR={a url of a collector}`
+- `SW_APM_TEST_SERVICE_KEY={a valid service key for the collector above}`.
 
 3. Run `npm run dev`. This will:
   - Create a docker container, set it up, and open a shell. Docker container will have all required build tools, nvm and multiple versions of node preinstalled, as well as nano installed, and access to GitHub SSH keys as configured. Repo code is **mounted** to the container.

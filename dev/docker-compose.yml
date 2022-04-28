@@ -15,23 +15,22 @@ services:
       - ~/.aws/config:/root/.aws/config
     working_dir: /usr/src/work
     env_file:
-      - ../.env # contains AO_TEST_SERVICE_KEY, AO_TEST_COLLECTOR, APPOPTICS_SERVICE_KEY
+      - ../.env # contains SW_APM_TEST_SERVICE_KEY, SW_APM_TEST_COLLECTOR, SW_APM_SERVICE_KEY
     environment:
-      APPOPTICS_LOG_SETTINGS: error,warn,patching,bind,debug
-      APPOPTICS_COLLECTOR: localhost:7832
-      APPOPTICS_REPORTER: udp
-
-      AO_TEST_CASSANDRA_2_2: cassandra:9042
-      AO_TEST_MEMCACHED_1_4: memcached:11211
-      AO_TEST_MONGODB_2_4: mongo_2_4:27017
-      AO_TEST_MONGODB_2_6: mongo_2_6:27017
-      AO_TEST_MONGODB_3_0: mongo_3_0:27017
-      AO_TEST_SQLSERVER_EX: mssql:1433
-      AO_TEST_MYSQL: mysql:3306
-      AO_TEST_ORACLE: oracle:1521
-      AO_TEST_POSTGRES: postgres:5432
-      AO_TEST_RABBITMQ_3_5: rabbitmq:5672
-      AO_TEST_REDIS_3_0: redis:6379
+      SW_APM_LOG_SETTINGS: error,warn,patching,bind,debug
+      SW_APM_COLLECTOR: localhost:7832
+      SW_APM_REPORTER: udp
+      SW_APM_TEST_CASSANDRA_2_2: cassandra:9042
+      SW_APM_TEST_MEMCACHED_1_4: memcached:11211
+      SW_APM_TEST_MONGODB_2_4: mongo_2_4:27017
+      SW_APM_TEST_MONGODB_2_6: mongo_2_6:27017
+      SW_APM_TEST_MONGODB_3_0: mongo_3_0:27017
+      SW_APM_TEST_SQLSERVER_EX: mssql:1433
+      SW_APM_TEST_MYSQL: mysql:3306
+      SW_APM_TEST_ORACLE: oracle:1521
+      SW_APM_TEST_POSTGRES: postgres:5432
+      SW_APM_TEST_RABBITMQ_3_5: rabbitmq:5672
+      SW_APM_TEST_REDIS_3_0: redis:6379
     ports:
       - "9229:9229"
       - "3000:3000"

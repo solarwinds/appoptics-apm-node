@@ -20,10 +20,10 @@ const pkg = require('mongodb/package.json')
 const moduleName = semver.gte(pkg.version, '3.3.0') ? 'mongodb' : 'mongodb-core'
 
 let hosts = {
-  2.4: process.env.AO_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
-  2.6: process.env.AO_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
-  '3.0': process.env.AO_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
-  'replica set': process.env.AO_TEST_MONGODB_SET
+  2.4: process.env.SW_APM_TEST_MONGODB_2_4 || 'mongo_2_4:27017',
+  2.6: process.env.SW_APM_TEST_MONGODB_2_6 || 'mongo_2_6:27017',
+  '3.0': process.env.SW_APM_TEST_MONGODB_3_0 || 'mongo_3_0:27017',
+  'replica set': process.env.SW_APM_TEST_MONGODB_SET
 }
 
 // version 3 of mongodb-core removed the 2.4 protocol driver. and mongodb 3.0.0
@@ -35,8 +35,8 @@ if (semver.gte(pkg.version, '3.0.0')) {
 // if travis reset for now.
 if (process.env.CI === 'true' && process.env.TRAVIS === 'true') {
   hosts = {
-    '3+': process.env.AO_TEST_MONGODB_3 || 'localhost:27017',
-    'replica set': process.env.AO_TEST_MONGODB_SET
+    '3+': process.env.SW_APM_TEST_MONGODB_3 || 'localhost:27017',
+    'replica set': process.env.SW_APM_TEST_MONGODB_SET
   }
 }
 
@@ -51,10 +51,10 @@ describe('probes.mongodb UDP', function () {
   let emitter
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)
@@ -101,14 +101,14 @@ function makeTests (db_host, host, isReplicaSet) {
   }
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   beforeEach(function (done) {
     ao.probes.fs.enabled = false
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.probes[moduleName].collectBacktraces = false
-    emitter = helper.appoptics(function () {
+    emitter = helper.backend(function () {
       done()
     })
   })

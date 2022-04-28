@@ -1,5 +1,5 @@
-// a simple AppOptics instrumented http server
-const ao = require('appoptics-apm')
+// a simple SolarWinds APM instrumented http server
+const ao = require('solarwinds-apm')
 const http = require('http')
 const arg = require('arg')
 
@@ -9,7 +9,7 @@ const args = arg({ '--preflight': Boolean, '--port': Number })
 const preflight = async () => {
   // server must be instrumented and will exit with error if not
   const isReady = await ao.readyToSample(5000)
-  if (!isReady) throw new Error('AppOptics not ready to sample.')
+  if (!isReady) throw new Error('SolarWinds APM not ready to sample.')
 }
 
 const setServer = async () => {

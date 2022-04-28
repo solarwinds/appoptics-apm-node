@@ -1,5 +1,5 @@
 'use strict'
 
-process.env.AO_TEST_HTTP = 'http'
+process.env.SW_APM_TEST_HTTP = 'http'
 
 require('./http-common.js')

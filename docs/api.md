@@ -216,7 +216,7 @@ hapi/hapi: customFunction (request)
 <a name="ao.readyToSample"></a>
 
 ### ao.readyToSample(ms, [obj]) ⇒ <code>boolean</code>
-Check whether the appoptics agent is ready to sample. It will wait up to
+Check whether the agent is ready to sample. It will wait up to
 the specified number of milliseconds before returning.
 
 **Kind**: static method of [<code>ao</code>](#ao)  
@@ -284,7 +284,7 @@ Apply custom instrumentation to a synchronous or async-callback function.
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | span | <code>string</code> \| [<code>spanInfoFunction</code>](#spanInfoFunction) |  | span name or span-info function     If `span` is a string then a span is created with that name. If it     is a function it will be run only if tracing; it must return a     spanInfo-compatible object - see instrumenting-a-module.md in guides/. |
-| run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error appoptics will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     AppOptics know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
+| run | <code>function</code> |  | the function to instrument<br/><br/>     Synchronous `run` function:<br/>     the signature has no callback, e.g., `function run () {...}`. If a     synchronous `run` function throws an error agent will report that     error for the span and re-throw the error.<br/>     <br/>     Asynchronous `run` function:<br/>     the signature must include a done callback that is used to let     agent know when your instrumented async code is done running,     e.g., `function run (done) {...}`. In order to report an error for     an async span the done function must be called with an Error object     as the argument. |
 | [options] | <code>object</code> |  | options |
 | [options.enabled] | <code>boolean</code> | <code>true</code> | enable tracing |
 | [options.collectBacktraces] | <code>boolean</code> | <code>false</code> | collect stack traces. |
@@ -316,7 +316,7 @@ ao.instrument(spanInfo, run)
 // An asynchronous `run` function.
 //
 // Rather than callback directly, you give the done argument.
-// This tells AppOptics when your instrumented code is done running.
+// This tells the agent when your instrumented code is done running.
 //
 // The `callback` function is the callback you normally would have given
 // directly to the code you want to instrument. It receives the same

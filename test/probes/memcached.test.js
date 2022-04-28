@@ -8,7 +8,7 @@ const semver = require('semver')
 
 const Memcached = require('memcached')
 const pkg = require('memcached/package.json')
-const db_host = process.env.AO_TEST_MEMCACHED_1_4 || 'memcached:11211'
+const db_host = process.env.SW_APM_TEST_MEMCACHED_1_4 || 'memcached:11211'
 
 describe('probes.memcached ' + pkg.version, function () {
   this.timeout(10000)
@@ -16,10 +16,10 @@ describe('probes.memcached ' + pkg.version, function () {
   let mem
 
   //
-  // Intercept appoptics messages for analysis
+  // Intercept messages for analysis
   //
   before(function (done) {
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
 

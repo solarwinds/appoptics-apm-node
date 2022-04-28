@@ -355,7 +355,7 @@ describe('probes.http trigger-trace', function () {
 
   before(function (done) {
     // setup to handle messages
-    emitter = helper.appoptics(done)
+    emitter = helper.backend(done)
     ao.sampleRate = addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
 

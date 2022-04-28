@@ -2,7 +2,7 @@
 
 ## Overview
 
-This *agent package* ([appoptics-apm](https://www.npmjs.com/package/appoptics-apm)) is dependent on the upstream *bindings package* ([@appoptics/apm-bindings](https://www.npmjs.com/package/@appoptics/apm-bindings)) which contains a binary node add-on. 
+This *agent package* ([solarwinds-apm](https://www.npmjs.com/package/solarwinds-apm)) is dependent on the upstream *bindings package* ([solarwinds-apm-bindings](https://www.npmjs.com/package/solarwinds-apm-bindings)) which contains a binary node add-on. 
 
 End users only install the *agent package*. They do not directly install the *bindings package*. 
 
@@ -26,9 +26,9 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 ### Agent
 1. Create a prerelease branch (e.g Prerelease-2021-09-22)
 2. **ONLY IF needed** update bindings version to `prerelease`
-  - ```npm install @appoptics/apm-bindings@prerelease```
+  - ```npm install @solarwinds-apm-bindings@prerelease```
   - ```npm install --package-lock-only```
-  - ```git commit -am "Updated @appoptics/apm-bindings to prerelease."```
+  - ```git commit -am "Updated solarwinds-apm-bindings to prerelease."```
 3. On the branch, bump and tag prerelease version with the `prerelease` tag.
   - ```npm version prerelease --preid prerelease```
 4. Push (watch result of triggered GitHub Actions workflow)
@@ -79,11 +79,11 @@ A release should **always** come after a prerelease. The head of the master bran
 ### Agent
 1. Create the release branch (e.g Release-2021-09-22)
   - ```git checkout -b Release```
-2. Update [CHANGELOG.md](https://github.com/appoptics/appoptics-apm-node/blob/master/CHANGELOG.md)
+2. Update [CHANGELOG.md](https://github.com/solarwindscloud/solarwinds-apm-node/blob/main/CHANGELOG.md)
 3. Update bindings version **ONLY IF needed**
-  - ```npm install @appoptics/apm-bindings@latest```
+  - ```npm install solarwinds-apm-bindings@latest```
   - ```npm install --package-lock-only```
-  - ```git commit -am "Updated @appoptics/apm-bindings to latest."```
+  - ```git commit -am "Updated solarwinds-apm-bindings to latest."```
 4. Bump and tag release version
   - ```npm version [<newversion> | major | minor | patch ]```
 5. Push (watch result of triggered GitHub Action workflow)
@@ -96,7 +96,7 @@ A release should **always** come after a prerelease. The head of the master bran
 9. Watch Verify workflow result
 
 ### Post Release
-1. Update [Agent Release notes](https://github.com/appoptics/appoptics-apm-node/releases) and [Bindings Release Notes](https://github.com/appoptics/appoptics-bindings-node/releases). "Click Draft new release" and choose tag of completed release.
+1. Update [Agent Release notes](https://github.com/solarwindscloud/solarwinds-apm-node/releases) and [Bindings Release Notes](https://github.com/solarwindscloud/solarwinds-bindings-node/releases). "Click Draft new release" and choose tag of completed release.
 2. Run Document workflow.
-3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/appoptics/appoptics-apm-node/blob/master/docs/supported-components.human) list.
+3. Update Documentation Ticket with link to newly generated [supported components](https://github.com/solarwindscloud/solarwinds-apm-node/blob/main/docs/supported-components.human) list.
 4. Announce new version in #ao-releases in Slack.

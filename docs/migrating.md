@@ -28,7 +28,7 @@ functions. Previously this would work because promise-spans were really callback
 - `ao.serviceKey` - this property has been removed; it is no longer valid in all cases. If
 you require the service key in your code either fetch it from the environment or read your
 configuration file.
-- in v8 if `APPOPTICS_LOG_SETTINGS` was the empty string then the default logging 'error,warn'
+- in v8 if `SW_APM_LOG_SETTINGS` was the empty string then the default logging 'error,warn'
 would be used. in v9 that means no logging is enabled.
 - some error messages have changed to be more consistent.
 - the config file name is now `appoptics-apm-config`. It can still be either `.json` or `.js`.
