@@ -267,11 +267,6 @@ jobs:
       - name: Clear supported-components-data
         run: rm -rf docs/supported-components-data
 
-      - name: Download Test Matrix Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: docs/
-
       - name: Setup Node
         uses: actions/setup-node@v2
 
