@@ -288,7 +288,7 @@ jobs:
 
       - name: Commit Results
         run: |
-          git add docs
+          git add docs/supported-components.human
           git commit --message "Test Each Version Results ${{ steps.date.outputs.date }}"
           git push origin test-each-version-${{ steps.date.outputs.date }}
 
