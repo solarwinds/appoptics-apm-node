@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '14.x'
 
-      - name: Check is pablishable version
+      - name: Check is publishable version
         run: .github/scripts/is-publishable.sh ${{ github.event.inputs.releasing }}
 
   npm-publish:
