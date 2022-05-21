@@ -21,9 +21,7 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 3. Push (watch result of triggered GitHub Actions workflow)
 4. Create PR (watch result of triggered GitHub Actions workflow)
 5. Merge (watch result of triggered GitHub Actions workflow)
-6. If all workflows complete succsfully - Release
-  - ```git push --tags --dry-run``` to see what local tag is being pushed
-  - ```git push --tags```
+6. If all workflows complete successfully - Release (via Workflow)
 
 ### Agent
 1. Create a prerelease branch (e.g Prerelease-2021-09-22)
@@ -36,9 +34,7 @@ Release of `prerelease` taged packages allows for robust end-to-end testing and 
 4. Push (watch result of triggered GitHub Actions workflow)
 5. Create PR (watch result of triggered GitHub Actions workflow)
 6. Merge (watch result of triggered GitHub Actions workflow)
-7. If all workflows complete succsfully - Release
-  - ```git push --tags --dry-run``` to see what local tag is being pushed
-  - ```git push --tags```
+7. If all workflows complete successfully - Release (via Workflow)
 8. Watch result of Verify GitHub Actions workflow.
 
 ## Release Promotion
@@ -75,9 +71,10 @@ A release should **always** come after a prerelease. The head of the master bran
 3. Push (watch result of triggered GitHub Actions workflow)
 4. Create PR (watch result of triggered GitHub Actions workflow)
 5. Merge (watch result of triggered GitHub Actions workflow)
-6. Release
+6. Update tags
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
+7. If all workflows complete successfully - Release (via Workflow)
 
 ### Agent
 1. Create the release branch (e.g Release-2021-09-22)
@@ -92,9 +89,10 @@ A release should **always** come after a prerelease. The head of the master bran
 5. Push (watch result of triggered GitHub Action workflow)
 6. Create PR (watch result of triggered GitHub Actions workflow)
 7. Merge (watch result of triggered GitHub Actions workflow)
-8. Release
+8. Update tags
   - ```git push --tags --dry-run``` to see what local tag is being pushed
   - ```git push --tags```
+8. If all workflows complete successfully - Release (via Workflow)
 9. Watch Verify workflow result
 
 ### Post Release
