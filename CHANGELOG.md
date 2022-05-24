@@ -228,3 +228,17 @@ Maintenance
 
 Breaking changes
 - None
+
+### v10.2.2
+
+Maintenance
+
+- Supports Node 18.
+- Updated dependencies.
+
+Bug fix
+- No error when using without Service Key.
+- No error logging for failing to report error on an aborted connection.
+
+Breaking changes
+- None
