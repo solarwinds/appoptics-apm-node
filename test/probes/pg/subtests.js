@@ -131,7 +131,7 @@ module.exports = function (ao, ctx) {
   //
   // test sanitize
   //
-  const sanitizeQuery = `select * from "${ctx.tName}" where "foo" = '?'`
+  const sanitizeQuery = `select * from "${ctx.tName}" where "foo" = ?`
   const sanitizeChecks = [
     function (msg) {
       checks.entry(msg)
