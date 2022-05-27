@@ -335,7 +335,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = '?'`)
+        msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = ?`)
       },
       function (msg) {
         checks.exit(msg)

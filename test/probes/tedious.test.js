@@ -164,7 +164,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['mssql-entry'](msg)
-        msg.should.have.property('Query', 'select 0, @msg')
+        msg.should.have.property('Query', 'select ?, @msg')
         msg.should.not.have.property('QueryArgs')
       },
       function (msg) {

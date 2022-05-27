@@ -124,7 +124,7 @@ describe(`probes.oracledb ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['oracle-entry'](msg)
-        msg.should.have.property('Query', 'SELECT 0 FROM DUAL')
+        msg.should.have.property('Query', 'SELECT ? FROM DUAL')
         msg.should.not.have.property('QueryArgs')
       },
       function (msg) {

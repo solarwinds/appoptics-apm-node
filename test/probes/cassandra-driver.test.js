@@ -222,7 +222,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
     helper.test(emitter, helper.run(ctx, 'cassandra-driver/sanitize'), [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', 'SELECT * from foo where bar=\'?\'')
+        msg.should.have.property('Query', 'SELECT * from foo where bar=?')
       },
       function (msg) {
         checks.info(msg)
@@ -292,7 +292,7 @@ describe('probes.cassandra-driver ' + pkg.version, function () {
         function (msg) {
           checks.entry(msg)
           msg.should.have.property('Query', 'BATCH')
-          msg.should.have.property('BatchQueries', '["INSERT INTO foo (bar) values (?)","INSERT INTO foo (bar) values (\'?\')"]')
+          msg.should.have.property('BatchQueries', '["INSERT INTO foo (bar) values (?)","INSERT INTO foo (bar) values (?)"]')
           msg.should.not.have.property('BatchQueryArgs')
         },
         function (msg) {
