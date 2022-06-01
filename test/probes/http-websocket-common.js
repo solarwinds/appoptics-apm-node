@@ -143,8 +143,8 @@ describe(`probes.${p} websocket`, function () {
 
   // these are constant for a given protocol.
   const prefix = p === 'http' ? 'ws' : 'wss'
-  const url = `${p}://echo.websocket.org/`
-  const wsUrl = `${prefix}://echo.websocket.org/`
+  const url = `${p}://echo.websocket.events/`
+  const wsUrl = `${prefix}://echo.websocket.events/`
   const parsedUrl = new URL(wsUrl)
 
   describe(`${p}-client`, function () {
@@ -169,7 +169,7 @@ describe(`probes.${p} websocket`, function () {
       ], done)
     })
 
-    it.skip(`${p} connect to a public server`, function (done) {
+    it(`${p} connect to a public server`, function (done) {
       this.timeout(10000)
       const options = makeOptions(parsedUrl)
 
@@ -211,7 +211,7 @@ describe(`probes.${p} websocket`, function () {
       )
     })
 
-    it.skip('WebSocket connect to a public server', function (done) {
+    it('WebSocket connect to a public server', function (done) {
       helper.test(
         emitter,
         function (xdone) {
