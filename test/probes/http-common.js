@@ -180,18 +180,19 @@ describe(`probes.${p}`, function () {
           expect(msg).property('Status', 200)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
         port = server.address().port
         axios(
-          `${p}://localhost:${port}/foo?bar=baz`,
-          function (error, response, body) {
-            expect(response.headers).exist()
-            expect(response.headers).property('x-trace')
-          }
-        )
+          `${p}://localhost:${port}/foo?bar=baz`
+        ).then(function (response) {
+          expect(response.headers).property('x-trace')
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
       })
     })
 
@@ -204,20 +205,16 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let trasportXtrace = ''
-
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
           expect(msg).not.have.property('Edge')
-
-          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -225,11 +222,12 @@ describe(`probes.${p}`, function () {
         axios({
           url: `${p}://localhost:${port}`,
           headers: {}
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(baseTraceparent.slice(0, 35)).not.equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -239,20 +237,16 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let trasportXtrace = ''
-
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).not.have.property('Edge')
-
-          trasportXtrace = msg['X-Trace']
+          expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
         },
         function (msg) {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -262,11 +256,12 @@ describe(`probes.${p}`, function () {
           headers: {
             traceparent: baseTraceparent
           }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -276,19 +271,15 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let trasportXtrace = ''
-
       helper.doChecks(emitter, [
         function (msg) {
           expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
-
-          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -299,11 +290,12 @@ describe(`probes.${p}`, function () {
             traceparent: baseTraceparent,
             tracestate: baseTracestateOrgPart
           }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -313,22 +305,18 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let trasportXtrace = ''
-
       helper.doChecks(emitter, [
         function (msg) {
           // the edge in "Continuation" is from trace parent.
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
           expect(msg).property('sw.tracestate_parent_id')
           expect(msg).property('sw.w3c.tracestate')
-
-          trasportXtrace = msg['X-Trace']
         },
         function (msg) {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -339,11 +327,12 @@ describe(`probes.${p}`, function () {
             traceparent: baseTraceparent,
             tracestate: otherTracestateOrgPart
           }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(trasportXtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -402,7 +391,7 @@ describe(`probes.${p}`, function () {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -413,11 +402,12 @@ describe(`probes.${p}`, function () {
             traceparent,
             tracestate: baseTracestateOrgPart
           }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(3, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -439,7 +429,7 @@ describe(`probes.${p}`, function () {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
@@ -447,11 +437,12 @@ describe(`probes.${p}`, function () {
         axios({
           url: `${p}://localhost:${port}`,
           headers: { tracestate: baseTracestateOrgPart }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist()
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(3, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
