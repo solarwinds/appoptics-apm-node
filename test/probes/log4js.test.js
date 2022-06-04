@@ -112,6 +112,17 @@ describe(`log4js v${version}`, function () {
     ], done)
   })
 
+  // the way tests are setup - a configuration object is required in order
+  // to analyze the logs and see that they are correct
+  // this test just loads the logger without configuration to ensure it does not produce errors.
+  // and log function has been correctly wrapped.
+  it('should load correctly when no configuration is provided', function (done) {
+    const logger = log4js.getLogger()
+
+    expect(logger.log.name === 'wrappedLog')
+    done()
+  })
+
   insertModes.forEach(mode => {
     const maybe = mode === false ? 'not ' : ''
     eventInfo = undefined
