@@ -307,7 +307,7 @@ describe(`probes.${p}`, function () {
 
       helper.doChecks(emitter, [
         function (msg) {
-          // the edge in "Continuation" is from trace parent.
+          // the edge in "Continuation" is from tracestate.
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
           expect(msg).property('sw.tracestate_parent_id')
           expect(msg).property('sw.w3c.tracestate')
