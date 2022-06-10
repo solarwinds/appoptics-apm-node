@@ -256,6 +256,7 @@ describe(`probes.${p}`, function () {
         function (msg) {
           check.server.entry(msg)
           expect(msg).not.have.property('Edge')
+          expect(msg).not.have.property('sw.w3c.tracestate')
 
           xtrace = msg['X-Trace']
         },
@@ -282,6 +283,45 @@ describe(`probes.${p}`, function () {
       })
     })
 
+    it('should start a "Downstream" trace when receiving a traceparent and tracestate without our org', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.have.property('Edge')
+          expect(msg).property('sw.w3c.tracestate')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: 'ot=123'
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
     it('should continue "Flow" tracing when receiving a traceparent and tracestate that match', function (done) {
       const server = createServer(options, function (req, res) {
         res.end('done')
@@ -292,6 +332,7 @@ describe(`probes.${p}`, function () {
       helper.doChecks(emitter, [
         function (msg) {
           expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
+          expect(msg).property('sw.tracestate_parent_id')
 
           xtrace = msg['X-Trace']
         },
@@ -331,7 +372,6 @@ describe(`probes.${p}`, function () {
           // the edge in "Continuation" is from trace parent.
           expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
           expect(msg).property('sw.tracestate_parent_id')
-          expect(msg).property('sw.w3c.tracestate')
 
           xtrace = msg['X-Trace']
         },
