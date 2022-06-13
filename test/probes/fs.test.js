@@ -157,14 +157,7 @@ describe('probes.fs', function () {
         if (mode === 'sync') {
           return [span('open'), span('ftruncate'), span('close')]
         } else {
-          const expected = [span('open')]
-          // TODO: revisit
-          // when using continuation-local-storage the 'close' span
-          // doesn't appear.
-          if (ao.contextProvider !== 'continuation-local-storage') {
-            expected.push(span('close'))
-          }
-          return expected
+          return [span('open'), span('close')]
         }
       }
     },
