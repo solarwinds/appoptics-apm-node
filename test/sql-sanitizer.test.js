@@ -41,7 +41,7 @@ describe('sqlSanitizer basic', function () {
   })
 
   it('should adapt to = spacing', function () {
-    const sql = "UPDATE my_table SET col1=10, col2=20, col3=30 WHERE col1=1"
+    const sql = 'UPDATE my_table SET col1=10, col2=20, col3=30 WHERE col1=1'
     const result = sqlSanitizer.sanitize(sql)
     expect(result).equal('UPDATE my_table SET col1=?, col2=?, col3=? WHERE col1=?')
   })

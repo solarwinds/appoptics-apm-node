@@ -273,8 +273,6 @@ describe(`probes.${p}`, function () {
         res.end('done')
       })
 
-      let xtrace = ''
-
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
