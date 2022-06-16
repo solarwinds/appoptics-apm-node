@@ -136,8 +136,7 @@ describe('integrity', function () {
   it('should make sure that package dependencies are all from an approved list', function () {
     const approvedDependencies = [
       'ace-context',
-      'cls-hooked',
-      'debug-custom',
+      'debug',
       'semver',
       'shimmer'
     ]
