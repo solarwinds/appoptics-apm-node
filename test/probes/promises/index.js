@@ -37,9 +37,6 @@ module.exports = function (Promise) {
   it('should support promises via delay', function (done) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous span
-      // ao.requestStore.set('lastSpan', true)
-
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
         return delay(100)
@@ -57,9 +54,6 @@ module.exports = function (Promise) {
   it('should support promises via fs.readFile', function (done) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous span
-      // ao.requestStore.set('lastSpan', true)
-
       ao.requestStore.set('foo', 'bar')
       const p = new Promise(function (resolve, reject) {
         fs.readFile('./package.json', 'utf8', function (err, data) {
@@ -85,15 +79,11 @@ module.exports = function (Promise) {
     d.on('error', done)
     d.run(function () {
       ao.requestStore.run(function () {
-        // Hack to look like there's a previous span
-        // ao.requestStore.set('lastSpan', true)
-
         ao.requestStore.set('foo', 'bar')
         delay(100).then(function () {
           const foo = ao.requestStore.get('foo')
           should.exist(foo)
           foo.should.equal('bar')
-          // ao.requestStore.get('foo').should.equal('bar')
           t.done()
         }, done)
       })
@@ -110,9 +100,6 @@ module.exports = function (Promise) {
   it('should support progress callbacks', function (done) {
     const t = indirectDone(done)
     ao.requestStore.run(function () {
-      // Hack to look like there's a previous span
-      // ao.requestStore.set('lastSpan', true)
-
       ao.requestStore.set('foo', 'bar')
       delay(100).then(function () {
         t.done()
