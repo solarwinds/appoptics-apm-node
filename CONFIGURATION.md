@@ -36,7 +36,7 @@ The configuration file can supply the following properties, showing their defaul
   insertTraceIdsIntoLogs: false,
   proxy: undefined,
   probes: {
-    // probe-specific defaults. see lib/probe-defaults.js for details
+    // probe-specific defaults. see: /docs/probe-defaults.md for details
   }
 }
 ```
@@ -61,7 +61,7 @@ The configuration file can supply the following properties, showing their defaul
 ### Configuration File Probe Settings ###
 
 Probes are the packages that `appoptics-apm` auto-instruments. Different types of probes have different
-configuration options. See `lib/probe-defaults.js` for details.
+configuration options. See [probe defaults](./docs/probe-defaults.md) for details.
 
 There is one particular setting for the `fs` probe that you might want to be aware of: `ignoreErrors`.
 The only errors that can be ignored are node System errors (see the node [docs](https://nodejs.org/api/errors.html#errors_common_system_errors))
@@ -72,9 +72,7 @@ each pair of asynchronous and synchronous functions, e.g. the `open` setting app
 Ignoring the `ENOENT` error for the `fs.open()` and `fs.openSync()` functions is shown in the examples below. This setting
 won't take effect because of the `fs` probe setting `enabled: false` but is shown for the syntax.
 
-Probe settings in the `appoptics-apm-config` configuration file will override those in `probe-defaults.js`, so the safest
-approach to changing an option is to add it to `appoptics-apm-config.json`. For example, here is how to turn off sampling
-for `fs`:
+Probe settings in the `appoptics-apm-config` configuration file will override [probe defaults](./docs/probe-defaults.md). For example, here is how to turn off sampling for `fs`:
 
 ```
 {
