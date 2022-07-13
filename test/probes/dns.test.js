@@ -303,7 +303,7 @@ describe('probes.dns', function () {
           function (msg) {
             checks.entry(msg)
             msg.should.have.property('Operation', 'setServers')
-            msg.should.have.property('Args', '4.4.4.4,2001:4860:4860::8888,4.4.4.4:1053,[2001:4860:4860::8888]:1053')
+            msg.should.have.property('Args', '["4.4.4.4","2001:4860:4860::8888","4.4.4.4:1053","[2001:4860:4860::8888]:1053"]')
           },
           function (msg) {
             checks.exit(msg)
