@@ -233,7 +233,7 @@ describe('get-unified-config', function () {
       const cfg = guc()
 
       const expected = Object.assign({}, config, { serviceKey: '' })
-      const fatals = [`not a valid serviceKey: ${'f'.repeat(64)}`]
+      const fatals = ['not a valid serviceKey: ffff...ffff:']
       doChecks(cfg, { global: expected, fatals })
     })
 
@@ -316,7 +316,7 @@ describe('get-unified-config', function () {
       const overrides = {
         file: `${process.cwd()}/${file}`,
         global: expected,
-        fatals: ['not a valid serviceKey: undefined'],
+        fatals: ['not a valid serviceKey: '],
         warnings
       }
       doChecks(cfg, overrides)
@@ -416,7 +416,7 @@ describe('get-unified-config', function () {
       config.unifiedLogging = process.env.APPOPTICS_UNIFIED_LOGGING
 
       const expected = Object.assign(config, { serviceKey: '' })
-      doChecks(cfg, { global: expected, fatals: [`not a valid serviceKey: ${'ab'.repeat(32)}`] })
+      doChecks(cfg, { global: expected, fatals: ['not a valid serviceKey: abab...abab:'] })
     })
 
     it('should use environment variables when the config file is invalid', function () {
@@ -537,14 +537,62 @@ describe('get-unified-config', function () {
     // actually prevent the agent from running in a lambda environment, but the error will
     // be reported because the service key's format is invalid.
     //
-    it('an invalid serviceKey is a fatal error', function () {
+    it('an invalid serviceKey is a fatal error (output is masked)', function () {
       const serviceKey = `${'f'.repeat(32)}:service-name`
       process.env.APPOPTICS_SERVICE_KEY = serviceKey
 
       const cfg = guc()
 
       // the serviceKey is not valid and should be reported
-      const fatals = [`not a valid serviceKey: ${serviceKey}`]
+      const fatals = ['not a valid serviceKey: ffff...ffff:service-name']
+      const expected = Object.assign({ global: { serviceKey: '' }, fatals })
+      doChecks(cfg, expected)
+    })
+
+    it('an invalid serviceKey with no service name is a fatal error (output is masked)', function () {
+      const serviceKey = `${'f'.repeat(32)}`
+      process.env.APPOPTICS_SERVICE_KEY = serviceKey
+
+      const cfg = guc()
+
+      // the serviceKey is not valid and should be reported
+      const fatals = ['not a valid serviceKey: ffff...ffff:']
+      const expected = Object.assign({ global: { serviceKey: '' }, fatals })
+      doChecks(cfg, expected)
+    })
+
+    it('an invalid serviceKey with empty service name is a fatal error (output is masked)', function () {
+      const serviceKey = `${'f'.repeat(32)}:`
+      process.env.APPOPTICS_SERVICE_KEY = serviceKey
+
+      const cfg = guc()
+
+      // the serviceKey is not valid and should be reported
+      const fatals = ['not a valid serviceKey: ffff...ffff:']
+      const expected = Object.assign({ global: { serviceKey: '' }, fatals })
+      doChecks(cfg, expected)
+    })
+
+    it('an empty serviceKey is a fatal error (output is empty)', function () {
+      const serviceKey = ''
+      process.env.APPOPTICS_SERVICE_KEY = serviceKey
+
+      const cfg = guc()
+
+      // the serviceKey is not valid and should be reported
+      const fatals = ['not a valid serviceKey: ']
+      const expected = Object.assign({ global: { serviceKey: '' }, fatals })
+      doChecks(cfg, expected)
+    })
+
+    it('a very short serviceKey is a fatal error (output is as is)', function () {
+      const serviceKey = `${'f'.repeat(10)}:service-name`
+      process.env.APPOPTICS_SERVICE_KEY = serviceKey
+
+      const cfg = guc()
+
+      // the serviceKey is not valid and should be reported
+      const fatals = [`not a valid serviceKey: ${'f'.repeat(10)}:service-name`]
       const expected = Object.assign({ global: { serviceKey: '' }, fatals })
       doChecks(cfg, expected)
     })
