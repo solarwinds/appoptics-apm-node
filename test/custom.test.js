@@ -716,7 +716,7 @@ describe('custom', function () {
       null,
       main, // span name
       function (cb) { // runner
-        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line node/no-callback-literal
+        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line n/no-callback-literal
         return test
       },
       conf, // configuration
@@ -1257,7 +1257,7 @@ describe('custom', function () {
       traceparent.split('-')[2] + '-' + traceparent.split('-')[3],
       main, // span name
       function (cb) { // runner
-        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line node/no-callback-literal
+        setTimeout(function () { cb(1, 2, 3, 5) }, 100) // eslint-disable-line n/no-callback-literal
         return test
       },
       conf, // configuration

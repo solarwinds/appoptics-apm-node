@@ -159,7 +159,7 @@ function makeTests (db_host, host, isReplicaSet) {
       host = parts.shift()
       const port = parts.shift()
       return {
-        host: host,
+        host,
         port: Number(port)
       }
     })
@@ -456,8 +456,8 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           db.command(`${dbn}.data-${dbn}`, {
             findAndModify: `${dbn}.data-${dbn}`,
-            query: query,
-            update: update,
+            query,
+            update,
             new: true
           }, options, done)
         }, steps, done)
@@ -489,7 +489,7 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           db.command(`${dbn}.$cmd`, {
             distinct: `${dbn}.data-${dbn}`,
-            key: key,
+            key,
             q: query
           }, options, done)
         }, steps, done)
@@ -643,7 +643,7 @@ function makeTests (db_host, host, isReplicaSet) {
         helper.test(emitter, function (done) {
           db.command(`${dbn}.$cmd`, {
             deleteIndexes: `${dbn}.data-${dbn}`,
-            index: index
+            index
           }, options, done)
         }, steps, done)
       })
@@ -702,7 +702,7 @@ function makeTests (db_host, host, isReplicaSet) {
 
         helper.test(emitter, function (done) {
           db.command(`${dbn}.$cmd`, {
-            group: group
+            group
           }, done)
         }, steps, done)
       })

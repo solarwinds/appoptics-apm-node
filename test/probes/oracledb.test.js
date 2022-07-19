@@ -221,7 +221,7 @@ describe(`probes.oracledb ${pkg.version}`, function () {
       oracledb.getConnection(config, function (err, connection) {
         function query (isAutoCommit, done) {
           const options = {
-            isAutoCommit: isAutoCommit
+            isAutoCommit
           }
           if (isAutoCommit === null) delete options.isAutoCommit
 

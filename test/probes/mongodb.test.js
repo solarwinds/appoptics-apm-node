@@ -159,7 +159,7 @@ function makeTests (db_host, host, isReplicaSet) {
       host = parts.shift()
       const port = parts.shift()
       return {
-        host: host,
+        host,
         port: Number(port)
       }
     })

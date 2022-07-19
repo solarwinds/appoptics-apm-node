@@ -18,7 +18,7 @@ const auth = {
   host: addr.host,
   port: addr.port,
   user: process.env.SW_APM_TEST_POSTGRES_USERNAME || 'postgres',
-  password: password,
+  password,
   database: 'test'
 }
 

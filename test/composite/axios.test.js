@@ -335,7 +335,7 @@ describe('composite.axios', function () {
           const port = server.address().port
           const options = {
             url: 'http://localhost:' + port,
-            headers: headers
+            headers
           }
           axios(options)
         })

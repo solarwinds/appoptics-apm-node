@@ -669,7 +669,7 @@ describe(`probes.${p}`, function () {
           const port = server.address().port
           const options = {
             url: `${p}://localhost:${port}`,
-            headers: headers
+            headers
           }
           axios(options)
         })

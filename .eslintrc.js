@@ -14,9 +14,15 @@ module.exports = {
     ecmaVersion: 12
   },
   rules: {
-    'node/handle-callback-err': 'warn',
-    'node/no-deprecated-api': 'warn',
+    'n/handle-callback-err': 'warn',
+    'n/no-deprecated-api': 'warn',
     camelcase: 'warn',
     'no-eval': 'warn'
-  }
+  },
+  overrides: [{
+    files: ['test/probes/*.test.js'],
+    rules: {
+      'n/handle-callback-err': 'off'
+    }
+  }]
 }

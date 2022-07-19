@@ -34,7 +34,7 @@ if (!v3) {
     create: function (cb) {
       gpDebug(`pool create() called n=${n}`)
       if (n >= max) {
-        cb('done') // eslint-disable-line node/no-callback-literal
+        cb(null, 'done')
       } else {
         n += 1
         cb(null, { bar: n })

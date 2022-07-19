@@ -118,7 +118,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
     const db = makeDb({
       host: addr.host,
       port: addr.port,
-      user: user,
+      user,
       password: pass
     }, function (err) {
       if (err) {
@@ -147,7 +147,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
     const db = makeDb({
       host: addr.host,
       port: addr.port,
-      user: user,
+      user,
       password: pass
     }, function (err) {
       if (err) return done(err)
@@ -163,7 +163,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
       host: addr.host,
       port: addr.port,
       database: 'test',
-      user: user,
+      user,
       password: pass
     }, function (err) {
       if (err) return done(err)
@@ -177,7 +177,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
       host: addr.host,
       port: addr.port,
       database: 'test',
-      user: user,
+      user,
       password: pass
     }
 
