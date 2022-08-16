@@ -3,12 +3,8 @@
 The `appoptics-apm` module provides [AppOptics](https://www.appoptics.com/) instrumentation for Node.js.
 
 It supports most commonly used databases, frameworks, and packages automatically. An
-API allows anything to be instrumented.
+API (a.k.a Custom SDK) allows anything to be instrumented. An [AppOptics](https://www.appoptics.com) account is required to view traces & metrics.
 
-An [AppOptics](https://www.appoptics.com/) account is required to view metrics.
-Accounts are [free](https://www.appoptics.com/free-apm-software) for development
-and testing use. For production usage a [free trial](https://www.appoptics.com/)
-is a great way to start.
 
 ## Dependencies
 
@@ -16,7 +12,13 @@ This is a **Linux Only package** with no Mac or Windows support. When installed 
 
 It is compatible with Node versions 10, 12, 14, 16 and 18. See [node status](https://github.com/nodejs/Release) for more.
 
-It is dependent on [@appoptics/apm-bindings](https://www.npmjs.com/package/@appoptics/apm-bindings) binary add-on. The AppOptics APM Agent will first attempt to install a prebuilt binary add-on using [node-pre-gyp](https://github.com/mapbox/node-pre-gyp) and only if that fails, will it attempt to build the add-on from source using [node-gyp](https://github.com/nodejs/node-gyp#on-unix).
+It is dependent on [solarwinds-apm-bindings](https://github.com/solarwindscloud/solarwinds-bindings-node) binary add-on. 
+
+### Binary dependency
+
+The SolarWinds APM Agent will first attempt to install a prebuilt binary add-on using [node-pre-gyp](https://github.com/mapbox/node-pre-gyp). Prebuilt binaries are provided for various versions of Alpine, Centos, Amazon Linux and Red Hat Enterprise Linux.
+
+Only if finding an appropriate prebuilt binary fails, will the agent attempt to build the binary add-on from source using [node-gyp](https://github.com/nodejs/node-gyp#on-unix). In such a case, the target platform should include the build toolchain.
 
 Building with node-gyp (via node-pre-gyp) requires:
 
@@ -24,7 +26,7 @@ Building with node-gyp (via node-pre-gyp) requires:
 - make
 - A proper C/C++ compiler toolchain, like GCC
 
-## Installation
+## Installing
 
 The `appoptics-apm` module is [available on npm](http://npmjs.org/package/appoptics-apm) and can be installed
 by navigating to your app root and running:
@@ -33,18 +35,38 @@ by navigating to your app root and running:
 npm install --save appoptics-apm
 ```
 
-The agent requires a service key, obtained from the AppOptics dashboard under "Organization Details",
-to connect to your account.  This is set via the `APPOPTICS_SERVICE_KEY` environment variable, make
+## Authorizing
+
+
+The agent requires a service key, obtained from the AppOptics dashboard. This is set via the `APPOPTICS_SERVICE_KEY` environment variable, make
 sure it is available in the environment where your application is running:
 
 ```
 export APPOPTICS_SERVICE_KEY="api-token-here:your-service-name"
 ```
 
-Then, at the top of your main js file for your app, add this:
+A service key is composed of an API token and the name of the service you're installing on. The AppOptics platform onboarding flow provides the full service key.
 
+## Loading
+
+To load the agent into your application you can use one of two methods: require `appopticss-apm` in your application start command (run time), or require `appoptics-apm` in your entry point file before any other `require()` calls (build time).
+
+Below are simple examples:
+
+**At Start (preferred)**
+```bash
+node -r appoptics-apm <app.js>
 ```
+
+**In Code**
+```js
+// must be first require
 require('appoptics-apm')
+
+const express = require('express')
+const app = express()
+app.get('/', (req, res) => res.send('Hello World!'))
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
 ```
 
 Now restart your app and you should see data in your AppOptics dashboard in a minute or two.
@@ -83,6 +105,6 @@ an issue. For all other support requests, please email technicalsupport@solarwin
 
 ## License
 
-Copyright (c) 2016 - 2021 SolarWinds, LLC
+Copyright (c) 2016 - 2022 SolarWinds, LLC
 
 Released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
