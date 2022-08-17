@@ -49,7 +49,7 @@ A service key is composed of an API token and the name of the service you're ins
 
 ## Loading
 
-To load the agent into your application you can use one of two methods: require `appopticss-apm` in your application start command (run time), or require `appoptics-apm` in your entry point file before any other `require()` calls (build time).
+To load the agent into your application you can use one of two methods: require `appoptics-apm` in your application start command (run time), or require `appoptics-apm` in your entry point file before any other `require()` calls (build time).
 
 Below are simple examples:
 
