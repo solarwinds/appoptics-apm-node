@@ -44,6 +44,15 @@ const httpsOptions = {
   cert: '-----BEGIN CERTIFICATE-----\nMIICWDCCAcGgAwIBAgIJAPIHj8StWrbJMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTQwODI3MjM1MzUwWhcNMTQwOTI2MjM1MzUwWjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\nZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\ngQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9KWso/+vHhkp6\nCmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5NpzdQwNROKN8EPoK\njlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQABo1AwTjAdBgNV\nHQ4EFgQUTqL/t/yOtpAxKuC9zVm3PnFdRqAwHwYDVR0jBBgwFoAUTqL/t/yOtpAx\nKuC9zVm3PnFdRqAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQBn1XAm\nAsVdXKr3aiZIgOmw5q+F1lKNl/CHtAPCqwjgntPGhW08WG1ojhCQcNaCp1yfPzpm\niaUwFrgiz+JD+KvxvaBn4pb95A6A3yObADAaAE/ZfbEA397z0RxwTSVU+RFKxzvW\nyICDpugdtxRjkb7I715EjO9R7LkSe5WGzYDp/g==\n-----END CERTIFICATE-----'
 }
 
+const baseTracestateSpanId = '7a71b110e5e3588d'
+const baseTracestateFlags = '01'
+const baseTracestateTraceId = '0123456789abcdef0123456789abcdef'
+
+const baseTraceparent = ['00', baseTracestateTraceId, baseTracestateSpanId, baseTracestateFlags].join('-')
+const baseTracestateOrgPart = 'sw=' + [baseTracestateSpanId, baseTracestateFlags].join('-')
+
+const otherTracestateOrgPart = 'sw=9999888855667788-01'
+
 const options = p === 'https' ? httpsOptions : {}
 
 describe(`probes.${p}`, function () {
@@ -161,9 +170,6 @@ describe(`probes.${p}`, function () {
       ], done)
     })
 
-    //
-    // Test a simple res.end() call in an http server
-    //
     it(`should send traces for ${p} routing and response spans`, function (done) {
       let port
       const server = createServer(options, function (req, res) {
@@ -201,9 +207,202 @@ describe(`probes.${p}`, function () {
     })
 
     //
+    // Verify w3c trace context
+    //
+
+    it('should start a "Source" trace when receiving no w3c headers', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.have.property('Edge')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {}
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
+    it('should start a "Downstream" trace when receiving a traceparent only', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.have.property('Edge')
+          expect(msg).not.have.property('sw.w3c.tracestate')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
+    it('should start a "Downstream" trace when receiving a traceparent and tracestate without our org', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.have.property('Edge')
+          expect(msg).property('sw.w3c.tracestate')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: 'ot=123'
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
+    it('should continue "Flow" tracing when receiving a traceparent and tracestate that match', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
+          expect(msg).property('sw.tracestate_parent_id')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: baseTracestateOrgPart
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
+    it('should continue "Continuation" tracing when receiving a traceparent and tracestate that do not match in header', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      let xtrace = ''
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          // the edge in "Continuation" is from trace parent.
+          expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
+          expect(msg).property('sw.tracestate_parent_id')
+
+          xtrace = msg['X-Trace']
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close(done)
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: otherTracestateOrgPart
+          }
+        },
+        function (error, response, body) {
+          expect(response.headers).exist
+          expect(response.headers).property('x-trace')
+          expect(xtrace.slice(0, 42)).equal(response.headers['x-trace'].slice(0, 42))
+        })
+      })
+    })
+
+    //
     // Verify X-Trace header results in a continued trace
     //
-    it('should continue tracing when receiving an xtrace id header', function (done) {
+    it('should continue tracing when receiving a legacy x-trace in header', function (done) {
       const server = createServer(options, function (req, res) {
         res.end('done')
       })
@@ -723,8 +922,9 @@ describe(`probes.${p}`, function () {
         helper.test(emitter, testFunction, [
           function (msg) {
             check.client.entry(msg)
-            expect(msg).property('RemoteURL', ctx.data.url)
+            expect(msg).property('Spec', 'rsc')
             expect(msg).property('IsService', 'yes')
+            expect(msg).property('RemoteURL', ctx.data.url)
           },
           function (msg) {
             check.server.entry(msg)
