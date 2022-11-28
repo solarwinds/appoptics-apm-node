@@ -31,14 +31,14 @@ describe(`probes.tedious ${pkg.version}`, function () {
   // Intercept messages for analysis
   //
   before(function (done) {
-    ao.probes.fs.enabled = false
     emitter = helper.appoptics(done)
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     ao.g.testing(__filename)
+    ao.probes.fs.enabled = false
+    ao.probes.dns.enabled = false
   })
   after(function (done) {
-    ao.probes.fs.enabled = true
     emitter.close(done)
   })
 
@@ -57,6 +57,10 @@ describe(`probes.tedious ${pkg.version}`, function () {
   it('should be configured to sanitize SQL by default', function () {
     ao.probes.tedious.should.have.property('sanitizeSql', true)
     ao.probes.tedious.sanitizeSql = false
+  })
+
+  it('should be configured to not tag SQL by default', function () {
+    ao.probes.tedious.should.have.property('tagSql', false)
   })
 
   const checks = {
@@ -80,12 +84,14 @@ describe(`probes.tedious ${pkg.version}`, function () {
   it('should support parameters with a database name', test_parameters)
   it('should sanitize query with a database name', test_sanitization)
   it('should truncate long queries with a database name', test_truncate)
+  it('should tag queries when feature is enabled', test_tag)
   it('should do nothing when disabled with a database name', test_disabled)
   dbname = undefined
   it('should support basic queries with no database name', test_basic)
   it('should support parameters with no database name', test_parameters)
   it('should sanitize query with no database name', test_sanitization)
   it('should truncate long queries with no database name', test_truncate)
+  it('should tag queries when feature is enabled', test_tag)
   it('should do nothing when disabled with no database name', test_disabled)
 
   function test_basic (done) {
@@ -100,6 +106,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
       function (msg) {
         checks['mssql-entry'](msg)
         msg.should.have.property('Query', "select 42, 'hello world'")
+        msg.should.not.have.property('QueryTag')
       },
       function (msg) {
         checks['mssql-exit'](msg)
@@ -129,7 +136,8 @@ describe(`probes.tedious ${pkg.version}`, function () {
         msg.should.have.property('QueryArgs')
 
         const QueryArgs = JSON.parse(msg.QueryArgs)
-        const params = request.originalParameters
+        // api changed at that specific version...
+        const params = semver.gte(pkg.version, '11.0.10') ? request.parameters : request.originalParameters
 
         QueryArgs.should.have.property('num', findParam('num', params))
         QueryArgs.should.have.property('msg', findParam('msg', params))
@@ -156,7 +164,7 @@ describe(`probes.tedious ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks['mssql-entry'](msg)
-        msg.should.have.property('Query', 'select 0, @msg')
+        msg.should.have.property('Query', 'select ?, @msg')
         msg.should.not.have.property('QueryArgs')
       },
       function (msg) {
@@ -200,6 +208,30 @@ describe(`probes.tedious ${pkg.version}`, function () {
     })
   }
 
+  function test_tag (done) {
+    ao.probes.tedious.tagSql = true
+    helper.test(emitter, function (done) {
+      query(function () {
+        return new tedious.Request("select 42, 'hello world'", onComplete)
+        function onComplete (err) {
+          done()
+        }
+      })
+    }, [
+      function (msg) {
+        checks['mssql-entry'](msg)
+        msg.should.have.property('QueryTag', `/*traceparent='${msg['sw.trace_context']}'*/`)
+        msg.should.have.property('Query', "select 42, 'hello world'")
+      },
+      function (msg) {
+        checks['mssql-exit'](msg)
+      }
+    ], function (err) {
+      ao.probes.tedious.tagSql = false
+      done(err)
+    })
+  }
+
   function test_disabled (done) {
     ao.probes.tedious.enabled = false
 
@@ -235,7 +267,9 @@ describe(`probes.tedious ${pkg.version}`, function () {
       options: {
         enableArithAbort: true,
         tdsVersion: '7_1',
-        encrypt: false
+        encrypt: false,
+        validateBulkLoadParameters: true,
+        trustServerCertificate: true
       }
     }
     if (dbname) {
@@ -251,13 +285,15 @@ describe(`probes.tedious ${pkg.version}`, function () {
       connection.close()
     })
 
-    // api changed between versions
-    if (semver.gte(pkg.version, '10.0.0')) connection.connect()
+    connection.connect()
   }
 
   function findParam (name, params) {
-    return params.filter(function (v) {
+    const val = params.filter(function (v) {
       return v.name === name
     }).shift().value
+    // newer versions of package keep params as a buffer.
+    // which is reported as string for kv pair
+    return Buffer.isBuffer(val) ? val.toString() : val
   }
 })

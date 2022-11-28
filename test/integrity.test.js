@@ -40,7 +40,7 @@ describe('integrity', function () {
     // load all and filter out keys that are not api.
     // TODO: when cyclic is solved can revert to pattern as used for api-sim
     const aoApi = require('../lib/')
-    const notApi = '_stats, version, g, root, omitTraceId, logger, loggers, logLevel, logLevelAdd, logLevelRemove, probes, specialUrls, execEnv, cfg, getDomainPrefix, makeLogMissing, modeMap, modeToStringMap, contextProvider, cls, addon, reporter, control, startup, debugLogging, traceMode, sampleRate, tracing, traceId, lastEvent, lastSpan, maps, requestStore, resetRequestStore, clsCheck, stack, backtrace, bind, bindEmitter, setCustomTxNameFunction, wrappedFlag, notifications, fs'
+    const notApi = '_stats, version, g, root, omitTraceId, logger, loggers, logLevel, logLevelAdd, logLevelRemove, probes, specialUrls, execEnv, cfg, getDomainPrefix, makeLogMissing, modeMap, modeToStringMap, cls, addon, reporter, control, startup, debugLogging, traceMode, sampleRate, tracing, traceId, lastEvent, lastSpan, maps, requestStore, resetRequestStore, clsCheck, stack, backtrace, bind, bindEmitter, setCustomTxNameFunction, wrappedFlag, fs'
     const apiKeys = new Set([...new Set([...Object.getOwnPropertyNames(aoApi)])].filter(item => notApi.indexOf(item) === -1))
 
     const aoSim = require('../lib/api-sim')(Object.assign({}, skeletalAo))
@@ -77,20 +77,19 @@ describe('integrity', function () {
       errorCount += 1
     }
 
-    // this only reads probes and one level below probes for directories starting
-    // with '@'. it may have to change at some point but right now only the only
-    // subdirectory with probes in it is @hapi and it serves double purpose - both
-    // scoped and unscoped versions of hapi and vision.
+    // this reads probes and one level below probes for directories starting
+    // with '@'.
     const probesInDir = []
     const probes = fs.readdirSync('lib/probes', { withFileTypes: true })
+
     probes.forEach(f => {
       if (f.isFile() && f.name.endsWith('.js')) {
         probesInDir.push(f.name.slice(0, -3))
       } else if (f.isDirectory() && f.name[0] === '@') {
         const files1 = fs.readdirSync(`lib/probes/${f.name}`, { withFileTypes: true })
-        files1.forEach(f => {
-          if (f.isFile() && f.name.endsWith('.js')) {
-            probesInDir.push(f.name.slice(0, -3))
+        files1.forEach(ff => {
+          if (ff.isFile() && ff.name.endsWith('.js')) {
+            probesInDir.push(f.name + '/' + ff.name.slice(0, -3))
           }
         })
       }
@@ -137,12 +136,7 @@ describe('integrity', function () {
   it('should make sure that package dependencies are all from an approved list', function () {
     const approvedDependencies = [
       'ace-context',
-      'array-flatten',
-      'cls-hooked',
-      'debug-custom',
-      'methods',
-      'glob',
-      'minimist',
+      'debug',
       'semver',
       'shimmer'
     ]

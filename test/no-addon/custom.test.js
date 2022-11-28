@@ -16,7 +16,7 @@ function psoon () {
   })
 }
 
-const xtrace = '2B4FC9017BA3404828F253638A697DC7CF1A6BB1A4A544D5B98159B55501'
+const traceparent = '00-0123456789abcdef0123456789abcdef-7a71b110e5e3588d-01'
 
 // Without the native liboboe bindings present,
 // the custom instrumentation should be a no-op
@@ -65,7 +65,7 @@ describe('custom (without native bindings present)', function () {
 
   it('should passthrough sync startOrContinueTrace', function () {
     let counter = 0
-    ao.startOrContinueTrace(null, 'test', function () {
+    ao.startOrContinueTrace(null, null, 'test', function () {
       counter++
     })
     assert(counter === 1, 'counter should be equal to 1')
@@ -75,7 +75,7 @@ describe('custom (without native bindings present)', function () {
     function localDone () {
       done()
     }
-    ao.startOrContinueTrace(null, 'test', soon, localDone)
+    ao.startOrContinueTrace(null, null, 'test', soon, localDone)
   })
 
   it('should passthrough pStartOrContinueTrace', function () {
@@ -85,7 +85,7 @@ describe('custom (without native bindings present)', function () {
       counter += 1
       return Promise.resolve(99)
     }
-    return ao.pStartOrContinueTrace(null, 'test', pfunc).then(r => {
+    return ao.pStartOrContinueTrace(null, null, 'test', pfunc).then(r => {
       assert(counter === 1, 'counter should be 1')
       assert(r === 99, 'the result of pStartOrContinueTrace should be 99')
       return r
@@ -123,23 +123,19 @@ describe('custom (without native bindings present)', function () {
     assert(ao.readyToSample() === false)
     assert(ao.getTraceSettings().doSample === false)
     assert(ao.sampling() === false)
-    assert(ao.xtraceToEvent('') === undefined)
-    assert(ao.xtraceToEvent(xtrace) instanceof aob.Event)
+    assert(ao.traceToEvent('') === undefined)
+    assert(ao.traceToEvent(traceparent) instanceof aob.Event)
     assert(ao.patchResponse('x') === undefined)
     assert(ao.addResponseFinalizer('x') === undefined)
     assert(ao.traceId === undefined)
     assert(ao.reportError(new Error('xyzzy')) === undefined)
     assert(ao.reportInfo('this is info') === undefined)
     assert(ao.sendMetric() === -1)
-    assert(ao.getFormattedTraceId() === `${'0'.repeat(40)}-0`)
 
-    let o = ao.insertLogObject()
+    const o = ao.getTraceObjecForLog()
     assert(typeof o === 'object')
     assert(Object.keys(o).length === 0)
 
-    o = ao.insertLogObject({ existing: 'bruce' })
-    assert(typeof o === 'object')
-    assert(Object.keys(o).length === 1)
-    assert(o.existing === 'bruce')
+    assert(ao.getTraceStringForLog() === '')
   })
 })

@@ -84,7 +84,9 @@ function checkEventInfo (eventInfo, level, message, traceId) {
   // check time first because it's not a straight compare
   expect(eventInfo.time.valueOf()).within(Date.now() - 150, Date.now() + 100)
   // if the time is good reset it to be exact so expect().eql will work
-  const post = Object.assign(traceId ? { ao: { traceId } } : {}, { time: eventInfo.time })
+  const parts = traceId ? traceId.toString().split('-') : null
+  const post = Object.assign(traceId ? { sw: { trace_id: parts[1], span_id: parts[2], trace_flags: parts[3] } } : {}, { time: eventInfo.time })
+
   const expected = makeExpected(
     { level: logLevels[level] },
     message,
@@ -107,23 +109,12 @@ class TestStream extends EventEmitter {
   write (object, enc, cb) {
     this.emit('test-log', object)
     if (this.debugging) {
-      // debugger
-      // eslint-disable-next-line no-console
       console.log(object)
     }
     if (cb) {
       setImmediate(cb)
     }
   }
-}
-
-//
-// get a trace string via a different function than the logging insertion uses.
-//
-function getTraceIdString () {
-  const firstEvent = ao.requestStore.get('topSpan').events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32)
 }
 
 const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
@@ -235,7 +226,7 @@ describe(`bunyan v${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.lastEvent.toString()
           // log
           logger.info(message)
         })
@@ -267,7 +258,7 @@ describe(`bunyan v${version}`, function () {
       ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString()
+        traceId = ao.lastEvent.toString()
         expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
         // log
         logger.info(message)
@@ -275,8 +266,8 @@ describe(`bunyan v${version}`, function () {
         return 'test-done'
       }
 
-      const xtrace = aob.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test)
+      const traceparent = aob.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(traceparent, '', spanName, test)
 
       expect(result).equal('test-done')
       checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId)
@@ -291,7 +282,7 @@ describe(`bunyan v${version}`, function () {
 
     logger.info(message)
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`)
+    checkEventInfo(eventInfo, level, message, `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
@@ -305,7 +296,7 @@ describe(`bunyan v${version}`, function () {
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger.error(message)
       setTimeout(function () {
         cb()
@@ -338,7 +329,7 @@ describe(`bunyan v${version}`, function () {
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger[level](message)
       return new Promise((resolve, reject) => {
         setTimeout(function () {
@@ -382,8 +373,8 @@ describe(`bunyan v${version}`, function () {
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
-          logger[level](message, getTraceIdString())
+          traceId = ao.lastEvent.toString()
+          logger[level](message, traceId)
         })
         done()
       },

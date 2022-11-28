@@ -18,37 +18,22 @@ const major = semver.major(version)
 
 const { EventEmitter } = require('events')
 
-let debugging = true
+let debugging = false
 
-// if no traceId is passed then don't expect {ao: {traceId}}
-function checkEventInfo (eventInfo, req, res, traceId) {
-  const method = req.method
-  const url = req.url
-  const status = res.statusCode
-  if (debugging) {
-    // eslint-disable-next-line no-console
-    console.log('checkEventInfo()', eventInfo)
-  }
-  // eslint-disable-next-line max-len
-  const reString = `${method} ${url} ${status} 42 - \\d+\\.\\d{3} ms( (ao.traceId=[A-F0-9]{40}-(0|1)))?`
+function checkEventInfo (eventInfo, level, message, traceId) {
+  // console.log(eventInfo)
+  const reString = 'trace_id=[a-f0-9]{32} span_id=[a-f0-9]{16} trace_flags=0(0|1)'
   const re = new RegExp(reString)
   const m = eventInfo.match(re)
-  // output some debugging help if these don't match
-  if (!m) {
-    // eslint-disable-next-line no-console
-    console.log('eventInfo', eventInfo, 'match', m)
-  }
-
-  expect(m).ok
-  expect(m.length).equal(4)
   if (traceId) {
-    expect(m[2]).equal(`ao.traceId=${traceId}`)
-    expect(m[3]).ok
+    const parts = traceId.split('-')
+    expect(m[0]).equal(`trace_id=${parts[1]} span_id=${parts[2]} trace_flags=${parts[3]}`)
   } else {
-    expect(m[2]).not.ok
-    expect(m[3]).not.ok
+    expect(m).equal(null)
   }
 }
+
+const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
 
 //
 // create a fake stream that emits the object to be logged so it can be checked.
@@ -64,29 +49,13 @@ class TestStream extends EventEmitter {
   write (object, enc, cb) {
     this.emit('test-log', object)
     if (this.debugging) {
-      // eslint-disable-next-line no-console
-      // console.log(object);
+      console.log(object)
     }
     if (cb) {
       setImmediate(cb)
     }
   }
 }
-
-//
-// get a trace string via a different function than the logging insertion uses.
-//
-function getTraceIdString () {
-  const topSpan = ao.requestStore.get('topSpan')
-  if (!topSpan) {
-    return `${'0'.repeat(40)}-0`
-  }
-  const firstEvent = topSpan.events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32)
-}
-
-const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
 
 //= ================================
 // morgan tests
@@ -183,12 +152,13 @@ describe(`probes.morgan ${version}`, function () {
     ao.sampleRate = ao.addon.MAX_SAMPLE_RATE
     ao.traceMode = 'always'
     // default to the simple 'true'
-    ao.cfg.insertTraceIdsIntoMorgan = true
+    ao.cfg.insertTraceIdsIntoLogs = true
 
     debugging = false
 
     emitter = helper.appoptics(done)
   })
+
   afterEach(function (done) {
     emitter.close(done)
   })
@@ -216,10 +186,9 @@ describe(`probes.morgan ${version}`, function () {
 
     it(`should ${maybe}insert in sync sampled code when mode=${mode}`, function (done) {
       let traceId
-      debugging = false
 
       // this gets reset in beforeEach() so set it in the test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
+      ao.cfg.insertTraceIdsIntoLogs = mode
       logger = makeLogger()
 
       function localDone () {
@@ -229,7 +198,7 @@ describe(`probes.morgan ${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           // log
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
@@ -259,62 +228,280 @@ describe(`probes.morgan ${version}`, function () {
 
     it(`should ${maybe}insert in sync unsampled code when mode=${mode}`, function (done) {
       let traceId
-      debugging = false
 
       // reset in beforeEach() so set in each test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
+      ao.cfg.insertTraceIdsIntoLogs = mode
       logger = makeLogger()
       ao.traceMode = 0
       ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString()
-        expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
         // log
         logger(fakeReq, fakeRes, function (err) {
           expect(err).not.ok
           // let the listener run
           setImmediate(function () {
+            traceId = ao.lastEvent.toString()
+            expect(traceId[traceId.length - 1] === '0', 'traceId should be unsampled')
             checkEventInfo(eventInfo, fakeReq, fakeRes, maybe ? undefined : traceId)
             done()
           })
         })
+
         fakeRes.writeHead(200)
         fakeRes.finished = true
 
         return 'test-done'
       }
 
-      const xtrace = ao.addon.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test)
+      const traceparent = ao.addon.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(traceparent, '', spanName, test)
       expect(result).equal('test-done')
     })
   })
 
   //
-  // for each mode verify that insert works in sampled code
+  // for each mode verify that insert works with predefined strings
+  //
+  const predefineds = ['combined', 'common', 'short', 'tiny']
+  predefineds.forEach(predefined => {
+    insertModes.forEach(mode => {
+      const maybe = mode === false ? 'not ' : ''
+      eventInfo = undefined
+
+      it(`should ${maybe}insert in sync sampled code when mode=${mode} using ${predefined}`, function (done) {
+        let traceId
+
+        // this gets reset in beforeEach() so set it in the test.
+        ao.cfg.insertTraceIdsIntoLogs = mode
+        logger = makeLogger(predefined)
+
+        function localDone () {
+          checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
+          done()
+        }
+
+        helper.test(emitter, function (done) {
+          ao.instrument(spanName, function () {
+            traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
+            // log
+            logger(fakeReq, fakeRes, function (err) {
+              expect(err).not.ok
+            })
+            fakeRes.writeHead(200)
+            fakeRes.finished = true
+          })
+          done()
+        }, [
+          function (msg) {
+            msg.should.have.property('Layer', spanName)
+            msg.should.have.property('Label', 'entry')
+          },
+          function (msg) {
+            msg.should.have.property('Layer', spanName)
+            msg.should.have.property('Label', 'exit')
+          }
+        ], localDone)
+      })
+    })
+  })
+
+  //
+  // for each mode verify that insert works with predefined string dev (referring a function)
   //
   insertModes.forEach(mode => {
     const maybe = mode === false ? 'not ' : ''
     eventInfo = undefined
 
-    it(`should ${maybe}insert in when mode=${mode} using a format function`, function (done) {
+    it(`should ${maybe}insert in sync sampled code when mode=${mode} using dev precomplied`, function (done) {
       let traceId
-      debugging = false
 
       // this gets reset in beforeEach() so set it in the test.
-      ao.cfg.insertTraceIdsIntoMorgan = mode
-      logger = makeLogger(function () { return 'xyzzy' })
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      logger = makeLogger('dev')
 
       function localDone () {
-        const expected = mode === false ? '' : ` ao.traceId=${traceId}`
-        expect(eventInfo).equal(`xyzzy${expected}\n`)
+        checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
         done()
       }
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok
+          })
+          fakeRes.writeHead(200)
+          fakeRes.finished = true
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
+  // for each mode verify that insert works with format string
+  //
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : ''
+    eventInfo = undefined
+
+    it(`should ${maybe}insert in sync when mode=${mode} using a format string`, function (done) {
+      let traceId
+
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      logger = makeLogger(':method :trace :url :status :res[content-length]')
+
+      function localDone () {
+        checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok
+          })
+          fakeRes.writeHead(200)
+          fakeRes.finished = true
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
+  // for each mode verify that insert works with format string when no insertion is requested
+  //
+  insertModes.forEach(mode => {
+    eventInfo = undefined
+
+    it(`should never insert in sync when mode=${mode} using a format string and no insertion is requested`, function (done) {
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      logger = makeLogger(':method :url :status :res[content-length]')
+
+      function localDone () {
+        checkEventInfo(eventInfo, fakeReq, fakeRes, null)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok
+          })
+          fakeRes.writeHead(200)
+          fakeRes.finished = true
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
+  // for each mode verify that insert works with format string when no insertion is requested
+  //
+  insertModes.forEach(mode => {
+    eventInfo = undefined
+
+    it(`should never insert in sync when mode=${mode} using a format function`, function (done) {
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      logger = makeLogger(function () { return 'xyzzy' })
+
+      function localDone () {
+        checkEventInfo(eventInfo, fakeReq, fakeRes, null)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          // log
+          logger(fakeReq, fakeRes, function (err) {
+            expect(err).not.ok
+          })
+          fakeRes.writeHead(200)
+          fakeRes.finished = true
+        })
+        done()
+      }, [
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'entry')
+        },
+        function (msg) {
+          msg.should.have.property('Layer', spanName)
+          msg.should.have.property('Label', 'exit')
+        }
+      ], localDone)
+    })
+  })
+
+  //
+  // for each mode verify that insert works with format string when no insertion is requested
+  //
+  insertModes.forEach(mode => {
+    const maybe = mode === false ? 'not ' : ''
+    eventInfo = undefined
+
+    it(`should ${maybe}insert in sync when mode=${mode} using a format string`, function (done) {
+      let traceId
+
+      // this gets reset in beforeEach() so set it in the test.
+      ao.cfg.insertTraceIdsIntoLogs = mode
+      const custom = function (tokens, req, res) {
+        return [
+          tokens.trace(), // the token can be used as a method in custom function
+          tokens.method(req, res),
+          tokens.url(req, res),
+          tokens.status(req, res),
+          tokens.res(req, res, 'content-length'), '-',
+          tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+      }
+      logger = makeLogger(custom)
+
+      function localDone () {
+        checkEventInfo(eventInfo, fakeReq, fakeRes, mode === false ? undefined : traceId)
+        done()
+      }
+
+      helper.test(emitter, function (done) {
+        ao.instrument(spanName, function () {
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           // log
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
@@ -341,10 +528,10 @@ describe(`probes.morgan ${version}`, function () {
   //
   it('mode=\'always\' should always insert a trace ID even if not tracing', function (done) {
     ao.requestStore.run(function () {
-      const traceId = getTraceIdString()
+      const traceId = `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`
       ao.lastEvent = undefined
 
-      ao.cfg.insertTraceIdsIntoMorgan = 'always'
+      ao.cfg.insertTraceIdsIntoLogs = 'always'
       logger = makeLogger()
       ao.traceMode = 0
       ao.sampleRate = 0
@@ -365,7 +552,6 @@ describe(`probes.morgan ${version}`, function () {
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
     let traceId
-    debugging = false
 
     logger = makeLogger()
 
@@ -375,11 +561,11 @@ describe(`probes.morgan ${version}`, function () {
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString()
       logger(fakeReq, fakeRes, function (err) {
         expect(err).not.ok
       })
       setImmediate(function () {
+        traceId = ao.lastEvent.toString()
         cb()
       })
       fakeRes.writeHead(200)
@@ -411,7 +597,7 @@ describe(`probes.morgan ${version}`, function () {
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       return new Promise((resolve, reject) => {
         logger(fakeReq, fakeRes, function (err) {
           expect(err).not.ok
@@ -442,14 +628,16 @@ describe(`probes.morgan ${version}`, function () {
   })
 
   it('should insert trace IDs using the function directly', function (done) {
-    ao.cfg.insertTraceIdsIntoMorgan = false
+    // test does not have last span - thus force a "zeroed" trace id
+    ao.cfg.insertTraceIdsIntoLogs = 'always'
     let traceId
 
     logger = makeLogger('traceThis::my-trace-id')
-    morgan.token('my-trace-id', ao.getFormattedTraceId)
+
+    morgan.token('my-trace-id', () => ao.getTraceStringForLog())
 
     function localDone () {
-      expect(eventInfo).equal(`traceThis:${traceId}\n`)
+      checkEventInfo(eventInfo, fakeReq, fakeRes, traceId)
       done()
     }
 
@@ -457,7 +645,7 @@ describe(`probes.morgan ${version}`, function () {
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.requestStore.get('topSpan').events.exit.event.toString()
           logger(fakeReq, fakeRes, function (err) {
             expect(err).not.ok
           })

@@ -34,10 +34,13 @@ describe('composite.axios', function () {
   }
 
   const check = {
-    xtrace: function (msg) {
-      const xtrace = msg['X-Trace']
-      expect(msg).property('X-Trace')
-      return xtraceComponents(xtrace)
+    traceContext: function (msg) {
+      const traceContext = msg['sw.trace_context']
+      msg.should.have.property('sw.trace_context')
+      const taskId = traceContext.split('-')[1]
+      const opId = traceContext.split('-')[2]
+      const flags = traceContext.split('-')[3]
+      return [taskId, opId, flags]
     },
     server: {
       entry: function (msg) {
@@ -101,7 +104,7 @@ describe('composite.axios', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).property('Method', 'GET')
+          expect(msg).property('HTTPMethod', 'GET')
           expect(msg).property('Proto', 'http')
           expect(msg).property('HTTP-Host', 'localhost')
           expect(msg).property('Port', port)
@@ -123,9 +126,9 @@ describe('composite.axios', function () {
     })
 
     //
-    // Verify X-Trace header results in a continued trace
+    // Verify traceparent/tracestate header results in a continued trace
     //
-    it('should continue tracing when receiving an xtrace id header', function (done) {
+    it('should continue tracing when receiving an traceparent/tracestate header', function (done) {
       const server = http.createServer(function (req, res) {
         res.end('done')
       })
@@ -135,6 +138,7 @@ describe('composite.axios', function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
+
           expect(msg).property('Edge', origin.opId)
         },
         function (msg) {
@@ -149,14 +153,15 @@ describe('composite.axios', function () {
         axios({
           url: 'http://localhost:' + port,
           headers: {
-            'X-Trace': origin.toString()
+            traceparent: origin.toString(),
+            tracestate: `sw=${origin.toString().split('-')[2]}-${origin.toString().split('-')[3]}`
           }
         })
       })
     })
 
     //
-    // Verify that a bad X-Trace header does not result in a continued trace
+    // Verify that a bad traceparnet header does not result in a continued trace
     //
     it('should not continue tracing when receiving a bad xtrace id header', function (done) {
       const server = http.createServer(function (req, res) {
@@ -164,10 +169,10 @@ describe('composite.axios', function () {
       })
 
       const origin = new ao.Event('span-name', 'label-name', addon.Event.makeRandom(1))
-      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+      const traceparent = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
 
       const logChecks = [
-        { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
+        { level: 'warn', message: `invalid X-Trace string "${traceparent}"` }
       ]
       //
       const [, clearLogMessageChecks] = helper.checkLogMessages(logChecks)
@@ -190,7 +195,8 @@ describe('composite.axios', function () {
         axios({
           url: 'http://localhost:' + port,
           headers: {
-            'X-Trace': xtrace
+            traceparent,
+            tracestate: `sw=${origin.toString().split('-')[2]}-${origin.toString().split('-')[3]}`
           }
         })
       })
@@ -518,7 +524,7 @@ describe('composite.axios', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg); // sometimes a semicolon really is needed
-            [ptaskId, popId, pflags] = check.xtrace(msg)
+            [ptaskId, popId, pflags] = check.traceContext(msg)
             expect(msg).property('RemoteURL', ctx.data.url)
             expect(msg).property('IsService', 'yes')
           },
@@ -540,7 +546,7 @@ describe('composite.axios', function () {
           function (msg) {
             check.client.exit(msg)
             expect(msg).property('HTTPStatus', 200)
-            const [taskId, opId, flags] = check.xtrace(msg)
+            const [taskId, opId, flags] = check.traceContext(msg)
             expect(taskId).equal(ptaskId)
             expect(opId).not.equal(popId)
             expect(flags).equal(pflags)
@@ -596,14 +602,14 @@ describe('composite.axios', function () {
           // check request.get('google')
           function (msg) {
             check.client.entry(msg); // sometimes a semicolon really is needed
-            [ptaskId, popId, pflags] = check.xtrace(msg)
+            [ptaskId, popId, pflags] = check.traceContext(msg)
             expect(msg).property('RemoteURL', url2)
             expect(msg).property('IsService', 'yes')
           },
           function (msg) {
             check.client.exit(msg)
             expect(msg).property('HTTPStatus', 200)
-            const xt = check.xtrace(msg)
+            const xt = check.traceContext(msg)
             expect(xt[0]).equal(ptaskId)
             expect(xt[1]).not.equal(popId)
             expect(xt[2]).equal(pflags);
@@ -611,7 +617,7 @@ describe('composite.axios', function () {
           },
           function (msg) {
             check.server.exit(msg)
-            const xt = check.xtrace(msg)
+            const xt = check.traceContext(msg)
             expect(xt[0]).equal(ptaskId)
             expect(xt[1]).not.equal(popId)
             expect(xt[2]).equal(pflags);
@@ -655,7 +661,7 @@ describe('composite.axios', function () {
         helper.test(emitter, mod, [
           function (msg) {
             check.client.entry(msg); // sometimes a semicolon is needed
-            [ptaskId, popId, pflags] = check.xtrace(msg)
+            [ptaskId, popId, pflags] = check.traceContext(msg)
             expect(msg).property('RemoteURL', ctx.data.url)
             expect(msg).property('IsService', 'yes')
           },
@@ -677,7 +683,7 @@ describe('composite.axios', function () {
           function (msg) {
             check.client.exit(msg)
             expect(msg).property('HTTPStatus', 200)
-            const [taskId, opId, flags] = check.xtrace(msg)
+            const [taskId, opId, flags] = check.traceContext(msg)
             expect(taskId).equal(ptaskId)
             expect(opId).not.equal(popId)
             expect(flags).equal(pflags)

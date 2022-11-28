@@ -192,6 +192,10 @@ describe(`probes.mysql ${pkg.version}`, function () {
     ao.probes.mysql.sanitizeSql = false
   })
 
+  it('should be configured to not tag SQL by default', function () {
+    ao.probes.mysql.should.have.property('tagSql', false)
+  })
+
   it('should trace a basic query', test_basic)
   it('should trace a query with a value list', test_values)
   it('should trace a query with a value object', test_object)
@@ -200,6 +204,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
   it('should trace a cluster pooled query', test_clustered_pool)
   it('should sanitize a query', test_sanitize)
   it('should truncate long queries', test_long_query)
+  it('should tag queries when feature is enabled', test_tag)
   it('should skip when disabled', test_disabled)
 
   //
@@ -213,6 +218,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
       function (msg) {
         checks.entry(msg)
         msg.should.have.property('Query', 'SELECT 1')
+        msg.should.not.have.property('QueryTag')
       },
       function (msg) {
         checks.exit(msg)
@@ -329,7 +335,7 @@ describe(`probes.mysql ${pkg.version}`, function () {
     }, [
       function (msg) {
         checks.entry(msg)
-        msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = '?'`)
+        msg.should.have.property('Query', `SELECT * FROM ${ctx.t} WHERE "foo" = ?`)
       },
       function (msg) {
         checks.exit(msg)
@@ -358,6 +364,26 @@ describe(`probes.mysql ${pkg.version}`, function () {
       }
     ], function (err) {
       done(err)
+    })
+  }
+
+  function test_tag (done) {
+    ao.probes.mysql.tagSql = true
+    helper.test(emitter, function (done) {
+      const query = 'SELECT 1'
+      ctx.mysql.query(query, done)
+    }, [
+      function (msg) {
+        checks.entry(msg)
+        msg.should.have.property('QueryTag', `/*traceparent='${msg['sw.trace_context']}'*/`)
+        msg.should.have.property('Query', 'SELECT 1')
+      },
+      function (msg) {
+        checks.exit(msg)
+      }
+    ], () => {
+      ao.probes.mysql.tagSql = false
+      done()
     })
   }
 

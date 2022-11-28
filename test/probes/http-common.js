@@ -1,8 +1,4 @@
 /* global it, describe, before, beforeEach, after, afterEach */
-
-// note: expect() triggers a lint no-unused-expressions. no apparent reason
-/* eslint-disable no-unused-expressions */
-
 'use strict'
 
 //
@@ -28,21 +24,23 @@ const p = process.env.AO_TEST_HTTP
 
 const driver = require(p)
 
-let createServer = function (options, requestListener) {
+const createServer = function (options, requestListener) {
   return driver.createServer(options, requestListener)
-}
-
-if (p === 'http' && semver.lte(process.version, '9.6.0')) {
-  // the options argument was added to the http module in v9.6.0
-  createServer = function (options, requestListener) {
-    return driver.createServer(requestListener)
-  }
 }
 
 const httpsOptions = {
   key: '-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9\nKWso/+vHhkp6Cmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5Npzd\nQwNROKN8EPoKjlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQAB\nAoGBAJTD9/r1n5/JZ+0uTIzf7tx1kGJh7xW2xFtFvDIWhV0wAJDjfT/t10mrQNtA\n1oP5Fh2xy9YC+tZ/cCtw9kluD93Xhzg1Mz6n3h+ZnvnlMb9E0JCgyCznKSS6fCmb\naBz99pPJoR2JThUmcuVtbIYdasqxcHStYEXJH89Ehr85uqrBAkEA31JgRxeuR/OF\n96NJFeD95RYTDeN6JpxJv10k81TvRCxoOA28Bcv5PwDALFfi/LDya9AfZpeK3Nt3\nAW3+fqkYdQJBAMVV37vFQpfl0fmOIkMcZKFEIDx23KHTjE/ZPi9Wfcg4aeR4Y9vt\nm2f8LTaUs/buyrCLK5HzYcX0dGXdnFHgCaUCQDSc47HcEmNBLD67aWyOJULjgHm1\nLgIKsBU1jI8HY5dcHvGVysZS19XQB3Zq/j8qMPLVhZBWA5Ek41Si5WJR1EECQBru\nTUpi8WOpia51J1fhWBpqIbwevJ2ZMVz0WPg85Y2dpVX42Cf7lWnrkIASaz0X+bF+\nTMPuYzmQ0xHT3LGP0cECQQCqt4PLmzx5KtsooiXI5NVACW12GWP78/6uhY6FHUAF\nnJl51PB0Lz8F4HTuHhr+zUr+P7my7X3b00LPog2ixKiO\n-----END RSA PRIVATE KEY-----',
   cert: '-----BEGIN CERTIFICATE-----\nMIICWDCCAcGgAwIBAgIJAPIHj8StWrbJMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQwHhcNMTQwODI3MjM1MzUwWhcNMTQwOTI2MjM1MzUwWjBF\nMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\nZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\ngQCsJU2dO/K3oQEh9wo60VC2ajCZjIudc8cqHl9kKNKwc9lP4Rw9KWso/+vHhkp6\nCmx6Cshm6Hs00rPgZo9HmY//gcj0zHmNbagpmdvAmOudK8l5NpzdQwNROKN8EPoK\njlFEBMnZj136gF5YAgEN9ydcLtS2TeLmUG1Y3RR6ADjgaQIDAQABo1AwTjAdBgNV\nHQ4EFgQUTqL/t/yOtpAxKuC9zVm3PnFdRqAwHwYDVR0jBBgwFoAUTqL/t/yOtpAx\nKuC9zVm3PnFdRqAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQBn1XAm\nAsVdXKr3aiZIgOmw5q+F1lKNl/CHtAPCqwjgntPGhW08WG1ojhCQcNaCp1yfPzpm\niaUwFrgiz+JD+KvxvaBn4pb95A6A3yObADAaAE/ZfbEA397z0RxwTSVU+RFKxzvW\nyICDpugdtxRjkb7I715EjO9R7LkSe5WGzYDp/g==\n-----END CERTIFICATE-----'
 }
+
+const baseTracestateSpanId = '7a71b110e5e3588d'
+const baseTracestateFlags = '01'
+const baseTracestateTraceId = '1'.repeat(32)
+
+const baseTraceparent = ['00', baseTracestateTraceId, baseTracestateSpanId, baseTracestateFlags].join('-')
+const baseTracestateOrgPart = 'sw=' + [baseTracestateSpanId, baseTracestateFlags].join('-')
+
+const otherTracestateOrgPart = 'sw=9999888855667788-01'
 
 const options = p === 'https' ? httpsOptions : {}
 
@@ -161,9 +159,6 @@ describe(`probes.${p}`, function () {
       ], done)
     })
 
-    //
-    // Test a simple res.end() call in an http server
-    //
     it(`should send traces for ${p} routing and response spans`, function (done) {
       let port
       const server = createServer(options, function (req, res) {
@@ -173,7 +168,7 @@ describe(`probes.${p}`, function () {
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).property('Method', 'GET')
+          expect(msg).property('HTTPMethod', 'GET')
           expect(msg).property('Proto', p)
           expect(msg).property('HTTP-Host', 'localhost')
           expect(msg).property('Port', port)
@@ -185,42 +180,75 @@ describe(`probes.${p}`, function () {
           expect(msg).property('Status', 200)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
         port = server.address().port
         axios(
-          `${p}://localhost:${port}/foo?bar=baz`,
-          function (error, response, body) {
-            expect(response.headers).exist
-            expect(response.headers).property('x-trace')
-          }
-        )
+          `${p}://localhost:${port}/foo?bar=baz`
+        ).then(function (response) {
+          expect(response.headers).property('x-trace')
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
       })
     })
 
     //
-    // Verify X-Trace header results in a continued trace
+    // Verify w3c trace context
     //
-    it('should continue tracing when receiving an xtrace id header', function (done) {
+
+    it('should start a "Source" trace when receiving no w3c headers', function (done) {
       const server = createServer(options, function (req, res) {
         res.end('done')
       })
 
-      const ev = addon.Event.makeRandom(1)
-      const origin = new ao.Event('span-name', 'label-name', ev)
-
       helper.doChecks(emitter, [
         function (msg) {
           check.server.entry(msg)
-          expect(msg).property('Edge', origin.opId)
+          expect(msg).not.have.property('Edge')
         },
         function (msg) {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {}
+        }).then(function (response) {
+          expect(response.headers).property('x-trace')
+          expect(baseTraceparent.slice(0, 35)).not.equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
+      })
+    })
+
+    it('should start a "Downstream" trace when receiving a traceparent only', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+
+          expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
+          expect(msg).not.have.property('sw.w3c.tracestate')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close()
       })
 
       server.listen(function () {
@@ -228,13 +256,122 @@ describe(`probes.${p}`, function () {
         axios({
           url: `${p}://localhost:${port}`,
           headers: {
-            'X-Trace': origin.toString()
+            traceparent: baseTraceparent
           }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(origin.taskId).equal(response.headers['x-trace'].slice(2, 42))
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
+      })
+    })
+
+    it('should start a "Downstream" trace when receiving a traceparent and tracestate without our org', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+
+          expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
+          expect(msg).property('sw.w3c.tracestate')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: 'ot=123'
+          }
+        }).then(function (response) {
+          expect(response.headers).property('x-trace')
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
+      })
+    })
+
+    it('should continue "Flow" tracing when receiving a traceparent and tracestate that match', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          expect(msg).property('Edge', baseTracestateSpanId.toUpperCase())
+          expect(msg).property('sw.tracestate_parent_id')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: baseTracestateOrgPart
+          }
+        }).then(function (response) {
+          expect(response.headers).property('x-trace')
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
+      })
+    })
+
+    it('should continue "Continuation" tracing when receiving a traceparent and tracestate that do not match in header', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          // the edge in "Continuation" is from tracestate.
+          expect(msg).property('Edge', otherTracestateOrgPart.slice(3).split('-')[0].toUpperCase())
+          expect(msg).property('sw.tracestate_parent_id')
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: {
+            traceparent: baseTraceparent,
+            tracestate: otherTracestateOrgPart
+          }
+        }).then(function (response) {
+          expect(response.headers).property('x-trace')
+          expect(baseTraceparent.slice(0, 35)).equal(response.headers['x-trace'].slice(0, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -267,19 +404,19 @@ describe(`probes.${p}`, function () {
     })
 
     //
-    // Verify that a bad X-Trace header does not result in a continued trace
+    // Verify that a bad traceparent header does not result in a continued trace
     //
-    it('should not continue tracing when receiving a bad xtrace id header', function (done) {
+    it('should not continue tracing when receiving a bad traceparent id header', function (done) {
       const server = createServer(options, function (req, res) {
         res.end('done')
       })
 
       const originMetadata = addon.Event.makeRandom(1)
       const origin = new ao.Event('span-name', 'label-name', originMetadata)
-      const xtrace = origin.toString().slice(0, 42) + '0'.repeat(16) + '01'
+      const traceparent = origin.toString().split('-').map((part, index) => index === 2 ? '0'.repeat(15) : part).join('-')
 
       const logChecks = [
-        { level: 'warn', message: `invalid X-Trace string "${xtrace}"` }
+        { level: 'warn', message: `invalid traceparent string "${traceparent}"` }
       ];
 
       [, clear] = helper.checkLogMessages(logChecks)
@@ -293,19 +430,58 @@ describe(`probes.${p}`, function () {
           check.server.exit(msg)
         }
       ], function () {
-        server.close(done)
+        server.close()
       })
 
       server.listen(function () {
         const port = server.address().port
         axios({
           url: `${p}://localhost:${port}`,
-          headers: { 'X-Trace': xtrace }
-        },
-        function (error, response, body) {
-          expect(response.headers).exist
+          headers: {
+            traceparent,
+            tracestate: baseTracestateOrgPart
+          }
+        }).then(function (response) {
           expect(response.headers).property('x-trace')
-          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(2, 42))
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(3, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
+        })
+      })
+    })
+
+    it('should not continue tracing when receiving only tracestate id header', function (done) {
+      const server = createServer(options, function (req, res) {
+        res.end('done')
+      })
+
+      const originMetadata = addon.Event.makeRandom(1)
+      const origin = new ao.Event('span-name', 'label-name', originMetadata)
+
+      helper.doChecks(emitter, [
+        function (msg) {
+          check.server.entry(msg)
+          expect(msg).not.property('Edge', origin.opId)
+        },
+        function (msg) {
+          check.server.exit(msg)
+        }
+      ], function () {
+        server.close()
+      })
+
+      server.listen(function () {
+        const port = server.address().port
+        axios({
+          url: `${p}://localhost:${port}`,
+          headers: { tracestate: baseTracestateOrgPart }
+        }).then(function (response) {
+          expect(response.headers).property('x-trace')
+          expect(origin.taskId).not.equal(response.headers['x-trace'].slice(3, 35))
+          done()
+        }).catch(function (err) {
+          done(err)
         })
       })
     })
@@ -723,8 +899,9 @@ describe(`probes.${p}`, function () {
         helper.test(emitter, testFunction, [
           function (msg) {
             check.client.entry(msg)
-            expect(msg).property('RemoteURL', ctx.data.url)
+            expect(msg).property('Spec', 'rsc')
             expect(msg).property('IsService', 'yes')
+            expect(msg).property('RemoteURL', ctx.data.url)
           },
           function (msg) {
             check.server.entry(msg)
@@ -1071,23 +1248,7 @@ describe(`probes.${p}`, function () {
       })
     })
 
-    // this fails with the following error on node v10.9.0 to v10.14.1
-    // it might fail before 10.9.0 but it succeeds with node 8. there
-    // are fixes related to errors on streams in 10.14.2, so it seems
-    // reasonable to consider the failures as related to a node bug.
-    /**
-     * Error: Parse Error
-     *  at Socket.socketOnData (_http_client.js:441:20)
-     *  at addChunk (_stream_readable.js:283:12)
-     *  at readableAddChunk (_stream_readable.js:264:11)
-     *  at Socket.Readable.push (_stream_readable.js:219:10)
-     *  at TCP.onread (net.js:639:20)
-     */
     it('should report an error when the server has a socket error', function (testDone) {
-      if (semver.satisfies(process.version, '>= 10.9.0 <= 10.14.1')) {
-        return this.skip()
-      }
-
       // disable so we don't have to look for/exclude http spans in the
       // emitted output.
       ao.probes[p].enabled = false

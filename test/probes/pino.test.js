@@ -11,36 +11,9 @@ const semver = require('semver')
 const pino = require('pino')
 const { version } = require('pino/package.json')
 
-// NOTE - context pino 5.12.2 with flatstr 1.0.9
-// this test sometimes fails with "SyntaxError: Unexpected token '%'" which is
-// the result of flatstr failing intermittently. Running the most recent
-// version of pino which updates the flatstr dependency has prevented this
-// error so far. It's not obvious from looking at the code why the error was
-// not handled by the try-catch clauses in flatstr.
-// https://github.com/davidmarkclements/flatstr/issues/5
-
 const major = semver.major(version)
-let streamSym
-if (major >= 5) {
-  streamSym = pino.symbols.streamSym
-}
-const { EventEmitter } = require('events')
 
-// > child.info('message to love')
-// {"level": 30, "time": 1554384912925, "pid": 31188, "hostname": "uxpanapa", "a": 100, "msg": "message to love", "v": 1}
-// undefined
-//  > logger.info({a: 88})
-// {"level": 30, "time": 1554385436410, "pid": 31188, "hostname": "uxpanapa", "a": 88, "v": 1}
-// undefined
-//  > logger.info({message: 'what i wanna say'})
-// {"level": 30, "time": 1554385458227, "pid": 31188, "hostname": "uxpanapa", "message": "what i wanna say", "v": 1}
-// undefined
-//  > logger.info('my message to you', {a: 1001})
-// {"level": 30, "time": 1554385477498, "pid": 31188, "hostname": "uxpanapa", "msg": "my message to you {\"a\":1001}", "v": 1}
-// undefined
-//  > logger.info({a: 1001}, 'my message to you')
-// {"level": 30, "time": 1554385692908, "pid": 31188, "hostname": "uxpanapa", "a": 1001, "msg": "my message to you", "v": 1}
-//
+const { EventEmitter } = require('events')
 
 const template1 = {
   level: 30,
@@ -49,9 +22,10 @@ const template1 = {
   hostname: os.hostname()
 }
 
-const template2 = {
-  v: 1
-}
+// version logging was removed in 6.0.0
+// see:
+// https://github.com/pinojs/pino/pull/623
+const template2 = semver.gte(version, '6.0.0') ? {} : { v: 1 }
 
 /**
  * predefined - objects set in a logger that are inherited by a child. they come
@@ -80,22 +54,16 @@ function checkEventInfo (eventInfo, level, message, traceId) {
   eventInfo = JSON.parse(eventInfo)
   expect(eventInfo.time).within(Date.now() - 150, Date.now() + 100)
   // if the time is good reset it to be exact so expect().eql will work
-  const post = traceId ? { ao: { traceId } } : {}
+  const parts = traceId ? traceId.toString().split('-') : null
+  const post = Object.assign(traceId ? { sw: { trace_id: parts[1], span_id: parts[2], trace_flags: parts[3] } } : {}, { time: eventInfo.time })
+
   const expected = makeExpected(
-    { level: pino.levels.values[level], time: eventInfo.time },
+
+    { level: pino().levels.values[level], time: eventInfo.time },
     message,
     post
   )
   expect(eventInfo).deep.equal(expected)
-}
-
-//
-// get a trace string via a different function than the logging insertion uses.
-//
-function getTraceIdString () {
-  const firstEvent = ao.requestStore.get('topSpan').events.entry.event
-  // 2 task, 16 sample bit, 32 separators
-  return firstEvent.toString(2 | 16 | 32)
 }
 
 const insertModes = [false, true, 'traced', 'sampledOnly', 'always']
@@ -109,9 +77,7 @@ describe(`pino v${version}`, function () {
   let counter = 0
   let pfx
   let spanName
-  let stream
   const logEmitter = new EventEmitter()
-  const debugging = false
 
   // used by each test
   let eventInfo
@@ -124,51 +90,25 @@ describe(`pino v${version}`, function () {
   })
 
   before(function () {
-    //
-    // make decisions based on pino version
-    //
+    // make the logger
+    logger = pino()
+
+    // modify the logger so that it emits logging so it can be checked. implement
+    // only the functions that are called.
+    const modStream = {
+      write (s) {
+        logEmitter.emit('test-log', s)
+      },
+      flush () {},
+      flushSync () {}
+    }
+
     if (major >= 5) {
-      // make the logger
-      logger = pino()
-
-      //
-      // modify the logger so that it emits logging so it can be checked. implement
-      // only the functions that are called.
-      //
-      stream = logger[streamSym] = {
-        write (s) {
-          logEmitter.emit('test-log', s)
-          if (debugging) {
-            console.log(s);  // eslint-disable-line
-          }
-        },
-        flush () {},
-        flushSync () {}
-      }
-      Object.setPrototypeOf(stream, EventEmitter.prototype)
+      logger[pino.symbols.streamSym] = modStream
+      Object.setPrototypeOf(logger[pino.symbols.streamSym], EventEmitter.prototype)
     } else if (major >= 2) {
-      logger = pino()
-
-      //
-      // modify the logger so that it emits logging so it can be checked. implement
-      // only the functions that are called.
-      //
-      stream = logger.stream = {
-        write (s) {
-          logEmitter.emit('test-log', s)
-          if (debugging) {
-            console.log(s);   // eslint-disable-line
-          }
-        },
-        flush () {},
-        flushSync () {}
-      }
-      Object.setPrototypeOf(stream, EventEmitter.prototype)
-
-      // listen to our fake stream.
-      logEmitter.addListener('test-log', function (s) {
-        eventInfo = s
-      })
+      logger.stream = modStream
+      Object.setPrototypeOf(logger.stream, EventEmitter.prototype)
     } else {
       throw new RangeError(`pino test - unsupported version: ${version}`)
     }
@@ -231,7 +171,7 @@ describe(`pino v${version}`, function () {
 
       helper.test(emitter, function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
+          traceId = ao.lastEvent.toString()
           // log
           logger.info(message)
         })
@@ -263,14 +203,14 @@ describe(`pino v${version}`, function () {
       ao.sampleRate = 0
 
       function test () {
-        traceId = getTraceIdString()
+        traceId = ao.lastEvent.toString()
         expect(traceId[traceId.length - 1] === '0', 'traceId shoud be unsampled')
         logger.info(message)
         return 'test-done'
       }
 
-      const xtrace = ao.addon.Event.makeRandom(0).toString()
-      const result = ao.startOrContinueTrace(xtrace, spanName, test)
+      const traceparent = ao.addon.Event.makeRandom(0).toString()
+      const result = ao.startOrContinueTrace(traceparent, '', spanName, test)
 
       expect(result).equal('test-done')
       checkEventInfo(eventInfo, level, message, maybe ? undefined : traceId)
@@ -285,7 +225,7 @@ describe(`pino v${version}`, function () {
 
     logger.info(message)
 
-    checkEventInfo(eventInfo, level, message, `${'0'.repeat(40)}-0`)
+    checkEventInfo(eventInfo, level, message, `00-${'0'.repeat(32)}-${'0'.repeat(16)}-${'0'.repeat(2)}`)
   })
 
   it('should insert trace IDs in asynchronous instrumented code', function (done) {
@@ -299,7 +239,7 @@ describe(`pino v${version}`, function () {
     }
 
     function asyncFunction (cb) {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger.error(message)
       setTimeout(function () {
         cb()
@@ -332,7 +272,7 @@ describe(`pino v${version}`, function () {
     }
 
     function promiseFunction () {
-      traceId = getTraceIdString()
+      traceId = ao.lastEvent.toString()
       logger[level](message)
       return new Promise((resolve, reject) => {
         setTimeout(function () {
@@ -376,8 +316,8 @@ describe(`pino v${version}`, function () {
       emitter,
       function (done) {
         ao.instrument(spanName, function () {
-          traceId = getTraceIdString()
-          logger[level](message, getTraceIdString())
+          traceId = ao.lastEvent.toString()
+          logger[level](message, traceId)
         })
         done()
       },

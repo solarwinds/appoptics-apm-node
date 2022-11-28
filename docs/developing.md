@@ -101,36 +101,6 @@ The repo includes API docs that are auto generated from code comments.
 `npm run docs:api`.
 
 
-## Dev Repo
-
-The dev repo setup allows to run end-to-end npm release process in a development environment.
-It also greatly simplifies creating and testing CI integrations such as GitHub Actions.
-
-It contains:
-  - dev repo: https://github.com/appoptics/appoptics-apm-node-dev (private, permissions via AppOptics Organization admin)
-
-The dev repo was cloned from the main repo and setup with the appropriate secrets.
-
-To set the main repo to work with the dev repo:
-
-1. `git remote -v`
-2. `git remote add dev git@github.com:appoptics/appoptics-apm-node-dev.git`
-3. `npm run dev:repo:reset`
-
-The script will:
-  - Force push all branches and tags to dev repo.
-  - Remove the local dev repo and clone a fresh one into a sibling directory. 
-  - Modify package.json:
-  ```
-  "name": "appoptics-apm-node-dev",
-  ```
-  - Commit updated `package.json` to `master` all branches.
-
-To start fresh on the dev repo run `npm run dev:repo:reset` again.
-
-When running a Release process on the dev repo, the package will be published to https://www.npmjs.com/package/appoptics-apm-node-dev. It should be [unpublished](https://docs.npmjs.com/unpublishing-packages-from-the-registry) as soon as possible.
-
-
 # Additional Info
 
 * [Development & Release with GitHub Actions ](./github-actions.md)

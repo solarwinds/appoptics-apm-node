@@ -32,8 +32,6 @@ test('zlib')
 test('amqplib', '>= 0.2.0 < 0.5.0 || > 0.5.0')
 
 test('bcrypt', selectone(process.version, [
-  { selector: '>= 8.0.0 < 10.0.0', targetSelector: '>= 1.0.3 < 3.0.0 || > 3.0.0' },
-  { selector: '>= 10.0.0 < 12.0.0', targetSelector: '>= 3.0.0' },
   // version 4.0.0 doesn't work on alpine
   { selector: '>= 12.0.0', targetSelector: loi.id !== 'alpine' ? '>= 3.0.6' : '>= 3.0.6 < 4.0.0 || >= 4.0.1' }
 ]))
@@ -47,31 +45,6 @@ test('director', '>= 1.2.0')
 test('express', '>= 3.0.0')
 
 test('generic-pool', '>= 2.4.0')
-
-if (node('lt', '16.0.0')) {
-  test('hapi', {
-    ranges: [
-      {
-        range: '>= 13.0.0 < 17.0.0',
-        dependencies: ['vision@4']
-      }, {
-        range: '>= 17.0.0 <= 18.1.0',
-        dependencies: ['vision@5']
-      }
-    ]
-  })
-  test('vision', {
-    ranges: [
-      {
-        range: '>= 4.0.0 < 5.0.0',
-        dependencies: ['hapi@16']
-      }, {
-        range: '>= 5.0.0',
-        dependencies: ['hapi@17']
-      }
-    ]
-  })
-}
 
 if (node('gte', '11.0.0')) {
   test('@hapi/hapi', {
@@ -119,6 +92,7 @@ test('koa-router', {
 })
 
 test('level', node('gte', '12.0.0') ? '>= 5.0.0' : '>= 1.3.0')
+test('log4js')
 
 test('memcached', '>= 2.2.0')
 // prior to version 3.3.0 mongodb used mongodb-core.

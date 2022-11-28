@@ -1,14 +1,8 @@
 {
   "name": "appoptics-apm",
-  "version": "10.2.2",
-  "appoptics": {
-    "version-suffix": "lambda-1"
-  },
+  "version": "11.0.0-nh.2",
   "description": "Agent for AppOptics APM",
   "main": "lib/index.js",
-  "bin": {
-    "node-ao": "./bin/node-ao"
-  },
   "files": [
     "lib",
     "appoptics-apm-config.json",
@@ -21,7 +15,6 @@
     "lint": "eslint . --ext .json,.js,.yml --fix --ignore-pattern bench --ignore-pattern test/docker",
     "dev": "dev/start.sh",
     "dev:oneoff": "dev/oneoff.sh",
-    "dev:repo:reset": "dev/repo/reset.sh",
     "dev:reinstall": "rm -rf node_modules && npm install --unsafe-perm"
   },
   "contributors": [
@@ -53,22 +46,15 @@
   },
   "dependencies": {
     "ace-context": "^1.0.1",
-    "array-flatten": "^2.1.2",
-    "cls-hooked": "^4.2.2",
-    "debug-custom": "^1.1.0",
-    "glob": "^7.2.0",
-    "methods": "^1.1.2",
-    "minimist": "^1.2.6",
+    "debug": "^4.3.4",
     "semver": "^7.3.5",
     "shimmer": "^1.2.1"
   },
   "devDependencies": {
     "@hapi/hapi": "^20.1.5",
     "@hapi/vision": "^6.1.0",
-    "amqp": "^0.2.6",
     "amqplib": "^0.8.0",
-    "appoptics-auto-lambda": "git+https://github.com/appoptics/apm-node-auto-lambda.git#2130a7b8be77fe3689edef9007552dfbdd903f7b",
-    "aws-sdk": "^2.440.0",
+    "aws-sdk": "^2.1057.0",
     "axios": "^0.26.1",
     "bcrypt": "^5.0.0",
     "bluebird": "^3.7.2",
@@ -92,18 +78,19 @@
     "eslint-plugin-yaml": "^0.5.0",
     "express": "^4.17.1",
     "generic-pool": "^3.8.2",
-    "hapi": "^18.1.0",
-    "jsdoc-to-markdown": "^7.0.1",
+    "jsdoc-to-markdown": "^7.1.0",
     "koa": "^2.13.1",
     "koa-ejs": "^4.2.0",
     "koa-resource-router": "^0.4.0",
     "koa-route": "^3.2.0",
     "koa-router": "^10.1.1",
     "level": "^7.0.0",
+    "log4js": "^6.4.2",
     "memcached": "^2.2.2",
     "method-override": "^2.3.10",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.1",
-    "mocha": "^8.4.0",
+    "mocha": "^9.1.3",
     "mongodb": "^3.7.0",
     "mongodb-core": "^3.2.7",
     "mongoose": "^5.13.9",
@@ -112,21 +99,20 @@
     "oracledb": "^5.2.0",
     "pg": "^8.7.1",
     "pg-native": "^3.0.0",
-    "pino": "^5.17.0",
+    "pino": "^7.8.0",
     "q": "^1.5.1",
     "raw-body": "^2.4.1",
     "redis": "^3.1.2",
     "restify": "^8.6.1",
     "should": "^8.3.1",
     "supertest": "^3.4.2",
-    "tedious": "8.0.1",
+    "tedious": "^14.0.0",
     "testeachversion": "^9.0.0",
-    "vision": "^5.4.4",
-    "winston": "^3.3.3",
-    "winston-transport": "^4.3.0",
+    "winston": "^3.6.0",
+    "winston-transport": "^4.5.0",
     "ws": "^7.2.0"
   },
   "optionalDependencies": {
-    "@appoptics/apm-bindings": "^11.2.1"
+    "@appoptics/apm-bindings": "https://github.com/appoptics/appoptics-bindings-node.git#nh-main"
   }
 }

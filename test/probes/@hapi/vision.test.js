@@ -9,29 +9,10 @@ const helloDotEjs = 'hello.ejs'
 const helper = require(path.join(base, 'test/helper'))
 const ao = global[Symbol.for('AppOptics.Apm.Once')]
 
-const semver = require('semver')
-
 const axios = require('axios')
 
-// This test can't even be compiled if JavaScript doesn't recognize async/await.
-const nodeVersion = process.version.slice(1)
-const hasAsyncAwait = semver.gte(nodeVersion, '8.0.0')
-
-if (!hasAsyncAwait) {
-  throw new Error('hapi@17 testing requires async/await')
-}
-
-// above node 14, hapi version must be over 18, which means must be at @hapi/hapi.
-// below node 11 hapi version must be below 18, which means must be at hapi.
-// process.env.hapiVersion is set when running the @hapi/hapi test
-
-// don't run what is not supported
-if (semver.gte(nodeVersion, '16.0.0') && !process.env.hapiVersion) process.exit()
-if (semver.lt(nodeVersion, '11.0.0') && process.env.hapiVersion) process.exit()
-
-// if testing the @hapi scoped package then hapiVersion is set to @hapi
-const hapiName = process.env.hapiVersion ? `${process.env.hapiVersion}/hapi` : 'hapi'
-const visionName = process.env.hapiVersion ? `${process.env.hapiVersion}/vision` : 'vision'
+const hapiName = '@hapi/hapi'
+const visionName = '@hapi/vision'
 
 const hapi = require(hapiName)
 const vision = require(visionName)
@@ -39,17 +20,8 @@ const vision = require(visionName)
 const pkg = require(`${visionName}/package.json`)
 const hapiPkg = require(`${hapiName}/package.json`)
 
-if (semver.lt(hapiPkg.version, '17.0.0')) {
-  throw new Error('vision-5-and-above requires hapi version 17+')
-}
-
-let plugins
-let hapiText
-if (semver.gte(pkg.version, '5.0.0')) {
-  plugins = { plugin: require(visionName) }
-  hapiText = `${hapiName} ${hapiPkg.version}`
-  hapiText = ' hapi ' + hapiPkg.version
-}
+const plugins = { plugin: require(visionName) }
+const hapiText = `${hapiName} ${hapiPkg.version}`
 
 describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   let emitter
@@ -241,7 +213,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
   }
 
   async function disabledTest () {
-    ao.probes.vision.enabled = false
+    ao.probes['@hapi/vision'].enabled = false
     const server = await makeViewServer()
 
     server.route({
@@ -272,7 +244,7 @@ describe(`probes.${visionName} ${pkg.version} ${hapiText}`, function () {
       }
     ]
     helper.doChecks(emitter, validations, function () {
-      ao.probes.vision.enabled = true
+      ao.probes['@hapi/vision'].enabled = true
       server.listener.close(_resolve)
     })
 
